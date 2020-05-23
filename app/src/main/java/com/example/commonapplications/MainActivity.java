@@ -26,6 +26,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void clickWake(View view) {
+        AppsPanel.setAlarm(this, 6000);
+        Toast.makeText(this, R.string.service_button_toast_text, Toast.LENGTH_SHORT);
+    }
+
     public void clickBlack(View view) {
         MyApplication app = (MyApplication) this.getApplication();
         app.color = MyApplication.COLOR_BLACK;

@@ -96,7 +96,8 @@ public class AppsPanel extends AppWidgetProvider {
 //        Intent intent = new Intent(CommonAppsService.ACTION_NAME_START_OR_STOP_SERVICE);
 //        intent.setPackage(CommonAppsService.PACKAGE_NAME);
 //        context.startForegroundService(intent);
-
+        Toast.makeText(context, R.string.wait_app, Toast.LENGTH_LONG).show();
+        setAlarm(context, 0);
     }
 
     /**
@@ -147,15 +148,7 @@ public class AppsPanel extends AppWidgetProvider {
         Log.e("action received", "******************** Action: " + intent.getAction() + " ********************");
         if (action.equals(ACTION_NAME_UPDATE_ALL_WIDGET)) {
             int color = intent.getIntExtra(CommonAppsService.EXTRA_NAME_APP_TEXT_COLOR, MyApplication.COLOR_STAY);
-
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            int ms_later = context.getResources().getInteger(R.integer.period_ms);
-            long triggerAtTime = System.currentTimeMillis() + ms_later;
-            Intent intentWake = new Intent(ACTION_NAME_UPDATE_ALL_WIDGET);
-            intentWake.setComponent(new ComponentName(PACKAGE_NAME, CLASS_NAME));
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getBroadcast(context, 0, intentWake, PendingIntent.FLAG_UPDATE_CURRENT));
-            Log.e("Alarm set", "<<<<<<<<<<<<<<<<<<<< Alarm continue <<<<<<<<<<<<<<<<<<<<");
-
+            setAlarm(context, context.getResources().getInteger(R.integer.period_ms));
             Log.e("color code received", "#################### ColorCode: " + MyApplication.getColorName(color) + " ####################");
             if (widgetIds.length > 0)
 //                myUpdate(context, AppWidgetManager.getInstance(context), widgetIds, color);
@@ -164,13 +157,7 @@ public class AppsPanel extends AppWidgetProvider {
                 Log.e("update canceled", "@@@@@@@@@@ No widget @@@@@@@@@@");
         } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)) {
             Toast.makeText(context, R.string.wait_app, Toast.LENGTH_LONG).show();
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            int ms_later = context.getResources().getInteger(R.integer.period_ms);
-            long triggerAtTime = System.currentTimeMillis();
-            Intent intentWake = new Intent(ACTION_NAME_UPDATE_ALL_WIDGET);
-            intentWake.setComponent(new ComponentName(PACKAGE_NAME, CLASS_NAME));
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getBroadcast(context, 0, intentWake, PendingIntent.FLAG_UPDATE_CURRENT));
-            Log.e("Alarm set", ">>>>>>>>>>>>>>>>>>>> Alarm set >>>>>>>>>>>>>>>>>>>>");
+            setAlarm(context, 0);
         } else if (action.equals(ACTION_TIME_TICK) || action.equals(ACTION_USER_PRESENT) || action.equals(ACTION_SCREEN_ON)) {
             Intent intentStart = new Intent(CommonAppsService.ACTION_NAME_START_OR_STOP_SERVICE);
             intentStart.setPackage(CommonAppsService.PACKAGE_NAME);
@@ -188,6 +175,15 @@ public class AppsPanel extends AppWidgetProvider {
 //            myUpdate(context, appWidgetManager, appWidgetIds, MyApplication.COLOR_STAY);
 //        else
 //            Log.e("update canceled", "@@@@@@@@@@ No widget @@@@@@@@@@");
+    }
+
+    static void setAlarm(Context context, int ms_later) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        long triggerAtTime = System.currentTimeMillis() + ms_later;
+        Intent intentWake = new Intent(ACTION_NAME_UPDATE_ALL_WIDGET);
+        intentWake.setComponent(new ComponentName(PACKAGE_NAME, CLASS_NAME));
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getBroadcast(context, 0, intentWake, PendingIntent.FLAG_UPDATE_CURRENT));
+        Log.e("Alarm set", ">>>>>>>>>>>>>>>>>>>> Alarm set : " + ms_later + " ms later >>>>>>>>>>>>>>>>>>>>");
     }
 
     public void changeColor(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
