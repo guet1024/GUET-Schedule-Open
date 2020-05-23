@@ -22,3 +22,8 @@ This design is inspired by Microsoft Launcher.
 - 在向手机桌面添加桌面小部件前，不要忘记授予权限。你只需要点击APP中左下角的按钮。
 - 如果你发现桌面小部件长时间未更新，可以手动唤醒其自动更新。你只需要点击APP中右下角的按钮。
 
+![](APP details.png)
+
+![](APP detailss.png)
+
+![](APP widget details.png)
