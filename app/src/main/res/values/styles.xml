@@ -1,0 +1,31 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="button_icon">
+        <item name="android:background">#00000000</item>
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="button_text">
+        <item name="android:layout_width">wrap_content</item>>
+        <item name="android:layout_height">wrap_content</item>>
+        <item name="android:textSize">12sp</item>>
+        <item name="android:layout_centerHorizontal">true</item>>
+        <item name="android:ellipsize">end</item>>
+        <item name="android:maxEms">5</item>>
+        <item name="android:maxLines">1</item>>
+        <item name="android:text">常用应用</item>>
+        <item name="android:textColor">@color/colorWidget</item>>
+    </style>
+
+</resources>

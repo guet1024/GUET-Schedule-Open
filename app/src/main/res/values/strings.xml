@@ -1,0 +1,159 @@
+<resources>
+    <string name="app_name">常用应用页</string>
+    <string name="tip">
+        ⛵本应用提供小部件:
+        \n\n
+        “常用应用页”
+        \n\n
+        \n\n
+        👉使用方法：
+        \n\n
+        先在本界面授予APP权限，然后到桌面上添加名为“常用应用页”的窗口小工具
+        \n\n
+        \n\n
+        🔒需要获得权限：
+        \n\n
+        使用情况访问权限
+        \n\n
+        \n\n
+        🔐关于授权：
+        \n\n
+        如果未授权就添加小工具，小工具将无法正常刷新界面，授权后会自动在 30 秒内恢复
+        \n\n
+        \n\n
+        ⚡提示：
+        \n\n
+        1. 窗口小工具首次加载需要 5~10 秒
+        \n\n
+        2. 点击窗口小工具的标题和⏱图标可以更换字体颜色（每次点击随机更换为黑色或白色）
+        \n\n
+        3. 由于小部件处于实时更新的状态，更换字体颜色可能会稍有延迟，可以疯狂点击直至颜色切换成功
+    </string>
+    <string name="update_button_text">⏱</string>
+    <string name="check_button_text">授予权限</string>
+    <string name="color_button_text_black">APP图标设为黑色字体</string>
+    <string name="color_button_text_white">APP图标设为白色字体</string>
+    <string name="null_stats">未能获取应用使用情况，请检查是否授予了权限！授权后将自动刷新小部件</string>
+    <string name="wait_app">小部件正在加载，请耐心等候数秒~</string>
+    <string name="wait_color_white">更改字体颜色为 白色 成功！请耐心等候小部件刷新~</string>
+    <string name="wait_color_black">更改字体颜色为 黑色 成功！请耐心等候小部件刷新~</string>
+    <string name="random_color_black">随机颜色 : 黑色</string>
+    <string name="random_color_white">随机颜色 : 白色</string>
+    <string name="is_running_notification_channel_name">小部件正在运行通知</string>
+    <string name="is_running_notification_title">常用应用页正在运行</string>
+    <string name="is_running_notification_content_text">您可以关闭此应用的通知</string>
+
+    <!--    If you want to change the frequency of the update, you need to pay attention to two places:-->
+    <!--    1. the following value "period_ms" controls the frequency of update using "UPDATE_ALL" intent-->
+    <!--    2. the following value "period_loop_time" controls the loop-times in the service onDestroy() -->
+    <!--    3. the value "updatePeriodMillis" controls the frequency of update by system, set it to "0" if you-->
+    <!--       don't want system to update the widgets automatically-->
+    <integer name="period_ms">20000</integer>
+    <integer name="period_loop_time">3</integer>
+
+    <integer name="bitmap_width_default">100</integer>
+    <integer name="bitmap_width_huawei">170</integer>
+    <integer name="bitmap_width_honor">170</integer>
+    <integer name="bitmap_width_xiaomi">100</integer>
+
+    <string-array name="buttons">
+
+        <item>@id/a</item>
+
+        <item>@id/b</item>
+
+        <item>@id/c</item>
+
+        <item>@id/d</item>
+
+        <item>@id/e</item>
+
+        <item>@id/f</item>
+
+        <item>@id/g</item>
+
+        <item>@id/h</item>
+
+        <item>@id/i</item>
+
+        <item>@id/j</item>
+
+        <item>@id/k</item>
+
+        <item>@id/l</item>
+
+        <item>@id/m</item>
+
+        <item>@id/n</item>
+
+        <item>@id/o</item>
+
+        <item>@id/p</item>
+
+        <item>@id/q</item>
+
+        <item>@id/r</item>
+
+        <item>@id/s</item>
+
+        <item>@id/t</item>
+
+        <item>@id/u</item>
+
+        <item>@id/v</item>
+
+        <item>@id/w</item>
+
+        <item>@id/x</item>
+    </string-array>
+    <string-array name="button_texts">
+
+        <item>@id/at</item>
+
+        <item>@id/bt</item>
+
+        <item>@id/ct</item>
+
+        <item>@id/dt</item>
+
+        <item>@id/et</item>
+
+        <item>@id/ft</item>
+
+        <item>@id/gt</item>
+
+        <item>@id/ht</item>
+
+        <item>@id/it</item>
+
+        <item>@id/jt</item>
+
+        <item>@id/kt</item>
+
+        <item>@id/lt</item>
+
+        <item>@id/mt</item>
+
+        <item>@id/nt</item>
+
+        <item>@id/ot</item>
+
+        <item>@id/pt</item>
+
+        <item>@id/qt</item>
+
+        <item>@id/rt</item>
+
+        <item>@id/st</item>
+
+        <item>@id/tt</item>
+
+        <item>@id/ut</item>
+
+        <item>@id/vt</item>
+
+        <item>@id/wt</item>
+
+        <item>@id/xt</item>
+    </string-array>
+</resources>

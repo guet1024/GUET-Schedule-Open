@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/colorWidget"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/widget_name_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textSize="3sp" />
+
+    <TextView
+        android:id="@+id/update_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/update_button_text"
+        android:textColor="@color/colorWidget"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/update_button_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textSize="3sp" />
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="6"
+        android:useDefaultMargins="true">
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/a"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/at"
+                style="@style/button_text"
+                android:layout_below="@+id/a" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/b"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/bt"
+                style="@style/button_text"
+                android:layout_below="@+id/b" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/c"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/ct"
+                style="@style/button_text"
+                android:layout_below="@+id/c" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/d"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/dt"
+                style="@style/button_text"
+                android:layout_below="@+id/d" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/e"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/et"
+                style="@style/button_text"
+                android:layout_below="@+id/e" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/f"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/ft"
+                style="@style/button_text"
+                android:layout_below="@+id/f" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/g"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/gt"
+                style="@style/button_text"
+                android:layout_below="@+id/g" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/h"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/ht"
+                style="@style/button_text"
+                android:layout_below="@+id/h" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/i"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/it"
+                style="@style/button_text"
+                android:layout_below="@+id/i" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/j"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/jt"
+                style="@style/button_text"
+                android:layout_below="@+id/j" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/k"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/kt"
+                style="@style/button_text"
+                android:layout_below="@+id/k" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/l"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/lt"
+                style="@style/button_text"
+                android:layout_below="@+id/l" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/m"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/mt"
+                style="@style/button_text"
+                android:layout_below="@+id/m" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/n"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/nt"
+                style="@style/button_text"
+                android:layout_below="@+id/n" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/o"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/ot"
+                style="@style/button_text"
+                android:layout_below="@+id/o" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/p"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/pt"
+                style="@style/button_text"
+                android:layout_below="@+id/p" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/q"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/qt"
+                style="@style/button_text"
+                android:layout_below="@+id/q" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/r"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/rt"
+                style="@style/button_text"
+                android:layout_below="@+id/r" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/s"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/st"
+                style="@style/button_text"
+                android:layout_below="@+id/s" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/t"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/tt"
+                style="@style/button_text"
+                android:layout_below="@+id/t" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/u"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/ut"
+                style="@style/button_text"
+                android:layout_below="@+id/u" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/v"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/vt"
+                style="@style/button_text"
+                android:layout_below="@+id/v" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/w"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/wt"
+                style="@style/button_text"
+                android:layout_below="@+id/w" />
+        </RelativeLayout>
+
+        <RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/x"
+                style="@style/button_icon" />
+
+            <TextView
+                android:id="@+id/xt"
+                style="@style/button_text"
+                android:layout_below="@+id/x" />
+        </RelativeLayout>
+    </GridLayout>
+</LinearLayout>
