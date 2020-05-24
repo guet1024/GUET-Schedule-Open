@@ -26,6 +26,7 @@
             <intent-filter>
                 <action android:name="com.example.commonapplications.UPDATE_ALL" />
                 <action android:name="com.example.commonapplications.CHANGE_COLOR" />
+                <action android:name="com.example.commonapplications.WAKE_UP" />
                 <!--                Dangerous: These must be added-->
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_DELETED" />

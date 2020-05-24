@@ -43,6 +43,7 @@ public class AppsPanel extends AppWidgetProvider {
     public static final String CLASS_NAME = "com.example.commonapplications.AppsPanel";
     public static final String ACTION_NAME_UPDATE_ALL_WIDGET = "com.example.commonapplications.UPDATE_ALL";
     public static final String ACTION_NAME_CHANGE_COLOR = "com.example.commonapplications.CHANGE_COLOR";
+    public static final String ACTION_NAME_WAKE_UP = "com.example.commonapplications.WAKE_UP";
     public static final int REQUEST_CODE_COMMON_APPS_START_OTHER_APP = 55532;
     public static final int REQUEST_CODE_COMMON_APPS_CHANGE_COLOR = 55531;
 
@@ -159,13 +160,19 @@ public class AppsPanel extends AppWidgetProvider {
             Toast.makeText(context, R.string.wait_app, Toast.LENGTH_LONG).show();
             setAlarm(context, 0);
         } else if (action.equals(ACTION_TIME_TICK) || action.equals(ACTION_USER_PRESENT) || action.equals(ACTION_SCREEN_ON)) {
-            Intent intentStart = new Intent(CommonAppsService.ACTION_NAME_START_OR_STOP_SERVICE);
-            intentStart.setPackage(CommonAppsService.PACKAGE_NAME);
-            context.startForegroundService(intentStart);
-            Log.e("wake the service", "~~~~~~~~~~~~~~~~~~~~ wake up, don't die ~~~~~~~~~~~~~~~~~~~~");
+//            Intent intentStart = new Intent(CommonAppsService.ACTION_NAME_START_OR_STOP_SERVICE);
+//            intentStart.setPackage(CommonAppsService.PACKAGE_NAME);
+//            context.startForegroundService(intentStart);
+//            Log.e("wake the widget", "~~~~~~~~~~~~~~~~~~~~ wake up, don't die ~~~~~~~~~~~~~~~~~~~~");
+            setAlarm(context, 0);
+            Log.e("wake the widget", "~~~~~~~~~~~~~~~~~~~~ wake up, don't die ~~~~~~~~~~~~~~~~~~~~");
         } else if (action.equals(ACTION_NAME_CHANGE_COLOR)) {
             if (widgetIds.length > 0)
                 changeColor(context, AppWidgetManager.getInstance(context), widgetIds);
+        } else if (action.equals(ACTION_NAME_WAKE_UP)) {
+            setAlarm(context, 0);
+            Toast.makeText(context, R.string.service_button_toast_text, Toast.LENGTH_SHORT).show();
+            Log.e("wake the widget", "~~~~~~~~~~~~~~~~~~~~ wake up, don't die ~~~~~~~~~~~~~~~~~~~~");
         }
     }
 
@@ -264,10 +271,12 @@ public class AppsPanel extends AppWidgetProvider {
                 rv.setOnClickPendingIntent(buttonIds[i], pendingIntent);
                 Intent intentChange = new Intent(ACTION_NAME_CHANGE_COLOR);
                 intentChange.setComponent(new ComponentName(PACKAGE_NAME, CLASS_NAME));
+                Intent intentWakeUp = new Intent(ACTION_NAME_WAKE_UP);
+                intentWakeUp.setComponent(new ComponentName(PACKAGE_NAME, CLASS_NAME));
                 rv.setOnClickPendingIntent(R.id.widget_name, PendingIntent.getBroadcast(context, REQUEST_CODE_COMMON_APPS_CHANGE_COLOR, intentChange, PendingIntent.FLAG_UPDATE_CURRENT));
                 rv.setOnClickPendingIntent(R.id.widget_name_blank, PendingIntent.getBroadcast(context, REQUEST_CODE_COMMON_APPS_CHANGE_COLOR, intentChange, PendingIntent.FLAG_UPDATE_CURRENT));
-                rv.setOnClickPendingIntent(R.id.update_button, PendingIntent.getBroadcast(context, REQUEST_CODE_COMMON_APPS_CHANGE_COLOR, intentChange, PendingIntent.FLAG_UPDATE_CURRENT));
-                rv.setOnClickPendingIntent(R.id.update_button_blank, PendingIntent.getBroadcast(context, REQUEST_CODE_COMMON_APPS_CHANGE_COLOR, intentChange, PendingIntent.FLAG_UPDATE_CURRENT));
+                rv.setOnClickPendingIntent(R.id.update_button, PendingIntent.getBroadcast(context, 0, intentWakeUp, PendingIntent.FLAG_UPDATE_CURRENT));
+                rv.setOnClickPendingIntent(R.id.update_button_blank, PendingIntent.getBroadcast(context, 0, intentWakeUp, PendingIntent.FLAG_UPDATE_CURRENT));
                 try {
                     rv.setTextViewText(buttonTextIds[i], context.getPackageManager().getApplicationLabel(context.getPackageManager().getApplicationInfo(list.get(i).getPackageName(), PackageManager.GET_META_DATA)));
                 } catch (PackageManager.NameNotFoundException e) {

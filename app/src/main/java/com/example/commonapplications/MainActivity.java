@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickWake(View view) {
         AppsPanel.setAlarm(this, 6000);
-        Toast.makeText(this, R.string.service_button_toast_text, Toast.LENGTH_SHORT);
+        Toast.makeText(this, R.string.service_button_toast_text, Toast.LENGTH_SHORT).show();
+        Log.e("wake the widget", "~~~~~~~~~~~~~~~~~~~~ wake up, don't die ~~~~~~~~~~~~~~~~~~~~");
     }
 
     public void clickBlack(View view) {
