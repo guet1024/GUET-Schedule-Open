@@ -3,6 +3,9 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Entity(primaryKeys = {"username"})
 public class User {
     @NonNull
@@ -10,6 +13,12 @@ public class User {
 
     @NonNull
     public String password;
+
+    @NonNull
+    public boolean activated;
+
+    @NonNull
+    public String updateTime;
 
     public User(String username, String password){
         if (username == null){
@@ -20,5 +29,7 @@ public class User {
         }
         this.password = password;
         this.username = username;
+        activated = false;
+        updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }

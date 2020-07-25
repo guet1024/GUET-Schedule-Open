@@ -26,7 +26,9 @@
     <string name="login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
     <string name="toast_login_success">登录成功！</string>
-    <string name="toast_login_fail">登录失败！</string>
+    <string name="toast_login_fail">登录失败</string>
+    <string name="toast_login_fail_ck">验证码错误，登录失败</string>
+    <string name="toast_login_fail_pwd">密码错误，登录失败</string>
     <string name="login_success_contain_response_text">\"success\":true</string>
     <string name="cookie_delimiter">"; "</string>
     <string name="get_term_url">http://bkjw.guet.edu.cn/Comm/GetTerm</string>
@@ -38,4 +40,10 @@
     <string name="forget_btn">删除</string>
     <string name="ok_btn_text_zhcn">确定</string>
     <string name="deny_btn_zhcn">取消</string>
+    <string name="login_fail_ck_title">登录失败 - 验证码错误</string>
+    <string name="login_fail_pwd_title">登录失败 - 密码不正确</string>
+    <string name="login_fail_other_title">登录失败</string>
+    <string name="login_success_title">登录成功</string>
+    <string name="login_fail_ck_text">验证码不正确</string>
+    <string name="login_fail_pwd_text">用户或密码错误!</string>
 </resources>

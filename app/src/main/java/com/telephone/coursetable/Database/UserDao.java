@@ -24,6 +24,15 @@ public interface UserDao {
     @Query("delete from User where username=:username")
     void deleteUser(String username);
 
+    @Query("update User set activated=0")
+    void disableAllUser();
+
+    @Query("select * from User where activated=1")
+    List<User> getActivatedUser();
+
+    @Query("update User set activated=1 where username=:username")
+    void activateUser(String username);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(User user);
 }

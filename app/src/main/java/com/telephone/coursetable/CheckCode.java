@@ -17,9 +17,12 @@ import java.util.List;
 
 public class CheckCode {
     /**
+     * @non-ui
+     * @any-ui
+     * @any
      * get the check code from the internet, and fill the check code image in specified ImageView
-     * @param aty this method may be call in a non-UI thread, so the activity to which the ImageView
-     *            belongs must be specified to call the runOnUiThread()
+     * @param aty this method must be call in a non-UI thread, due to it has network operation, so
+     *            the activity to which the ImageView belongs must be specified to call the runOnUiThread()
      * @return
      * - 0 success
      * - -1 cannot open url
@@ -56,6 +59,8 @@ public class CheckCode {
             e.printStackTrace();
             return new HttpConnectionAndCode(null, -3);
         }
+
+        //if success, update the ImageView with the check-code
         final Bitmap bmpf = bmp;
         aty.runOnUiThread(new Runnable() {
             @Override
@@ -64,6 +69,9 @@ public class CheckCode {
             }
         });
 
+        /*
+        if success and cookie_out(the cookie StringBuilder passed in) is not null, write the cookie set
+        by server into the cookie_out */
         if (cookie_out != null) {
             CookieManager cookieman = new CookieManager();
             //getHeaderFields() returns the header fields of response
@@ -85,6 +93,14 @@ public class CheckCode {
         return new HttpConnectionAndCode(cnt, 0);
     }
 
+    /**
+     * @ui
+     * @any-ui
+     * @any
+     * this method call ShowCheckCode() in a new thread, so you can call it in UI thread. The @param aty is
+     * still necessary. The return value of ShowCheckCode() is shown in @param res.
+     * @param res pass in a HttpConnectionAndCode, the return value of ShowCheckCode() will be shown in that.
+     */
     public static void ShowCheckCode_thread(final Activity aty, final ImageView im, final String urlString, final StringBuilder sb, final String cookie_delimiter, final HttpConnectionAndCode res){
         new Thread(new Runnable() {
             @Override
