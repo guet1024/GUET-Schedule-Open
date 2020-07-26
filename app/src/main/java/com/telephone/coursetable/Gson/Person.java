@@ -1,11 +1,9 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.Gson;
 
-import java.util.List;
-
-public class Table {
+public class Person {
     private boolean success;
     private long total;
-    private List<TableNode> data;
+    private PersonInfo data;
 
     public boolean isSuccess() {
         return success;
@@ -15,7 +13,7 @@ public class Table {
         return total;
     }
 
-    public List<TableNode> getData() {
+    public PersonInfo getData() {
         return data;
     }
 }

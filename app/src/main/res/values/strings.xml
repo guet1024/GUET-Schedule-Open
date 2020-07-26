@@ -25,7 +25,8 @@
     <string name="login_head_text">学分制教学管理系统</string>
     <string name="login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
-    <string name="toast_login_success">登录成功！</string>
+    <string name="toast_login_success">登录成功，正在更新数据...</string>
+    <string name="toast_update_success">数据更新成功！</string>
     <string name="toast_login_fail">登录失败</string>
     <string name="toast_login_fail_ck">验证码错误，登录失败</string>
     <string name="toast_login_fail_pwd">密码错误，登录失败</string>
@@ -33,8 +34,10 @@
     <string name="cookie_delimiter">"; "</string>
     <string name="get_term_url">http://bkjw.guet.edu.cn/Comm/GetTerm</string>
     <string name="get_table_url">http://bkjw.guet.edu.cn/student/getstutable</string>
+    <string name="get_person_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_term_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_table_referer">http://bkjw.guet.edu.cn</string>
+    <string name="get_person_success_contain_response_text">\"success\":true</string>
     <string name="get_term_success_contain_response_text">\"success\":true</string>
     <string name="get_table_success_contain_response_text">\"success\":true</string>
     <string name="forget_btn">删除</string>
@@ -46,4 +49,7 @@
     <string name="login_success_title">登录成功</string>
     <string name="login_fail_ck_text">验证码不正确</string>
     <string name="login_fail_pwd_text">用户或密码错误!</string>
+    <string name="get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
+    <string name="title_login_updating">登录 | Updating...</string>
+    <string name="title_login_updated">登录 | Success</string>
 </resources>

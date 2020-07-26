@@ -92,8 +92,7 @@
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button2"
-        app:layout_constraintTop_toTopOf="@+id/guideline3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <ImageView
         android:id="@+id/imageView4"

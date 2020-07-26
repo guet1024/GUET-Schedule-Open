@@ -1,4 +1,4 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.Gson;
 
 import java.util.List;
 

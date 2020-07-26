@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -20,10 +22,17 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.Gson.Person;
+import com.telephone.coursetable.Gson.PersonInfo;
+import com.telephone.coursetable.Gson.Table;
+import com.telephone.coursetable.Gson.TableNode;
+import com.telephone.coursetable.Gson.Term;
+import com.telephone.coursetable.Gson.Terms;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -51,6 +60,7 @@ public class Login extends AppCompatActivity {
     private ClassInfoDao cdao = null;
     private TermInfoDao tdao = null;
     private UserDao  udao = null;
+    private PersonInfoDao pdao = null;
 
     /**
      * @ui
@@ -213,6 +223,71 @@ public class Login extends AppCompatActivity {
 
     /**
      * @non-ui
+     * try to personal information information with specified cookie.
+     * if success, put the personal information(json) in return value's "comment" field.
+     * @return
+     * - 0 get personal info success
+     * - -1 cannot open url
+     * - -2 cannot close input stream
+     * - -5 cannot get response
+     * - -6 get personal info fail
+     */
+    private HttpConnectionAndCode getPersonInfo(final String cookie){
+        URL url = null;
+        HttpURLConnection cnt = null;
+        InputStreamReader in = null;
+        String response = null;
+        int resp_code = 0;
+        try {
+            url = new URL(getResources().getString(R.string.get_person_url));
+            cnt = (HttpURLConnection) url.openConnection();
+            cnt.setDoOutput(true);
+            cnt.setDoInput(true);
+            cnt.setRequestProperty("User-Agent", getResources().getString(R.string.user_agent));
+            cnt.setRequestProperty("Referer", getResources().getString(R.string.get_person_referer));
+            if (cookie.length() > 0){
+                cnt.setRequestProperty("Cookie", cookie);
+            }
+            cnt.setRequestMethod("GET");
+            cnt.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -1);
+        }
+        try {
+            resp_code = cnt.getResponseCode();
+            Log.e("getPersonInfo() GET response code", ""+resp_code);
+            in = new InputStreamReader(cnt.getInputStream());
+            //getContentLength() returns the "Content-Length" value in the response header
+            int content_len = cnt.getContentLength();
+            StringBuilder response_builder = new StringBuilder();
+            for (int i = 0; i < content_len; i++){
+                //the conversion to char is necessary
+                response_builder.append((char)in.read());
+            }
+            response = response_builder.toString();
+            if (response.contains("}}")){
+                response = response.substring(0, response.indexOf("}}") + 2);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -5);
+        }
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -2);
+        }
+        if (!response.contains(getResources().getString(R.string.get_person_success_contain_response_text))){
+            return new HttpConnectionAndCode(cnt, -6);
+        }
+        //do not disconnect, keep alive
+        return new HttpConnectionAndCode(cnt, 0, response);
+    }
+
+    /**
+     * @non-ui
      * try to get terms information with specified cookie.
      * if success, put the terms information(json) in return value's "comment" field.
      * @return
@@ -347,16 +422,12 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //get-check-code on create
         changeCode(null);
-//        db = new Gson().fromJson(getIntent().getStringExtra(MainActivity.EXTRA_DATABASE), AppDatabase.class);
-
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "telephone-db").build();
-
-
+        db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
         tdao = db.termInfoDao();
         udao = db.userDao();
+        pdao = db.personInfoDao();
         //init auto-fill list of username input box on create
         new Thread(new Runnable() {
             @Override
@@ -456,6 +527,12 @@ public class Login extends AppCompatActivity {
      *  5. if success, toast @toast_login_success, and continue......
      */
     public void login_thread(View view){
+        ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(false);
+        ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(true);
+        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(false);
+        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(true);
+        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setEnabled(false);
+        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setEnabled(true);
         final String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
         final String pwd = ((AutoCompleteTextView)findViewById(R.id.passwd_input)).getText().toString();
         final String ck = ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).getText().toString();
@@ -496,6 +573,8 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
+                        //make a tip to show data-update status
+                        getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updating));
                     }
                 });
                 udao.insert(new User(sid, pwd));
@@ -503,9 +582,24 @@ public class Login extends AppCompatActivity {
                 cdao.deleteAll();
                 gdao.deleteAll();
                 tdao.deleteAll();
+                pdao.deleteAll();
                 /**
                  * ******************************* UPDATE DATA START *******************************
                  */
+                //update person info
+                HttpConnectionAndCode getPersonInfo_res = getPersonInfo(cookie_builder.toString());
+                //if success, insert data into database
+                if (getPersonInfo_res.code == 0){
+                    Person person = new Gson().fromJson(getPersonInfo_res.comment, Person.class);
+                    PersonInfo p = person.getData();
+                    //extract information and then insert into database
+                    pdao.insert(new com.telephone.coursetable.Database.PersonInfo(p.getStid(), p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
+                            p.getEngname(),p.getSex(),p.getPass(),p.getDegree(),p.getDirection(),p.getChangetype(),p.getSecspno(),p.getClasstype(),p.getIdcard(),
+                            p.getStype(),p.getXjzt(),p.getChangestate(),p.getLqtype(),p.getZsjj(),p.getNation(),p.getPolitical(),p.getNativeplace(),
+                            p.getBirthday(),p.getEnrolldate(),p.getLeavedate(),p.getDossiercode(),p.getHostel(),p.getHostelphone(),p.getPostcode(),p.getAddress(),
+                            p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
+                            p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno()));
+                }
                 //update terms info
                 HttpConnectionAndCode getTerms_res = getTerms(cookie_builder.toString());
                 //if success, insert data into database
@@ -523,7 +617,10 @@ public class Login extends AppCompatActivity {
                 "ClassInfo"
                  */
                 List<TermInfo> term_info_list = tdao.selectAll();
+                String sterm = pdao.getGrade().get(0).toString();
                 for (TermInfo t : term_info_list){
+                    //do not get table for terms before enroll
+                    if (t.term.substring(0, 4).compareTo(sterm) < 0) continue;
                     HttpConnectionAndCode getTable_res = getTable(cookie_builder.toString(), t.term);
                     //if success, insert data into database
                     if (getTable_res.code == 0){
@@ -532,7 +629,7 @@ public class Login extends AppCompatActivity {
                         for (TableNode table_node : table_node_list){
                             //extract information and then insert into "GoToClass"
                             gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
-                            //extract information and then insert into "GoToClass"
+                            //extract information and then insert into "ClassInfo"
                             cdao.insert(new ClassInfo(table_node.getCourseno(), table_node.getCtype(), table_node.getTname(), table_node.getExamt(), table_node.getDptname(), table_node.getDptno(), table_node.getSpname(), table_node.getSpno(), table_node.getGrade(), table_node.getCname(), table_node.getTeacherno(), table_node.getName(),
                                     table_node.getCourseid(), table_node.getComm(), table_node.getMaxcnt(), table_node.getXf(), table_node.getLlxs(), table_node.getSyxs(), table_node.getSjxs(), table_node.getQtxs(), table_node.getSctcnt()));
                         }
@@ -542,6 +639,14 @@ public class Login extends AppCompatActivity {
                  * ******************************** UPDATE DATA END ********************************
                  */
                 udao.activateUser(sid);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_LONG).show();
+                        //make a tip to show data-update status
+                        getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
+                    }
+                });
             }
         }).start();
     }

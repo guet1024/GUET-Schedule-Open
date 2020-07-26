@@ -1,4 +1,4 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.Gson;
 
 public class Term {
     private String term;
