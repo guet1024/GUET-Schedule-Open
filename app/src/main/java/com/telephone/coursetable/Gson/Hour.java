@@ -7,6 +7,10 @@ public class Hour {
     private String nodename;
     private String memo;
 
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
     public String getTerm() {
         return term;
     }
