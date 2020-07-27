@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    //keys of intent extra
-    public static final String EXTRA_DATABASE = "com.telephone.coursetable.EXTRA_DATABASE";
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

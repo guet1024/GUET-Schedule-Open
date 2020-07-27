@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,6 +28,8 @@ import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.Gson.Hour;
+import com.telephone.coursetable.Gson.Hours;
 import com.telephone.coursetable.Gson.Person;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.Table;
@@ -41,6 +44,10 @@ import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Login extends AppCompatActivity {
@@ -416,6 +423,130 @@ public class Login extends AppCompatActivity {
         return new HttpConnectionAndCode(cnt, 0, response);
     }
 
+    /**
+     * @non-ui
+     * try to get hours information with specified cookie.
+     * if success, put the hours information(json) in return value's "comment" field.
+     * @return
+     * - 0 get hours success
+     * - -1 cannot open url
+     * - -2 cannot close input stream
+     * - -5 cannot get response
+     * - -6 get hours fail
+     */
+    private HttpConnectionAndCode getHours(final String cookie){
+        URL url = null;
+        HttpURLConnection cnt = null;
+        InputStreamReader in = null;
+        String response = null;
+        int resp_code = 0;
+        try {
+            url = new URL(getResources().getString(R.string.get_hours_url));
+            cnt = (HttpURLConnection) url.openConnection();
+            cnt.setDoOutput(true);
+            cnt.setDoInput(true);
+            cnt.setRequestProperty("User-Agent", getResources().getString(R.string.user_agent));
+            cnt.setRequestProperty("Referer", getResources().getString(R.string.get_hours_referer));
+            if (cookie.length() > 0){
+                cnt.setRequestProperty("Cookie", cookie);
+            }
+            cnt.setRequestMethod("GET");
+            cnt.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -1);
+        }
+        try {
+            resp_code = cnt.getResponseCode();
+            Log.e("getHours() GET response code", ""+resp_code);
+            in = new InputStreamReader(cnt.getInputStream());
+            //getContentLength() returns the "Content-Length" value in the response header
+            int content_len = cnt.getContentLength();
+            StringBuilder response_builder = new StringBuilder();
+            for (int i = 0; i < content_len; i++){
+                //the conversion to char is necessary
+                response_builder.append((char)in.read());
+            }
+            response = response_builder.toString();
+            if (response.contains("]}")){
+                response = response.substring(0, response.indexOf("]}") + 2);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -5);
+        }
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HttpConnectionAndCode(null, -2);
+        }
+        if (!response.contains(getResources().getString(R.string.get_hours_success_contain_response_text))){
+            return new HttpConnectionAndCode(cnt, -6);
+        }
+        //do not disconnect, keep alive
+        return new HttpConnectionAndCode(cnt, 0, response);
+    }
+
+    /**
+     * return 0 means that sts > nts
+     */
+    public static long whichWeek(final long sts, final long nts){
+        long res = 0;
+        if (nts >= sts){
+            res = 1;
+            res += (nts - sts) / 604800000;
+        }
+        return res;
+    }
+
+    /**
+     * @non-ui
+     * key = timeno + suffix
+     * return null means not found
+     */
+    public static TImeAndDescription whichTime(SharedPreferences pref, String[] timenos, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix){
+        TImeAndDescription res = null;
+        LocalTime n =  LocalTime.now();
+        for (String timeno : timenos) {
+            String sj = pref.getString(timeno + s_suffix, null);
+            String ej = pref.getString(timeno + e_suffix, null);
+            String des = pref.getString(timeno + d_suffix, null);
+            if (sj != null && ej != null && des != null) {
+                LocalTime sl = LocalTime.parse(sj, formatter);
+                LocalTime el = LocalTime.parse(ej, formatter);
+                if (sl.isBefore(n) || sl.equals(n)) {
+                    if (el.isAfter(n) || el.equals(n)) {
+                        res = new TImeAndDescription(timeno, des);
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * @non-ui
+     */
+    public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
+        Locate res = new Locate(null, 0, 0, 0, 0, null, null);
+        List<TermInfo> which_term_res = tdao.whichTerm(nts);
+        if (!which_term_res.isEmpty()){
+            res.term = which_term_res.get(0);
+            res.week = whichWeek(res.term.sts, nts);
+        }
+        res.weekday = LocalDateTime.now().getDayOfWeek().getValue();
+        res.month = LocalDateTime.now().getMonthValue();
+        res.day = LocalDateTime.now().getDayOfMonth();
+        TImeAndDescription which_time_res = whichTime(pref, times, formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
+        if (which_time_res != null){
+            res.time = which_time_res.time;
+            res.time_description = which_time_res.des;
+        }
+        return res;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -583,6 +714,10 @@ public class Login extends AppCompatActivity {
                 gdao.deleteAll();
                 tdao.deleteAll();
                 pdao.deleteAll();
+                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
+                SharedPreferences.Editor editor = hours_pref.edit();
+                editor.clear();
+                editor.commit();
                 /**
                  * ******************************* UPDATE DATA START *******************************
                  */
@@ -608,7 +743,13 @@ public class Login extends AppCompatActivity {
                     List<Term> term_list = terms.getData();
                     for (Term t : term_list){
                         //extract information and then insert into database
-                        tdao.insert(new TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm()));
+                        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_terminfo_datetime_format));
+                        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format));
+                        String sts_string = LocalDateTime.parse(t.getStartdate(), server_formatter).format(ts_formatter);
+                        String ets_string = LocalDateTime.parse(t.getEnddate(), server_formatter).format(ts_formatter);
+                        long sts = Timestamp.valueOf(sts_string).getTime();
+                        long ets = Timestamp.valueOf(ets_string).getTime();
+                        tdao.insert(new TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
                     }
                 }
                 /*
@@ -619,8 +760,11 @@ public class Login extends AppCompatActivity {
                 List<TermInfo> term_info_list = tdao.selectAll();
                 String sterm = pdao.getGrade().get(0).toString();
                 for (TermInfo t : term_info_list){
-                    //do not get table for terms before enroll
-                    if (t.term.substring(0, 4).compareTo(sterm) < 0) continue;
+                    //do not get table for before-enroll terms, remove them from database
+                    if (t.term.substring(0, 4).compareTo(sterm) < 0) {
+                        tdao.deleteTerm(t.term);
+                        continue;
+                    }
                     HttpConnectionAndCode getTable_res = getTable(cookie_builder.toString(), t.term);
                     //if success, insert data into database
                     if (getTable_res.code == 0){
@@ -635,10 +779,48 @@ public class Login extends AppCompatActivity {
                         }
                     }
                 }
+                //update hours info
+                HttpConnectionAndCode getHours_res = getHours(cookie_builder.toString());
+                //if success, insert data into SharedPreferences
+                if (getHours_res.code == 0){
+                    Hours hours = new Gson().fromJson(getHours_res.comment, Hours.class);
+                    List<Hour> hour_list = hours.getData();
+                    for (Hour h : hour_list){
+                        String memo = h.getMemo();
+                        if (memo == null){
+                            continue;
+                        }
+                        String des = h.getNodename();
+                        int index = memo.indexOf('-');
+                        String stime = memo.substring(0, index);
+                        String etime = memo.substring(index + 1);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_start_suffix), stime);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_end_suffix), etime);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_des_suffix), des);
+                    }
+                    editor.commit();
+                }
+                //locate today
+                long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
+                DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
+                Locate locate_res = locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
+                        getResources().getString(R.string.hours_pref_time_start_suffix),
+                        getResources().getString(R.string.hours_pref_time_end_suffix),
+                        getResources().getString(R.string.hours_pref_time_des_suffix));
+                Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
+                Log.e("login_thread() which week", locate_res.week + "");
+                Log.e("login_thread() which weekday", locate_res.weekday + "");
+                Log.e("login_thread() which month", locate_res.month + "");
+                Log.e("login_thread() which day", locate_res.day + "");
+                Log.e("login_thread() which time", locate_res.time + " | " + locate_res.time_description);
+                Log.e("login_thread() now timestamp", nts + "");
                 /**
                  * ******************************** UPDATE DATA END ********************************
                  */
+                editor.commit();
                 udao.activateUser(sid);
+                com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
+                Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

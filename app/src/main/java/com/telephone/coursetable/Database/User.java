@@ -30,6 +30,6 @@ public class User {
         this.password = password;
         this.username = username;
         activated = false;
-        updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.M.d H:m:s"));
     }
 }

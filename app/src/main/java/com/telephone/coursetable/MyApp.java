@@ -9,6 +9,7 @@ import com.telephone.coursetable.Database.AppDatabase;
 public class MyApp extends Application {
     private static MyApp app;
     private static AppDatabase db;
+    public static String[] times = {"1","2","3","4","5"};
 
     @Override
     public void onCreate() {
