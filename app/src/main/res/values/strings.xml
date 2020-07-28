@@ -52,4 +52,6 @@
     <string name="get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
     <string name="title_login_updating">登录 | Updating...</string>
     <string name="title_login_updated">登录 | Success</string>
+    <string name="Hour_save">保存</string>
+    <string name="Hour_restore">恢复默认</string>
 </resources>
