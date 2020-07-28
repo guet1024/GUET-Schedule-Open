@@ -17,4 +17,10 @@ public interface TermInfoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TermInfo tuple);
+
+    @Query("delete from TermInfo where term=:term")
+    void deleteTerm(String term);
+
+    @Query("select * from TermInfo where sts<=:date and ets>=:date")
+    List<TermInfo> whichTerm(long date);
 }

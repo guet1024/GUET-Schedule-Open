@@ -5,4 +5,6 @@ public class ShowTableNode {
     public String cname;
     public String name;
     public String croomno;
+    public long weekday;
+    public String time;
 }

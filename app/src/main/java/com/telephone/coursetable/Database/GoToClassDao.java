@@ -21,8 +21,8 @@ public interface GoToClassDao {
     /**
      * this method will return a course list of specified period
      */
-    @Query("select g.courseno, c.cname, c.name, g.croomno from " +
-                "(select courseno, croomno from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and time=:time) g, " +
+    @Query("select g.courseno, c.cname, c.name, g.croomno, g.weekday, g.time from " +
+                "(select courseno, croomno, weekday, time from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and time=:time) g, " +
                 "(select courseno, cname, name from ClassInfo) c " +
             "where g.courseno=c.courseno ")
     List<ShowTableNode> getNode(String term, long week, long weekday, String time);
@@ -30,7 +30,7 @@ public interface GoToClassDao {
     /**
      * this method will return a course list of specified week
      */
-    @Query("select g.courseno, c.cname, c.name, g.croomno from " +
+    @Query("select g.courseno, c.cname, c.name, g.croomno, g.weekday, g.time from " +
                 "(select courseno, croomno, time, weekday from GoToClass where term=:term and startweek<=:week and endweek>=:week) g, " +
                 "(select courseno, cname, name from ClassInfo) c " +
             "where g.courseno=c.courseno " +

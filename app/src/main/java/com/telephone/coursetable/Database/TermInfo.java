@@ -3,6 +3,9 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Entity(primaryKeys = {"term"})
 public class TermInfo {
     @NonNull
@@ -14,6 +17,8 @@ public class TermInfo {
     public String termname;
     public String schoolyear;
     public String comm;
+    public long sts;
+    public long ets;
 
     public TermInfo(String term,
                     String startdate,
@@ -21,7 +26,9 @@ public class TermInfo {
                     String weeknum,
                     String termname,
                     String schoolyear,
-                    String comm){
+                    String comm,
+                    long sts,
+                    long ets){
         this.term = term;
         this.startdate = startdate;
         this.enddate = enddate;
@@ -29,5 +36,7 @@ public class TermInfo {
         this.termname = termname;
         this.schoolyear = schoolyear;
         this.comm = comm;
+        this.sts = sts;
+        this.ets = ets;
     }
 }
