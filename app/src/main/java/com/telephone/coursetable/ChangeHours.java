@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,8 @@ import com.google.gson.Gson;
 import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hours;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ChangeHours extends AppCompatActivity {
@@ -41,10 +44,14 @@ public class ChangeHours extends AppCompatActivity {
                     }
                 }
             }
-            else break;
+            else
+            {
+                editText.setError("格式错误！");
+                return 0;
+            }
         }
 
-            index = jiaoyan.indexOf(":", index);
+            index = jiaoyan.indexOf(":");
             String stime = jiaoyan.substring(0, index);
             if(Integer.parseInt(stime)>24){
                 editText.setError("大于24时");
@@ -60,24 +67,26 @@ public class ChangeHours extends AppCompatActivity {
             return a;
 
     }
-    public void restoretime(int[] ids,int[] editids,List<Hour> hs){
+    public void restoretime(int[] ids,int[] editids,List<String> starttime,List<String> endtime,List<String> des){
         int i = -1;
         int j = -1;
-        for (Hour h : hs){
+        for (String d :des){
             i++;
-            ((TextView)findViewById(ids[i])).setText(h.getNodename() + "开始");
-            int index = h.getMemo().indexOf('-');
-            String stime= h.getMemo().substring(0, index);
-            String etime= h.getMemo().substring(index+1);
-            j++;
-            ((EditText)findViewById(editids[j])).setText(stime);
-            ((EditText)findViewById(editids[j])).setError(null);
-            j++;
-            ((EditText)findViewById(editids[j])).setText(etime);
-            ((EditText)findViewById(editids[j])).setError(null);
+            ((TextView)findViewById(ids[i])).setText(d + "开始");
             i++;
-            ((TextView)findViewById(ids[i])).setText(h.getNodename() + "结束");
+            ((TextView)findViewById(ids[i])).setText(d + "结束");
         }
+         j = 0;
+        for(String s:starttime){
+            ((EditText)findViewById(editids[j])).setText(s);
+            j=j+2;
+        }
+         j = 1;
+        for(String e:endtime){
+            ((EditText)findViewById(editids[j])).setText(e);
+            j=j+2;
+        }
+
     }
     public int jianyan(int[] editids){
         String jiaoyan=null;
@@ -119,88 +128,20 @@ public class ChangeHours extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_hours);
-        originHList = new Gson().fromJson("{\n" +
-                "    \"success\": true,\n" +
-                "    \"total\": 0,\n" +
-                "    \"data\": [\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"1\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第1、2节\",\n" +
-                "            \"memo\": \"8:25-10:05\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"2\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第3、4节\",\n" +
-                "            \"memo\": \"10:25-12:00\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"3\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第5、6节\",\n" +
-                "            \"memo\": \"14:25-16:05\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"4\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第7、8节\",\n" +
-                "            \"memo\": \"16:25-18:00\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"5\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第9、10节\",\n" +
-                "            \"memo\": \"19:25-21:05\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}\n", Hours.class);
-        reoriginHList = new Gson().fromJson("{\n" +
-                "    \"success\": true,\n" +
-                "    \"total\": 0,\n" +
-                "    \"data\": [\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"1\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第1、2节\",\n" +
-                "            \"memo\": \"8:25-10:05\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"2\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第3、4节\",\n" +
-                "            \"memo\": \"10:25-12:00\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"3\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第5、6节\",\n" +
-                "            \"memo\": \"14:25-16:05\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"4\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第7、8节\",\n" +
-                "            \"memo\": \"16:25-18:00\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"term\": null,\n" +
-                "            \"nodeno\": \"5\",\n" +
-                "            \"xss\": 2,\n" +
-                "            \"nodename\": \"第9、10节\",\n" +
-                "            \"memo\": \"19:25-21:05\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}\n", Hours.class);
+        List<String> starttime=new ArrayList<String>();
+        List<String> endtime=new ArrayList<String>();
+        List<String> des=new ArrayList<String>();
+        int i =0;
+        final SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name),MODE_PRIVATE);
+        for(String time: MyApp.times){
+            String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
+            String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
+            String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
+            starttime.add( sharedPreferences.getString(skey,null));
+            endtime.add( sharedPreferences.getString(ekey,null));
+            des.add( sharedPreferences.getString(dkey,null));
+        }
+
         final int[] ids = {
                 R.id.textView1,
                 R.id.textView2,
@@ -225,18 +166,32 @@ public class ChangeHours extends AppCompatActivity {
                 R.id.editTextTime8,
                 R.id.editTextTime9
         };
-        List<Hour> hs = originHList.getData();
-
-        restoretime(ids,editids,hs);//显示时间
+        restoretime(ids,editids,starttime,endtime,des);//显示时间
 
         Button btn2 = (Button)findViewById(R.id.button3);//复原建
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<Hour> hs = reoriginHList.getData();
-                restoretime(ids,editids,hs);
-                Toast toast =  Toast.makeText(ChangeHours.this,"已恢复默认值",Toast.LENGTH_SHORT);
-                toast.show();
+                List<String> starttime=new ArrayList<String>();
+                List<String> endtime=new ArrayList<String>();
+                List<String> des=new ArrayList<String>();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int i=0;
+                for(String time: MyApp.times){
+                    String sbkey = time + getResources().getString(R.string.hours_pref_time_start_backup_suffix);
+                    String ebkey = time + getResources().getString(R.string.hours_pref_time_end_backup_suffix);
+                    String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
+                    String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
+                    String sbtime = sharedPreferences.getString(sbkey, null);
+                    String ebtime = sharedPreferences.getString(ebkey, null);
+                    editor.putString(skey, sbtime);
+                    editor.putString(ekey, ebtime);
+                    ((EditText)findViewById(editids[i])).setText(sbtime);
+                    ((EditText)findViewById(editids[i+1])).setText(ebtime);
+                    i += 2;
+                }
+                editor.apply();
+                Toast.makeText(ChangeHours.this,"已恢复默认值",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -245,31 +200,67 @@ public class ChangeHours extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final int re = jianyan(editids); //进行数据校验
+                if(re==0){
+                    Toast toast =  Toast.makeText(ChangeHours.this,"数据出错，不能保存！",Toast.LENGTH_LONG);
+                    toast.show();
+                    return;
+                }
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ChangeHours.this);
                 alertDialog.setTitle("数据将会保存");
                 alertDialog.setMessage("请确认数据无误");
                 alertDialog.setCancelable(true);
                 alertDialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if(re==0){
-                            Toast toast =  Toast.makeText(ChangeHours.this,"数据出错，不能保存！",Toast.LENGTH_LONG);
-                            toast.show();
-                            return;
+                    public void onClick(DialogInterface dialogInterface, int var) {
+                        List<String> starttime=new ArrayList<String>();
+                        List<String> endtime=new ArrayList<String>();
+                        int n=0;
+                        int index=0;
+                        for(int i = 0; i < editids.length; i+=2){
+                            String sadd = ((EditText)findViewById(editids[i])).getText().toString();
+                            String eadd = ((EditText)findViewById(editids[i+1])).getText().toString();
+
+                            index = sadd.indexOf(":");
+                            String sad = sadd.substring(0, index);
+                            if(sad.length()==2 && sad.substring(0, 1).equals("0")){
+                                sad = sad.substring(1);
+                            }
+                            String sad1 =sadd.substring(index+1);
+                            if(sad1.length()==1){
+                                sad1 = '0'+sad1;
+                            }
+                            sadd = sad+ ":"+ sad1;
+
+                            index = eadd.indexOf(":");
+                            String ead = eadd.substring(0, index);
+                            if(ead.length()==2 && ead.substring(0, 1).equals("0")){
+                                ead = ead.substring(1);
+                            }
+                            String ead1 =eadd.substring(index+1);
+                            if(ead1.length()==1){
+                                ead1 = '0'+ead1;
+                            }
+                            eadd = ead+ ":"+ ead1;
+
+
+                            starttime.add(sadd);
+                            endtime.add(eadd);
                         }
-                        //保存操作
-                        int j =-1;
-                        List<Hour> hs = originHList.getData();
-                        for(Hour hour:hs){
+                        int j =0;
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        for(String time: MyApp.times){
+                            String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
+                            String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
+                            String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
+                            editor.putString(skey,starttime.get(j));
+                            editor.putString(ekey,endtime.get(j));
                             j++;
-                            String firstpart = ((EditText) findViewById(editids[j])).getText()+"-";
-                            j++;
-                            String Memo = firstpart + ((EditText) findViewById(editids[j])).getText();
-                            hour.setMemo(Memo);
                         }
+                        editor.apply();
                         Toast toast =  Toast.makeText(ChangeHours.this,"保存成功！",Toast.LENGTH_LONG);
                         toast.show();
-                    }
+                        }
+                        //保存操作
                 });
                 alertDialog.setNegativeButton("重新编辑", new DialogInterface.OnClickListener() {
                     @Override
