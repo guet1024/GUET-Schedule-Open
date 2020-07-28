@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -529,7 +531,7 @@ public class Login extends AppCompatActivity {
     /**
      * @non-ui
      */
-    public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
+    public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter server_hours_time_format, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
         Locate res = new Locate(null, 0, 0, 0, 0, null, null);
         List<TermInfo> which_term_res = tdao.whichTerm(nts);
         if (!which_term_res.isEmpty()){
@@ -539,7 +541,7 @@ public class Login extends AppCompatActivity {
         res.weekday = LocalDateTime.now().getDayOfWeek().getValue();
         res.month = LocalDateTime.now().getMonthValue();
         res.day = LocalDateTime.now().getDayOfMonth();
-        TImeAndDescription which_time_res = whichTime(pref, times, formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
+        TImeAndDescription which_time_res = whichTime(pref, times, server_hours_time_format, pref_s_suffix, pref_e_suffix, pref_d_suffix);
         if (which_time_res != null){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
@@ -551,6 +553,7 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
         //get-check-code on create
         changeCode(null);
         db = MyApp.getCurrentAppDB();
@@ -605,6 +608,12 @@ public class Login extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -706,6 +715,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
                         //make a tip to show data-update status
                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updating));
+                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
                     }
                 });
                 udao.insert(new User(sid, pwd));
@@ -797,6 +807,9 @@ public class Login extends AppCompatActivity {
                         editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_start_suffix), stime);
                         editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_end_suffix), etime);
                         editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_des_suffix), des);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_start_backup_suffix), stime);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_end_backup_suffix), etime);
+                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_des_backup_suffix), des);
                     }
                     editor.commit();
                 }
@@ -824,11 +837,14 @@ public class Login extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                         Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_LONG).show();
                         //make a tip to show data-update status
                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
                     }
                 });
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                startActivity(intent);
             }
         }).start();
     }
