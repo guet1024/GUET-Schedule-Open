@@ -28,27 +28,11 @@ public class ChangeHours extends AppCompatActivity {
     public int islogical(String jiaoyan, EditText editText) {
         int index = 0;
         int count = 0;
-        for (int n = 0; n < 5; n++) {
-            index = jiaoyan.indexOf(":", index);
-            if (index != -1) {
-                if (index == 0 || index == 3 || index == 4) {
-                    editText.setError("格式错误！");
-                    return 0;
-                }
-                else if(index==1){
-                    index++;
-                    index = jiaoyan.indexOf(":", index);
-                    if (index==2){
-                        editText.setError("格式错误！");
-                        return 0;
-                    }
-                }
-            }
-            else
-            {
-                editText.setError("格式错误！");
-                return 0;
-            }
+        index = jiaoyan.indexOf(":", index);
+        switch (index){
+            case 1:if(jiaoyan.indexOf(":",2)!=-1){ editText.setError("格式错误！");return 0;}break;
+            case 2:if(jiaoyan.indexOf(":",3)!=-1) { editText.setError("格式错误！");return 0;}break;
+            default:editText.setError("格式错误！");return 0;
         }
 
             index = jiaoyan.indexOf(":");
@@ -61,6 +45,9 @@ public class ChangeHours extends AppCompatActivity {
             if(Integer.parseInt(etime)>60){
                 editText.setError("大于60分");
                 return 0;
+            }
+            if(Integer.parseInt(etime)<10 && etime.length()==1){
+                etime = "0"+etime;
             }
             etime = stime + etime;
             int a = Integer.parseInt(etime);
@@ -107,12 +94,16 @@ public class ChangeHours extends AppCompatActivity {
                 b = islogical(jiaoyan1, editText1);
             }
             n++;
+            if(a==b && a!=0 && n%2==0){
+                editText.setError("时间相等");
+                ((EditText)findViewById(e+1)).setError("时间相等");
+                flag++;
+            }
             if(a==0 || b==0){
                 flag++;
-                break;
             }
-            if(a>b){
-                editText.setError("时间出错");
+            if(a>b && a!=0 && b!=0){
+                editText.setError("前面的时间大于后面的时间");
                 flag++;
            }
         }
@@ -191,6 +182,9 @@ public class ChangeHours extends AppCompatActivity {
                     i += 2;
                 }
                 editor.apply();
+                for(int e:editids){
+                    ((EditText)findViewById(e)).setError(null);
+                }
                 Toast.makeText(ChangeHours.this,"已恢复默认值",Toast.LENGTH_SHORT).show();
             }
         });
@@ -206,6 +200,9 @@ public class ChangeHours extends AppCompatActivity {
                     return;
                 }
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ChangeHours.this);
+                for(int e:editids){
+                    ((EditText)findViewById(e)).setError(null);
+                }
                 alertDialog.setTitle("数据将会保存");
                 alertDialog.setMessage("请确认数据无误");
                 alertDialog.setCancelable(true);
