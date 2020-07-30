@@ -5,8 +5,8 @@ android {
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "com.telephone.classtime"
-        minSdkVersion 29
+        applicationId "com.telephone.coursetable"
+        minSdkVersion 28
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
