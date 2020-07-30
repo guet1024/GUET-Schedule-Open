@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Gson.Hours;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class ChangeHours extends AppCompatActivity {
     private int[] etids;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private View snack_view;
 
     public int islogical(String jiaoyan, EditText editText,String jiaoyan1,EditText editText1) {
         int index = 0;
@@ -179,6 +182,8 @@ public class ChangeHours extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name),MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
+        snack_view = (TextView)findViewById(R.id.textView10);
+
         List<String> starttime=new ArrayList<String>();
         List<String> endtime=new ArrayList<String>();
         List<String> des=new ArrayList<String>();
@@ -205,6 +210,9 @@ public class ChangeHours extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu1:
+                ((EditText)findViewById(etids[0])).requestFocus();
+                ((EditText)findViewById(etids[0])).setEnabled(false);
+                ((EditText)findViewById(etids[0])).setEnabled(true);
                 List<String> starttime=new ArrayList<String>();
                 List<String> endtime=new ArrayList<String>();
                 List<String> des=new ArrayList<String>();
@@ -226,123 +234,129 @@ public class ChangeHours extends AppCompatActivity {
                 for(int e:etids){
                     ((EditText)findViewById(e)).setError(null);
                 }
-                Toast.makeText(ChangeHours.this,"已恢复默认值",Toast.LENGTH_SHORT).show();
+                Snackbar.make(snack_view, "已恢复默认值", BaseTransientBottomBar.LENGTH_SHORT).show();
                 break;
             case R.id.menu2:
-                    final int re = jianyan(etids); //进行数据校验
-                    if(re==0){
-                        Toast toast =  Toast.makeText(ChangeHours.this,"数据出错，不能保存！",Toast.LENGTH_LONG);
-                        toast.show();
-                        break;
-                    }
-                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ChangeHours.this);
-                    for(int e:etids){
-                        ((EditText)findViewById(e)).setError(null);
-                    }
-                    alertDialog.setTitle("数据将会保存");
-                    alertDialog.setMessage("请确认数据无误");
-                    alertDialog.setCancelable(true);
-                    alertDialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int var) {
-                            List<String> starttime=new ArrayList<String>();
-                            List<String> endtime=new ArrayList<String>();
-                            int n=0;
-                            int index=0;
-                            for(int i = 0; i < etids.length; i+=2){
-                                String sadd = ((EditText)findViewById(etids[i])).getText().toString();
-                                String eadd = ((EditText)findViewById(etids[i+1])).getText().toString();
-
-                                index = sadd.indexOf(":");
-                                String sad = sadd.substring(0, index);
-                                String sad1 =sadd.substring(index+1);
-                                switch (index) {
-                                    case 1:if(sad1.length()==3){
-                                                sad1=sad1.substring(1);
-                                        }
-                                        sad = sad +":"+ sad1;
-                                    break;
-                                    case 2:
-                                        if (sad.length() == 2 && sad.substring(0, 1).equals("0")) {
-                                            sad = sad.substring(1);
-                                        }
-                                        if (sad1.length() == 1 && Integer.parseInt(sad) < 10) {
-                                            sad1 = "0" + sad1;
-                                        }
-                                        sad = sad +":"+ sad1;
-                                        break;
-                                    case 3:
-                                        if (sad.length() == 3 && sad.substring(0, 1).equals("0") && Integer.parseInt(sad) < 10) {
-                                            sad = sad.substring(2);
-                                        }
-                                        if (sad.length() == 3 && Integer.parseInt(sad) >= 10) {
-                                            sad = sad.substring(1);
-                                        }
-                                        if (sad1.length() == 1) {
-                                            sad1 = "0" + sad1;
-                                        }
-                                        sad = sad +":"+ sad1;
-                                        break;
-                                }
-                                starttime.add(sad);
-                                index = eadd.indexOf(":");
-                                String ead = eadd.substring(0, index);
-                                String ead1 =eadd.substring(index+1);
-                                switch (index) {
-                                    case 1:if(ead1.length()==3){
-                                        ead1=ead1.substring(1);
-                                    }
-                                        ead = ead +":"+ ead1;
-                                        break;
-                                    case 2:
-                                        if (ead.length() == 2 && ead.substring(0, 1).equals("0")) {
-                                            ead = ead.substring(1);
-                                        }
-                                        if (ead1.length() == 1 && Integer.parseInt(ead) < 10) {
-                                            ead1 = "0" + ead1;
-                                        }
-                                        ead = ead +":"+ ead1;
-                                        break;
-                                    case 3:
-                                        if (ead.length() == 3 && ead.substring(0, 1).equals("0") && Integer.parseInt(ead) < 10) {
-                                            ead = ead.substring(2);
-                                        }
-                                        if (ead.length() == 3 && Integer.parseInt(ead) >= 10) {
-                                            ead = ead.substring(1);
-                                        }
-                                        if (ead1.length() == 1) {
-                                            ead1 = "0" + ead1;
-                                        }
-                                        ead = ead +":"+ ead1;
-                                        break;
-                                }
-
-                                endtime.add(ead);
-                            }
-                            int j =0;
-                            for(String time: MyApp.times){
-                                String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
-                                String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
-                                String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
-                                editor.putString(skey,starttime.get(j));
-                                editor.putString(ekey,endtime.get(j));
-                                j++;
-                            }
-                            editor.apply();
-                            Toast toast =  Toast.makeText(ChangeHours.this,"保存成功！",Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                        //保存操作
-                    });
-                    alertDialog.setNegativeButton("重新编辑", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    });
-                    alertDialog.show();
+                ((EditText)findViewById(etids[0])).requestFocus();
+                ((EditText)findViewById(etids[0])).setEnabled(false);
+                ((EditText)findViewById(etids[0])).setEnabled(true);
+                final int re = jianyan(etids); //进行数据校验
+                if(re==0){
+                    Snackbar.make(snack_view, "数据出错，不能保存！", BaseTransientBottomBar.LENGTH_LONG).show();
                     break;
+                }
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ChangeHours.this);
+                for(int e:etids){
+                    ((EditText)findViewById(e)).setError(null);
+                }
+                alertDialog.setTitle("数据将会保存");
+                alertDialog.setMessage("请确认数据无误");
+                alertDialog.setCancelable(true);
+                alertDialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int var) {
+                        List<String> starttime=new ArrayList<String>();
+                        List<String> endtime=new ArrayList<String>();
+                        int n=0;
+                        int index=0;
+                        for(int i = 0; i < etids.length; i+=2){
+                            String sadd = ((EditText)findViewById(etids[i])).getText().toString();
+                            String eadd = ((EditText)findViewById(etids[i+1])).getText().toString();
+
+                            index = sadd.indexOf(":");
+                            String sad = sadd.substring(0, index);
+                            String sad1 =sadd.substring(index+1);
+                            switch (index) {
+                                case 1:if(sad1.length()==3){
+                                            sad1=sad1.substring(1);
+                                    }
+                                    sad = sad +":"+ sad1;
+                                break;
+                                case 2:
+                                    if (sad.length() == 2 && sad.substring(0, 1).equals("0")) {
+                                        sad = sad.substring(1);
+                                    }
+                                    if (sad1.length() == 1 && Integer.parseInt(sad) < 10) {
+                                        sad1 = "0" + sad1;
+                                    }
+                                    sad = sad +":"+ sad1;
+                                    break;
+                                case 3:
+                                    if (sad.length() == 3 && sad.substring(0, 1).equals("0") && Integer.parseInt(sad) < 10) {
+                                        sad = sad.substring(2);
+                                    }
+                                    if (sad.length() == 3 && Integer.parseInt(sad) >= 10) {
+                                        sad = sad.substring(1);
+                                    }
+                                    if (sad1.length() == 1) {
+                                        sad1 = "0" + sad1;
+                                    }
+                                    sad = sad +":"+ sad1;
+                                    break;
+                            }
+                            starttime.add(sad);
+                            index = eadd.indexOf(":");
+                            String ead = eadd.substring(0, index);
+                            String ead1 =eadd.substring(index+1);
+                            switch (index) {
+                                case 1:if(ead1.length()==3){
+                                    ead1=ead1.substring(1);
+                                }
+                                    ead = ead +":"+ ead1;
+                                    break;
+                                case 2:
+                                    if (ead.length() == 2 && ead.substring(0, 1).equals("0")) {
+                                        ead = ead.substring(1);
+                                    }
+                                    if (ead1.length() == 1 && Integer.parseInt(ead) < 10) {
+                                        ead1 = "0" + ead1;
+                                    }
+                                    ead = ead +":"+ ead1;
+                                    break;
+                                case 3:
+                                    if (ead.length() == 3 && ead.substring(0, 1).equals("0") && Integer.parseInt(ead) < 10) {
+                                        ead = ead.substring(2);
+                                    }
+                                    if (ead.length() == 3 && Integer.parseInt(ead) >= 10) {
+                                        ead = ead.substring(1);
+                                    }
+                                    if (ead1.length() == 1) {
+                                        ead1 = "0" + ead1;
+                                    }
+                                    ead = ead +":"+ ead1;
+                                    break;
+                            }
+
+                            endtime.add(ead);
+                        }
+                        int j =0;
+                        for(String time: MyApp.times){
+                            String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
+                            String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
+                            String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
+                            editor.putString(skey,starttime.get(j));
+                            editor.putString(ekey,endtime.get(j));
+                            j++;
+                        }
+                        editor.apply();
+                        Snackbar.make(snack_view, "保存成功！", BaseTransientBottomBar.LENGTH_LONG).show();
+                    }
+                    //保存操作
+                });
+                alertDialog.setNegativeButton("重新编辑", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                alertDialog.show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

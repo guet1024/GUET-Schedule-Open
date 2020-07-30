@@ -490,4 +490,11 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void setTime(View view){
+        if (!pickerPanel.isShown()){
+            Intent intent = new Intent(this, ChangeHours.class);
+            startActivity(intent);
+        }
+    }
+
 }
