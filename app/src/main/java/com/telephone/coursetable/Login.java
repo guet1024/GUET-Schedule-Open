@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.ClassInfo;
@@ -542,7 +544,7 @@ public class Login extends AppCompatActivity {
         res.month = LocalDateTime.now().getMonthValue();
         res.day = LocalDateTime.now().getDayOfMonth();
         TImeAndDescription which_time_res = whichTime(pref, times, server_hours_time_format, pref_s_suffix, pref_e_suffix, pref_d_suffix);
-        if (which_time_res != null){
+        if (which_time_res != null && (!which_term_res.isEmpty())){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
         }
@@ -666,7 +668,7 @@ public class Login extends AppCompatActivity {
      *  4. if fail due to other reason, toast @toast_login_fail + " - " + login_res.code, stop here.
      *  5. if success, toast @toast_login_success, and continue......
      */
-    public void login_thread(View view){
+    public void login_thread(final View view){
         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(false);
         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(true);
         ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(false);
@@ -696,7 +698,8 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void run() {
 //                            getSupportActionBar().setTitle(title_f);
-                            Toast.makeText(Login.this, toast_f, Toast.LENGTH_LONG).show();
+//                            Toast.makeText(Login.this, toast_f, Toast.LENGTH_LONG).show();
+                            Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
                             changeCode(null);
                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
@@ -709,25 +712,27 @@ public class Login extends AppCompatActivity {
                     });
                     return;
                 }
+                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
+                SharedPreferences.Editor editor = hours_pref.edit();
+                udao.insert(new User(sid, pwd));
+                udao.disableAllUser();
+                editor.clear();
+                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), true);
+                editor.commit();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
+                        Snackbar.make(view, getResources().getString(R.string.toast_login_success), BaseTransientBottomBar.LENGTH_LONG).show();
                         //make a tip to show data-update status
                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updating));
                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
                     }
                 });
-                udao.insert(new User(sid, pwd));
-                udao.disableAllUser();
                 cdao.deleteAll();
                 gdao.deleteAll();
                 tdao.deleteAll();
                 pdao.deleteAll();
-                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
-                SharedPreferences.Editor editor = hours_pref.edit();
-                editor.clear();
-                editor.commit();
                 /**
                  * ******************************* UPDATE DATA START *******************************
                  */
@@ -832,13 +837,16 @@ public class Login extends AppCompatActivity {
                  */
                 editor.commit();
                 udao.activateUser(sid);
+                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
+                editor.commit();
                 com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
                 Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                        Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
+//                        Snackbar.make(view, getResources().getString(R.string.toast_update_success), BaseTransientBottomBar.LENGTH_SHORT).show();
                         //make a tip to show data-update status
                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
                     }

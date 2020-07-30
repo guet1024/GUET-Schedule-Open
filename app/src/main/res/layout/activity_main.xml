@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView138"
+        android:id="@+id/textView_time5"
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
@@ -16,8 +16,8 @@
         android:textAlignment="center"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView130"
-        app:layout_constraintTop_toBottomOf="@+id/textView130" />
+        app:layout_constraintStart_toStartOf="@+id/textView_time4"
+        app:layout_constraintTop_toBottomOf="@+id/textView_time4" />
 
     <TextView
         android:id="@+id/textView31"
@@ -112,7 +112,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView30"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/textView138"
+        app:layout_constraintStart_toEndOf="@id/textView_time5"
         app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
     <TextView
@@ -132,7 +132,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView28" />
 
     <TextView
-        android:id="@+id/textView130"
+        android:id="@+id/textView_time4"
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
@@ -140,9 +140,9 @@
         android:text="@string/time4_title"
         android:textAlignment="center"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView138"
-        app:layout_constraintStart_toStartOf="@+id/textView122"
-        app:layout_constraintTop_toBottomOf="@+id/textView122" />
+        app:layout_constraintBottom_toTopOf="@+id/textView_time5"
+        app:layout_constraintStart_toStartOf="@+id/textView_time3"
+        app:layout_constraintTop_toBottomOf="@+id/textView_time3" />
 
     <TextView
         android:id="@+id/textView24"
@@ -237,7 +237,7 @@
         app:layout_constraintBottom_toTopOf="@+id/textView29"
         app:layout_constraintEnd_toStartOf="@+id/textView23"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/textView130"
+        app:layout_constraintStart_toEndOf="@id/textView_time4"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <TextView
@@ -257,7 +257,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
     <TextView
-        android:id="@+id/textView122"
+        android:id="@+id/textView_time3"
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
@@ -265,9 +265,9 @@
         android:text="@string/time3_title"
         android:textAlignment="center"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView130"
-        app:layout_constraintStart_toStartOf="@+id/textView114"
-        app:layout_constraintTop_toBottomOf="@+id/textView114" />
+        app:layout_constraintBottom_toTopOf="@+id/textView_time4"
+        app:layout_constraintStart_toStartOf="@+id/textView_time2"
+        app:layout_constraintTop_toBottomOf="@+id/textView_time2" />
 
     <TextView
         android:id="@+id/textView17"
@@ -362,7 +362,7 @@
         app:layout_constraintBottom_toTopOf="@+id/textView22"
         app:layout_constraintEnd_toStartOf="@+id/textView16"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/textView122"
+        app:layout_constraintStart_toEndOf="@id/textView_time3"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <TextView
@@ -382,7 +382,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <TextView
-        android:id="@+id/textView114"
+        android:id="@+id/textView_time2"
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
@@ -390,9 +390,9 @@
         android:text="@string/time2_title"
         android:textAlignment="center"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView122"
-        app:layout_constraintStart_toStartOf="@+id/textView106"
-        app:layout_constraintTop_toBottomOf="@+id/textView106" />
+        app:layout_constraintBottom_toTopOf="@+id/textView_time3"
+        app:layout_constraintStart_toStartOf="@+id/textView_time1"
+        app:layout_constraintTop_toBottomOf="@+id/textView_time1" />
 
     <TextView
         android:id="@+id/textView10"
@@ -487,7 +487,7 @@
         app:layout_constraintBottom_toTopOf="@+id/textView15"
         app:layout_constraintEnd_toStartOf="@+id/textView9"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView114"
+        app:layout_constraintStart_toEndOf="@+id/textView_time2"
         app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
     <TextView
@@ -507,7 +507,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <TextView
-        android:id="@+id/textView106"
+        android:id="@+id/textView_time1"
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
@@ -515,7 +515,7 @@
         android:text="@string/time1_title"
         android:textAlignment="center"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView114"
+        app:layout_constraintBottom_toTopOf="@+id/textView_time2"
         app:layout_constraintStart_toStartOf="@+id/textView_date"
         app:layout_constraintTop_toBottomOf="@+id/textView_date" />
 
@@ -612,7 +612,7 @@
         app:layout_constraintBottom_toTopOf="@+id/textView8"
         app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView106"
+        app:layout_constraintStart_toEndOf="@+id/textView_time1"
         app:layout_constraintTop_toBottomOf="@+id/textView_wd1" />
 
     <TextView
@@ -775,7 +775,7 @@
 
     <TextView
         android:id="@+id/textView_title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/title"
@@ -787,10 +787,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/imageView3"
         app:layout_constraintTop_toTopOf="@id/imageView"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constrainedWidth="true" />
 
     <TextView
-        android:id="@+id/textView_update"
+        android:id="@+id/textView_update_time"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
@@ -804,5 +804,96 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/textView_title"
         app:layout_constraintTop_toTopOf="@id/imageView" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorCurrentWeekday"
+        android:clickable="true"
+        android:onClick="openOrHidePanel"
+        android:tint="@color/colorCurrentWeekdayText"
+        app:backgroundTint="@color/colorCurrentWeekday"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/colorCurrentWeekdayText"
+        app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="104dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorCurrentWeekday"
+        android:clickable="true"
+        android:onClick="resetTermWeek"
+        android:tint="@color/colorCurrentWeekdayText"
+        app:backgroundTint="@color/colorCurrentWeekday"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/colorCurrentWeekdayText"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
+
+    <ImageView
+        android:id="@+id/termPickerBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textView_time3"
+        app:layout_constraintTop_toBottomOf="@id/textView_wd3"
+        app:srcCompat="@color/colorPickerBackground"
+        tools:srcCompat="@color/colorPickerBackground" />
+
+    <NumberPicker
+        android:id="@+id/termPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="@+id/termPickerBackground"
+        app:layout_constraintEnd_toStartOf="@+id/weekPicker"
+        app:layout_constraintStart_toStartOf="@id/termPickerBackground"
+        app:layout_constraintTop_toTopOf="@+id/termPickerBackground"/>
+
+    <NumberPicker
+        android:id="@+id/weekPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/termPickerBackground"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/termPicker"
+        app:layout_constraintTop_toTopOf="@+id/termPicker"
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"/>
+
+    <TextView
+        android:id="@+id/term_picker_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"
+        android:text="学期"
+        app:layout_constraintBottom_toTopOf="@id/termPicker"
+        app:layout_constraintEnd_toEndOf="@+id/termPicker"
+        app:layout_constraintStart_toStartOf="@+id/termPicker"/>
+
+    <TextView
+        android:id="@+id/week_picker_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="周数"
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintEnd_toEndOf="@+id/weekPicker"
+        app:layout_constraintStart_toStartOf="@+id/weekPicker"
+        app:layout_constraintBottom_toTopOf="@id/weekPicker"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@
     <color name="colorLoginButtonText">#FFFFFF</color>
     <color name="colorForgetButtonText">#FFFFFF</color>
     <color name="colorCurrentWeekdayText">#FFFFFF</color>
+    <color name="colorPickerBackground">#FFFFFF</color>
 
     <color name="colorForgetButton">#A0CFD5</color>
     <color name="colorCurrentWeekday">#A0CFD5</color>

@@ -23,4 +23,10 @@ public interface TermInfoDao {
 
     @Query("select * from TermInfo where sts<=:date and ets>=:date")
     List<TermInfo> whichTerm(long date);
+
+    @Query("select weeknum from TermInfo where termname=:termname")
+    List<String> getWeekNumByTermName(String termname);
+
+    @Query("select term from TermInfo where termname=:termname")
+    List<String> getTermCodeByTermName(String termname);
 }
