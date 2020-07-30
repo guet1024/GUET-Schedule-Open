@@ -65,6 +65,9 @@
     <string name="title_login">同步</string>
     <string name="title_login_updating">同步 | Updating...</string>
     <string name="title_login_updated">同步 | Success</string>
+    <string name="Hour_save">保存</string>
+    <string name="Hour_restore">重置</string>
+    <string name="Hour_List">时间表</string>
 
     <string name="server_terminfo_datetime_format">yyyy/M/d H:mm:ss</string>
     <string name="ts_datetime_format">yyyy-MM-dd HH:mm:ss</string>

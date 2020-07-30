@@ -14,5 +14,16 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">@string/title_login</item>
     </style>
+    <style name="AppTheme_ChangeHours" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"时间表"</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
+    </style>
+    <style name="TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 
 </resources>
