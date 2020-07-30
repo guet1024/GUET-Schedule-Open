@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ChangeHours">
+        <activity android:name=".ChangeHours"
+            android:theme="@style/AppTheme_ChangeHours">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
