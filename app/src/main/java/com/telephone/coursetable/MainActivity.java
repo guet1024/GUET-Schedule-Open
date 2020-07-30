@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private long current_week;
 
     private long exit_ts = 0;
+    private boolean has_user = false;
 
     private GoToClassDao gdao;
     private TermInfoDao tdao;
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     return;
                 }else{
+                    has_user = true;
                     final String last_update_time = acuser.get(0).updateTime;
                     final String pname = pdao.selectAll().get(0).name;
                     final String pre = getResources().getString(R.string.ok_user_title_prefix);
@@ -491,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setTime(View view){
-        if (!pickerPanel.isShown()){
+        if (!pickerPanel.isShown() && has_user){
             Intent intent = new Intent(this, ChangeHours.class);
             startActivity(intent);
         }
