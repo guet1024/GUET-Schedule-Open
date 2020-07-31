@@ -787,16 +787,16 @@
         android:textAlignment="center"
         android:textColor="@color/colorTitleText"
         android:textSize="20sp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintEnd_toEndOf="@id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/imageView3"
-        app:layout_constraintTop_toTopOf="@id/imageView"
-        app:layout_constrainedWidth="true" />
+        app:layout_constraintTop_toTopOf="@id/imageView" />
 
     <TextView
         android:id="@+id/textView_update_time"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:gravity="center"
         android:onClick="Login"
@@ -804,6 +804,7 @@
         android:textAlignment="viewStart"
         android:textColor="@color/colorTitleText"
         android:textSize="12sp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintEnd_toEndOf="@id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
@@ -819,12 +820,13 @@
         android:backgroundTint="@color/colorCurrentWeekday"
         android:clickable="true"
         android:onClick="openOrHidePanel"
-        android:tint="@color/colorCurrentWeekdayText"
+        android:scaleType="fitCenter"
         app:backgroundTint="@color/colorCurrentWeekday"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="40dp"
         app:rippleColor="@color/colorCurrentWeekdayText"
         app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
@@ -837,14 +839,16 @@
         android:backgroundTint="@color/colorCurrentWeekday"
         android:clickable="true"
         android:onClick="resetTermWeek"
+        android:scaleType="fitCenter"
         android:tint="@color/colorCurrentWeekdayText"
         app:backgroundTint="@color/colorCurrentWeekday"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="30dp"
         app:rippleColor="@color/colorCurrentWeekdayText"
-        app:srcCompat="@android:drawable/ic_menu_revert" />
+        app:srcCompat="@android:drawable/ic_popup_sync" />
 
     <ImageView
         android:id="@+id/termPickerBackground"
@@ -859,46 +863,59 @@
 
     <NumberPicker
         android:id="@+id/termPicker"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
         app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/termPickerBackground"
-        app:layout_constraintEnd_toStartOf="@+id/weekPicker"
-        app:layout_constraintStart_toStartOf="@id/termPickerBackground"
-        app:layout_constraintTop_toTopOf="@+id/termPickerBackground"/>
+        app:layout_constraintEnd_toStartOf="@id/guideline14"
+        app:layout_constraintStart_toEndOf="@id/guideline15"
+        app:layout_constraintTop_toTopOf="@+id/termPickerBackground" />
 
     <NumberPicker
         android:id="@+id/weekPicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/termPickerBackground"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/termPicker"
-        app:layout_constraintTop_toTopOf="@+id/termPicker"
+        app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constrainedHeight="true"/>
+        app:layout_constraintEnd_toEndOf="@id/termPickerBackground"
+        app:layout_constraintStart_toEndOf="@id/guideline14"
+        app:layout_constraintTop_toTopOf="@+id/termPicker" />
 
     <TextView
         android:id="@+id/term_picker_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
-        app:layout_constrainedHeight="true"
         android:text="学期"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/termPicker"
         app:layout_constraintEnd_toEndOf="@+id/termPicker"
-        app:layout_constraintStart_toStartOf="@+id/termPicker"/>
+        app:layout_constraintStart_toStartOf="@+id/termPicker" />
 
     <TextView
         android:id="@+id/week_picker_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="周数"
-        app:layout_constrainedWidth="true"
         app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/weekPicker"
         app:layout_constraintEnd_toEndOf="@+id/weekPicker"
-        app:layout_constraintStart_toStartOf="@+id/weekPicker"
-        app:layout_constraintBottom_toTopOf="@id/weekPicker"/>
+        app:layout_constraintStart_toStartOf="@+id/weekPicker" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.56" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.21" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

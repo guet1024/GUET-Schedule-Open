@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Database.GoToClassDao;
@@ -34,7 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private String current_term;
-    private long current_week;
+    private CurrentWeek current_week;
 
     private long exit_ts = 0;
     private boolean has_user = false;
@@ -98,6 +100,48 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
         editor = pref.edit();
 
+        current_week = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(MyApp.getCurrentApp())).get(CurrentWeek.class);
+        current_week.getCurrent_week().observe(this, new Observer<Long>() {
+            @Override
+            public void onChanged(Long aLong) {
+                int iconIndex = Integer.parseInt(aLong.toString());
+                int[] weekIconIds = {
+                        R.drawable.vacation,
+                        R.drawable.week_1,
+                        R.drawable.week_2,
+                        R.drawable.week_3,
+                        R.drawable.week_4,
+                        R.drawable.week_5,
+                        R.drawable.week_6,
+                        R.drawable.week_7,
+                        R.drawable.week_8,
+                        R.drawable.week_9,
+                        R.drawable.week_10,
+                        R.drawable.week_11,
+                        R.drawable.week_12,
+                        R.drawable.week_13,
+                        R.drawable.week_14,
+                        R.drawable.week_15,
+                        R.drawable.week_16,
+                        R.drawable.week_17,
+                        R.drawable.week_18,
+                        R.drawable.week_19,
+                        R.drawable.week_20,
+                        R.drawable.week_21,
+                        R.drawable.week_22,
+                        R.drawable.week_23,
+                        R.drawable.week_24,
+                        R.drawable.week_25,
+                        R.drawable.week_26,
+                        R.drawable.week_27,
+                        R.drawable.week_28,
+                        R.drawable.week_29,
+                        R.drawable.week_30
+                };
+                ((FloatingActionButton)findViewById(R.id.floatingActionButton)).setImageResource(weekIconIds[iconIndex]);
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -146,18 +190,25 @@ public class MainActivity extends AppCompatActivity {
                 long pref_week = pref.getLong(getResources().getString(R.string.pref_current_week_key), -1);
                 //init current term and current week
                 //after Login, the current term and current week in SharedPreferences will disappear
+                Log.e("pref_week", ""+pref_week);
                 if (pref_term == null || pref_week == -1){
                     if (locate.term == null){
                         current_term = getResources().getString(R.string.term_vacation);
-                        current_week = 0;
+                        current_week.getCurrent_week().postValue((long)0);
                     }else {
                         current_term = locate.term.termname;
-                        current_week = locate.week;
+                        current_week.getCurrent_week().postValue(locate.week);
                     }
                 }else{
                     current_term = pref_term;
-                    current_week = pref_week;
+                    current_week.getCurrent_week().postValue(pref_week);
                 }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.e("init || current_week.getCurrent_week().getValue()", ""+current_week.getCurrent_week().getValue());
                 //init term picker
                 List<TermInfo> termInfoList = tdao.selectAll();
                 final List<String> termNameList = new LinkedList<String>();
@@ -186,11 +237,11 @@ public class MainActivity extends AppCompatActivity {
                                     ((NumberPicker)findViewById(R.id.weekPicker)).setMinValue(0);
                                     ((NumberPicker)findViewById(R.id.weekPicker)).setMaxValue(0);
                                     ((NumberPicker)findViewById(R.id.weekPicker)).setValue(0);
-                                    current_week = 0;
+                                    current_week.getCurrent_week().postValue((long)0);
                                     week_value_change_listener_dynamic = new NumberPicker.OnValueChangeListener() {
                                         @Override
                                         public void onValueChange(NumberPicker numberPicker_week, int old_value_week, int new_value_week) {
-                                            current_week = 0;
+                                            current_week.getCurrent_week().postValue((long)0);
                                         }
                                     };
                                     ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener(week_value_change_listener_dynamic);
@@ -208,10 +259,11 @@ public class MainActivity extends AppCompatActivity {
                                     ((NumberPicker) findViewById(R.id.weekPicker)).setMinValue(0);
                                     ((NumberPicker) findViewById(R.id.weekPicker)).setMaxValue(weekArray.length - 1);
                                     ((NumberPicker) findViewById(R.id.weekPicker)).setValue(0);
+                                    current_week.getCurrent_week().postValue((long)1);
                                     week_value_change_listener_dynamic = new NumberPicker.OnValueChangeListener() {
                                         @Override
                                         public void onValueChange(NumberPicker numberPicker_week, int old_value_week, int new_value_week) {
-                                            current_week = Long.parseLong(weekArray[new_value_week]);
+                                            current_week.getCurrent_week().postValue(Long.parseLong(weekArray[new_value_week]));
                                         }
                                     };
                                     ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener(week_value_change_listener_dynamic);
@@ -231,7 +283,14 @@ public class MainActivity extends AppCompatActivity {
                     ((NumberPicker)findViewById(R.id.weekPicker)).setMinValue(0);
                     ((NumberPicker)findViewById(R.id.weekPicker)).setMaxValue(0);
                     ((NumberPicker)findViewById(R.id.weekPicker)).setValue(0);
-                    current_week = 0;
+                    current_week.getCurrent_week().postValue((long)0);
+                    week_value_change_listener_init = new NumberPicker.OnValueChangeListener() {
+                        @Override
+                        public void onValueChange(NumberPicker numberPicker_week, int old_value_week, int new_value_week) {
+                            current_week.getCurrent_week().postValue((long)0);
+                        }
+                    };
+                    ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener(week_value_change_listener_init);
                 }else {
                     //else
                     long week_num = Long.parseLong(tdao.getWeekNumByTermName(current_term).get(0));
@@ -246,15 +305,17 @@ public class MainActivity extends AppCompatActivity {
                     ((NumberPicker) findViewById(R.id.weekPicker)).setMinValue(0);
                     ((NumberPicker) findViewById(R.id.weekPicker)).setMaxValue(weekArray.length - 1);
                     ((NumberPicker) findViewById(R.id.weekPicker)).setValue(weekList.indexOf(current_week + ""));
+                    //no need to set current_week
                     week_value_change_listener_init = new NumberPicker.OnValueChangeListener() {
                         @Override
                         public void onValueChange(NumberPicker numberPicker_week, int old_value_week, int new_value_week) {
-                            current_week = Long.parseLong(weekArray[new_value_week]);
+                            current_week.getCurrent_week().postValue(Long.parseLong(weekArray[new_value_week]));
                         }
                     };
                     ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener(week_value_change_listener_init);
                 }
                 //show and hide picker panel to refresh their layout size
+                //this may not work
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -282,7 +343,8 @@ public class MainActivity extends AppCompatActivity {
             long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
             Log.e("MainActivity press back", nts + "");
             if (nts - exit_ts < 2000) {
-                finish();
+                onPause();
+                System.exit(0);
             } else {
                 Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
                 exit_ts = nts;
@@ -294,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         if (current_term != null){
             editor.putString(getResources().getString(R.string.pref_current_term_key), current_term);
-            editor.putLong(getResources().getString(R.string.pref_current_week_key), current_week);
+            editor.putLong(getResources().getString(R.string.pref_current_week_key), current_week.getCurrent_week().getValue());
         }
         editor.commit();
         super.onPause();
@@ -349,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 String[] wpvs = ((NumberPicker)findViewById(R.id.weekPicker)).getDisplayedValues();
                 int windex = Arrays.asList(wpvs).indexOf(today_weeknumf);
+                if (windex == -1)return;
                 ((NumberPicker)findViewById(R.id.weekPicker)).setValue(windex);
                 week_value_change_listener_dynamic.onValueChange((NumberPicker)findViewById(R.id.weekPicker), 0, windex);
             }
@@ -374,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
         if (!current_term.equals(getResources().getString(R.string.term_vacation))) {
             //override current_term from termname to term
             String current_term = tdao.getTermCodeByTermName(this.current_term).get(0);
-            List<ShowTableNode> list = gdao.getSpecifiedWeekTable(current_term, current_week);
+            List<ShowTableNode> list = gdao.getSpecifiedWeekTable(current_term, current_week.getCurrent_week().getValue());
             List<String> time_list = Arrays.asList(MyApp.times);
             long last_weekdayIndex = -2;
             long last_timeIndex = -2;
