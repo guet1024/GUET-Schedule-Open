@@ -825,7 +825,11 @@ public class Login extends AppCompatActivity {
                         getResources().getString(R.string.hours_pref_time_start_suffix),
                         getResources().getString(R.string.hours_pref_time_end_suffix),
                         getResources().getString(R.string.hours_pref_time_des_suffix));
-                Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
+                if (locate_res.term != null){
+                    Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
+                }else{
+                    Log.e("login_thread() which term", getResources().getString(R.string.term_vacation));
+                }
                 Log.e("login_thread() which week", locate_res.week + "");
                 Log.e("login_thread() which weekday", locate_res.weekday + "");
                 Log.e("login_thread() which month", locate_res.month + "");
