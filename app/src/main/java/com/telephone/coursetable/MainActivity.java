@@ -187,6 +187,13 @@ public class MainActivity extends AppCompatActivity {
                                     ((NumberPicker)findViewById(R.id.weekPicker)).setMaxValue(0);
                                     ((NumberPicker)findViewById(R.id.weekPicker)).setValue(0);
                                     current_week = 0;
+                                    week_value_change_listener_dynamic = new NumberPicker.OnValueChangeListener() {
+                                        @Override
+                                        public void onValueChange(NumberPicker numberPicker_week, int old_value_week, int new_value_week) {
+                                            current_week = 0;
+                                        }
+                                    };
+                                    ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener(week_value_change_listener_dynamic);
                                 }else {
                                     //else
                                     long week_num = Long.parseLong(tdao.getWeekNumByTermName(numberPicker.getDisplayedValues()[new_value]).get(0));
@@ -253,55 +260,6 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         pickerPanel.show(MainActivity.this);
                         pickerPanel.hide(MainActivity.this);
-                    }
-                });
-                //show light date, weekday, time
-                List<String> time_list = Arrays.asList(MyApp.times);
-                long current_weekday = locate.weekday;
-                TextView weekday_tv;
-                switch ((int)current_weekday){
-                    case 1:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd1);
-                        break;
-                    case 2:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd2);
-                        break;
-                    case 3:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd3);
-                        break;
-                    case 4:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd4);
-                        break;
-                    case 5:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd5);
-                        break;
-                    case 6:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd6);
-                        break;
-                    case 7:
-                        weekday_tv = (TextView)findViewById(R.id.textView_wd7);
-                        break;
-                    default:
-                        weekday_tv = null;
-                }
-                TextView time_tv = null;
-                if (locate.time != null) {
-                    int currentTimeIndex = time_list.indexOf(locate.time);
-                    time_tv = (TextView) findViewById(MyApp.timetvIds[currentTimeIndex]);
-                }
-                final TextView weekday_tvf = weekday_tv;
-                final Locate locatef = locate;
-                final TextView time_tvf = time_tv;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        weekday_tvf.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
-                        weekday_tvf.setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
-                        ((TextView)findViewById(R.id.textView_date)).setText(locatef.month + "/" + locatef.day);
-                        if (time_tvf != null){
-                            time_tvf.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
-                            time_tvf.setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
-                        }
                     }
                 });
                 //show table and hide picker panel
@@ -402,14 +360,13 @@ public class MainActivity extends AppCompatActivity {
      * show table according to current_term and current_week, hide picker panel
      */
     public void showTable(){
-        for(int i = 0; i < MyApp.nodeIds.length; i++){
-            for(int j = 0; j < (MyApp.nodeIds[i]).length; j++){
-                final int i_f = i;
-                final int j_f = j;
+        for(int[] id_list : MyApp.nodeIds){
+            for (int id : id_list){
+                final int idf = id;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((TextView)findViewById(MyApp.nodeIds[i_f][j_f])).setText("");
+                        ((TextView)findViewById(idf)).setText("");
                     }
                 });
             }
@@ -466,6 +423,15 @@ public class MainActivity extends AppCompatActivity {
                 pickerPanel.hide(MainActivity.this);
             }
         });
+        //show light date, weekday, time, node
+        //locate now
+        Locate locate = Login.locateNow(Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime(),
+                tdao, pref,
+                MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                getResources().getString(R.string.hours_pref_time_start_suffix),
+                getResources().getString(R.string.hours_pref_time_end_suffix),
+                getResources().getString(R.string.hours_pref_time_des_suffix));
+        highLight(locate.weekday, locate.time, locate.month, locate.day);
     }
 
     public void openOrHidePanel(View view){
@@ -499,4 +465,51 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void highLight(final long weekday, String time, final long month, final long day){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(int id : MyApp.weekdaytvIds){
+                    ((TextView)findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
+                    ((TextView)findViewById(id)).setTextColor(((TextView)findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                }
+                for(int id : MyApp.timetvIds){
+                    ((TextView)findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
+                    ((TextView)findViewById(id)).setTextColor(((TextView)findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                }
+                for(int[] id_list : MyApp.nodeIds){
+                    for (int id : id_list){
+                        ((TextView)findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorTableNodeBackground, getTheme()));
+                        ((TextView)findViewById(id)).setTextColor(((TextView)findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                    }
+                }
+            }
+        });
+        final TextView weekday_tv = (TextView)findViewById(MyApp.weekdaytvIds[(int)weekday - 1]);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                weekday_tv.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                weekday_tv.setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
+                ((TextView)findViewById(R.id.textView_date)).setText(month + "/" + day);
+            }
+        });
+        if (time == null){
+            return;
+        }
+        List<String> time_list = Arrays.asList(MyApp.times);
+        final int currentTimeIndex = time_list.indexOf(time);
+        final TextView time_tv = (TextView) findViewById(MyApp.timetvIds[currentTimeIndex]);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                time_tv.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                time_tv.setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
+                TextView node = (TextView)findViewById(MyApp.nodeIds[currentTimeIndex][(int)weekday - 1]);
+                if (!node.getText().toString().equals("")) {
+                    node.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                }
+            }
+        });
+    }
 }

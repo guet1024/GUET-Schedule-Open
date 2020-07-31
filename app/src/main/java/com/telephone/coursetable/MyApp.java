@@ -17,6 +17,15 @@ public class MyApp extends Application {
             R.id.textView_time4, //times[3]
             R.id.textView_time5 //times[4]
     };
+    public static int[] weekdaytvIds = {
+            R.id.textView_wd1,
+            R.id.textView_wd2,
+            R.id.textView_wd3,
+            R.id.textView_wd4,
+            R.id.textView_wd5,
+            R.id.textView_wd6,
+            R.id.textView_wd7
+    };
     public static int[][] nodeIds = {
             {R.id.textView1,R.id.textView2,R.id.textView3,R.id.textView4,R.id.textView5,R.id.textView6,R.id.textView7},//times[0]
             {R.id.textView8,R.id.textView9,R.id.textView10,R.id.textView11,R.id.textView12,R.id.textView13,R.id.textView14},//times[1]
