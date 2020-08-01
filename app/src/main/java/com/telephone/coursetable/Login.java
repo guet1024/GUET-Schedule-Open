@@ -56,6 +56,8 @@ import java.util.List;
 
 public class Login extends AppCompatActivity {
 
+    private boolean updating = false;
+
     //the StringBuilder storing the latest cookie
     //will be update in login() when login success and in changeCode() when changeCode() called
     private StringBuilder cookie_builder;
@@ -619,9 +621,15 @@ public class Login extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
-        super.onPause();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), updating).commit();
     }
 
     /**
@@ -723,7 +731,8 @@ public class Login extends AppCompatActivity {
                 udao.insert(new User(sid, pwd));
                 udao.disableAllUser();
                 editor.clear();
-                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), true);
+                updating = true;
+                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
                 editor.commit();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -847,7 +856,8 @@ public class Login extends AppCompatActivity {
                  */
                 editor.commit();
                 udao.activateUser(sid);
-                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
+                updating = false;
+                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
                 editor.commit();
                 com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
                 Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
