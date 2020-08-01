@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString(getResources().getString(R.string.pref_current_term_key), current_term);
             editor.putLong(getResources().getString(R.string.pref_current_week_key), current_week.getCurrent_week().getValue());
         }
+        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
         editor.commit();
         super.onPause();
     }
@@ -366,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
      * jump to Login Activity
      */
     public void Login(View view){
+        if (pref.getBoolean(getResources().getString(R.string.pref_user_updating_key), false))return;
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }

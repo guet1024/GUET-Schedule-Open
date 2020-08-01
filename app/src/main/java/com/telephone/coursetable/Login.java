@@ -618,6 +618,12 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onPause() {
+        getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
+        super.onPause();
+    }
+
     /**
      * when user clicks the delete btn, show a AlertDialog to ask user to confirm to forget the information
      * of the user specified by the username which is in the username input box.
