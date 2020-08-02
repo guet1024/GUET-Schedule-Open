@@ -1,10 +1,12 @@
 package com.telephone.coursetable.Gson;
 
+import java.util.List;
+
 //考试安排查询
 public class ExamQueryS {
     private boolean success;
     private long total;
-    private ExamQuery_Data eqd;
+    private List<ExamQuery_Data> data;
 
     public boolean isSuccess() {
         return success;
@@ -14,7 +16,7 @@ public class ExamQueryS {
         return total;
     }
 
-    public ExamQuery_Data getEqd() {
-        return eqd;
+    public List<ExamQuery_Data> getData() {
+        return data;
     }
 }

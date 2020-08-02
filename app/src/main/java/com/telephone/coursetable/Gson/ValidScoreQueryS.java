@@ -2,10 +2,12 @@ package com.telephone.coursetable.Gson;
 
 //有效学分
 
+import java.util.List;
+
 public class ValidScoreQueryS {
     private boolean success;
     private long total;
-    private ValidScoreQuery_Data vsqd;
+    private List<ValidScoreQuery_Data> data;
 
     public boolean isSuccess() {
         return success;
@@ -15,7 +17,7 @@ public class ValidScoreQueryS {
         return total;
     }
 
-    public ValidScoreQuery_Data getVsqd() {
-        return vsqd;
+    public List<ValidScoreQuery_Data> getData() {
+        return data;
     }
 }
