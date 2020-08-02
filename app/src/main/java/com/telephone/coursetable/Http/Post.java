@@ -49,6 +49,7 @@ public class Post {
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
+            cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
