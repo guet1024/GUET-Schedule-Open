@@ -24,6 +24,8 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GraduationScore;
+import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -38,6 +40,9 @@ import com.telephone.coursetable.Gson.Table;
 import com.telephone.coursetable.Gson.TableNode;
 import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
+import com.telephone.coursetable.Gson.ValidScoreQueryS;
+import com.telephone.coursetable.Gson.ValidScoreQuery_Data;
+import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 
@@ -75,6 +80,7 @@ public class Login extends AppCompatActivity {
     private TermInfoDao tdao = null;
     private UserDao  udao = null;
     private PersonInfoDao pdao = null;
+    private GraduationScoreDao gsdao = null;
 
     /**
      * @ui
@@ -520,6 +526,29 @@ public class Login extends AppCompatActivity {
     }
 
     /**
+     * @non-ui
+     * try to get graduation score with specified cookie.
+     * if success, put the graduation score(json) in return value's "comment" field.
+     * @return see Get.get
+     */
+    private HttpConnectionAndCode getGraduationScore(final String cookie){
+        HttpConnectionAndCode res = Get.get(getResources().getString(R.string.get_graduation_score_url),
+                new LinkedList<>(),
+                getResources().getString(R.string.user_agent),
+                getResources().getString(R.string.get_graduation_score_referer),
+                cookie,
+                "}]}",
+                null,
+                getResources().getString(R.string.get_graduation_score_success_contain_response_text));
+        if (res.code == 0){
+            Log.e("getGraduationScore()", "success");
+        }else{
+            Log.e("getGraduationScore()", "fail" + " | " + res.code);
+        }
+        return res;
+    }
+
+    /**
      * return 0 means that sts > nts
      */
     public static long whichWeek(final long sts, final long nts){
@@ -591,6 +620,7 @@ public class Login extends AppCompatActivity {
         tdao = db.termInfoDao();
         udao = db.userDao();
         pdao = db.personInfoDao();
+        gsdao = db.graduationScoreDao();
         //init auto-fill list of username input box on create
         new Thread(new Runnable() {
             @Override
@@ -773,6 +803,7 @@ public class Login extends AppCompatActivity {
                 gdao.deleteAll();
                 tdao.deleteAll();
                 pdao.deleteAll();
+                gsdao.deleteAll();
                 /**
                  * ******************************* UPDATE DATA START *******************************
                  */
@@ -792,6 +823,19 @@ public class Login extends AppCompatActivity {
                             p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
                             p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno(),
                             studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
+                }
+                //update graduation score
+                HttpConnectionAndCode getGraduationScore_res = getGraduationScore(cookie_builder.toString());
+                //if success, insert data into database
+                if (getGraduationScore_res.code == 0){
+                    ValidScoreQueryS vs = new Gson().fromJson(getGraduationScore_res.comment, ValidScoreQueryS.class);
+                    List<ValidScoreQuery_Data> vd_list = vs.getData();
+                    for (ValidScoreQuery_Data vd : vd_list){
+                        //extract information and then insert into database
+                        gsdao.insert(new GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
+                                vd.getTerm(), vd.getCourseid(), vd.getPlanxf(), vd.getCredithour(), vd.getCoursetype(), vd.getLvl(), vd.getSterm(),
+                                vd.getCourseno(), vd.getScid(), vd.getScname(), vd.getScore(), vd.getZpxs(), vd.getXf(), vd.getStp()));
+                    }
                 }
                 //update terms info
                 HttpConnectionAndCode getTerms_res = getTerms(cookie_builder.toString());
