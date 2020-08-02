@@ -2,7 +2,6 @@ package com.telephone.coursetable;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,8 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -40,6 +37,7 @@ import com.telephone.coursetable.Gson.Table;
 import com.telephone.coursetable.Gson.TableNode;
 import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

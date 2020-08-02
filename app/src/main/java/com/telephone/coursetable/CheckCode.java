@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieManager;

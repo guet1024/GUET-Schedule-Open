@@ -3,16 +3,14 @@ package com.telephone.coursetable;
 import android.content.Context;
 
 import java.util.Map;
-import java.util.Map.Entry;
+
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,11 +20,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
     private Context context;
 
     private DataSetObservable dataSetObservable;
-    private List<Map.Entry<String, List<String>>> groups;
+    private List<Map.Entry<String, List<List<String>>>> groups;
     private boolean singleExpanded;
     private ExpandableListView list;
 
-    public FunctionMenuAdapter(Context context, List<Map.Entry<String, List<String>>> groups, boolean singleExpanded, ExpandableListView list) {
+    public FunctionMenuAdapter(Context context, List<Map.Entry<String, List<List<String>>>> groups, boolean singleExpanded, ExpandableListView list) {
         this.context = context;
         this.dataSetObservable = new DataSetObservable();
         this.groups = groups;
@@ -84,23 +82,29 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
         if(view == null){
             view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
         }
-        if (isExpanded) {
-            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group Expanded");
-        }else {
-            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group");
-        }
+//        if (isExpanded) {
+//            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group Expanded");
+//        }else {
+//            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group");
+//        }
+        ((TextView)view.findViewById(R.id.textView_group_text)).setText(groups.get(i).getKey());
         return view;
     }
 
     @Override
     public View getChildView(int i, int i1, boolean isLastChild, View view, ViewGroup viewGroup) {
         if(view == null){
-            view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item, viewGroup, false);
+            switch (i){
+                case 0:
+                    view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_person_info, viewGroup, false);
+                    break;
+            }
         }
-        if (isLastChild) {
-            ((TextView) view.findViewById(R.id.textView_child_text)).setText("Last Child");
-        }else {
-            ((TextView) view.findViewById(R.id.textView_child_text)).setText("Child");
+        switch (i){
+            case 0:
+                ((TextView)view.findViewById(R.id.textView_person_info_name_key)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.textView_person_info_name_value)).setText(groups.get(i).getValue().get(i1).get(1));
+                break;
         }
         return view;
     }
