@@ -24,6 +24,7 @@ public class Post {
      * - -3 can not get output stream
      * - -4 POST send body fail
      * - -5 cannot get response
+     * - -6 response check fail
      */
     public static HttpConnectionAndCode post(@NonNull final String u,
                                             @NonNull final List<String> parms,
@@ -32,7 +33,8 @@ public class Post {
                                             @Nullable final String data,
                                             @Nullable final String cookie,
                                             @Nullable final String tail,
-                                            @Nullable final String cookie_delimiter){
+                                            @Nullable final String cookie_delimiter,
+                                             @Nullable final String success_resp_text){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -51,7 +53,9 @@ public class Post {
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
             cnt.setRequestProperty("Referer", referer);
-            cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
+            if (data != null) {
+                cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
+            }
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
@@ -121,6 +125,13 @@ public class Post {
                 cookie_builder.append(TextUtils.join(cookie_delimiter, cookieman.getCookieStore().getCookies()));
             }
             set_cookie = cookie_builder.toString();
+        }
+
+        //do not disconnect, keep alive
+        if (success_resp_text != null){
+            if (!response.contains(success_resp_text)){
+                return new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
+            }
         }
 
         //do not disconnect, keep alive

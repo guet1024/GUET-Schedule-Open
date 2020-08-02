@@ -33,11 +33,13 @@ import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hours;
 import com.telephone.coursetable.Gson.Person;
 import com.telephone.coursetable.Gson.PersonInfo;
+import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.Table;
 import com.telephone.coursetable.Gson.TableNode;
 import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.Http.Post;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -50,6 +52,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Login extends AppCompatActivity {
@@ -493,6 +496,30 @@ public class Login extends AppCompatActivity {
     }
 
     /**
+     * @non-ui
+     * try to get student information with specified cookie.
+     * if success, put the student information(json) in return value's "comment" field.
+     * @return see Post.post
+     */
+    private HttpConnectionAndCode getStudentInfo(final String cookie){
+        HttpConnectionAndCode res = Post.post(getResources().getString(R.string.get_student_url),
+                new LinkedList<>(),
+                getResources().getString(R.string.user_agent),
+                getResources().getString(R.string.get_student_referer),
+                null,
+                cookie,
+                "}",
+                null,
+                getResources().getString(R.string.get_student_success_contain_response_text));
+        if (res.code == 0){
+            Log.e("getStudentInfo()", "success");
+        }else{
+            Log.e("getStudentInfo()", "fail" + " | " + res.code);
+        }
+        return res;
+    }
+
+    /**
      * return 0 means that sts > nts
      */
     public static long whichWeek(final long sts, final long nts){
@@ -751,17 +778,20 @@ public class Login extends AppCompatActivity {
                  */
                 //update person info
                 HttpConnectionAndCode getPersonInfo_res = getPersonInfo(cookie_builder.toString());
+                HttpConnectionAndCode getStudentInfo_res = getStudentInfo(cookie_builder.toString());
                 //if success, insert data into database
-                if (getPersonInfo_res.code == 0){
+                if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
                     Person person = new Gson().fromJson(getPersonInfo_res.comment, Person.class);
                     PersonInfo p = person.getData();
+                    StudentInfo studentInfo = new Gson().fromJson(getStudentInfo_res.comment, StudentInfo.class);
                     //extract information and then insert into database
                     pdao.insert(new com.telephone.coursetable.Database.PersonInfo(p.getStid(), p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
                             p.getEngname(),p.getSex(),p.getPass(),p.getDegree(),p.getDirection(),p.getChangetype(),p.getSecspno(),p.getClasstype(),p.getIdcard(),
                             p.getStype(),p.getXjzt(),p.getChangestate(),p.getLqtype(),p.getZsjj(),p.getNation(),p.getPolitical(),p.getNativeplace(),
                             p.getBirthday(),p.getEnrolldate(),p.getLeavedate(),p.getDossiercode(),p.getHostel(),p.getHostelphone(),p.getPostcode(),p.getAddress(),
                             p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
-                            p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno()));
+                            p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno(),
+                            studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
                 }
                 //update terms info
                 HttpConnectionAndCode getTerms_res = getTerms(cookie_builder.toString());

@@ -55,6 +55,10 @@ public class FunctionMenu extends AppCompatActivity {
                                 }
                                 else if (sm.equals("班级")){
                                     child.add(pinfo.classno);
+                                }else if (sm.equals("学院")){
+                                    child.add(pinfo.dptno + "院 " + pinfo.dptname);
+                                }else if (sm.equals("专业")){
+                                    child.add(pinfo.spname);
                                 }
                                 else if (sm.equals("专业代码")){
                                     child.add(pinfo.spno);

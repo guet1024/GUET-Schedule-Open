@@ -58,8 +58,11 @@ public class PersonInfo {
     public String xq; ///*
     public String rxfs; ///*
     public String oldno; ///*
+    public String dptno; //学院//
+    public String dptname; //学院名称//
+    public String spname; //专业//
 
-    public PersonInfo(String stid, long grade, String classno, String spno, String name, String name1, String engname, String sex, String pass, String degree, String direction, String changetype, String secspno, String classtype, String idcard, String stype, String xjzt, String changestate, String lqtype, String zsjj, String nation, String political, String nativeplace, String birthday, String enrolldate, String leavedate, String dossiercode, String hostel, String hostelphone, String postcode, String address, String phoneno, String familyheader, long total, long chinese, long maths, long english, long addscore1, long addscore2, String comment, String testnum, String fmxm1, String fmzjlx1, String fmzjhm1, String fmxm2, String fmzjlx2, String fmzjhm2, String ds, String xq, String rxfs, String oldno) {
+    public PersonInfo(@NonNull String stid, long grade, String classno, String spno, String name, String name1, String engname, String sex, String pass, String degree, String direction, String changetype, String secspno, String classtype, String idcard, String stype, String xjzt, String changestate, String lqtype, String zsjj, String nation, String political, String nativeplace, String birthday, String enrolldate, String leavedate, String dossiercode, String hostel, String hostelphone, String postcode, String address, String phoneno, String familyheader, long total, long chinese, long maths, long english, long addscore1, long addscore2, String comment, String testnum, String fmxm1, String fmzjlx1, String fmzjhm1, String fmxm2, String fmzjlx2, String fmzjhm2, String ds, String xq, String rxfs, String oldno, String dptno, String dptname, String spname) {
         this.stid = stid;
         this.grade = grade;
         this.classno = classno;
@@ -111,5 +114,8 @@ public class PersonInfo {
         this.xq = xq;
         this.rxfs = rxfs;
         this.oldno = oldno;
+        this.dptno = dptno;
+        this.dptname = dptname;
+        this.spname = spname;
     }
 }

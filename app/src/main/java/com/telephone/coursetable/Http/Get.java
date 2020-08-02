@@ -25,6 +25,7 @@ public class Get {
      * - -1 cannot open url
      * - -2 cannot close input stream
      * - -5 cannot get response
+     * - -6 response check fail
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
                                             @NonNull final List<String> parms,
@@ -32,7 +33,8 @@ public class Get {
                                             @NonNull final String referer,
                                             @Nullable final String cookie,
                                             @Nullable final String tail,
-                                            @Nullable final String cookie_delimiter){
+                                            @Nullable final String cookie_delimiter,
+                                            @Nullable final String success_resp_text){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -102,6 +104,13 @@ public class Get {
                 cookie_builder.append(TextUtils.join(cookie_delimiter, cookieman.getCookieStore().getCookies()));
             }
             set_cookie = cookie_builder.toString();
+        }
+
+        //do not disconnect, keep alive
+        if (success_resp_text != null){
+            if (!response.contains(success_resp_text)){
+                return new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
+            }
         }
 
         //do not disconnect, keep alive
