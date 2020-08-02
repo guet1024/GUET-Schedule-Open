@@ -28,6 +28,7 @@ public class Post {
     public static HttpConnectionAndCode post(@NonNull final String u,
                                             @NonNull final List<String> parms,
                                             @NonNull final String user_agent,
+                                            @NonNull final String referer,
                                             @Nullable final String data,
                                             @Nullable final String cookie,
                                             @Nullable final String tail,
@@ -44,11 +45,12 @@ public class Post {
             if (!parms.isEmpty()) {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
-            url = new URL(u);
+            url = new URL(u_bulider.toString());
             cnt = (HttpURLConnection) url.openConnection();
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
+            cnt.setRequestProperty("Referer", referer);
             cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);

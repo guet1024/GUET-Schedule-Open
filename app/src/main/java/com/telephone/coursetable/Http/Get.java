@@ -29,6 +29,7 @@ public class Get {
     public static HttpConnectionAndCode get(@NonNull final String u,
                                             @NonNull final List<String> parms,
                                             @NonNull final String user_agent,
+                                            @NonNull final String referer,
                                             @Nullable final String cookie,
                                             @Nullable final String tail,
                                             @Nullable final String cookie_delimiter){
@@ -44,11 +45,12 @@ public class Get {
             if (!parms.isEmpty()) {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
-            url = new URL(u);
+            url = new URL(u_bulider.toString());
             cnt = (HttpURLConnection) url.openConnection();
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
+            cnt.setRequestProperty("Referer", referer);
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
