@@ -1,11 +1,13 @@
 package com.telephone.coursetable.Gson;
 
+import java.util.List;
+
 //已选课程
 public class CourseSelectedS {
 
     private boolean success;
     private long total;
-    private CourseSelected_Data csd;
+    private List<CourseSelected_Data> data;
 
     public boolean isSuccess() {
         return success;
@@ -15,8 +17,7 @@ public class CourseSelectedS {
         return total;
     }
 
-    public CourseSelected_Data getCsd() {
-        return csd;
+    public List<CourseSelected_Data> getData() {
+        return data;
     }
-
 }

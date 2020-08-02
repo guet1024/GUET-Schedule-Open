@@ -2,10 +2,12 @@ package com.telephone.coursetable.Gson;
 
 //实验成绩
 
+import java.util.List;
+
 public class ExperimentScoreQueryS {
     private boolean success;
     private long total;
-    private ExperimentScoreQuery_Data esqd;
+    private List<ExperimentScoreQuery_Data> data;
 
     public boolean isSuccess() {
         return success;
@@ -15,7 +17,7 @@ public class ExperimentScoreQueryS {
         return total;
     }
 
-    public ExperimentScoreQuery_Data getEsqd() {
-        return esqd;
+    public List<ExperimentScoreQuery_Data> getData() {
+        return data;
     }
 }

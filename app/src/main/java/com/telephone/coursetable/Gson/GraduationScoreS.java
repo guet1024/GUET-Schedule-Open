@@ -2,10 +2,12 @@ package com.telephone.coursetable.Gson;
 
 //毕业学位
 
+import java.util.List;
+
 public class GraduationScoreS {
     private boolean success;
     private long total;
-    private GraduationScore_Data gsd;
+    private List<GraduationScore_Data> data;
 
     public boolean isSuccess() {
         return success;
@@ -15,7 +17,7 @@ public class GraduationScoreS {
         return total;
     }
 
-    public GraduationScore_Data getGsd() {
-        return gsd;
+    public List<GraduationScore_Data> getData() {
+        return data;
     }
 }
