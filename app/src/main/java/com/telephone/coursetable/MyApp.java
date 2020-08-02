@@ -33,11 +33,6 @@ public class MyApp extends Application {
             {R.id.textView22,R.id.textView23,R.id.textView24,R.id.textView25,R.id.textView26,R.id.textView27,R.id.textView28},//times[3]
             {R.id.textView29,R.id.textView30,R.id.textView31,R.id.textView32,R.id.textView33,R.id.textView34,R.id.textView35}//times[4]
     };
-    public static MenuAndSubmenu[] menuText = {
-            new MenuAndSubmenu("个人信息", new String[]{"学号", "姓名", "年级", "班级", "学院", "专业", "专业代码", "状态",
-                    "身份证号码", "学生类型", "民族", "政治面貌", "籍贯", "入学日期", "离校日期", "高考总分", "高考英语（或语文）",
-                    "高考数学", "高考语文（或英语）", "高考综合", "高考其他", "备注", "高考考生号"})
-    };
 
     @Override
     public void onCreate() {

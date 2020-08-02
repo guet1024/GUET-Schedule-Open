@@ -3,7 +3,7 @@ package com.telephone.coursetable.Gson;
 public class Hour {
     private String term;
     private String nodeno;
-    private long xss;
+    private double xss;
     private String nodename;
     private String memo;
 
@@ -19,7 +19,7 @@ public class Hour {
         return nodeno;
     }
 
-    public long getXss() {
+    public double getXss() {
         return xss;
     }
 

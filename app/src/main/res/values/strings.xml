@@ -32,18 +32,21 @@
     <string name="get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
     <string name="get_hours_url">http://bkjw.guet.edu.cn/comm/gethours</string>
     <string name="get_student_url">http://bkjw.guet.edu.cn/student/StuInfo</string>
+    <string name="get_graduation_score_url">http://bkjw.guet.edu.cn/student/Getyxxf</string>
 
     <string name="get_person_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_hours_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_term_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_table_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_student_referer">http://bkjw.guet.edu.cn</string>
+    <string name="get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
 
     <string name="login_success_contain_response_text">\"success\":true</string>
     <string name="get_person_success_contain_response_text">\"success\":true</string>
     <string name="get_term_success_contain_response_text">\"success\":true</string>
     <string name="get_table_success_contain_response_text">\"success\":true</string>
     <string name="get_hours_success_contain_response_text">\"success\":true</string>
+    <string name="get_graduation_score_success_contain_response_text">\"success\":true</string>
     <string name="get_student_success_contain_response_text">\"name\"</string>
 
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>

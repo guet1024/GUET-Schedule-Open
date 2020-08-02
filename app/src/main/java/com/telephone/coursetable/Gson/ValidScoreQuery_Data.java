@@ -3,26 +3,26 @@ package com.telephone.coursetable.Gson;
 //有效学分
 
 public class ValidScoreQuery_Data {
-    private String name;//	"潘鹏宇"
-    private String cname;//	"大学英语3"
-    private String engname;//	"College English III"
-    private String engcj;//	"73"
-    private String tname;//	"通识必修"
-    private String stid;//	"1800301127"
-    private String term;//	"2019-2020_1"
-    private String courseid;//	"BG0000006X0"
-    private long planxf;//	0
-    private double credithour;//	3.5
-    private String coursetype;//	"BG"
-    private long lvl;//	1
-    private String sterm;//	"2019-2020_1"
-    private String courseno;//	"1911082"
-    private String scid;//	"BG0000006X0"
-    private String scname;//	"大学英语3"
-    private long score;//	73
-    private String zpxs;//	"73"
-    private double xf;//	3.5
-    private String stp;//	"BG"
+    private String name;
+    private String cname;
+    private String engname;
+    private String engcj;
+    private String tname;//	"通识必修" 课程性质 √√√√√√√√√
+    private String stid;
+    private String term;
+    private String courseid;
+    private double planxf;//	0 计划中的学分（换成勾和叉） √√√√√√√√√
+    private double credithour;//	3.5 已得学分（换成勾和叉） √√√√√√√√√
+    private String coursetype;
+    private double lvl;
+    private String sterm;//	"2019-2020_1" 选修学期 √√√√√√√√√
+    private String courseno;//	"1911082" 课号 √√√√√√√√√
+    private String scid;//	"BG0000006X0" 课程代号 √√√√√√√√√
+    private String scname;//	"大学英语3" 课程名称 √√√√√√√√√
+    private long score;//	73 成绩 √√√√√√√√√
+    private String zpxs;
+    private double xf;//	3.5 课程学分 √√√√√√√√√
+    private String stp;//	"BG" 课程性质代码 √√√√√√√√√
 
     public String getName() {
         return name;
@@ -56,7 +56,7 @@ public class ValidScoreQuery_Data {
         return courseid;
     }
 
-    public long getPlanxf() {
+    public double getPlanxf() {
         return planxf;
     }
 
@@ -68,7 +68,7 @@ public class ValidScoreQuery_Data {
         return coursetype;
     }
 
-    public long getLvl() {
+    public double getLvl() {
         return lvl;
     }
 
