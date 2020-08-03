@@ -7,7 +7,7 @@
     app:layout_constrainedHeight="true">
 
     <TextView
-        android:id="@+id/textView_person_info_name_key"
+        android:id="@+id/textView_pinfo_key"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:gravity="center"
@@ -15,14 +15,14 @@
         android:textAlignment="center"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_person_info_name_value"
+        app:layout_constraintEnd_toStartOf="@+id/textView_pinfo_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_person_info_name_value"
+        android:id="@+id/textView_pinfo_value"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:gravity="center"
@@ -33,6 +33,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="6"
-        app:layout_constraintStart_toEndOf="@+id/textView_person_info_name_key"
+        app:layout_constraintStart_toEndOf="@+id/textView_pinfo_key"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,17 +94,27 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     @Override
     public View getChildView(int i, int i1, boolean isLastChild, View view, ViewGroup viewGroup) {
-        if(view == null){
-            switch (i){
-                case 0:
-                    view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_person_info, viewGroup, false);
-                    break;
-            }
+        switch (i){
+            case 0:
+                if (view != null &&  ((TextView)view.findViewById(R.id.textView_pinfo_key)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_person_info, viewGroup, false);
+                break;
+            case 1:
+                if (view != null &&  ((TextView)view.findViewById(R.id.textView_graduation_score_cname)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_graduation_score, viewGroup, false);
+                break;
         }
         switch (i){
             case 0:
-                ((TextView)view.findViewById(R.id.textView_person_info_name_key)).setText(groups.get(i).getValue().get(i1).get(0));
-                ((TextView)view.findViewById(R.id.textView_person_info_name_value)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.textView_pinfo_key)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.textView_pinfo_value)).setText(groups.get(i).getValue().get(i1).get(1));
+                break;
+            case 1:
+                ((TextView)view.findViewById(R.id.textView_graduation_score_cname)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_score)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_xf)).setText(groups.get(i).getValue().get(i1).get(2));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_success)).setText(groups.get(i).getValue().get(i1).get(3));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_plan)).setText(groups.get(i).getValue().get(i1).get(4));
                 break;
         }
         return view;

@@ -7,6 +7,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.telephone.coursetable.Database.GraduationScore;
+import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 
@@ -20,6 +22,7 @@ import java.util.List;
 public class FunctionMenu extends AppCompatActivity {
 
     private PersonInfoDao pdao;
+    private GraduationScoreDao gsdao;
     private ExpandableListView menu_list;
 
     @Override
@@ -28,6 +31,7 @@ public class FunctionMenu extends AppCompatActivity {
         setContentView(R.layout.activity_function_menu);
 
         pdao = MyApp.getCurrentAppDB().personInfoDao();
+        gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
 
         final ExpandableListView menu_listf = menu_list;
@@ -35,104 +39,146 @@ public class FunctionMenu extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PersonInfo pinfo = pdao.selectAll().get(0);
+
                 final List<Entry<String, List<List<String>>>> menus = new LinkedList<>();
-                String person_group = "个人信息";
-                List<List<String>> person_children = new LinkedList<>();
+                List<List<String>> children = new LinkedList<>();
                 List<String> child = new LinkedList<>();
+
+                PersonInfo pinfo = pdao.selectAll().get(0);
+                String person_group = "个人信息";
+                children = new LinkedList<>();
                 child = new LinkedList<>();
                 child.add("学号");
                 child.add(pinfo.stid);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("姓名");
                 child.add(pinfo.name);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("年级");
                 child.add(pinfo.grade+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("班级");
                 child.add(pinfo.classno);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("学院");
                 child.add(pinfo.dptno + "院 " + pinfo.dptname);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("专业");
                 child.add(pinfo.spname);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("专业代码");
                 child.add(pinfo.spno);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("状态");
                 child.add(pinfo.changetype);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("身份证号码");
                 child.add(pinfo.idcard);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("学生类型");
                 child.add(pinfo.stype);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("民族");
                 child.add(pinfo.nation);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("政治面貌");
                 child.add(pinfo.political);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("籍贯");
                 child.add(pinfo.nativeplace);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("入学日期");
                 child.add(pinfo.enrolldate);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("离校日期");
                 child.add(pinfo.leavedate);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考总分");
                 child.add(pinfo.total+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考英语（或语文）");
                 child.add(pinfo.chinese+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考数学");
                 child.add(pinfo.maths+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考语文（或英语）");
                 child.add(pinfo.english+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考综合");
                 child.add(pinfo.addscore1+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考其他");
                 child.add(pinfo.addscore2+"");
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("备注");
                 child.add(pinfo.comment);
-                person_children.add(child);
+                children.add(child);
                 child = new LinkedList<>();
                 child.add("高考考生号");
                 child.add(pinfo.testnum);
-                person_children.add(child);
-                menus.add(Map.entry(person_group, person_children));
+                children.add(child);
+                menus.add(Map.entry(person_group, children));
+
+                String graduation_score_group = "毕业学分";
+                List<GraduationScore> graduation_score_list = gsdao.selectAll();
+                children = new LinkedList<>();
+                child = new LinkedList<>();
+                child.add("课程名称");
+                child.add("成绩");
+                child.add("学分");
+                child.add("有效");
+                child.add("计划");
+                children.add(child);
+                double credit_hour_total = 0;
+                for (GraduationScore gs : graduation_score_list){
+                    child = new LinkedList<>();
+                    child.add(gs.scname);
+                    child.add(gs.score+"");
+                    child.add(gs.xf+"");
+                    if (gs.credithour == 0){
+                        child.add("×");
+                    }else {
+                        credit_hour_total += gs.credithour;
+                        child.add("√");
+                    }
+                    if (gs.planxf == 0){
+                        child.add("×");
+                    }else {
+                        child.add("√");
+                    }
+                    children.add(child);
+                }
+                child = new LinkedList<>();
+                child.add("");
+                child.add("");
+                child.add("");
+                child.add(credit_hour_total+"");
+                child.add("");
+                children.add(child);
+                menus.add(Map.entry(graduation_score_group, children));
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
