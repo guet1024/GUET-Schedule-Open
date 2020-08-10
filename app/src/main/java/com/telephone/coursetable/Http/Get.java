@@ -16,6 +16,8 @@ import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+
 
 public class Get {
     /**
@@ -28,13 +30,15 @@ public class Get {
      * - -6 response check fail
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
-                                            @NonNull final List<String> parms,
+                                            @Nullable final String[] parms,
                                             @NonNull final String user_agent,
                                             @NonNull final String referer,
                                             @Nullable final String cookie,
                                             @Nullable final String tail,
                                             @Nullable final String cookie_delimiter,
-                                            @Nullable final String success_resp_text){
+                                            @Nullable final String success_resp_text,
+                                            @Nullable final String[] accept_encodings,
+                                            @Nullable final Boolean redirect){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -44,7 +48,7 @@ public class Get {
         try {
             StringBuilder u_bulider = new StringBuilder();
             u_bulider.append(u);
-            if (!parms.isEmpty()) {
+            if (parms != null && parms.length > 0) {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
             url = new URL(u_bulider.toString());
@@ -52,11 +56,19 @@ public class Get {
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
+            if (accept_encodings != null && accept_encodings.length > 0){
+                cnt.setRequestProperty("Accept-Encoding", TextUtils.join(", ", accept_encodings));
+            }
             cnt.setRequestProperty("Referer", referer);
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
             cnt.setRequestMethod("GET");
+            if (redirect == null) {
+                cnt.setInstanceFollowRedirects(true);
+            }else {
+                cnt.setInstanceFollowRedirects(redirect);
+            }
             cnt.connect();
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,13 +76,20 @@ public class Get {
         }
         try {
             resp_code = cnt.getResponseCode();
-            in = new InputStreamReader(cnt.getInputStream());
-            //getContentLength() returns the "Content-Length" value in the response header
-            int content_len = cnt.getContentLength();
+            List<String> encodings = cnt.getHeaderFields().get("content-encoding");
+            if (encodings != null){
+                if (encodings.get(0).equals("gzip")){
+                    in = new InputStreamReader(new GZIPInputStream(cnt.getInputStream()));
+                }else {
+                    in = new InputStreamReader(cnt.getInputStream());
+                }
+            }else {
+                in = new InputStreamReader(cnt.getInputStream());
+            }
             StringBuilder response_builder = new StringBuilder();
-            for (int i = 0; i < content_len; i++){
-                //the conversion to char is necessary
-                response_builder.append((char)in.read());
+            char read_char;
+            while((read_char = (char)in.read()) != (char)-1){
+                response_builder.append(read_char);
             }
             response = response_builder.toString();
             if (tail != null) {
@@ -89,6 +108,7 @@ public class Get {
             return new HttpConnectionAndCode(-2);
         }
 
+        //get cookie from server
         String set_cookie = null;
         if (cookie_delimiter != null) {
             CookieManager cookieman = new CookieManager();
@@ -109,11 +129,15 @@ public class Get {
         //do not disconnect, keep alive
         if (success_resp_text != null){
             if (!response.contains(success_resp_text)){
+                //if cookie_delimiter != null but no server cookie, set_cookie = ""
+                //if no response, response = ""
                 return new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
             }
         }
 
         //do not disconnect, keep alive
+        //if cookie_delimiter != null but no server cookie, set_cookie = ""
+        //if no response, response = ""
         return new HttpConnectionAndCode(cnt, 0, response, set_cookie, resp_code);
     }
 }

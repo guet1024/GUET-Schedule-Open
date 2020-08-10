@@ -1,9 +1,11 @@
-package com.telephone.coursetable.Http;
+package com.telephone.coursetable.Https;
 
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import javax.net.ssl.HttpsURLConnection;
 
 public class Post {
     /**
@@ -40,7 +43,7 @@ public class Post {
                                              @Nullable final String[] accept_encodings,
                                              @Nullable final Boolean redirect){
         URL url = null;
-        HttpURLConnection cnt = null;
+        HttpsURLConnection cnt = null;
         DataOutputStream dos = null;
         InputStreamReader in = null;
         String response = null;
@@ -52,7 +55,7 @@ public class Post {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
             url = new URL(u_bulider.toString());
-            cnt = (HttpURLConnection) url.openConnection();
+            cnt = (HttpsURLConnection) url.openConnection();
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);

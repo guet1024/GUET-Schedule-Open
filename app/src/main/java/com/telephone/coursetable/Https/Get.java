@@ -1,9 +1,12 @@
-package com.telephone.coursetable.Http;
+package com.telephone.coursetable.Https;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,32 +18,30 @@ import java.net.URL;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import javax.net.ssl.HttpsURLConnection;
 
-public class Post {
+public class Get {
     /**
      * @non-ui
      * @return
      * - 0 GET success
      * - -1 cannot open url
      * - -2 cannot close input stream
-     * - -3 can not get output stream
-     * - -4 POST send body fail
      * - -5 cannot get response
      * - -6 response check fail
      */
-    public static HttpConnectionAndCode post(@NonNull final String u,
-                                             @Nullable final String[] parms,
-                                             @NonNull final String user_agent,
-                                             @NonNull final String referer,
-                                             @Nullable final String data,
-                                             @Nullable final String cookie,
-                                             @Nullable final String tail,
-                                             @Nullable final String cookie_delimiter,
-                                             @Nullable final String success_resp_text,
-                                             @Nullable final String[] accept_encodings,
-                                             @Nullable final Boolean redirect){
+    public static HttpConnectionAndCode get(@NonNull final String u,
+                                            @Nullable final String[] parms,
+                                            @NonNull final String user_agent,
+                                            @NonNull final String referer,
+                                            @Nullable final String cookie,
+                                            @Nullable final String tail,
+                                            @Nullable final String cookie_delimiter,
+                                            @Nullable final String success_resp_text,
+                                            @Nullable final String[] accept_encodings,
+                                            @Nullable final Boolean redirect){
         URL url = null;
-        HttpURLConnection cnt = null;
+        HttpsURLConnection cnt = null;
         DataOutputStream dos = null;
         InputStreamReader in = null;
         String response = null;
@@ -52,7 +53,7 @@ public class Post {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
             url = new URL(u_bulider.toString());
-            cnt = (HttpURLConnection) url.openConnection();
+            cnt = (HttpsURLConnection) url.openConnection();
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
@@ -60,13 +61,10 @@ public class Post {
                 cnt.setRequestProperty("Accept-Encoding", TextUtils.join(", ", accept_encodings));
             }
             cnt.setRequestProperty("Referer", referer);
-            if (data != null) {
-                cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
-            }
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
-            cnt.setRequestMethod("POST");
+            cnt.setRequestMethod("GET");
             if (redirect == null) {
                 cnt.setInstanceFollowRedirects(true);
             }else {
@@ -76,24 +74,6 @@ public class Post {
         } catch (IOException e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
-        }
-        String body = "";
-        if (data != null){
-            body += data;
-        }
-        try {
-            dos = new DataOutputStream(cnt.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-3);
-        }
-        try {
-            dos.writeBytes(body);
-            dos.flush();
-            dos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-4);
         }
         try {
             resp_code = cnt.getResponseCode();

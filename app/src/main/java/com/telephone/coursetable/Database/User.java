@@ -15,20 +15,34 @@ public class User {
     public String password;
 
     @NonNull
+    public String aaw_password;
+
+    @NonNull
+    public String vpn_password;
+
+    @NonNull
     public boolean activated;
 
     @NonNull
     public String updateTime;
 
-    public User(String username, String password){
+    public User(@NonNull String username, @NonNull String password, @NonNull String aaw_password, @NonNull String vpn_password){
         if (username == null){
             username = "";
         }
         if (password == null){
             password = "";
         }
+        if (aaw_password == null){
+            aaw_password = "";
+        }
+        if (vpn_password == null){
+            vpn_password = "";
+        }
         this.password = password;
         this.username = username;
+        this.aaw_password = aaw_password;
+        this.vpn_password = vpn_password;
         activated = false;
         updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.M.d H:mm:ss"));
     }

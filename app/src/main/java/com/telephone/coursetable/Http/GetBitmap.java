@@ -1,5 +1,7 @@
 package com.telephone.coursetable.Http;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -16,34 +18,31 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 
-public class Post {
+public class GetBitmap {
     /**
      * @non-ui
      * @return
      * - 0 GET success
      * - -1 cannot open url
-     * - -2 cannot close input stream
-     * - -3 can not get output stream
-     * - -4 POST send body fail
      * - -5 cannot get response
      * - -6 response check fail
      */
-    public static HttpConnectionAndCode post(@NonNull final String u,
-                                             @Nullable final String[] parms,
-                                             @NonNull final String user_agent,
-                                             @NonNull final String referer,
-                                             @Nullable final String data,
-                                             @Nullable final String cookie,
-                                             @Nullable final String tail,
-                                             @Nullable final String cookie_delimiter,
-                                             @Nullable final String success_resp_text,
-                                             @Nullable final String[] accept_encodings,
-                                             @Nullable final Boolean redirect){
+    public static HttpConnectionAndCode get(@NonNull final String u,
+                                            @Nullable final String[] parms,
+                                            @NonNull final String user_agent,
+                                            @NonNull final String referer,
+                                            @Nullable final String cookie,
+                                            @Nullable final String cookie_delimiter,
+                                            @Nullable final String[] accept_encodings){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
         InputStreamReader in = null;
         String response = null;
+        Bitmap bmp = null;
+        String tail = null;
+        String success_resp_text = null;
+        Boolean redirect = false;
         int resp_code = 0;
         try {
             StringBuilder u_bulider = new StringBuilder();
@@ -60,13 +59,10 @@ public class Post {
                 cnt.setRequestProperty("Accept-Encoding", TextUtils.join(", ", accept_encodings));
             }
             cnt.setRequestProperty("Referer", referer);
-            if (data != null) {
-                cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
-            }
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
             }
-            cnt.setRequestMethod("POST");
+            cnt.setRequestMethod("GET");
             if (redirect == null) {
                 cnt.setInstanceFollowRedirects(true);
             }else {
@@ -77,56 +73,13 @@ public class Post {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
-        String body = "";
-        if (data != null){
-            body += data;
-        }
-        try {
-            dos = new DataOutputStream(cnt.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-3);
-        }
-        try {
-            dos.writeBytes(body);
-            dos.flush();
-            dos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-4);
-        }
         try {
             resp_code = cnt.getResponseCode();
-            List<String> encodings = cnt.getHeaderFields().get("content-encoding");
-            if (encodings != null){
-                if (encodings.get(0).equals("gzip")){
-                    in = new InputStreamReader(new GZIPInputStream(cnt.getInputStream()));
-                }else {
-                    in = new InputStreamReader(cnt.getInputStream());
-                }
-            }else {
-                in = new InputStreamReader(cnt.getInputStream());
-            }
-            StringBuilder response_builder = new StringBuilder();
-            char read_char;
-            while((read_char = (char)in.read()) != (char)-1){
-                response_builder.append(read_char);
-            }
-            response = response_builder.toString();
-            if (tail != null) {
-                if (response.contains(tail)) {
-                    response = response.substring(0, response.indexOf(tail) + tail.length());
-                }
-            }
+            response = "";
+            bmp = BitmapFactory.decodeStream(cnt.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-5);
-        }
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-2);
         }
 
         //get cookie from server
@@ -152,13 +105,17 @@ public class Post {
             if (!response.contains(success_resp_text)){
                 //if cookie_delimiter != null but no server cookie, set_cookie = ""
                 //if no response, response = ""
-                return new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
+                HttpConnectionAndCode res = new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
+                res.obj = bmp;
+                return res;
             }
         }
 
         //do not disconnect, keep alive
         //if cookie_delimiter != null but no server cookie, set_cookie = ""
         //if no response, response = ""
-        return new HttpConnectionAndCode(cnt, 0, response, set_cookie, resp_code);
+        HttpConnectionAndCode res = new HttpConnectionAndCode(cnt, 0, response, set_cookie, resp_code);
+        res.obj = bmp;
+        return res;
     }
 }
