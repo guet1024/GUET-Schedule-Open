@@ -1,5 +1,6 @@
 package com.telephone.coursetable;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -160,8 +161,8 @@ public class Login extends AppCompatActivity {
      * - code == other : fail
      * - if code == other and response is not null or empty, the comment will be replaced with the response's "msg"
      */
-    private HttpConnectionAndCode login(String sid, String pwd, String code, String cookie) {
-        Resources r = getResources();
+    public static HttpConnectionAndCode login(Context c, String sid, String pwd, String code, String cookie) {
+        Resources r = c.getResources();
         String body = "us=" + sid + "&pwd=" + pwd + "&ck=" + code;
         HttpConnectionAndCode login_res = Post.post(
                 r.getString(R.string.login_url),
@@ -190,17 +191,18 @@ public class Login extends AppCompatActivity {
      * - cookie containing ticket : success
      * - null : fail
      */
-    private String vpn_login_test(final String id, final String pwd){
+    public static String vpn_login_test(Context c, final String id, final String pwd){
+        Resources r = c.getResources();
         String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
         Log.e("vpn_login_test() body", body);
         HttpConnectionAndCode get_ticket_res = com.telephone.coursetable.Https.Get.get(
-                getResources().getString(R.string.vpn_get_ticket_url),
+                r.getString(R.string.vpn_get_ticket_url),
                 null,
-                getResources().getString(R.string.user_agent),
-                getResources().getString(R.string.vpn_get_ticket_referer),
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_get_ticket_referer),
                 null,
                 null,
-                getResources().getString(R.string.cookie_delimiter),
+                r.getString(R.string.cookie_delimiter),
                 null,
                 new String[]{"gzip"},
                 null
@@ -208,32 +210,32 @@ public class Login extends AppCompatActivity {
         String cookie = get_ticket_res.cookie + "; remember_token=";
         Log.e("vpn_login_test() ticket cookie", cookie);
         HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
-                getResources().getString(R.string.vpn_login_url),
+                r.getString(R.string.vpn_login_url),
                 null,
-                getResources().getString(R.string.user_agent),
-                getResources().getString(R.string.vpn_login_referer),
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_login_referer),
                 body,
                 cookie,
                 null,
-                getResources().getString(R.string.cookie_delimiter),
+                r.getString(R.string.cookie_delimiter),
                 null,
                 new String[]{"gzip"},
                 null
         );
-        if (try_to_login_res.comment.contains(getResources().getString(R.string.vpn_confirm_login_contain_response_text)) && !try_to_login_res.comment.contains(getResources().getString(R.string.vpn_confirm_login_not_contain_response_text))){
+        if (try_to_login_res.comment.contains(r.getString(R.string.vpn_confirm_login_contain_response_text)) && !try_to_login_res.comment.contains(r.getString(R.string.vpn_confirm_login_not_contain_response_text))){
             String html = try_to_login_res.comment;
-            int index = html.indexOf(getResources().getString(R.string.vpn_confirm_login_contain_response_text));
+            int index = html.indexOf(r.getString(R.string.vpn_confirm_login_contain_response_text));
             String token = html.substring(index + 24, index + 24 + 16);
             String confirm_body = "username=" + id + "&logoutOtherToken=" + token;
             HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
-                    getResources().getString(R.string.vpn_confirm_login_url),
+                    r.getString(R.string.vpn_confirm_login_url),
                     null,
-                    getResources().getString(R.string.user_agent),
-                    getResources().getString(R.string.vpn_confirm_login_referer),
+                    r.getString(R.string.user_agent),
+                    r.getString(R.string.vpn_confirm_login_referer),
                     confirm_body,
                     cookie,
                     null,
-                    getResources().getString(R.string.cookie_delimiter),
+                    r.getString(R.string.cookie_delimiter),
                     null,
                     new String[]{"gzip"},
                     null
@@ -242,24 +244,57 @@ public class Login extends AppCompatActivity {
             Log.e("vpn_login_test() confirm login response", confirm_login_res.comment);
         }
         HttpConnectionAndCode verify_login_res = com.telephone.coursetable.Https.Get.get(
-                getResources().getString(R.string.vpn_verify_login_url),
+                r.getString(R.string.vpn_verify_login_url),
                 null,
-                getResources().getString(R.string.user_agent),
-                getResources().getString(R.string.vpn_verify_login_referer),
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_verify_login_referer),
                 cookie,
                 null,
-                getResources().getString(R.string.cookie_delimiter),
+                r.getString(R.string.cookie_delimiter),
                 null,
                 new String[]{"gzip"},
                 null
         );
-        if (verify_login_res.comment.contains(getResources().getString(R.string.vpn_confirm_login_contain_response_text))){
+        if (verify_login_res.comment.contains(r.getString(R.string.vpn_confirm_login_contain_response_text))){
             Log.e("vpn_login_test() login", "fail");
             return null;
         }else {
             Log.e("vpn_login_test() login", "success");
             return cookie;
         }
+    }
+
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     */
+    public static HttpConnectionAndCode outside_login_test(Context c, final String id, final String pwd){
+        Resources r = c.getResources();
+        String body = "username=" + id + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
+        Log.e("outside_login_test() body", body);
+        HttpConnectionAndCode login_res = Post.post(
+                r.getString(R.string.outside_login_url),
+                null,
+                r.getString(R.string.user_agent),
+                r.getString(R.string.outside_login_referer),
+                body,
+                null,
+                null,
+                r.getString(R.string.cookie_delimiter),
+                null,
+                new String[]{"gzip"},
+                false
+        );
+        if (login_res.code == 0 && login_res.resp_code == 302){
+            Log.e("outside_login_test() login", "success");
+        }else {
+            if (login_res.code == 0){
+                login_res.code = -6;
+            }
+            Log.e("outside_login_test() login", "fail" + " code: " + login_res.code);
+        }
+        return login_res;
     }
 
     /**
@@ -477,7 +512,7 @@ public class Login extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                HttpConnectionAndCode login_res = login(sid, pwd, ck, cookie_before_login);
+                                HttpConnectionAndCode login_res = login(Login.this, sid, pwd, ck, cookie_before_login);
                                 if (login_res.code != 0){
                                     String toast = null;
                                     if (login_res.comment.contains("验证码")){
@@ -510,12 +545,26 @@ public class Login extends AppCompatActivity {
                                 final String cookie_after_login = cookie_before_login + getResources().getString(R.string.cookie_delimiter) + login_res.cookie;
                                 cookie_builder = new StringBuilder();
                                 cookie_builder.append(cookie_after_login);
-                                String vpn_login_res = vpn_login_test(sid, vpn_pwd);
+                                String vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
                                 if (vpn_login_res == null){
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            ((Button)findViewById(R.id.button)).setEnabled(true);
+                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
+                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                                        }
+                                    });
+                                    return;
+                                }
+                                HttpConnectionAndCode outside_login_res = outside_login_test(Login.this, sid, aaw_pwd);
+                                if (outside_login_res.code != 0){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Snackbar.make(view, getResources().getString(R.string.snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
                                             ((Button)findViewById(R.id.button)).setEnabled(true);
                                             ((Button)findViewById(R.id.button2)).setEnabled(true);
                                             ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);

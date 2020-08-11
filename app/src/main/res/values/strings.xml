@@ -47,6 +47,9 @@
     <string name="get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
 
 
+    <string name="outside_login_url">http://172.16.1.99/student/public/login.asp</string>
+    <string name="outside_login_referer">http://172.16.1.99/student/public/login.asp</string>
+
     <string name="vpn_get_ticket_url">https://v.guet.edu.cn/</string>
     <string name="vpn_login_url">https://v.guet.edu.cn/do-login?local_login=true</string>
     <string name="vpn_confirm_login_url">https://v.guet.edu.cn/do-confirm-login</string>
@@ -80,6 +83,7 @@
     <string name="snackbar_login_fail_ck">验证码错误，登录失败</string>
     <string name="snackbar_login_fail_pwd">密码错误，登录失败</string>
     <string name="snackbar_vpn_test_login_fail">WebVPN登录验证失败</string>
+    <string name="snackbar_outside_test_login_fail">教务网站登录验证失败</string>
 
     <string name="cookie_delimiter">"; "</string>
     <string name="ok_btn_text_zhcn">确定</string>
