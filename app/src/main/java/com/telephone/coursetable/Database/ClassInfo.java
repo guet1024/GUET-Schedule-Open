@@ -6,20 +6,20 @@ import androidx.room.Entity;
 @Entity(primaryKeys = {"courseno"})
 public class ClassInfo {
     @NonNull
-    public String courseno;//
+    public String courseno;
 
-    public String ctype;//null
-    public String tname;
+    public String ctype;
+    public String tname; //type name
     public String examt;
     public String dptname;
     public String dptno;
     public String spname;
     public String spno;
     public String grade;
-    public String cname;//
+    public String cname;
     public String teacherno;
-    public String name;//
-    public String courseid;
+    public String name; //teacher name
+    public String courseid; //such as BG0000022X0
     public String comm;
     public long maxcnt;
     public double xf;
