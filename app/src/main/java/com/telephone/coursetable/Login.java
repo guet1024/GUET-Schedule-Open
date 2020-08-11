@@ -874,7 +874,8 @@ public class Login extends AppCompatActivity {
                         List<TableNode> table_node_list = table.getData();
                         for (TableNode table_node : table_node_list){
                             //extract information and then insert into "GoToClass"
-                            gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
+                            gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getCroomno(),
+                                    table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(),table_node.getId(), table_node.getHours()));
                             //extract information and then insert into "ClassInfo"
                             cdao.insert(new ClassInfo(table_node.getCourseno(), table_node.getCtype(), table_node.getTname(), table_node.getExamt(), table_node.getDptname(), table_node.getDptno(), table_node.getSpname(), table_node.getSpno(), table_node.getGrade(), table_node.getCname(), table_node.getTeacherno(), table_node.getName(),
                                     table_node.getCourseid(), table_node.getComm(), table_node.getMaxcnt(), table_node.getXf(), table_node.getLlxs(), table_node.getSyxs(), table_node.getSjxs(), table_node.getQtxs(), table_node.getSctcnt()));

@@ -30,6 +30,7 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
     def room_version = "2.2.5"
 
     implementation "androidx.room:room-runtime:$room_version"
@@ -48,5 +49,5 @@ dependencies {
 }
 
 repositories {
-    google()
+    maven{ url 'http://maven.aliyun.com/nexus/content/repositories/google/'}
 }

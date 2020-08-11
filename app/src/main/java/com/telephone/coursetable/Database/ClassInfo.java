@@ -6,9 +6,9 @@ import androidx.room.Entity;
 @Entity(primaryKeys = {"courseno"})
 public class ClassInfo {
     @NonNull
-    public String courseno;
+    public String courseno;//
 
-    public String ctype;
+    public String ctype;//null
     public String tname;
     public String examt;
     public String dptname;
@@ -16,9 +16,9 @@ public class ClassInfo {
     public String spname;
     public String spno;
     public String grade;
-    public String cname;
+    public String cname;//
     public String teacherno;
-    public String name;
+    public String name;//
     public String courseid;
     public String comm;
     public long maxcnt;

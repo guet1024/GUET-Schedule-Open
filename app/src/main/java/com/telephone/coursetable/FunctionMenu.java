@@ -3,6 +3,7 @@ package com.telephone.coursetable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -11,6 +12,8 @@ import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.Http.Post;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -39,6 +42,18 @@ public class FunctionMenu extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                HttpConnectionAndCode hca = Post.post("http://172.16.1.99/student/public/login.asp",
+                        new LinkedList<>(),
+                        getResources().getString(R.string.user_agent),
+                        getResources().getString(R.string.get_student_referer),
+                        "username=1800301127&passwd=080291",
+                        null,
+                        null,
+                        null,
+                        null);
+
+                Log.e("biaotou",hca.code+"");
 
                 final List<Entry<String, List<List<String>>>> menus = new LinkedList<>();
                 List<List<String>> children = new LinkedList<>();
