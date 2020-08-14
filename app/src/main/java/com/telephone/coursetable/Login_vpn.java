@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +39,7 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.Fetch.WAN;
 import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hours;
 import com.telephone.coursetable.Gson.LoginResponse;
@@ -51,24 +52,17 @@ import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
 import com.telephone.coursetable.Gson.ValidScoreQueryS;
 import com.telephone.coursetable.Gson.ValidScoreQuery_Data;
-import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.CookieManager;
-import java.net.HttpCookie;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class Login extends AppCompatActivity {
+public class Login_vpn extends AppCompatActivity {
 
     private boolean updating = false;
 
@@ -89,21 +83,19 @@ public class Login extends AppCompatActivity {
 
     /**
      * @ui
-     * this method get-check-code and update the check-code-ImageView and replace the old cookie.
-     * success or not, the old image and the old cookie will be cleared anyway.
+     * this method get-check-code and update the check-code-ImageView.
+     * success or not, the old image will be cleared anyway.
      */
     public void changeCode(View view){
         ImageView im = (ImageView)findViewById(R.id.imageView_checkcode);
         //clear old image
         im.setImageDrawable(getResources().getDrawable(R.drawable.network, getTheme()));
-        //clear old cookie
-        cookie_builder = new StringBuilder();
         //set the new one
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //get
-                HttpConnectionAndCode res = LAN.checkcode(Login.this);
+                HttpConnectionAndCode res = WAN.checkcode(Login_vpn.this, cookie_builder.toString());
                 Log.e("changeCode() get check code", res.code+"");
                 //if success, set
                 if (res.obj != null){
@@ -113,14 +105,13 @@ public class Login extends AppCompatActivity {
                             im.setImageBitmap((Bitmap) (res.obj));
                         }
                     });
-                    cookie_builder.append(res.cookie);
                 }
             }
         }).start();
     }
 
-    private void updateUserNameAutoFill(){
-        final ArrayAdapter<String> ada = new ArrayAdapter<>(Login.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
+    private void updateUserNameAutoFill(final boolean has_checkcode){
+        final ArrayAdapter<String> ada = new ArrayAdapter<>(Login_vpn.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -138,7 +129,11 @@ public class Login extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText(userSelected.get(0).password);
+                                    if (has_checkcode) {
+                                        ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).password);
+                                    }else {
+                                        ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).vpn_password);
+                                    }
                                 }
                             });
                         }
@@ -146,6 +141,82 @@ public class Login extends AppCompatActivity {
                 }).start();
             }
         });
+    }
+
+    private void changeCheckCodeContentView(final boolean has_checkcode){
+        if (has_checkcode){
+            setContentView(R.layout.activity_login_vpn);
+            changeCode(null);
+        }else {
+            setContentView(R.layout.activity_login_vpn_no_checkcode);
+        }
+        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateUserNameAutoFill(has_checkcode);
+                final List<User> ac_user = udao.getActivatedUser();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (has_checkcode){
+                            ((EditText)findViewById(R.id.checkcode_input)).setText("");
+                        }
+                        if (!ac_user.isEmpty()) {
+                            final User u = ac_user.get(0);
+                            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setText(u.username);
+                            if (has_checkcode) {
+                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(u.password);
+                            } else {
+                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(u.vpn_password);
+                            }
+                            ((EditText)findViewById(R.id.checkcode_input)).requestFocus();
+                        }
+                        if (has_checkcode){
+                            ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    login_thread(view);
+                                }
+                            });
+                        }else {
+                            ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    final String sid = ((EditText)findViewById(R.id.sid_input)).getText().toString();
+                                    final String vpn_pwd = ((EditText)findViewById(R.id.passwd_input)).getText().toString();
+                                    ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String cookie = vpn_login_test(Login_vpn.this, sid, vpn_pwd);
+                                            if (cookie != null){
+                                                cookie_builder = new StringBuilder();
+                                                cookie_builder.append(cookie);
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        changeCheckCodeContentView(true);
+                                                    }
+                                                });
+                                            }else {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }).start();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     /**
@@ -195,14 +266,124 @@ public class Login extends AppCompatActivity {
         return login_res;
     }
 
+    public static String encrypt(String pwd){
+        int[] key = {134, 8, 187, 0, 251, 59, 238, 74, 176, 180, 24, 67, 227, 252, 205, 80};
+        //for good, pwd's length should not be 0
+        int pwd_len = pwd.length();
+        try{
+            if(pwd.length() % 16 != 0){
+                int need_num = 16 - pwd.length() % 16;
+                StringBuilder pwd_builder = new StringBuilder();
+                pwd_builder.append(pwd);
+                for(int i = 0; i < need_num; i++){
+                    pwd_builder.append("0");
+                }
+                pwd = pwd_builder.toString();
+            }
+            byte[] pwd_bytes = pwd.getBytes(StandardCharsets.UTF_8);
+            for(int i = 0; i < pwd_bytes.length; i++){
+                pwd_bytes[i] ^= key[i % 16];
+            }
+            StringBuilder encrypt_builder = new StringBuilder();
+            encrypt_builder.append("77726476706e6973617765736f6d6521");
+            for(int i = 0; i < pwd_len; i++){
+                byte b = pwd_bytes[i];
+                encrypt_builder.append(String.format("%02x", b));
+            }
+            return encrypt_builder.toString();
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * @non-ui
      * @return
      * - cookie containing ticket : success
      * - null : fail
      */
-    public static String vpn_login_test(Context c, final String id, final String pwd){
-        return Login_vpn.vpn_login_test(c, id, pwd);
+    public static String vpn_login_test(Context c, final String id, String pwd){
+        Resources r = c.getResources();
+        String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
+        Log.e("vpn_login_test() body", body);
+        if (pwd.length() <= 0){
+            Log.e("vpn_login_test() login", "fail");
+            return null;
+        }
+        pwd = encrypt(pwd);
+        body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
+        Log.e("vpn_login_test() encrypted body", body);
+        HttpConnectionAndCode get_ticket_res = com.telephone.coursetable.Https.Get.get(
+                r.getString(R.string.vpn_get_ticket_url),
+                null,
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_get_ticket_referer),
+                null,
+                null,
+                r.getString(R.string.cookie_delimiter),
+                null,
+                new String[]{"gzip"},
+                null
+        );
+        String cookie = get_ticket_res.cookie;
+        Log.e("vpn_login_test() ticket cookie", cookie);
+        HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
+                r.getString(R.string.vpn_login_url),
+                null,
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_login_referer),
+                body,
+                cookie,
+                null,
+                r.getString(R.string.cookie_delimiter),
+                null,
+                new String[]{"gzip"},
+                null
+        );
+        if (try_to_login_res.comment.contains(r.getString(R.string.vpn_confirm_login_contain_response_text)) && !try_to_login_res.comment.contains(r.getString(R.string.vpn_confirm_login_not_contain_response_text))){
+            String html = try_to_login_res.comment;
+            int index = html.indexOf(r.getString(R.string.vpn_confirm_login_contain_response_text));
+            String token = html.substring(index + 24, index + 24 + 16);
+            String confirm_body = "username=" + id + "&logoutOtherToken=" + token;
+            HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
+                    r.getString(R.string.vpn_confirm_login_url),
+                    null,
+                    r.getString(R.string.user_agent),
+                    r.getString(R.string.vpn_confirm_login_referer),
+                    confirm_body,
+                    cookie,
+                    null,
+                    r.getString(R.string.cookie_delimiter),
+                    null,
+                    new String[]{"gzip"},
+                    null
+            );
+            Log.e("vpn_login_test() confirm login body", confirm_body);
+            Log.e("vpn_login_test() confirm login response", confirm_login_res.comment);
+        }
+        HttpConnectionAndCode verify_login_res = com.telephone.coursetable.Https.Get.get(
+                r.getString(R.string.vpn_verify_login_url),
+                null,
+                r.getString(R.string.user_agent),
+                r.getString(R.string.vpn_verify_login_referer),
+                cookie,
+                null,
+                r.getString(R.string.cookie_delimiter),
+                null,
+                new String[]{"gzip"},
+                false
+        );
+        if (verify_login_res.resp_code == 302 &&
+                verify_login_res.c.getHeaderFields().get("Location") != null &&
+                !verify_login_res.c.getHeaderFields().get("Location").isEmpty() &&
+                verify_login_res.c.getHeaderFields().get("Location").get(0).equals("https://v.guet.edu.cn///")){
+            Log.e("vpn_login_test() login", "success");
+            return cookie;
+        }else {
+            Log.e("vpn_login_test() login", "fail");
+            return null;
+        }
     }
 
     /**
@@ -300,10 +481,6 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-        //get-check-code on create
-        changeCode(null);
         db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -311,27 +488,7 @@ public class Login extends AppCompatActivity {
         udao = db.userDao();
         pdao = db.personInfoDao();
         gsdao = db.graduationScoreDao();
-        //init auto-fill list of username input box on create
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateUserNameAutoFill();
-                //if any user is activated, fill his sid and pwd in the input box
-                List<User> ac_user = udao.getActivatedUser();
-                if (!ac_user.isEmpty()){
-                    final User u = ac_user.get(0);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText(u.username);
-                            ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText(u.password);
-                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
-                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
-                        }
-                    });
-                }
-            }
-        }).start();
+        changeCheckCodeContentView(false);
     }
 
     @Override
@@ -371,13 +528,16 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void run() {
                             udao.deleteUser(((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString());
-                            updateUserNameAutoFill();
+                            updateUserNameAutoFill(false);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
                                     ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText("");
-                                    ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
+                                    EditText checkcode_input = (EditText)findViewById(R.id.checkcode_input);
+                                    if (checkcode_input != null){
+                                        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
+                                    }
                                     ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
                                 }
                             });
@@ -428,7 +588,7 @@ public class Login extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                HttpConnectionAndCode login_res = login(Login.this, sid, pwd, ck, cookie_before_login);
+                                HttpConnectionAndCode login_res = login(Login_vpn.this, sid, pwd, ck, cookie_before_login);
                                 if (login_res.code != 0){
                                     String toast = null;
                                     if (login_res.comment.contains("验证码")){
@@ -461,7 +621,7 @@ public class Login extends AppCompatActivity {
                                 final String cookie_after_login = cookie_before_login + getResources().getString(R.string.cookie_delimiter) + login_res.cookie;
                                 cookie_builder = new StringBuilder();
                                 cookie_builder.append(cookie_after_login);
-                                String vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
+                                String vpn_login_res = vpn_login_test(Login_vpn.this, sid, vpn_pwd);
                                 if (vpn_login_res == null){
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -475,7 +635,7 @@ public class Login extends AppCompatActivity {
                                     });
                                     return;
                                 }
-                                HttpConnectionAndCode outside_login_res = outside_login_test(Login.this, sid, aaw_pwd);
+                                HttpConnectionAndCode outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd);
                                 if (outside_login_res.code != 0){
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -515,9 +675,9 @@ public class Login extends AppCompatActivity {
                                  * ******************************* UPDATE DATA START *******************************
                                  */
                                 //update person info
-                                HttpConnectionAndCode getPersonInfo_res = LAN.personInfo(Login.this, cookie_after_login);
+                                HttpConnectionAndCode getPersonInfo_res = LAN.personInfo(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get person info", getPersonInfo_res.code+"");
-                                HttpConnectionAndCode getStudentInfo_res = LAN.studentInfo(Login.this, cookie_after_login);
+                                HttpConnectionAndCode getStudentInfo_res = LAN.studentInfo(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get student info", getStudentInfo_res.code+"");
                                 //if success, insert data into database
                                 if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
@@ -534,7 +694,7 @@ public class Login extends AppCompatActivity {
                                             studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
                                 }
                                 //update graduation score
-                                HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login.this, cookie_after_login);
+                                HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
                                 //if success, insert data into database
                                 if (getGraduationScore_res.code == 0){
@@ -548,7 +708,7 @@ public class Login extends AppCompatActivity {
                                     }
                                 }
                                 //update terms info
-                                HttpConnectionAndCode getTerms_res = LAN.terms(Login.this, cookie_after_login);
+                                HttpConnectionAndCode getTerms_res = LAN.terms(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get terms", getTerms_res.code+"");
                                 //if success, insert data into database
                                 if (getTerms_res.code == 0){
@@ -578,7 +738,7 @@ public class Login extends AppCompatActivity {
                                         tdao.deleteTerm(t.term);
                                         continue;
                                     }
-                                    HttpConnectionAndCode getTable_res = LAN.table(Login.this, cookie_after_login, t.term);
+                                    HttpConnectionAndCode getTable_res = LAN.table(Login_vpn.this, cookie_after_login, t.term);
                                     Log.e("login_thread() get table " + t.term, getTable_res.code+"");
                                     //if success, insert data into database
                                     if (getTable_res.code == 0){
@@ -594,7 +754,7 @@ public class Login extends AppCompatActivity {
                                     }
                                 }
                                 //update hours info
-                                HttpConnectionAndCode getHours_res = LAN.hours(Login.this, cookie_after_login);
+                                HttpConnectionAndCode getHours_res = LAN.hours(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get hours", getHours_res.code+"");
                                 //if success, insert data into SharedPreferences
                                 if (getHours_res.code == 0){
@@ -650,13 +810,13 @@ public class Login extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                        Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
 //                                      Snackbar.make(view, getResources().getString(R.string.toast_update_success), BaseTransientBottomBar.LENGTH_SHORT).show();
                                         //make a tip to show data-update status
                                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
                                     }
                                 });
-                                Intent intent = new Intent(Login.this, MainActivity.class);
+                                Intent intent = new Intent(Login_vpn.this, MainActivity.class);
                                 startActivity(intent);
                             }
                         }).start();

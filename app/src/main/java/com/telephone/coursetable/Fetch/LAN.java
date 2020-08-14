@@ -24,8 +24,7 @@ public class LAN {
                 r.getString(R.string.user_agent),
                 r.getString(R.string.get_checkcode_referer),
                 null,
-                r.getString(R.string.cookie_delimiter),
-                new String[]{"gzip"}
+                r.getString(R.string.cookie_delimiter)
         );
     }
 

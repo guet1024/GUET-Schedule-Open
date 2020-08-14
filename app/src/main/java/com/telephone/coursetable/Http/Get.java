@@ -15,6 +15,7 @@ import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -57,7 +58,13 @@ public class Get {
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
             if (accept_encodings != null && accept_encodings.length > 0){
-                cnt.setRequestProperty("Accept-Encoding", TextUtils.join(", ", accept_encodings));
+                List<String> encodings = Arrays.asList(accept_encodings);
+                if (encodings.indexOf("gzip") == -1){
+                    encodings.add("gzip");
+                }
+                cnt.setRequestProperty("Accept-Encoding", TextUtils.join(", ", encodings));
+            }else {
+                cnt.setRequestProperty("Accept-Encoding", "gzip");
             }
             cnt.setRequestProperty("Referer", referer);
             if (cookie != null){
@@ -121,7 +128,11 @@ public class Get {
                 }
             }
             if (cookieman.getCookieStore().getCookies().size() > 0) {
-                cookie_builder.append(TextUtils.join(cookie_delimiter, cookieman.getCookieStore().getCookies()));
+                String cookie_join = TextUtils.join(cookie_delimiter, cookieman.getCookieStore().getCookies());
+                if (cookie_join.contains(";$")){
+                    cookie_join = cookie_join.substring(0, cookie_join.indexOf(";$"));
+                }
+                cookie_builder.append(cookie_join);
             }
             set_cookie = cookie_builder.toString();
         }

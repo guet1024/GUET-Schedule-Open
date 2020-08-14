@@ -27,32 +27,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/passwd_tip"
+        android:text="@string/vpn_passwd_tip"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/textView9"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/checkcode_tip"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -60,21 +44,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
-
-    <ImageView
-        android:id="@+id/imageView_checkcode"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:onClick="changeCode"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
-        app:layout_constraintEnd_toStartOf="@+id/guideline7"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline8"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintWidth_default="spread"
-        app:srcCompat="@drawable/network" />
 
     <Button
         android:id="@+id/button"
@@ -176,7 +145,7 @@
         android:layout_height="wrap_content"
         app:barrierDirection="end"
         app:barrierMargin="8dp"
-        app:constraint_referenced_ids="textView7,textView8,textView9"
+        app:constraint_referenced_ids="textView7,textView8"
         tools:layout_editor_absoluteX="411dp" />
 
     <AutoCompleteTextView
@@ -188,24 +157,10 @@
         android:inputType="textPassword"
         android:textAlignment="center"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/checkcode_input"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toEndOf="@id/barrier2"
         app:layout_constraintTop_toBottomOf="@+id/sid_input" />
-
-    <AutoCompleteTextView
-        android:id="@+id/checkcode_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/login_text_border"
-        android:gravity="center"
-        android:inputType="number"
-        android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toStartOf="@+id/guideline7"
-        app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/passwd_input" />
 
     <Button
         android:id="@+id/button2"

@@ -12,9 +12,12 @@
     <string name="time3_title">5,6</string>
     <string name="time4_title">7,8</string>
     <string name="time5_title">晚</string>
+
     <string name="sid_tip">学号</string>
-    <string name="passwd_tip">密码</string>
-    <string name="checkcode_tip">验证码</string>
+    <string name="passwd_tip">学分制系统密码</string>
+    <string name="vpn_passwd_tip">WebVPN密码</string>
+    <string name="checkcode_tip">学分制系统验证码</string>
+
     <string name="sid_fill">1234567890</string>
     <string name="passwd_fill">password</string>
     <string name="checkcode_fill">1234</string>
