@@ -74,7 +74,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_default="spread"
-        app:srcCompat="@drawable/network" />
+        app:srcCompat="@drawable/network_vpn" />
 
     <Button
         android:id="@+id/button"

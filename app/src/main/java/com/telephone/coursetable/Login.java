@@ -72,8 +72,6 @@ public class Login extends AppCompatActivity {
 
     private boolean updating = false;
 
-    //the StringBuilder storing the latest cookie
-    //will be update in login() when login success and in changeCode() when changeCode() called
     private StringBuilder cookie_builder;
 
     //database of the whole app
@@ -187,7 +185,7 @@ public class Login extends AppCompatActivity {
                 new String[]{"gzip"},
                 null
         );
-        if (!login_res.comment.equals("")) {
+        if (login_res.comment != null && !login_res.comment.equals("")) {
             LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
         }
@@ -211,31 +209,7 @@ public class Login extends AppCompatActivity {
      * - code == other : fail
      */
     public static HttpConnectionAndCode outside_login_test(Context c, final String id, final String pwd){
-        Resources r = c.getResources();
-        String body = "username=" + id + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
-        Log.e("outside_login_test() body", body);
-        HttpConnectionAndCode login_res = Post.post(
-                r.getString(R.string.outside_login_url),
-                null,
-                r.getString(R.string.user_agent),
-                r.getString(R.string.outside_login_referer),
-                body,
-                null,
-                null,
-                r.getString(R.string.cookie_delimiter),
-                null,
-                new String[]{"gzip"},
-                false
-        );
-        if (login_res.code == 0 && login_res.resp_code == 302){
-            Log.e("outside_login_test() login", "success");
-        }else {
-            if (login_res.code == 0){
-                login_res.code = -6;
-            }
-            Log.e("outside_login_test() login", "fail" + " code: " + login_res.code);
-        }
-        return login_res;
+        return Login_vpn.outside_login_test(c, id, pwd);
     }
 
     /**
@@ -297,21 +271,13 @@ public class Login extends AppCompatActivity {
         return res;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private void initContentView(){
         setContentView(R.layout.activity_login);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-        //get-check-code on create
+        ((Button)findViewById(R.id.button)).setEnabled(true);
+        ((Button)findViewById(R.id.button2)).setEnabled(true);
+        ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
         changeCode(null);
-        db = MyApp.getCurrentAppDB();
-        gdao = db.goToClassDao();
-        cdao = db.classInfoDao();
-        tdao = db.termInfoDao();
-        udao = db.userDao();
-        pdao = db.personInfoDao();
-        gsdao = db.graduationScoreDao();
-        //init auto-fill list of username input box on create
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -335,6 +301,20 @@ public class Login extends AppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = MyApp.getCurrentAppDB();
+        gdao = db.goToClassDao();
+        cdao = db.classInfoDao();
+        tdao = db.termInfoDao();
+        udao = db.userDao();
+        pdao = db.personInfoDao();
+        gsdao = db.graduationScoreDao();
+        cookie_builder = new StringBuilder();
+        initContentView();
+    }
+
+    @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -353,24 +333,19 @@ public class Login extends AppCompatActivity {
     }
 
     /**
-     * when user clicks the delete btn, show a AlertDialog to ask user to confirm to forget the information
-     * of the user specified by the username which is in the username input box.
-     *
-     * if user click no, nothing will happen
-     * if user click yes, start a new thread to do these things:
-     *  1. delete user information from database
-     *  2. use the data in the database to update the auto-fill list of Login Activity's username input box
-     *  3. clear all the input boxes of Login Activity in Login Activity UI thread
+     * @clear
      */
     public void deleteUser(View view){
-        getAlertDialog("确定要取消记住用户" + " " + ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString() + " " + "的登录信息吗？",
+        String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
+        getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
             new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            udao.deleteUser(((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString());
+                            udao.deleteUser(sid);
+                            Log.e("user deleted", sid);
                             updateUserNameAutoFill();
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -431,9 +406,9 @@ public class Login extends AppCompatActivity {
                                 HttpConnectionAndCode login_res = login(Login.this, sid, pwd, ck, cookie_before_login);
                                 if (login_res.code != 0){
                                     String toast = null;
-                                    if (login_res.comment.contains("验证码")){
+                                    if (login_res.comment != null && login_res.comment.contains("验证码")){
                                         toast = getResources().getString(R.string.snackbar_login_fail_ck);
-                                    }else if (login_res.comment.contains("密码")){
+                                    }else if (login_res.comment != null && login_res.comment.contains("密码")){
                                         toast = getResources().getString(R.string.snackbar_login_fail_pwd);
                                     }else {
                                         toast = getResources().getString(R.string.snackbar_login_fail) + " : " + login_res.comment + "(" + login_res.code + ")";
