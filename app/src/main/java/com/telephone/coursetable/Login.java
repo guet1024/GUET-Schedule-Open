@@ -197,6 +197,7 @@ public class Login extends AppCompatActivity {
      * @non-ui
      * @return
      * - cookie containing ticket : success
+     * - R.string.vpn_ip_forbidden : ip forbidden
      * - null : fail
      */
     public static String vpn_login_test(Context c, final String id, final String pwd){
@@ -437,11 +438,15 @@ public class Login extends AppCompatActivity {
                                 cookie_builder = new StringBuilder();
                                 cookie_builder.append(cookie_after_login);
                                 String vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
-                                if (vpn_login_res == null){
+                                if (vpn_login_res == null || vpn_login_res.equals(getResources().getString(R.string.vpn_ip_forbidden))){
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            if (vpn_login_res != null && vpn_login_res.equals(getResources().getString(R.string.vpn_ip_forbidden))){
+                                                Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            }else {
+                                                Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            }
                                             ((Button)findViewById(R.id.button)).setEnabled(true);
                                             ((Button)findViewById(R.id.button2)).setEnabled(true);
                                             ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);

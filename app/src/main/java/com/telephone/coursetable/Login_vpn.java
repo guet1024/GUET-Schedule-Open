@@ -203,7 +203,7 @@ public class Login_vpn extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             String cookie = vpn_login_test(Login_vpn.this, sid, vpn_pwd);
-                                            if (cookie != null){
+                                            if (cookie != null && !cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
                                                 cookie_builder = new StringBuilder();
                                                 cookie_builder.append(cookie);
                                                 vpn_password = vpn_pwd;
@@ -217,7 +217,11 @@ public class Login_vpn extends AppCompatActivity {
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                        if (cookie != null && cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
+                                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                        }else {
+                                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                        }
                                                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                                                         ((Button)findViewById(R.id.button)).setEnabled(true);
                                                         ((Button)findViewById(R.id.button2)).setEnabled(true);
@@ -317,6 +321,7 @@ public class Login_vpn extends AppCompatActivity {
      * @non-ui
      * @return
      * - cookie containing ticket : success
+     * - R.string.vpn_ip_forbidden : ip forbidden
      * - null : fail
      */
     public static String vpn_login_test(Context c, final String id, String pwd){
@@ -357,6 +362,9 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 null
         );
+        if (try_to_login_res.comment != null){
+            Log.e("vpn_login_test() try to login", try_to_login_res.comment);
+        }
         if (try_to_login_res.code == 0){
             Log.e("vpn_login_test() login", "success");
             return cookie;
@@ -380,6 +388,9 @@ public class Login_vpn extends AppCompatActivity {
                     Log.e("vpn_login_test() login", "success");
                     return cookie;
                 }
+            }else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"IP_FORBIDDEN\"")){
+                Log.e("vpn_login_test() login", "fail | ip forbidden");
+                return r.getString(R.string.vpn_ip_forbidden);
             }
             Log.e("vpn_login_test() login", "fail");
             return null;
