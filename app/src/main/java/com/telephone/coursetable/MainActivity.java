@@ -369,8 +369,28 @@ public class MainActivity extends AppCompatActivity {
      */
     public void Login(View view){
         if (updating)return;
-        Intent intent = new Intent(this, Login.class);
-        startActivity(intent);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (MyApp.isLAN()){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(MainActivity.this, Login.class);
+                            startActivity(intent);
+                        }
+                    });
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(MainActivity.this, Login_vpn.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     /**

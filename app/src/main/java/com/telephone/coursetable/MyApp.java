@@ -6,6 +6,9 @@ import androidx.room.Room;
 
 import com.telephone.coursetable.Database.AppDatabase;
 
+import java.io.IOException;
+import java.net.InetAddress;
+
 public class MyApp extends Application {
     private static MyApp app;
     private static AppDatabase db;
@@ -47,5 +50,14 @@ public class MyApp extends Application {
 
     public static AppDatabase getCurrentAppDB(){
         return db;
+    }
+
+    public static boolean isLAN(){
+        try {
+            return InetAddress.getByName("bkjw.guet.edu.cn").isReachable(300);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

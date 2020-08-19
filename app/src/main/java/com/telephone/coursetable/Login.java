@@ -54,6 +54,7 @@ import com.telephone.coursetable.Gson.ValidScoreQuery_Data;
 import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
+import com.telephone.coursetable.OCR.OCR;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -91,9 +92,12 @@ public class Login extends AppCompatActivity {
      * success or not, the old image and the old cookie will be cleared anyway.
      */
     public void changeCode(View view){
+        EditText et = (EditText)findViewById(R.id.checkcode_input);
         ImageView im = (ImageView)findViewById(R.id.imageView_checkcode);
         //clear old image
         im.setImageDrawable(getResources().getDrawable(R.drawable.network, getTheme()));
+        //clear old input
+        et.setText("");
         //clear old cookie
         cookie_builder = new StringBuilder();
         //set the new one
@@ -105,13 +109,15 @@ public class Login extends AppCompatActivity {
                 Log.e("changeCode() get check code", res.code+"");
                 //if success, set
                 if (res.obj != null){
+                    String ocr = OCR.getTextFromBitmap(Login.this, (Bitmap)res.obj, "telephone");
+                    cookie_builder.append(res.cookie);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             im.setImageBitmap((Bitmap) (res.obj));
+                            et.setText(ocr);
                         }
                     });
-                    cookie_builder.append(res.cookie);
                 }
             }
         }).start();
@@ -195,10 +201,7 @@ public class Login extends AppCompatActivity {
 
     /**
      * @non-ui
-     * @return
-     * - cookie containing ticket : success
-     * - R.string.vpn_ip_forbidden : ip forbidden
-     * - null : fail
+     * @see Login_vpn#vpn_login_test(Context, String, String)
      */
     public static String vpn_login_test(Context c, final String id, final String pwd){
         return Login_vpn.vpn_login_test(c, id, pwd);
@@ -210,7 +213,31 @@ public class Login extends AppCompatActivity {
      * - code == other : fail
      */
     public static HttpConnectionAndCode outside_login_test(Context c, final String id, final String pwd){
-        return Login_vpn.outside_login_test(c, id, pwd);
+        Resources r = c.getResources();
+        String body = "username=" + id + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
+        Log.e("outside_login_test() body", body);
+        HttpConnectionAndCode login_res = Post.post(
+                r.getString(R.string.outside_login_url),
+                null,
+                r.getString(R.string.user_agent),
+                r.getString(R.string.outside_login_referer),
+                body,
+                null,
+                null,
+                r.getString(R.string.cookie_delimiter),
+                null,
+                new String[]{"gzip"},
+                false
+        );
+        if (login_res.code == 0 && login_res.resp_code == 302){
+            Log.e("outside_login_test() login", "success");
+        }else {
+            if (login_res.code == 0){
+                login_res.code = -6;
+            }
+            Log.e("outside_login_test() login", "fail" + " code: " + login_res.code);
+        }
+        return login_res;
     }
 
     /**
@@ -274,10 +301,11 @@ public class Login extends AppCompatActivity {
 
     private void initContentView(){
         setContentView(R.layout.activity_login);
-        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
         ((Button)findViewById(R.id.button)).setEnabled(true);
         ((Button)findViewById(R.id.button2)).setEnabled(true);
         ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+        ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
         changeCode(null);
         new Thread(new Runnable() {
             @Override
@@ -292,8 +320,8 @@ public class Login extends AppCompatActivity {
                         public void run() {
                             ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText(u.username);
                             ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText(u.password);
-                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
+                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
                         }
                     });
                 }
@@ -353,8 +381,8 @@ public class Login extends AppCompatActivity {
                                 public void run() {
                                     ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
                                     ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText("");
-                                    ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
                                     ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
+                                    changeCode(null);
                                 }
                             });
                         }
@@ -380,12 +408,6 @@ public class Login extends AppCompatActivity {
      *  5. if success, toast @toast_login_success, and continue......
      */
     public void login_thread(final View view){
-        ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(false);
-        ((AutoCompleteTextView)findViewById(R.id.sid_input)).setEnabled(true);
-        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(false);
-        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(true);
-        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setEnabled(false);
-        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setEnabled(true);
         final String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
         final String pwd = ((AutoCompleteTextView)findViewById(R.id.passwd_input)).getText().toString();
         final String ck = ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).getText().toString();
@@ -395,6 +417,9 @@ public class Login extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        ((AutoCompleteTextView)findViewById(R.id.sid_input)).clearFocus();
+                        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).clearFocus();
+                        ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
                         ((Button)findViewById(R.id.button)).setEnabled(false);
                         ((Button)findViewById(R.id.button2)).setEnabled(false);
                         ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(false);
@@ -420,8 +445,8 @@ public class Login extends AppCompatActivity {
                                         public void run() {
                                             Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
                                             changeCode(null);
-                                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
                                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
+                                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
                                             if (toast_f.equals(getResources().getString(R.string.snackbar_login_fail_pwd))) {
                                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
                                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).requestFocus();
@@ -631,13 +656,12 @@ public class Login extends AppCompatActivity {
                                     public void run() {
                                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                                         Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
-//                                      Snackbar.make(view, getResources().getString(R.string.toast_update_success), BaseTransientBottomBar.LENGTH_SHORT).show();
                                         //make a tip to show data-update status
                                         getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
+                                        Intent intent = new Intent(Login.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                 });
-                                Intent intent = new Intent(Login.this, MainActivity.class);
-                                startActivity(intent);
                             }
                         }).start();
                     }

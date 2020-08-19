@@ -2,12 +2,23 @@ package com.telephone.coursetable.Fetch;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.googlecode.tesseract.android.TessBaseAPI;
 import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.GetBitmap;
 import com.telephone.coursetable.Http.Post;
 import com.telephone.coursetable.R;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class LAN {
 

@@ -54,6 +54,7 @@ import com.telephone.coursetable.Gson.ValidScoreQueryS;
 import com.telephone.coursetable.Gson.ValidScoreQuery_Data;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
+import com.telephone.coursetable.OCR.OCR;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -88,22 +89,44 @@ public class Login_vpn extends AppCompatActivity {
      * success or not, the old image will be cleared anyway.
      */
     public void changeCode(View view){
+        EditText et = (EditText)findViewById(R.id.checkcode_input);
         ImageView im = (ImageView)findViewById(R.id.imageView_checkcode);
         //clear old image
         im.setImageDrawable(getResources().getDrawable(R.drawable.network_vpn, getTheme()));
+        //clear old input
+        et.setText("");
         //set the new one
         new Thread(new Runnable() {
             @Override
             public void run() {
+                /** test */
+//                for (int i = 0; i < 2000; i++){
+//                    //get
+//                    HttpConnectionAndCode res = WAN.checkcode(Login_vpn.this, cookie_builder.toString());
+//                    Log.e("changeCode() get check code", res.code+"");
+//                    //if success, set
+//                    if (res.obj != null){
+//                        String ocr = OCR.getTextFromBitmap(Login_vpn.this, (Bitmap)res.obj, "eng");
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                im.setImageBitmap((Bitmap) (res.obj));
+//                                et.setText(ocr);
+//                            }
+//                        });
+//                    }
+//                }
                 //get
                 HttpConnectionAndCode res = WAN.checkcode(Login_vpn.this, cookie_builder.toString());
                 Log.e("changeCode() get check code", res.code+"");
                 //if success, set
                 if (res.obj != null){
+                    String ocr = OCR.getTextFromBitmap(Login_vpn.this, (Bitmap)res.obj, "telephone");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             im.setImageBitmap((Bitmap) (res.obj));
+                            et.setText(ocr);
                         }
                     });
                 }
@@ -147,13 +170,21 @@ public class Login_vpn extends AppCompatActivity {
     private void changeCheckCodeContentView(final boolean has_checkcode, String sid){
         if (has_checkcode){
             setContentView(R.layout.activity_login_vpn);
+            ((Button)findViewById(R.id.button)).setEnabled(true);
+            ((Button)findViewById(R.id.button2)).setEnabled(true);
+            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+            ((EditText)findViewById(R.id.sid_input)).setText(sid);
+            ((EditText)findViewById(R.id.sid_input)).setEnabled(false);
+            ((EditText)findViewById(R.id.passwd_input)).requestFocus();
             changeCode(null);
         }else {
             setContentView(R.layout.activity_login_vpn_no_checkcode);
+            ((Button)findViewById(R.id.button)).setEnabled(true);
+            ((Button)findViewById(R.id.button2)).setEnabled(true);
+            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+            ((EditText)findViewById(R.id.sid_input)).requestFocus();
         }
-        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-        ((Button)findViewById(R.id.button)).setEnabled(true);
-        ((Button)findViewById(R.id.button2)).setEnabled(true);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -168,19 +199,18 @@ public class Login_vpn extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (has_checkcode) {
-                            ((EditText)findViewById(R.id.sid_input)).setText(sid);
-                            ((EditText)findViewById(R.id.sid_input)).setEnabled(false);
-                            ((EditText)findViewById(R.id.checkcode_input)).setText("");
-                            ((EditText)findViewById(R.id.passwd_input)).requestFocus();
                             if (!select_userf.isEmpty()){
                                 ((EditText)findViewById(R.id.passwd_input)).setText(select_userf.get(0).password);
                                 ((EditText)findViewById(R.id.checkcode_input)).requestFocus();
+                                ((EditText)findViewById(R.id.checkcode_input)).clearFocus();
                             }
                         }else {
                             if (!ac_user.isEmpty()) {
                                 final User u = ac_user.get(0);
                                 ((AutoCompleteTextView) findViewById(R.id.sid_input)).setText(u.username);
                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(u.vpn_password);
+                                ((EditText)findViewById(R.id.sid_input)).clearFocus();
+                                ((EditText)findViewById(R.id.passwd_input)).clearFocus();
                             }
                         }
                         if (has_checkcode){
@@ -196,9 +226,11 @@ public class Login_vpn extends AppCompatActivity {
                                 public void onClick(View view) {
                                     final String sid = ((EditText)findViewById(R.id.sid_input)).getText().toString();
                                     final String vpn_pwd = ((EditText)findViewById(R.id.passwd_input)).getText().toString();
-                                    ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+                                    ((EditText)findViewById(R.id.sid_input)).clearFocus();
+                                    ((EditText)findViewById(R.id.passwd_input)).clearFocus();
                                     ((Button)findViewById(R.id.button)).setEnabled(false);
                                     ((Button)findViewById(R.id.button2)).setEnabled(false);
+                                    ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -217,14 +249,16 @@ public class Login_vpn extends AppCompatActivity {
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        ((Button)findViewById(R.id.button)).setEnabled(true);
+                                                        ((Button)findViewById(R.id.button2)).setEnabled(true);
+                                                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                                                         if (cookie != null && cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
                                                             Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
                                                         }else {
                                                             Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                            ((EditText)findViewById(R.id.passwd_input)).setText("");
+                                                            ((EditText)findViewById(R.id.passwd_input)).requestFocus();
                                                         }
-                                                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                                        ((Button)findViewById(R.id.button)).setEnabled(true);
-                                                        ((Button)findViewById(R.id.button2)).setEnabled(true);
                                                     }
                                                 });
                                             }
@@ -403,31 +437,7 @@ public class Login_vpn extends AppCompatActivity {
      * - code == other : fail
      */
     public static HttpConnectionAndCode outside_login_test(Context c, final String id, final String pwd){
-        Resources r = c.getResources();
-        String body = "username=" + id + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
-        Log.e("outside_login_test() body", body);
-        HttpConnectionAndCode login_res = Post.post(
-                r.getString(R.string.outside_login_url),
-                null,
-                r.getString(R.string.user_agent),
-                r.getString(R.string.outside_login_referer),
-                body,
-                null,
-                null,
-                r.getString(R.string.cookie_delimiter),
-                null,
-                new String[]{"gzip"},
-                false
-        );
-        if (login_res.code == 0 && login_res.resp_code == 302){
-            Log.e("outside_login_test() login", "success");
-        }else {
-            if (login_res.code == 0){
-                login_res.code = -6;
-            }
-            Log.e("outside_login_test() login", "fail" + " code: " + login_res.code);
-        }
-        return login_res;
+        return null;
     }
 
     /**
@@ -606,7 +616,6 @@ public class Login_vpn extends AppCompatActivity {
                                         public void run() {
                                             Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
                                             changeCode(null);
-                                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).setText("");
                                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
                                             if (toast_f.equals(getResources().getString(R.string.snackbar_login_fail_pwd))) {
                                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
