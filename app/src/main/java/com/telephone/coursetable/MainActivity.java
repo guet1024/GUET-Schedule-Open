@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -17,6 +16,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.ShowTableNode;
@@ -28,7 +29,6 @@ import com.telephone.coursetable.Database.UserDao;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         udao = MyApp.getCurrentAppDB().userDao();
         pdao = MyApp.getCurrentAppDB().personInfoDao();
 
-        pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
+        pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         editor = pref.edit();
 
         current_week = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(MyApp.getCurrentApp())).get(CurrentWeek.class);
@@ -182,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
                 //locate now
-                Locate locate = Login.locateNow(Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime(),
+                Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                         tdao, pref,
                         MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                        getResources().getString(R.string.hours_pref_time_start_suffix),
-                        getResources().getString(R.string.hours_pref_time_end_suffix),
-                        getResources().getString(R.string.hours_pref_time_des_suffix));
+                        getResources().getString(R.string.pref_time_start_suffix),
+                        getResources().getString(R.string.pref_time_end_suffix),
+                        getResources().getString(R.string.pref_time_des_suffix));
                 String pref_term = pref.getString(getResources().getString(R.string.pref_current_term_key), null);
                 long pref_week = pref.getLong(getResources().getString(R.string.pref_current_week_key), -1);
                 //init current term and current week
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("init || current_week.getCurrent_week().getValue()", ""+current_week.getCurrent_week().getValue());
                 //init term picker
                 List<TermInfo> termInfoList = tdao.selectAll();
-                final List<String> termNameList = new LinkedList<String>();
+                final List<String> termNameList = new LinkedList<>();
                 for (TermInfo t : termInfoList){
                     termNameList.add(t.termname);
                 }
@@ -398,12 +398,12 @@ public class MainActivity extends AppCompatActivity {
      * change the pickers to locate term and week, also change the current_term and current_week
      */
     public void returnToday(View view){
-        Locate locate = Login.locateNow(Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime(),
+        Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                 tdao, pref,
                 MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                getResources().getString(R.string.hours_pref_time_start_suffix),
-                getResources().getString(R.string.hours_pref_time_end_suffix),
-                getResources().getString(R.string.hours_pref_time_des_suffix));
+                getResources().getString(R.string.pref_time_start_suffix),
+                getResources().getString(R.string.pref_time_end_suffix),
+                getResources().getString(R.string.pref_time_des_suffix));
         String today_termname;
         String today_weeknum;
         if (locate.term == null){
@@ -511,12 +511,12 @@ public class MainActivity extends AppCompatActivity {
         });
         //show light date, weekday, time, node
         //locate now
-        Locate locate = Login.locateNow(Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime(),
+        Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                 tdao, pref,
                 MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                getResources().getString(R.string.hours_pref_time_start_suffix),
-                getResources().getString(R.string.hours_pref_time_end_suffix),
-                getResources().getString(R.string.hours_pref_time_des_suffix));
+                getResources().getString(R.string.pref_time_start_suffix),
+                getResources().getString(R.string.pref_time_end_suffix),
+                getResources().getString(R.string.pref_time_des_suffix));
         highLight(locate.weekday, locate.time, locate.month, locate.day);
     }
 

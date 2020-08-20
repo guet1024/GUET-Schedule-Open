@@ -2,6 +2,9 @@ package com.telephone.coursetable.Http;
 
 import java.net.HttpURLConnection;
 
+/**
+ * @clear
+ */
 public class HttpConnectionAndCode {
     public HttpURLConnection c;
     public int code;

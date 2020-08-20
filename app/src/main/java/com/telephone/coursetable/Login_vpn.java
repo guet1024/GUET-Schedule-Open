@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Clock.TimeAndDescription;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
@@ -167,6 +168,27 @@ public class Login_vpn extends AppCompatActivity {
         });
     }
 
+    private void clearIMAndFocus(){
+        EditText ets = (EditText)findViewById(R.id.sid_input);
+        EditText etp = (EditText)findViewById(R.id.passwd_input);
+        EditText etc = (EditText)findViewById(R.id.checkcode_input);
+        if (ets != null) {
+            ets.setEnabled(!ets.isEnabled());
+            ets.setEnabled(!ets.isEnabled());
+            ets.clearFocus();
+        }
+        if (etp != null) {
+            etp.setEnabled(!etp.isEnabled());
+            etp.setEnabled(!etp.isEnabled());
+            etp.clearFocus();
+        }
+        if (etc != null) {
+            etc.setEnabled(!etc.isEnabled());
+            etc.setEnabled(!etc.isEnabled());
+            etc.clearFocus();
+        }
+    }
+
     private void changeCheckCodeContentView(final boolean has_checkcode, String sid){
         if (has_checkcode){
             setContentView(R.layout.activity_login_vpn);
@@ -224,6 +246,7 @@ public class Login_vpn extends AppCompatActivity {
                             ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
+                                    clearIMAndFocus();
                                     final String sid = ((EditText)findViewById(R.id.sid_input)).getText().toString();
                                     final String vpn_pwd = ((EditText)findViewById(R.id.passwd_input)).getText().toString();
                                     ((EditText)findViewById(R.id.sid_input)).clearFocus();
@@ -234,7 +257,7 @@ public class Login_vpn extends AppCompatActivity {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            String cookie = vpn_login_test(Login_vpn.this, sid, vpn_pwd);
+                                            String cookie = vpn_login(Login_vpn.this, sid, vpn_pwd);
                                             if (cookie != null && !cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
                                                 cookie_builder = new StringBuilder();
                                                 cookie_builder.append(cookie);
@@ -300,15 +323,15 @@ public class Login_vpn extends AppCompatActivity {
         Resources r = c.getResources();
         String body = "us=" + sid + "&pwd=" + pwd + "&ck=" + code;
         HttpConnectionAndCode login_res = Post.post(
-                r.getString(R.string.login_url),
+                r.getString(R.string.lan_login_url),
                 null,
                 r.getString(R.string.user_agent),
-                r.getString(R.string.login_referer),
+                r.getString(R.string.lan_login_referer),
                 body,
                 cookie,
                 "}",
                 r.getString(R.string.cookie_delimiter),
-                r.getString(R.string.login_success_contain_response_text),
+                r.getString(R.string.lan_login_success_contain_response_text),
                 new String[]{"gzip"},
                 null
         );
@@ -358,7 +381,7 @@ public class Login_vpn extends AppCompatActivity {
      * - R.string.vpn_ip_forbidden : ip forbidden
      * - null : fail
      */
-    public static String vpn_login_test(Context c, final String id, String pwd){
+    public static String vpn_login(Context c, final String id, String pwd){
         Resources r = c.getResources();
         String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
         Log.e("vpn_login_test() body", body);
@@ -457,8 +480,8 @@ public class Login_vpn extends AppCompatActivity {
      * key = timeno + suffix
      * return null means not found
      */
-    public static TImeAndDescription whichTime(SharedPreferences pref, String[] timenos, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix){
-        TImeAndDescription res = null;
+    public static TimeAndDescription whichTime(SharedPreferences pref, String[] timenos, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix){
+        TimeAndDescription res = null;
         LocalTime n =  LocalTime.now();
         for (String timeno : timenos) {
             String sj = pref.getString(timeno + s_suffix, null);
@@ -469,7 +492,7 @@ public class Login_vpn extends AppCompatActivity {
                 LocalTime el = LocalTime.parse(ej, formatter);
                 if (sl.isBefore(n) || sl.equals(n)) {
                     if (el.isAfter(n) || el.equals(n)) {
-                        res = new TImeAndDescription(timeno, des);
+                        res = new TimeAndDescription(timeno, des);
                         break;
                     }
                 }
@@ -491,7 +514,7 @@ public class Login_vpn extends AppCompatActivity {
         res.weekday = LocalDateTime.now().getDayOfWeek().getValue();
         res.month = LocalDateTime.now().getMonthValue();
         res.day = LocalDateTime.now().getDayOfMonth();
-        TImeAndDescription which_time_res = whichTime(pref, times, server_hours_time_format, pref_s_suffix, pref_e_suffix, pref_d_suffix);
+        TimeAndDescription which_time_res = whichTime(pref, times, server_hours_time_format, pref_s_suffix, pref_e_suffix, pref_d_suffix);
         if (which_time_res != null && (!which_term_res.isEmpty())){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
@@ -521,14 +544,14 @@ public class Login_vpn extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
+        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
         super.onStop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), updating).commit();
+        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), updating).commit();
     }
 
     /**
@@ -632,7 +655,7 @@ public class Login_vpn extends AppCompatActivity {
                                 final String cookie_after_login = cookie_before_login + getResources().getString(R.string.cookie_delimiter) + login_res.cookie;
                                 cookie_builder = new StringBuilder();
                                 cookie_builder.append(cookie_after_login);
-                                String vpn_login_res = vpn_login_test(Login_vpn.this, sid, vpn_pwd);
+                                String vpn_login_res = vpn_login(Login_vpn.this, sid, vpn_pwd);
                                 if (vpn_login_res == null){
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -660,7 +683,7 @@ public class Login_vpn extends AppCompatActivity {
                                     });
                                     return;
                                 }
-                                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name), MODE_PRIVATE);
+                                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
                                 SharedPreferences.Editor editor = hours_pref.edit();
                                 udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
                                 udao.disableAllUser();
@@ -780,12 +803,12 @@ public class Login_vpn extends AppCompatActivity {
                                         int index = memo.indexOf('-');
                                         String stime = memo.substring(0, index);
                                         String etime = memo.substring(index + 1);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_start_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_end_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_des_suffix), des);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_start_backup_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_end_backup_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.hours_pref_time_des_backup_suffix), des);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_start_suffix), stime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_end_suffix), etime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_des_suffix), des);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_start_backup_suffix), stime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_end_backup_suffix), etime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_des_backup_suffix), des);
                                     }
                                     editor.commit();
                                 }
@@ -793,9 +816,9 @@ public class Login_vpn extends AppCompatActivity {
                                 long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
                                 DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
                                 Locate locate_res = locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
-                                        getResources().getString(R.string.hours_pref_time_start_suffix),
-                                        getResources().getString(R.string.hours_pref_time_end_suffix),
-                                        getResources().getString(R.string.hours_pref_time_des_suffix));
+                                        getResources().getString(R.string.pref_time_start_suffix),
+                                        getResources().getString(R.string.pref_time_end_suffix),
+                                        getResources().getString(R.string.pref_time_des_suffix));
                                 if (locate_res.term != null){
                                     Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
                                 }else{

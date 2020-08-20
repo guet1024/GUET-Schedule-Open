@@ -1,6 +1,7 @@
 package com.telephone.coursetable;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.room.Room;
 
@@ -42,6 +43,7 @@ public class MyApp extends Application {
         super.onCreate();
         app = this;
         db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").build();
+        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
     }
 
     public static MyApp getCurrentApp(){

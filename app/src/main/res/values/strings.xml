@@ -28,7 +28,7 @@
     <string name="picker_ok_btn">确定</string>
     <string name="picker_cancel_btn">取消</string>
 
-    <string name="login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
+    <string name="lan_login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
 
 
 
@@ -40,7 +40,7 @@
     <string name="get_student_url">http://bkjw.guet.edu.cn/student/StuInfo</string>
     <string name="get_graduation_score_url">http://bkjw.guet.edu.cn/student/Getyxxf</string>
 
-    <string name="login_referer">http://bkjw.guet.edu.cn/</string>
+    <string name="lan_login_referer">http://bkjw.guet.edu.cn/</string>
     <string name="get_checkcode_referer">http://bkjw.guet.edu.cn/</string>
     <string name="get_person_referer">http://bkjw.guet.edu.cn</string>
     <string name="get_hours_referer">http://bkjw.guet.edu.cn</string>
@@ -50,8 +50,8 @@
     <string name="get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
 
 
-    <string name="outside_login_url">http://172.16.1.99/student/public/login.asp</string>
-    <string name="outside_login_referer">http://172.16.1.99/student/public/login.asp</string>
+    <string name="lan_outside_login_url">http://172.16.1.99/student/public/login.asp</string>
+    <string name="lan_outside_login_referer">http://172.16.1.99/student/public/login.asp</string>
 
     <string name="vpn_get_ticket_url">https://v.guet.edu.cn/</string>
     <string name="vpn_login_url">https://v.guet.edu.cn/do-login</string>
@@ -65,7 +65,7 @@
 
 
 
-    <string name="login_success_contain_response_text">\"success\":true</string>
+    <string name="lan_login_success_contain_response_text">\"success\":true</string>
     <string name="get_person_success_contain_response_text">\"success\":true</string>
     <string name="get_terms_success_contain_response_text">\"success\":true</string>
     <string name="get_table_success_contain_response_text">\"success\":true</string>
@@ -99,8 +99,8 @@
 
     <string name="title">课程表</string>
     <string name="title_login">同步</string>
-    <string name="title_login_updating">同步 | Updating...</string>
-    <string name="title_login_updated">同步 | Success</string>
+    <string name="title_login_updating">同步 | 同步中...</string>
+    <string name="title_login_updated">同步 | 同步成功</string>
     <string name="Hour_save">保存</string>
     <string name="Hour_restore">重置</string>
     <string name="Hour_List">时间表</string>
@@ -109,17 +109,17 @@
     <string name="ts_datetime_format">yyyy-MM-dd HH:mm:ss</string>
     <string name="server_hours_time_format">H:mm</string>
 
-    <string name="hours_preference_file_name">com.telephone.coursetable.preference.hours</string>
+    <string name="preference_file_name">com.telephone.coursetable.preference</string>
 
-    <string name="hours_pref_time_start_suffix">S</string>
-    <string name="hours_pref_time_end_suffix">E</string>
-    <string name="hours_pref_time_des_suffix">D</string>
-    <string name="hours_pref_time_start_backup_suffix">SB</string>
-    <string name="hours_pref_time_end_backup_suffix">EB</string>
-    <string name="hours_pref_time_des_backup_suffix">DB</string>
+    <string name="pref_time_start_suffix">S</string>
+    <string name="pref_time_end_suffix">E</string>
+    <string name="pref_time_des_suffix">D</string>
+    <string name="pref_time_start_backup_suffix">SB</string>
+    <string name="pref_time_end_backup_suffix">EB</string>
+    <string name="pref_time_des_backup_suffix">DB</string>
 
-    <string name="no_user_title_suffix">" | Please Login"</string>
-    <string name="updating_user_title_suffix">" | Updating..."</string>
+    <string name="no_user_title_suffix">" | 未登录"</string>
+    <string name="updating_user_title_suffix">" | 同步中..."</string>
     <string name="ok_user_title_suffix">同步</string>
     <string name="ok_user_title_prefix">"  "</string>
     <string name="term_vacation">vacation</string>

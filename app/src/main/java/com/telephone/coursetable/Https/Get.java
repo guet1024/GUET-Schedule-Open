@@ -30,6 +30,7 @@ public class Get {
      * - -2 cannot close input stream
      * - -5 cannot get response
      * - -6 response check fail
+     * @clear
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
                                             @Nullable final String[] parms,

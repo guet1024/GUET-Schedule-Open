@@ -28,6 +28,7 @@ public class Post {
      * - -4 POST send body fail
      * - -5 cannot get response
      * - -6 response check fail
+     * @clear
      */
     public static HttpConnectionAndCode post(@NonNull final String u,
                                              @Nullable final String[] parms,

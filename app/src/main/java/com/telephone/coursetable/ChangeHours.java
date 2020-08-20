@@ -1,27 +1,22 @@
 package com.telephone.coursetable;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.telephone.coursetable.Gson.Hours;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +174,7 @@ public class ChangeHours extends AppCompatActivity {
                 R.id.editTextTime8,
                 R.id.editTextTime9
         };
-        sharedPreferences = getSharedPreferences(getResources().getString(R.string.hours_preference_file_name),MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getResources().getString(R.string.preference_file_name),MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         snack_view = (TextView)findViewById(R.id.textView10);
@@ -189,9 +184,9 @@ public class ChangeHours extends AppCompatActivity {
         List<String> des=new ArrayList<String>();
         int i =0;
         for(String time: MyApp.times){
-            String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
-            String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
-            String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
+            String skey = time + getResources().getString(R.string.pref_time_start_suffix);
+            String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
+            String dkey = time + getResources().getString(R.string.pref_time_des_suffix);
             starttime.add( sharedPreferences.getString(skey,null));
             endtime.add( sharedPreferences.getString(ekey,null));
             des.add( sharedPreferences.getString(dkey,null));
@@ -218,10 +213,10 @@ public class ChangeHours extends AppCompatActivity {
                 List<String> des=new ArrayList<String>();
                 int i=0;
                 for(String time: MyApp.times){
-                    String sbkey = time + getResources().getString(R.string.hours_pref_time_start_backup_suffix);
-                    String ebkey = time + getResources().getString(R.string.hours_pref_time_end_backup_suffix);
-                    String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
-                    String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
+                    String sbkey = time + getResources().getString(R.string.pref_time_start_backup_suffix);
+                    String ebkey = time + getResources().getString(R.string.pref_time_end_backup_suffix);
+                    String skey = time + getResources().getString(R.string.pref_time_start_suffix);
+                    String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
                     String sbtime = sharedPreferences.getString(sbkey, null);
                     String ebtime = sharedPreferences.getString(ebkey, null);
                     editor.putString(skey, sbtime);
@@ -331,9 +326,9 @@ public class ChangeHours extends AppCompatActivity {
                         }
                         int j =0;
                         for(String time: MyApp.times){
-                            String skey = time + getResources().getString(R.string.hours_pref_time_start_suffix);
-                            String ekey = time + getResources().getString(R.string.hours_pref_time_end_suffix);
-                            String dkey = time + getResources().getString(R.string.hours_pref_time_des_suffix);
+                            String skey = time + getResources().getString(R.string.pref_time_start_suffix);
+                            String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
+                            String dkey = time + getResources().getString(R.string.pref_time_des_suffix);
                             editor.putString(skey,starttime.get(j));
                             editor.putString(ekey,endtime.get(j));
                             j++;
