@@ -43,7 +43,7 @@ import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hours;
 import com.telephone.coursetable.Gson.LoginResponse;
-import com.telephone.coursetable.Gson.Person;
+import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.Table;
@@ -62,8 +62,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Login extends AppCompatActivity {
-
-    private boolean updating = false;
 
     private StringBuilder cookie_builder = null;
 
@@ -115,20 +113,28 @@ public class Login extends AppCompatActivity {
      * 1. get all user names in the database
      * 2. make an ArrayAdapter with these user names, set it as the adapter of sid input box
      * 3. set OnDismissListener of sid input box:
-     *      1. get the user with the sid in the sid input box in the database, if exist:
+     *      1. call {@link #clearAllIMAndFocus()}
+     *      2. get the user with the sid in the sid input box in the database, if exist:
      *          1. fill its password in the password input box
+     *          2. set focus to check-code input box
      * @clear
      */
     private void updateUserNameAutoFill(){
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
-            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnDismissListener(() -> new Thread(() -> {
-                final List<User> userSelected = udao.selectUser(((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString());
-                if (!userSelected.isEmpty()) {
-                    runOnUiThread(() -> ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).password));
-                }
-            }).start());
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnDismissListener(() -> {
+                clearAllIMAndFocus();
+                new Thread(() -> {
+                    final List<User> userSelected = udao.selectUser(((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString());
+                    if (!userSelected.isEmpty()) {
+                        runOnUiThread(() -> {
+                            ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).password);
+                            setFocusToEditText((EditText)findViewById(R.id.checkcode_input));
+                        });
+                    }
+                }).start();
+            });
         });
     }
 
@@ -157,6 +163,117 @@ public class Login extends AppCompatActivity {
             builder.setTitle(title);
         }
         return builder.create();
+    }
+
+    /**
+     * @ui
+     * 1. disable buttons, check-code-image-view
+     * 2. show progress-bar
+     * @clear
+     */
+    private void lock(){
+        ((Button)findViewById(R.id.button)).setEnabled(false);
+        ((Button)findViewById(R.id.button2)).setEnabled(false);
+        ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(false);
+        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * @ui
+     * @param clickable if enable buttons and check-code-image-view or not
+     * 1. enable/disable(according to clickable) buttons and check-code-image-view
+     * 2. hide progress-bar
+     * @clear
+     */
+    private void unlock(boolean clickable){
+        ((Button)findViewById(R.id.button)).setEnabled(clickable);
+        ((Button)findViewById(R.id.button2)).setEnabled(clickable);
+        ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(clickable);
+        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * @ui
+     * @param et the EditText
+     * 1. if the EditText is not null:
+     *      1. set focus to the EditText
+     *      2. if the EditText is not empty:
+     *           1. clear focus of the EditText
+     * @clear
+     */
+    private void setFocusToEditText(EditText et){
+        if (et != null) {
+            et.requestFocus();
+            if (!et.getText().toString().isEmpty()) {
+                et.clearFocus();
+            }
+        }
+    }
+
+    /**
+     * @ui
+     * @param et the EditText
+     * 1. if the EditText is not null:
+     *      1. set focus to the EditText
+     * @clear
+     */
+    private void setFocusToEditText_Force(EditText et){
+        if (et != null) {
+            et.requestFocus();
+        }
+    }
+
+    /**
+     * @ui
+     * 1. for each input box, if it is not null:
+     *      1. clear IM on it
+     *      2. clear focus of it
+     * @clear
+     */
+    private void clearAllIMAndFocus(){
+        EditText ets = (EditText)findViewById(R.id.sid_input);
+        EditText etp = (EditText)findViewById(R.id.passwd_input);
+        EditText etc = (EditText)findViewById(R.id.checkcode_input);
+        EditText eta = (EditText)findViewById(R.id.aaw_passwd_input);
+        EditText etv = (EditText)findViewById(R.id.vpn_passwd_input);
+        if (ets != null) {
+            ets.setEnabled(!ets.isEnabled());
+            ets.setEnabled(!ets.isEnabled());
+            ets.clearFocus();
+        }
+        if (etp != null) {
+            etp.setEnabled(!etp.isEnabled());
+            etp.setEnabled(!etp.isEnabled());
+            etp.clearFocus();
+        }
+        if (etc != null) {
+            etc.setEnabled(!etc.isEnabled());
+            etc.setEnabled(!etc.isEnabled());
+            etc.clearFocus();
+        }
+        if (eta != null) {
+            eta.setEnabled(!eta.isEnabled());
+            eta.setEnabled(!eta.isEnabled());
+            eta.clearFocus();
+        }
+        if (etv != null) {
+            etv.setEnabled(!etv.isEnabled());
+            etv.setEnabled(!etv.isEnabled());
+            etv.clearFocus();
+        }
+    }
+
+    /**
+     * @non-ui
+     * 1. delete all user-related data from database(not including user login information)
+     * @clear
+     */
+    private void deleteOldDataFromDatabase(){
+        gdao.deleteAll();
+        cdao.deleteAll();
+        tdao.deleteAll();
+        pdao.deleteAll();
+        gsdao.deleteAll();
     }
 
     /**
@@ -260,23 +377,20 @@ public class Login extends AppCompatActivity {
     /**
      * @ui
      * 1. set content view
-     * 2. enable buttons and check-code-image-view, hide progressbar, set focus to sid input box
-     * 3. call {@link #changeCode(View)}
-     * 4. call {@link #updateUserNameAutoFill()}
-     * 5. get activated user from database, if exist:
+     * 2. call {@link #unlock(boolean)} with true
+     * 3. set focus to sid input box
+     * 4. call {@link #changeCode(View)}
+     * 5. call {@link #updateUserNameAutoFill()}
+     * 6. get activated user from database, if exist:
      *      1. fill its username in sid input box
      *      2. fill its password in password input box
      *      3. set focus to check-code input box
-     *      4. clear focus of check-code input box
      * @clear
      */
     private void initContentView(){
         setContentView(R.layout.activity_login);
-        ((Button)findViewById(R.id.button)).setEnabled(true);
-        ((Button)findViewById(R.id.button2)).setEnabled(true);
-        ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-        ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
+        unlock(true);
+        setFocusToEditText((EditText)findViewById(R.id.sid_input));
         changeCode(null);
         new Thread((Runnable) () -> {
             updateUserNameAutoFill();
@@ -287,8 +401,7 @@ public class Login extends AppCompatActivity {
                 runOnUiThread((Runnable) () -> {
                     ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText(u.username);
                     ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText(u.password);
-                    ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
-                    ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
+                    setFocusToEditText((EditText)findViewById(R.id.checkcode_input));
                 });
             }
         }).start();
@@ -327,8 +440,9 @@ public class Login extends AppCompatActivity {
 
     /**
      * @ui
-     * 1. get the username in the sid input box
-     * 2. show an AlertDialog to warn user:
+     * 1. call {@link #clearAllIMAndFocus()}
+     * 2. get the username in the sid input box
+     * 3. show an AlertDialog to warn user:
      *      - if press yes, a new thread will be started:
      *          1. try to delete the user from the database with the username in the sid input box
      *          2. call {@link #updateUserNameAutoFill()}
@@ -340,6 +454,7 @@ public class Login extends AppCompatActivity {
      */
     public void deleteUser(View view){
         final String NAME = "deleteUser()";
+        clearAllIMAndFocus();
         String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
         getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
@@ -349,7 +464,7 @@ public class Login extends AppCompatActivity {
                     runOnUiThread((Runnable) () -> {
                         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
                         ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText("");
-                        ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
+                        setFocusToEditText((EditText)findViewById(R.id.sid_input));
                         changeCode(null);
                     });
                 }).start(),
@@ -358,130 +473,155 @@ public class Login extends AppCompatActivity {
     }
 
     /**
-     * when user clicks the login btn, read the information in all the input boxes, then create a new
-     * thread to do these things:
-     *  1. use the information inputted and the cookie "cookie_builder" to login by login().
-     *  2. if fail due to ck, toast @toast_login_fail_ck, clear the ck input box, stop here.
-     *  3. if fail due to pwd, toast @toast_login_fail_pwd, clear the pwd input box, stop here.
-     *  4. if fail due to other reason, toast @toast_login_fail + " - " + login_res.code, stop here.
-     *  5. if success, toast @toast_login_success, and continue......
+     * @ui
+     * 1. call {@link #clearAllIMAndFocus()}
+     * 2. get student id, credit system password, credit system check-code from input box
+     * 3. get cookie before logging in the credit system
+     * 4. get a dialog View
+     * 5. get an AlertDialog:
+     *      - Message : null
+     *      - View : the View obtained before
+     *      - Title : the String specified in resources file
+     *      - Press-yes :
+     *          1. call {@link #clearAllIMAndFocus()}
+     *          2. call {@link #lock()}
+     *          3. get aaw password, vpn password from input box
+     *          4. start a new thread:
+     *              1. call {@link #login(Context, String, String, String, String, StringBuilder)} , passing {@link #cookie_builder}
+     *                  - if credit system login fail:
+     *                      1. show tip snack-bar
+     *                      2. clear corresponding input box(except check-code input box), set focus to it(including check-code input box)
+     *                      3. call {@link #unlock(boolean)} with true
+     *                      4. end this thread
+     *              2. call {@link #vpn_login_test(Context, String, String)}
+     *                  - if vpn login test fail:
+     *                      1. show tip snack-bar
+     *                      2. call {@link #unlock(boolean)} with true
+     *                      3. end this thread
+     *              3. call {@link #outside_login_test(Context, String, String)}
+     *                  - if outside login test fail:
+     *                      1. show tip snack-bar
+     *                      2. call {@link #unlock(boolean)} with true
+     *                      3. end this thread
+     *              4. get cookie after successfully logging in the credit system
+     *              5. get shared preference and its editor
+     *              6. insert/replace new user into database
+     *              ******************************* UPDATE DATA START *******************************
+     *              7. deactivate all user in database
+     *              8. clear shared preference, put <{@link R.string#pref_user_updating_key} : true> into shared preference
+     *              9. commit shared preference
+     *              10. show tip snack-bar, change title
+     *              11. call {@link #deleteOldDataFromDatabase()}
      */
     public void login_thread(final View view){
+        final String NAME = "login_thread()";
+        /** call {@link #clearAllIMAndFocus()} */
+        clearAllIMAndFocus();
+        /** get student id, credit system password, credit system check-code from input box */
         final String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
         final String pwd = ((AutoCompleteTextView)findViewById(R.id.passwd_input)).getText().toString();
         final String ck = ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).getText().toString();
+        /** get cookie before logging in the credit system */
         final String cookie_before_login = cookie_builder.toString();
+        /** get a dialog View */
         View extra_pwd_dialog_layout = getLayoutInflater().inflate(R.layout.extra_password, null);
-        AlertDialog extra_pwd_dialog = getAlertDialog("",
+        /** get an AlertDialog */
+        AlertDialog extra_pwd_dialog = getAlertDialog(null,
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> {
-                    ((AutoCompleteTextView)findViewById(R.id.sid_input)).clearFocus();
-                    ((AutoCompleteTextView)findViewById(R.id.passwd_input)).clearFocus();
-                    ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
-                    ((Button)findViewById(R.id.button)).setEnabled(false);
-                    ((Button)findViewById(R.id.button2)).setEnabled(false);
-                    ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(false);
-                    ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+                    /** call {@link #clearAllIMAndFocus()} */
+                    clearAllIMAndFocus();
+                    /** call {@link #lock()} */
+                    lock();
+                    /** get aaw password, vpn password from input box */
                     final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
                     final String vpn_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).getText().toString();
+                    /** start a new thread */
                     new Thread((Runnable) () -> {
+                        /** call {@link #login(Context, String, String, String, String, StringBuilder)} , passing {@link #cookie_builder} */
                         HttpConnectionAndCode login_res = login(Login.this, sid, pwd, ck, cookie_before_login, cookie_builder);
+                        /** if credit system login fail */
                         if (login_res.code != 0){
-                            String toast;
+                            String tip;
                             if (login_res.comment != null && login_res.comment.contains("验证码")){
-                                toast = getResources().getString(R.string.snackbar_login_fail_ck);
+                                tip = getResources().getString(R.string.lan_snackbar_login_fail_ck);
                             }else if (login_res.comment != null && login_res.comment.contains("密码")){
-                                toast = getResources().getString(R.string.snackbar_login_fail_pwd);
+                                tip = getResources().getString(R.string.lan_snackbar_login_fail_pwd);
                             }else {
-                                toast = getResources().getString(R.string.snackbar_login_fail) + " : " + login_res.comment + "(" + login_res.code + ")";
+                                tip = getResources().getString(R.string.lan_snackbar_login_fail) + " : " + login_res.comment + " (" + login_res.code + ")";
                             }
-                            final String toast_f = toast;
+                            final String tip_f = tip;
                             runOnUiThread((Runnable) () -> {
-                                Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
-                                changeCode(null);
-                                ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
-                                ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).clearFocus();
-                                if (toast_f.equals(getResources().getString(R.string.snackbar_login_fail_pwd))) {
-                                    ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
-                                    ((AutoCompleteTextView) findViewById(R.id.passwd_input)).requestFocus();
+                                /** show tip snack-bar */
+                                Snackbar.make(view, tip_f, BaseTransientBottomBar.LENGTH_SHORT).show();
+                                /** clear corresponding input box(except check-code input box), set focus to it(including check-code input box) */
+                                if (tip_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_pwd))) {
+                                    ((EditText)findViewById(R.id.passwd_input)).setText("");
+                                    setFocusToEditText((EditText)findViewById(R.id.passwd_input));
+                                }else if (tip_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_ck))){
+                                    setFocusToEditText_Force((EditText)findViewById(R.id.checkcode_input));
                                 }
-                                ((Button)findViewById(R.id.button)).setEnabled(true);
-                                ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                                /** call {@link #unlock(boolean)} with true */
+                                unlock(true);
                             });
+                            /** end this thread */
                             return;
                         }
+                        /** call {@link #vpn_login_test(Context, String, String)} */
                         String vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
-                        if (vpn_login_res == null || vpn_login_res.equals(getResources().getString(R.string.vpn_ip_forbidden))){
+                        /** if vpn login test fail */
+                        if (vpn_login_res == null || vpn_login_res.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
                             runOnUiThread((Runnable) () -> {
-                                if (vpn_login_res != null && vpn_login_res.equals(getResources().getString(R.string.vpn_ip_forbidden))){
-                                    Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                /** show tip snack-bar */
+                                if (vpn_login_res != null && vpn_login_res.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
+                                    Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
                                 }else {
-                                    Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                    Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
                                 }
-                                ((Button)findViewById(R.id.button)).setEnabled(true);
-                                ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                                /** call {@link #unlock(boolean)} with true */
+                                unlock(true);
                             });
+                            /** end this thread */
                             return;
                         }
+                        /** call {@link #outside_login_test(Context, String, String)} */
                         HttpConnectionAndCode outside_login_res = outside_login_test(Login.this, sid, aaw_pwd);
+                        /** if outside login test fail */
                         if (outside_login_res.code != 0){
                             runOnUiThread((Runnable) () -> {
-                                Snackbar.make(view, getResources().getString(R.string.snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                ((Button)findViewById(R.id.button)).setEnabled(true);
-                                ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                                /** show tip snack-bar */
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                /** call {@link #unlock(boolean)} with true */
+                                unlock(true);
                             });
+                            /** end this thread */
                             return;
                         }
-                        String cookie_after_login = cookie_builder.toString();
-                        SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
-                        SharedPreferences.Editor editor = hours_pref.edit();
+                        /** get cookie after successfully logging in the credit system */
+                        final String cookie_after_login = cookie_builder.toString();
+                        /** get shared preference and its editor */
+                        final SharedPreferences shared_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
+                        final SharedPreferences.Editor editor = shared_pref.edit();
+                        /** insert/replace new user into database */
                         udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
-                        udao.disableAllUser();
-                        editor.clear();
-                        updating = true;
-                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
-                        editor.commit();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-//                                      Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
-                                Snackbar.make(view, getResources().getString(R.string.toast_login_success), BaseTransientBottomBar.LENGTH_LONG).show();
-                                //make a tip to show data-update status
-                                getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updating));
-                            }
-                        });
-                        cdao.deleteAll();
-                        gdao.deleteAll();
-                        tdao.deleteAll();
-                        pdao.deleteAll();
-                        gsdao.deleteAll();
                         /**
                          * ******************************* UPDATE DATA START *******************************
                          */
-                        //update person info
-                        HttpConnectionAndCode getPersonInfo_res = LAN.personInfo(Login.this, cookie_after_login);
-                        Log.e("login_thread() get person info", getPersonInfo_res.code+"");
-                        HttpConnectionAndCode getStudentInfo_res = LAN.studentInfo(Login.this, cookie_after_login);
-                        Log.e("login_thread() get student info", getStudentInfo_res.code+"");
-                        //if success, insert data into database
-                        if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
-                            Person person = new Gson().fromJson(getPersonInfo_res.comment, Person.class);
-                            PersonInfo p = person.getData();
-                            StudentInfo studentInfo = new Gson().fromJson(getStudentInfo_res.comment, StudentInfo.class);
-                            //extract information and then insert into database
-                            pdao.insert(new com.telephone.coursetable.Database.PersonInfo(p.getStid(), p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
-                                    p.getEngname(),p.getSex(),p.getPass(),p.getDegree(),p.getDirection(),p.getChangetype(),p.getSecspno(),p.getClasstype(),p.getIdcard(),
-                                    p.getStype(),p.getXjzt(),p.getChangestate(),p.getLqtype(),p.getZsjj(),p.getNation(),p.getPolitical(),p.getNativeplace(),
-                                    p.getBirthday(),p.getEnrolldate(),p.getLeavedate(),p.getDossiercode(),p.getHostel(),p.getHostelphone(),p.getPostcode(),p.getAddress(),
-                                    p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
-                                    p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno(),
-                                    studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
-                        }
+                        /** deactivate all user in database */
+                        udao.disableAllUser();
+                        /** clear shared preference, put <{@link R.string#pref_user_updating_key} : true> into shared preference */
+                        editor.clear();
+                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), true);
+                        /** commit shared preference */
+                        editor.commit();
+                        /** show tip snack-bar, change title */
+                        runOnUiThread(() -> {
+                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
+                            getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
+                        });
+                        /** call {@link #deleteOldDataFromDatabase()} */
+                        deleteOldDataFromDatabase();
+
+
                         //update graduation score
                         HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login.this, cookie_after_login);
                         Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
@@ -570,7 +710,7 @@ public class Login extends AppCompatActivity {
                         //locate today
                         long nts = Clock.nowTimeStamp();
                         DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
-                        Locate locate_res = Clock.locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
+                        Locate locate_res = Clock.locateNow(nts, tdao, shared_pref, MyApp.times, server_hours_time_formatter,
                                 getResources().getString(R.string.pref_time_start_suffix),
                                 getResources().getString(R.string.pref_time_end_suffix),
                                 getResources().getString(R.string.pref_time_des_suffix));
@@ -590,8 +730,7 @@ public class Login extends AppCompatActivity {
                          */
                         editor.commit();
                         udao.activateUser(sid);
-                        updating = false;
-                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
+                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
                         editor.commit();
                         com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
                         Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);

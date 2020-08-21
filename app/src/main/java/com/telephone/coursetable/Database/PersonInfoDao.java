@@ -7,6 +7,9 @@ import androidx.room.Query;
 
 import java.util.List;
 
+/**
+ * @clear
+ */
 @Dao
 public interface PersonInfoDao {
     @Query("delete from PersonInfo")

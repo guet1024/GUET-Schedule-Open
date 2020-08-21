@@ -28,30 +28,55 @@
     <string name="picker_ok_btn">确定</string>
     <string name="picker_cancel_btn">取消</string>
 
+
+
+
     <string name="lan_login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
-
-
-
-    <string name="get_checkcode_url">http://bkjw.guet.edu.cn/login/GetValidateCode?id=0.7117051736083029</string>
-    <string name="get_terms_url">http://bkjw.guet.edu.cn/Comm/GetTerm</string>
-    <string name="get_table_url">http://bkjw.guet.edu.cn/student/getstutable</string>
-    <string name="get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
-    <string name="get_hours_url">http://bkjw.guet.edu.cn/comm/gethours</string>
-    <string name="get_student_url">http://bkjw.guet.edu.cn/student/StuInfo</string>
-    <string name="get_graduation_score_url">http://bkjw.guet.edu.cn/student/Getyxxf</string>
-
     <string name="lan_login_referer">http://bkjw.guet.edu.cn/</string>
-    <string name="get_checkcode_referer">http://bkjw.guet.edu.cn/</string>
-    <string name="get_person_referer">http://bkjw.guet.edu.cn</string>
-    <string name="get_hours_referer">http://bkjw.guet.edu.cn</string>
-    <string name="get_terms_referer">http://bkjw.guet.edu.cn</string>
-    <string name="get_table_referer">http://bkjw.guet.edu.cn</string>
-    <string name="get_student_referer">http://bkjw.guet.edu.cn</string>
-    <string name="get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
-
+    <string name="lan_login_success_contain_response_text">\"success\":true</string>
 
     <string name="lan_outside_login_url">http://172.16.1.99/student/public/login.asp</string>
     <string name="lan_outside_login_referer">http://172.16.1.99/student/public/login.asp</string>
+
+    <string name="lan_snackbar_login_fail">登录失败, 检查校园网连接后重试</string>
+    <string name="lan_snackbar_login_fail_ck">验证码错误，登录失败</string>
+    <string name="lan_snackbar_login_fail_pwd">密码错误，登录失败</string>
+
+    <string name="lan_snackbar_vpn_test_login_fail_ip">WebVPN登录验证失败次数过多，请稍后重试</string>
+    <string name="lan_snackbar_vpn_test_login_fail">WebVPN登录验证失败</string>
+    <string name="lan_snackbar_outside_test_login_fail">教务网站登录验证失败</string>
+
+    <string name="lan_snackbar_data_updating">登录成功，正在同步数据...请勿离开</string>
+
+    <string name="lan_title_login_updating">同步 | 同步中...</string>
+
+    <string name="lan_get_checkcode_url">http://bkjw.guet.edu.cn/login/GetValidateCode?id=0.7117051736083029</string>
+    <string name="lan_get_checkcode_referer">http://bkjw.guet.edu.cn/</string>
+    <string name="lan_get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
+    <string name="lan_get_person_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_person_success_contain_response_text">\"success\":true</string>
+    <string name="lan_get_terms_url">http://bkjw.guet.edu.cn/Comm/GetTerm</string>
+    <string name="lan_get_terms_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_terms_success_contain_response_text">\"success\":true</string>
+    <string name="lan_get_table_url">http://bkjw.guet.edu.cn/student/getstutable</string>
+    <string name="lan_get_table_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_table_success_contain_response_text">\"success\":true</string>
+    <string name="lan_get_hours_url">http://bkjw.guet.edu.cn/comm/gethours</string>
+    <string name="lan_get_hours_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_hours_success_contain_response_text">\"success\":true</string>
+    <string name="lan_get_student_url">http://bkjw.guet.edu.cn/student/StuInfo</string>
+    <string name="lan_get_student_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_student_success_contain_response_text">\"name\"</string>
+    <string name="lan_get_graduation_score_url">http://bkjw.guet.edu.cn/student/Getyxxf</string>
+    <string name="lan_get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
+    <string name="lan_get_graduation_score_success_contain_response_text">\"success\":true</string>
+
+
+
+
+
+
+
 
     <string name="vpn_get_ticket_url">https://v.guet.edu.cn/</string>
     <string name="vpn_login_url">https://v.guet.edu.cn/do-login</string>
@@ -65,27 +90,14 @@
 
 
 
-    <string name="lan_login_success_contain_response_text">\"success\":true</string>
-    <string name="get_person_success_contain_response_text">\"success\":true</string>
-    <string name="get_terms_success_contain_response_text">\"success\":true</string>
-    <string name="get_table_success_contain_response_text">\"success\":true</string>
-    <string name="get_hours_success_contain_response_text">\"success\":true</string>
-    <string name="get_graduation_score_success_contain_response_text">\"success\":true</string>
-    <string name="get_student_success_contain_response_text">\"name\"</string>
     <string name="vpn_login_success_contain_response_text">\"success\": true</string>
 
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
 
-    <string name="toast_login_success">登录成功，正在同步数据...请勿离开</string>
     <string name="toast_update_success">数据同步成功！</string>
 
-    <string name="snackbar_login_fail">登录失败, 检查校园网连接后重试</string>
+
     <string name="snackbar_login_fail_vpn">登录失败, 检查网络连接后重试</string>
-    <string name="snackbar_login_fail_ck">验证码错误，登录失败</string>
-    <string name="snackbar_login_fail_pwd">密码错误，登录失败</string>
-    <string name="snackbar_vpn_test_login_fail">WebVPN登录验证失败</string>
-    <string name="snackbar_vpn_test_login_fail_ip">WebVPN登录验证失败次数过多，请稍后重试</string>
-    <string name="snackbar_outside_test_login_fail">教务网站登录验证失败</string>
 
     <string name="cookie_delimiter">"; "</string>
     <string name="ok_btn_text_zhcn">确定</string>
@@ -99,7 +111,6 @@
 
     <string name="title">课程表</string>
     <string name="title_login">同步</string>
-    <string name="title_login_updating">同步 | 同步中...</string>
     <string name="title_login_updated">同步 | 同步成功</string>
     <string name="Hour_save">保存</string>
     <string name="Hour_restore">重置</string>
@@ -127,5 +138,5 @@
     <string name="pref_current_week_key">current_week</string>
     <string name="pref_user_updating_key">updating</string>
     <string name="extra_password_title">还差一步  😋</string>
-    <string name="vpn_ip_forbidden">ip</string>
+    <string name="wan_vpn_ip_forbidden">ip</string>
 </resources>

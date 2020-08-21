@@ -1,5 +1,8 @@
 package com.telephone.coursetable.Gson;
 
+/**
+ * @clear
+ */
 public class PersonInfo {
     private String stid; //学号
     private long grade; //年级

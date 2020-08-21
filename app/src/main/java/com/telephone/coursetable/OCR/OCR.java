@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class OCR {
+
+    /**
+     * get the brightness of a pixel of a specified image
+     * @clear
+     */
     private static int getBright(Bitmap bm, int w, int h){
         if(bm == null) return -1;
         int width = bm.getWidth();
@@ -33,6 +38,10 @@ public class OCR {
         return (int)(0.299 * r + 0.587 * g + 0.114 * b);
     }
 
+    /**
+     * determine whether a pixel of the specified image is noise
+     * @clear
+     */
     private static boolean isNoise(Bitmap bm, int w, int h){
         if(bm == null) return false;
         int width = bm.getWidth();
@@ -44,7 +53,13 @@ public class OCR {
         return brights > 180;
     }
 
-    private static Bitmap processBitmap(Context c, Bitmap bm){
+    /**
+     * process a bitmap:
+     *      1. remove noise
+     *      2. binary
+     * @clear
+     */
+    private static Bitmap processBitmap(Bitmap bm){
         if (bm != null){
             Bitmap res_bitmap = bm.copy(bm.getConfig(), true);
             //remove noise
@@ -65,22 +80,19 @@ public class OCR {
                     }
                 }
             }
-            /** save image file */
-//            try {
-//                File file = new File(c.getExternalFilesDir("tessdata").toString() + File.separator + Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(c.getResources().getString(R.string.ts_datetime_format)))).getTime() + ".jpg");
-//                FileOutputStream out = null;
-//                out = new FileOutputStream(file);
-//                res_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//                out.flush();
-//                out.close();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             return res_bitmap;
         }
         return null;
     }
 
+    /**
+     * 1. if traineddata file of specified language does not exist on sdcard, copy it from application resources
+     * 2. if everything ok, return the data path of specified language to use in {@link TessBaseAPI#init(String, String)}
+     * @return
+     * - a data path to use in {@link TessBaseAPI#init(String, String)} : fine
+     * - null : something went wrong
+     * @clear
+     */
     private static String prepareTesseract(Context c, String lang_code){
         try {
             File f = new File(c.getExternalFilesDir("tessdata").toString() + File.separator + lang_code + ".traineddata");
@@ -102,19 +114,27 @@ public class OCR {
         }
     }
 
+    /**
+     * @non-ui
+     * recognize the text on specified bitmap using specified language
+     * @param bm the bitmap
+     * @param lang_code the language code
+     * @return
+     * - String : the result
+     * - null : something went wrong
+     * @clear
+     */
     public static String getTextFromBitmap(@NonNull Context c, @NonNull Bitmap bm, @NonNull String lang_code){
         TessBaseAPI api = new TessBaseAPI();
         String data_path = prepareTesseract(c, lang_code);
         if(data_path != null){
             api.init(data_path, lang_code);
-            api.setImage(processBitmap(c, bm));
+            api.setImage(processBitmap(bm));
             String res = api.getUTF8Text();
             api.end();
-            Log.e("getTextFromBitmap()", "success | " + res);
             return res;
         }else {
-            Log.e("getTextFromBitmap()", "fail | can not prepare data file");
-            return "";
+            return null;
         }
     }
 }

@@ -3,6 +3,9 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+/**
+ * @clear
+ */
 @Entity(primaryKeys = {"stid"})
 public class PersonInfo {
     @NonNull

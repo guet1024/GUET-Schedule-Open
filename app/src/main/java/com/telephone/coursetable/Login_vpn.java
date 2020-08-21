@@ -44,7 +44,7 @@ import com.telephone.coursetable.Fetch.WAN;
 import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hours;
 import com.telephone.coursetable.Gson.LoginResponse;
-import com.telephone.coursetable.Gson.Person;
+import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.Table;
@@ -258,7 +258,7 @@ public class Login_vpn extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             String cookie = vpn_login(Login_vpn.this, sid, vpn_pwd);
-                                            if (cookie != null && !cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
+                                            if (cookie != null && !cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
                                                 cookie_builder = new StringBuilder();
                                                 cookie_builder.append(cookie);
                                                 vpn_password = vpn_pwd;
@@ -275,10 +275,10 @@ public class Login_vpn extends AppCompatActivity {
                                                         ((Button)findViewById(R.id.button)).setEnabled(true);
                                                         ((Button)findViewById(R.id.button2)).setEnabled(true);
                                                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                                        if (cookie != null && cookie.equals(getResources().getString(R.string.vpn_ip_forbidden))){
-                                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                        if (cookie != null && cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
+                                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
                                                         }else {
-                                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
                                                             ((EditText)findViewById(R.id.passwd_input)).setText("");
                                                             ((EditText)findViewById(R.id.passwd_input)).requestFocus();
                                                         }
@@ -447,7 +447,7 @@ public class Login_vpn extends AppCompatActivity {
                 }
             }else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"IP_FORBIDDEN\"")){
                 Log.e("vpn_login_test() login", "fail | ip forbidden");
-                return r.getString(R.string.vpn_ip_forbidden);
+                return r.getString(R.string.wan_vpn_ip_forbidden);
             }
             Log.e("vpn_login_test() login", "fail");
             return null;
@@ -627,9 +627,9 @@ public class Login_vpn extends AppCompatActivity {
                                 if (login_res.code != 0){
                                     String toast = null;
                                     if (login_res.comment != null && login_res.comment.contains("验证码")){
-                                        toast = getResources().getString(R.string.snackbar_login_fail_ck);
+                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_ck);
                                     }else if (login_res.comment != null && login_res.comment.contains("密码")){
-                                        toast = getResources().getString(R.string.snackbar_login_fail_pwd);
+                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_pwd);
                                     }else {
                                         toast = getResources().getString(R.string.snackbar_login_fail_vpn) + " : " + login_res.comment + "(" + login_res.code + ")";
                                     }
@@ -640,7 +640,7 @@ public class Login_vpn extends AppCompatActivity {
                                             Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
                                             changeCode(null);
                                             ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
-                                            if (toast_f.equals(getResources().getString(R.string.snackbar_login_fail_pwd))) {
+                                            if (toast_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_pwd))) {
                                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
                                                 ((AutoCompleteTextView) findViewById(R.id.passwd_input)).requestFocus();
                                             }
@@ -660,7 +660,7 @@ public class Login_vpn extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Snackbar.make(view, getResources().getString(R.string.snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
                                             ((Button)findViewById(R.id.button)).setEnabled(true);
                                             ((Button)findViewById(R.id.button2)).setEnabled(true);
                                             ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
@@ -674,7 +674,7 @@ public class Login_vpn extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Snackbar.make(view, getResources().getString(R.string.snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
                                             ((Button)findViewById(R.id.button)).setEnabled(true);
                                             ((Button)findViewById(R.id.button2)).setEnabled(true);
                                             ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
@@ -695,9 +695,9 @@ public class Login_vpn extends AppCompatActivity {
                                     @Override
                                     public void run() {
 //                                      Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
-                                        Snackbar.make(view, getResources().getString(R.string.toast_login_success), BaseTransientBottomBar.LENGTH_LONG).show();
+                                        Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
                                         //make a tip to show data-update status
-                                        getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updating));
+                                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                                     }
                                 });
                                 cdao.deleteAll();
@@ -715,7 +715,7 @@ public class Login_vpn extends AppCompatActivity {
                                 Log.e("login_thread() get student info", getStudentInfo_res.code+"");
                                 //if success, insert data into database
                                 if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
-                                    Person person = new Gson().fromJson(getPersonInfo_res.comment, Person.class);
+                                    PersonInfo_s person = new Gson().fromJson(getPersonInfo_res.comment, PersonInfo_s.class);
                                     PersonInfo p = person.getData();
                                     StudentInfo studentInfo = new Gson().fromJson(getStudentInfo_res.comment, StudentInfo.class);
                                     //extract information and then insert into database

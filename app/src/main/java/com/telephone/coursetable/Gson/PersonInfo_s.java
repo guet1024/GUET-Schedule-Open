@@ -1,6 +1,9 @@
 package com.telephone.coursetable.Gson;
 
-public class Person {
+/**
+ * @clear
+ */
+public class PersonInfo_s {
     private boolean success;
     private long total;
     private PersonInfo data;

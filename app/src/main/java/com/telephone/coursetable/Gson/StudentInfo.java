@@ -1,5 +1,8 @@
 package com.telephone.coursetable.Gson;
 
+/**
+ * @clear
+ */
 public class StudentInfo {
     private String term;
     private String grade;
