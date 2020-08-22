@@ -122,12 +122,12 @@
 
     <string name="preference_file_name">com.telephone.coursetable.preference</string>
 
-    <string name="pref_time_start_suffix">S</string>
-    <string name="pref_time_end_suffix">E</string>
-    <string name="pref_time_des_suffix">D</string>
-    <string name="pref_time_start_backup_suffix">SB</string>
-    <string name="pref_time_end_backup_suffix">EB</string>
-    <string name="pref_time_des_backup_suffix">DB</string>
+    <string name="pref_hour_start_suffix">S</string>
+    <string name="pref_hour_end_suffix">E</string>
+    <string name="pref_hour_des_suffix">D</string>
+    <string name="pref_hour_start_backup_suffix">SB</string>
+    <string name="pref_hour_end_backup_suffix">EB</string>
+    <string name="pref_hour_des_backup_suffix">DB</string>
 
     <string name="no_user_title_suffix">" | 未登录"</string>
     <string name="updating_user_title_suffix">" | 同步中..."</string>

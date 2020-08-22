@@ -1,8 +1,8 @@
 package com.telephone.coursetable.Merge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,18 +14,17 @@ import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
-import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
 import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Gson.GraduationScore_s;
+import com.telephone.coursetable.Gson.Hour;
+import com.telephone.coursetable.Gson.Hour_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.TermInfo;
 import com.telephone.coursetable.Gson.TermInfo_s;
-import com.telephone.coursetable.Http.HttpConnectionAndCode;
-import com.telephone.coursetable.Login;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
@@ -125,5 +124,39 @@ public class Merge {
                     )
             );
         }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void hour(@NonNull Context c, @NonNull String origin_h, @NonNull SharedPreferences.Editor editor){
+        Hour_s h_s = new Gson().fromJson(origin_h, Hour_s.class);
+        List<Hour> h = h_s.getData();
+        Resources r = c.getResources();
+        String ss = r.getString(R.string.pref_hour_start_suffix);
+        String sbs = r.getString(R.string.pref_hour_start_backup_suffix);
+        String es = r.getString(R.string.pref_hour_end_suffix);
+        String ebs = r.getString(R.string.pref_hour_end_backup_suffix);
+        String ds = r.getString(R.string.pref_hour_des_suffix);
+        String dbs = r.getString(R.string.pref_hour_des_backup_suffix);
+        for (Hour i : h){
+            String memo = i.getMemo();
+            if (memo == null || memo.isEmpty()){
+                continue;
+            }
+            String des = i.getNodename();
+            String node_no = i.getNodeno();
+            int index = memo.indexOf('-');
+            String stime = memo.substring(0, index);
+            String etime = memo.substring(index + 1);
+            editor.putString(node_no + ss, stime);
+            editor.putString(node_no + es, etime);
+            editor.putString(node_no + ds, des);
+            editor.putString(node_no + sbs, stime);
+            editor.putString(node_no + ebs, etime);
+            editor.putString(node_no + dbs, des);
+        }
+        editor.commit();
     }
 }

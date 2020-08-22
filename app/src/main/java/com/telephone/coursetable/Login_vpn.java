@@ -40,7 +40,7 @@ import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Fetch.WAN;
 import com.telephone.coursetable.Gson.Hour;
-import com.telephone.coursetable.Gson.Hours;
+import com.telephone.coursetable.Gson.Hour_s;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.PersonInfo;
@@ -786,11 +786,11 @@ public class Login_vpn extends AppCompatActivity {
                                     }
                                 }
                                 //update hours info
-                                HttpConnectionAndCode getHours_res = LAN.hours(Login_vpn.this, cookie_after_login);
+                                HttpConnectionAndCode getHours_res = LAN.hour(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get hours", getHours_res.code+"");
                                 //if success, insert data into SharedPreferences
                                 if (getHours_res.code == 0){
-                                    Hours hours = new Gson().fromJson(getHours_res.comment, Hours.class);
+                                    Hour_s hours = new Gson().fromJson(getHours_res.comment, Hour_s.class);
                                     List<Hour> hour_list = hours.getData();
                                     for (Hour h : hour_list){
                                         String memo = h.getMemo();
@@ -801,12 +801,12 @@ public class Login_vpn extends AppCompatActivity {
                                         int index = memo.indexOf('-');
                                         String stime = memo.substring(0, index);
                                         String etime = memo.substring(index + 1);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_start_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_end_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_des_suffix), des);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_start_backup_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_end_backup_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_time_des_backup_suffix), des);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_suffix), stime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_suffix), etime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_suffix), des);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_backup_suffix), stime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_backup_suffix), etime);
+                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_backup_suffix), des);
                                     }
                                     editor.commit();
                                 }
@@ -814,9 +814,9 @@ public class Login_vpn extends AppCompatActivity {
                                 long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
                                 DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
                                 Locate locate_res = locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
-                                        getResources().getString(R.string.pref_time_start_suffix),
-                                        getResources().getString(R.string.pref_time_end_suffix),
-                                        getResources().getString(R.string.pref_time_des_suffix));
+                                        getResources().getString(R.string.pref_hour_start_suffix),
+                                        getResources().getString(R.string.pref_hour_end_suffix),
+                                        getResources().getString(R.string.pref_hour_des_suffix));
                                 if (locate_res.term != null){
                                     Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
                                 }else{

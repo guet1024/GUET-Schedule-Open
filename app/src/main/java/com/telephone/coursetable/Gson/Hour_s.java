@@ -2,7 +2,10 @@ package com.telephone.coursetable.Gson;
 
 import java.util.List;
 
-public class Hours {
+/**
+ * @clear
+ */
+public class Hour_s {
     private boolean success;
     private long total;
     private List<Hour> data;

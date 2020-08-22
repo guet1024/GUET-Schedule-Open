@@ -184,9 +184,9 @@ public class ChangeHours extends AppCompatActivity {
         List<String> des=new ArrayList<String>();
         int i =0;
         for(String time: MyApp.times){
-            String skey = time + getResources().getString(R.string.pref_time_start_suffix);
-            String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
-            String dkey = time + getResources().getString(R.string.pref_time_des_suffix);
+            String skey = time + getResources().getString(R.string.pref_hour_start_suffix);
+            String ekey = time + getResources().getString(R.string.pref_hour_end_suffix);
+            String dkey = time + getResources().getString(R.string.pref_hour_des_suffix);
             starttime.add( sharedPreferences.getString(skey,null));
             endtime.add( sharedPreferences.getString(ekey,null));
             des.add( sharedPreferences.getString(dkey,null));
@@ -213,10 +213,10 @@ public class ChangeHours extends AppCompatActivity {
                 List<String> des=new ArrayList<String>();
                 int i=0;
                 for(String time: MyApp.times){
-                    String sbkey = time + getResources().getString(R.string.pref_time_start_backup_suffix);
-                    String ebkey = time + getResources().getString(R.string.pref_time_end_backup_suffix);
-                    String skey = time + getResources().getString(R.string.pref_time_start_suffix);
-                    String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
+                    String sbkey = time + getResources().getString(R.string.pref_hour_start_backup_suffix);
+                    String ebkey = time + getResources().getString(R.string.pref_hour_end_backup_suffix);
+                    String skey = time + getResources().getString(R.string.pref_hour_start_suffix);
+                    String ekey = time + getResources().getString(R.string.pref_hour_end_suffix);
                     String sbtime = sharedPreferences.getString(sbkey, null);
                     String ebtime = sharedPreferences.getString(ebkey, null);
                     editor.putString(skey, sbtime);
@@ -326,9 +326,9 @@ public class ChangeHours extends AppCompatActivity {
                         }
                         int j =0;
                         for(String time: MyApp.times){
-                            String skey = time + getResources().getString(R.string.pref_time_start_suffix);
-                            String ekey = time + getResources().getString(R.string.pref_time_end_suffix);
-                            String dkey = time + getResources().getString(R.string.pref_time_des_suffix);
+                            String skey = time + getResources().getString(R.string.pref_hour_start_suffix);
+                            String ekey = time + getResources().getString(R.string.pref_hour_end_suffix);
+                            String dkey = time + getResources().getString(R.string.pref_hour_des_suffix);
                             editor.putString(skey,starttime.get(j));
                             editor.putString(ekey,endtime.get(j));
                             j++;

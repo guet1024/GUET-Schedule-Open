@@ -1,6 +1,7 @@
 package com.telephone.coursetable;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
@@ -62,4 +63,17 @@ public class DATALIST {
      * @clear
      */
     public final String TermInfo = null;
+
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.Hour}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#hour(Context, String)}
+     * @preference
+     *      {@link R.string#preference_file_name}
+     * @merge
+     *      {@link com.telephone.coursetable.Merge.Merge#hour(Context, String, SharedPreferences.Editor)}
+     * @clear
+     */
+    public final String Hour = null;
 }

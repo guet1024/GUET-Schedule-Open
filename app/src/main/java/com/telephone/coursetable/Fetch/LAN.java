@@ -102,7 +102,7 @@ public class LAN {
      * - code == other : fail
      * @clear
      */
-    public static HttpConnectionAndCode hours(Context c, String cookie){
+    public static HttpConnectionAndCode hour(Context c, String cookie){
         Resources r = c.getResources();
         return Get.get(
                 r.getString(R.string.lan_get_hours_url),

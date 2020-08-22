@@ -185,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                         tdao, pref,
                         MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                        getResources().getString(R.string.pref_time_start_suffix),
-                        getResources().getString(R.string.pref_time_end_suffix),
-                        getResources().getString(R.string.pref_time_des_suffix));
+                        getResources().getString(R.string.pref_hour_start_suffix),
+                        getResources().getString(R.string.pref_hour_end_suffix),
+                        getResources().getString(R.string.pref_hour_des_suffix));
                 String pref_term = pref.getString(getResources().getString(R.string.pref_current_term_key), null);
                 long pref_week = pref.getLong(getResources().getString(R.string.pref_current_week_key), -1);
                 //init current term and current week
@@ -401,9 +401,9 @@ public class MainActivity extends AppCompatActivity {
         Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                 tdao, pref,
                 MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                getResources().getString(R.string.pref_time_start_suffix),
-                getResources().getString(R.string.pref_time_end_suffix),
-                getResources().getString(R.string.pref_time_des_suffix));
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix),
+                getResources().getString(R.string.pref_hour_des_suffix));
         String today_termname;
         String today_weeknum;
         if (locate.term == null){
@@ -514,9 +514,9 @@ public class MainActivity extends AppCompatActivity {
         Locate locate = Clock.locateNow(Clock.nowTimeStamp(),
                 tdao, pref,
                 MyApp.times, DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                getResources().getString(R.string.pref_time_start_suffix),
-                getResources().getString(R.string.pref_time_end_suffix),
-                getResources().getString(R.string.pref_time_des_suffix));
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix),
+                getResources().getString(R.string.pref_hour_des_suffix));
         highLight(locate.weekday, locate.time, locate.month, locate.day);
     }
 
