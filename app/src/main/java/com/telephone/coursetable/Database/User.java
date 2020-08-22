@@ -6,6 +6,9 @@ import androidx.room.Entity;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @clear
+ */
 @Entity(primaryKeys = {"username"})
 public class User {
     @NonNull
@@ -43,7 +46,7 @@ public class User {
         this.username = username;
         this.aaw_password = aaw_password;
         this.vpn_password = vpn_password;
-        activated = false;
-        updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.M.d H:mm:ss"));
+        this.activated = false;
+        this.updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.M.d H:mm:ss"));
     }
 }

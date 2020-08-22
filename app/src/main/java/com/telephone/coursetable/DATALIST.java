@@ -34,4 +34,6 @@ public class DATALIST {
      * @clear
      */
     public final String GoToClass_ClassInfo = null;
+
+
 }

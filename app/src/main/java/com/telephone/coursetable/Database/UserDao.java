@@ -7,6 +7,9 @@ import androidx.room.Query;
 
 import java.util.List;
 
+/**
+ * @clear
+ */
 @Dao
 public interface UserDao {
     @Query("delete from User")
@@ -14,6 +17,9 @@ public interface UserDao {
 
     @Query("select * from User")
     List<User> selectAll();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(User user);
 
     @Query("select username from User")
     List<String> selectAllUserName();
@@ -33,6 +39,5 @@ public interface UserDao {
     @Query("update User set activated=1 where username=:username")
     void activateUser(String username);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(User user);
+
 }
