@@ -23,4 +23,17 @@ public class Locate {
         this.time = time;
         this.time_description = time_description;
     }
+
+    @Override
+    public String toString() {
+        return "Locate{" +
+                "term=" + term +
+                ", week=" + week +
+                ", weekday=" + weekday +
+                ", month=" + month +
+                ", day=" + day +
+                ", time='" + time + '\'' +
+                ", time_description='" + time_description + '\'' +
+                '}';
+    }
 }

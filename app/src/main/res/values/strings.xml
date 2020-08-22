@@ -48,7 +48,12 @@
 
     <string name="lan_snackbar_data_updating">登录成功，正在同步数据...请勿离开</string>
 
+    <string name="lan_toast_update_success">数据同步成功！</string>
+    <string name="lan_snackbar_update_fail">数据同步失败！请重试</string>
+
     <string name="lan_title_login_updating">同步 | 同步中...</string>
+    <string name="lan_title_login_updated">同步 | 同步成功</string>
+    <string name="lan_title_login_updated_fail">同步 | 请重试</string>
 
     <string name="lan_get_checkcode_url">http://bkjw.guet.edu.cn/login/GetValidateCode?id=0.7117051736083029</string>
     <string name="lan_get_checkcode_referer">http://bkjw.guet.edu.cn/</string>
@@ -94,7 +99,6 @@
 
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
 
-    <string name="toast_update_success">数据同步成功！</string>
 
 
     <string name="snackbar_login_fail_vpn">登录失败, 检查网络连接后重试</string>
@@ -111,7 +115,6 @@
 
     <string name="title">课程表</string>
     <string name="title_login">同步</string>
-    <string name="title_login_updated">同步 | 同步成功</string>
     <string name="Hour_save">保存</string>
     <string name="Hour_restore">重置</string>
     <string name="Hour_List">时间表</string>

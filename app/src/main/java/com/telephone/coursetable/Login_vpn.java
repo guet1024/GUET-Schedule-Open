@@ -618,240 +618,240 @@ public class Login_vpn extends AppCompatActivity {
                         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
                         final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
                         final String vpn_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).getText().toString();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                HttpConnectionAndCode login_res = login(Login_vpn.this, sid, pwd, ck, cookie_before_login);
-                                if (login_res.code != 0){
-                                    String toast = null;
-                                    if (login_res.comment != null && login_res.comment.contains("验证码")){
-                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_ck);
-                                    }else if (login_res.comment != null && login_res.comment.contains("密码")){
-                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_pwd);
-                                    }else {
-                                        toast = getResources().getString(R.string.snackbar_login_fail_vpn) + " : " + login_res.comment + "(" + login_res.code + ")";
-                                    }
-                                    final String toast_f = toast;
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
-                                            changeCode(null);
-                                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
-                                            if (toast_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_pwd))) {
-                                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
-                                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).requestFocus();
-                                            }
-                                            ((Button)findViewById(R.id.button)).setEnabled(true);
-                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                        }
-                                    });
-                                    return;
-                                }
-                                final String cookie_after_login = cookie_before_login + getResources().getString(R.string.cookie_delimiter) + login_res.cookie;
-                                cookie_builder = new StringBuilder();
-                                cookie_builder.append(cookie_after_login);
-                                String vpn_login_res = vpn_login(Login_vpn.this, sid, vpn_pwd);
-                                if (vpn_login_res == null){
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                            ((Button)findViewById(R.id.button)).setEnabled(true);
-                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                        }
-                                    });
-                                    return;
-                                }
-                                HttpConnectionAndCode outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd);
-                                if (outside_login_res.code != 0){
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                            ((Button)findViewById(R.id.button)).setEnabled(true);
-                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
-                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
-                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                        }
-                                    });
-                                    return;
-                                }
-                                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
-                                SharedPreferences.Editor editor = hours_pref.edit();
-                                udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
-                                udao.disableAllUser();
-                                editor.clear();
-                                updating = true;
-                                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
-                                editor.commit();
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-//                                      Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
-                                        Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
-                                        //make a tip to show data-update status
-                                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
-                                    }
-                                });
-                                cdao.deleteAll();
-                                gdao.deleteAll();
-                                tdao.deleteAll();
-                                pdao.deleteAll();
-                                gsdao.deleteAll();
-                                /**
-                                 * ******************************* UPDATE DATA START *******************************
-                                 */
-                                //update person info
-                                HttpConnectionAndCode getPersonInfo_res = LAN.personInfo(Login_vpn.this, cookie_after_login);
-                                Log.e("login_thread() get person info", getPersonInfo_res.code+"");
-                                HttpConnectionAndCode getStudentInfo_res = LAN.studentInfo(Login_vpn.this, cookie_after_login);
-                                Log.e("login_thread() get student info", getStudentInfo_res.code+"");
-                                //if success, insert data into database
-                                if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
-                                    PersonInfo_s person = new Gson().fromJson(getPersonInfo_res.comment, PersonInfo_s.class);
-                                    PersonInfo p = person.getData();
-                                    StudentInfo studentInfo = new Gson().fromJson(getStudentInfo_res.comment, StudentInfo.class);
-                                    //extract information and then insert into database
-                                    pdao.insert(new com.telephone.coursetable.Database.PersonInfo(p.getStid(), p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
-                                            p.getEngname(),p.getSex(),p.getPass(),p.getDegree(),p.getDirection(),p.getChangetype(),p.getSecspno(),p.getClasstype(),p.getIdcard(),
-                                            p.getStype(),p.getXjzt(),p.getChangestate(),p.getLqtype(),p.getZsjj(),p.getNation(),p.getPolitical(),p.getNativeplace(),
-                                            p.getBirthday(),p.getEnrolldate(),p.getLeavedate(),p.getDossiercode(),p.getHostel(),p.getHostelphone(),p.getPostcode(),p.getAddress(),
-                                            p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
-                                            p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno(),
-                                            studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
-                                }
-                                //update graduation score
-                                HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login_vpn.this, cookie_after_login);
-                                Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
-                                //if success, insert data into database
-                                if (getGraduationScore_res.code == 0){
-                                    GraduationScore_s vs = new Gson().fromJson(getGraduationScore_res.comment, GraduationScore_s.class);
-                                    List<GraduationScore> vd_list = vs.getData();
-                                    for (GraduationScore vd : vd_list){
-                                        //extract information and then insert into database
-                                        gsdao.insert(new com.telephone.coursetable.Database.GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
-                                                vd.getTerm(), vd.getCourseid(), vd.getPlanxf(), vd.getCredithour(), vd.getCoursetype(), vd.getLvl(), vd.getSterm(),
-                                                vd.getCourseno(), vd.getScid(), vd.getScname(), vd.getScore(), vd.getZpxs(), vd.getXf(), vd.getStp()));
-                                    }
-                                }
-                                //update terms info
-                                HttpConnectionAndCode getTerms_res = LAN.termInfo(Login_vpn.this, cookie_after_login);
-                                Log.e("login_thread() get terms", getTerms_res.code+"");
-                                //if success, insert data into database
-                                if (getTerms_res.code == 0){
-                                    TermInfo_s terms = new Gson().fromJson(getTerms_res.comment, TermInfo_s.class);
-                                    List<TermInfo> term_list = terms.getData();
-                                    for (TermInfo t : term_list){
-                                        //extract information and then insert into database
-                                        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_terminfo_datetime_format));
-                                        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format));
-                                        String sts_string = LocalDateTime.parse(t.getStartdate(), server_formatter).format(ts_formatter);
-                                        String ets_string = LocalDateTime.parse(t.getEnddate(), server_formatter).format(ts_formatter);
-                                        long sts = Timestamp.valueOf(sts_string).getTime();
-                                        long ets = Timestamp.valueOf(ets_string).getTime();
-                                        tdao.insert(new com.telephone.coursetable.Database.TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
-                                    }
-                                }
-                                /*
-                                for each term stored in the database, try to get table for it. if the data list in
-                                the response is not empty, extract information and then insert into "GoToClass" and
-                                "ClassInfo"
-                                 */
-                                List<com.telephone.coursetable.Database.TermInfo> term_info_list = tdao.selectAll();
-                                String sterm = pdao.getGrade().get(0).toString();
-                                for (com.telephone.coursetable.Database.TermInfo t : term_info_list){
-                                    //do not get table for before-enroll terms, remove them from database
-                                    if (t.term.substring(0, 4).compareTo(sterm) < 0) {
-                                        tdao.deleteTerm(t.term);
-                                        continue;
-                                    }
-                                    HttpConnectionAndCode getTable_res = LAN.goToClass_ClassInfo(Login_vpn.this, cookie_after_login, t.term);
-                                    Log.e("login_thread() get table " + t.term, getTable_res.code+"");
-                                    //if success, insert data into database
-                                    if (getTable_res.code == 0){
-                                        GoToClass_ClassInfo_s table = new Gson().fromJson(getTable_res.comment, GoToClass_ClassInfo_s.class);
-                                        List<GoToClass_ClassInfo> table_node_list = table.getData();
-                                        for (GoToClass_ClassInfo table_node : table_node_list){
-                                            //extract information and then insert into "GoToClass"
-                                            gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
-                                            //extract information and then insert into "ClassInfo"
-                                            cdao.insert(new ClassInfo(table_node.getCourseno(), table_node.getCtype(), table_node.getTname(), table_node.getExamt(), table_node.getDptname(), table_node.getDptno(), table_node.getSpname(), table_node.getSpno(), table_node.getGrade(), table_node.getCname(), table_node.getTeacherno(), table_node.getName(),
-                                                    table_node.getCourseid(), table_node.getComm(), table_node.getMaxcnt(), table_node.getXf(), table_node.getLlxs(), table_node.getSyxs(), table_node.getSjxs(), table_node.getQtxs(), table_node.getSctcnt()));
-                                        }
-                                    }
-                                }
-                                //update hours info
-                                HttpConnectionAndCode getHours_res = LAN.hour(Login_vpn.this, cookie_after_login);
-                                Log.e("login_thread() get hours", getHours_res.code+"");
-                                //if success, insert data into SharedPreferences
-                                if (getHours_res.code == 0){
-                                    Hour_s hours = new Gson().fromJson(getHours_res.comment, Hour_s.class);
-                                    List<Hour> hour_list = hours.getData();
-                                    for (Hour h : hour_list){
-                                        String memo = h.getMemo();
-                                        if (memo == null){
-                                            continue;
-                                        }
-                                        String des = h.getNodename();
-                                        int index = memo.indexOf('-');
-                                        String stime = memo.substring(0, index);
-                                        String etime = memo.substring(index + 1);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_suffix), des);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_backup_suffix), stime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_backup_suffix), etime);
-                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_backup_suffix), des);
-                                    }
-                                    editor.commit();
-                                }
-                                //locate today
-                                long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
-                                DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
-                                Locate locate_res = locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
-                                        getResources().getString(R.string.pref_hour_start_suffix),
-                                        getResources().getString(R.string.pref_hour_end_suffix),
-                                        getResources().getString(R.string.pref_hour_des_suffix));
-                                if (locate_res.term != null){
-                                    Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
-                                }else{
-                                    Log.e("login_thread() which term", getResources().getString(R.string.term_vacation));
-                                }
-                                Log.e("login_thread() which week", locate_res.week + "");
-                                Log.e("login_thread() which weekday", locate_res.weekday + "");
-                                Log.e("login_thread() which month", locate_res.month + "");
-                                Log.e("login_thread() which day", locate_res.day + "");
-                                Log.e("login_thread() which time", locate_res.time + " | " + locate_res.time_description);
-                                Log.e("login_thread() now timestamp", nts + "");
-                                /**
-                                 * ******************************** UPDATE DATA END ********************************
-                                 */
-                                editor.commit();
-                                udao.activateUser(sid);
-                                updating = false;
-                                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
-                                editor.commit();
-                                com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
-                                Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
-//                                      Snackbar.make(view, getResources().getString(R.string.toast_update_success), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                        //make a tip to show data-update status
-                                        getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
-                                    }
-                                });
-                                Intent intent = new Intent(Login_vpn.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        }).start();
+//                        new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                HttpConnectionAndCode login_res = login(Login_vpn.this, sid, pwd, ck, cookie_before_login);
+//                                if (login_res.code != 0){
+//                                    String toast = null;
+//                                    if (login_res.comment != null && login_res.comment.contains("验证码")){
+//                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_ck);
+//                                    }else if (login_res.comment != null && login_res.comment.contains("密码")){
+//                                        toast = getResources().getString(R.string.lan_snackbar_login_fail_pwd);
+//                                    }else {
+//                                        toast = getResources().getString(R.string.snackbar_login_fail_vpn) + " : " + login_res.comment + "(" + login_res.code + ")";
+//                                    }
+//                                    final String toast_f = toast;
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Snackbar.make(view, toast_f, BaseTransientBottomBar.LENGTH_SHORT).show();
+//                                            changeCode(null);
+//                                            ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).requestFocus();
+//                                            if (toast_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_pwd))) {
+//                                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText("");
+//                                                ((AutoCompleteTextView) findViewById(R.id.passwd_input)).requestFocus();
+//                                            }
+//                                            ((Button)findViewById(R.id.button)).setEnabled(true);
+//                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
+//                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+//                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+//                                        }
+//                                    });
+//                                    return;
+//                                }
+//                                final String cookie_after_login = cookie_before_login + getResources().getString(R.string.cookie_delimiter) + login_res.cookie;
+//                                cookie_builder = new StringBuilder();
+//                                cookie_builder.append(cookie_after_login);
+//                                String vpn_login_res = vpn_login(Login_vpn.this, sid, vpn_pwd);
+//                                if (vpn_login_res == null){
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+//                                            ((Button)findViewById(R.id.button)).setEnabled(true);
+//                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
+//                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+//                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+//                                        }
+//                                    });
+//                                    return;
+//                                }
+//                                HttpConnectionAndCode outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd);
+//                                if (outside_login_res.code != 0){
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+//                                            ((Button)findViewById(R.id.button)).setEnabled(true);
+//                                            ((Button)findViewById(R.id.button2)).setEnabled(true);
+//                                            ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(true);
+//                                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+//                                        }
+//                                    });
+//                                    return;
+//                                }
+//                                SharedPreferences hours_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = hours_pref.edit();
+//                                udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
+//                                udao.disableAllUser();
+//                                editor.clear();
+//                                updating = true;
+//                                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
+//                                editor.commit();
+//                                runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+////                                      Toast.makeText(Login.this, getResources().getString(R.string.toast_login_success), Toast.LENGTH_LONG).show();
+//                                        Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
+//                                        //make a tip to show data-update status
+//                                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
+//                                    }
+//                                });
+//                                cdao.deleteAll();
+//                                gdao.deleteAll();
+//                                tdao.deleteAll();
+//                                pdao.deleteAll();
+//                                gsdao.deleteAll();
+//                                /**
+//                                 * ******************************* UPDATE DATA START *******************************
+//                                 */
+//                                //update person info
+//                                HttpConnectionAndCode getPersonInfo_res = LAN.personInfo(Login_vpn.this, cookie_after_login);
+//                                Log.e("login_thread() get person info", getPersonInfo_res.code+"");
+//                                HttpConnectionAndCode getStudentInfo_res = LAN.studentInfo(Login_vpn.this, cookie_after_login);
+//                                Log.e("login_thread() get student info", getStudentInfo_res.code+"");
+//                                //if success, insert data into database
+//                                if (getPersonInfo_res.code == 0 && getStudentInfo_res.code == 0){
+//                                    PersonInfo_s person = new Gson().fromJson(getPersonInfo_res.comment, PersonInfo_s.class);
+//                                    PersonInfo p = person.getData();
+//                                    StudentInfo studentInfo = new Gson().fromJson(getStudentInfo_res.comment, StudentInfo.class);
+//                                    //extract information and then insert into database
+//                                    pdao.insert(new com.telephone.coursetable.Database.PersonInfo(p.getStid(), p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
+//                                            p.getEngname(),p.getSex(),p.getPass(),p.getDegree(),p.getDirection(),p.getChangetype(),p.getSecspno(),p.getClasstype(),p.getIdcard(),
+//                                            p.getStype(),p.getXjzt(),p.getChangestate(),p.getLqtype(),p.getZsjj(),p.getNation(),p.getPolitical(),p.getNativeplace(),
+//                                            p.getBirthday(),p.getEnrolldate(),p.getLeavedate(),p.getDossiercode(),p.getHostel(),p.getHostelphone(),p.getPostcode(),p.getAddress(),
+//                                            p.getPhoneno(),p.getFamilyheader(),p.getTotal(),p.getChinese(),p.getMaths(),p.getEnglish(),p.getAddscore1(),p.getAddscore2(),p.getComment(),
+//                                            p.getTestnum(),p.getFmxm1(),p.getFmzjlx1(),p.getFmzjhm1(),p.getFmxm2(),p.getFmzjlx2(),p.getFmzjhm2(),p.getDs(),p.getXq(),p.getRxfs(),p.getOldno(),
+//                                            studentInfo.getDptno(), studentInfo.getDptname(), studentInfo.getSpname()));
+//                                }
+//                                //update graduation score
+//                                HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login_vpn.this, cookie_after_login);
+//                                Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
+//                                //if success, insert data into database
+//                                if (getGraduationScore_res.code == 0){
+//                                    GraduationScore_s vs = new Gson().fromJson(getGraduationScore_res.comment, GraduationScore_s.class);
+//                                    List<GraduationScore> vd_list = vs.getData();
+//                                    for (GraduationScore vd : vd_list){
+//                                        //extract information and then insert into database
+//                                        gsdao.insert(new com.telephone.coursetable.Database.GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
+//                                                vd.getTerm(), vd.getCourseid(), vd.getPlanxf(), vd.getCredithour(), vd.getCoursetype(), vd.getLvl(), vd.getSterm(),
+//                                                vd.getCourseno(), vd.getScid(), vd.getScname(), vd.getScore(), vd.getZpxs(), vd.getXf(), vd.getStp()));
+//                                    }
+//                                }
+//                                //update terms info
+//                                HttpConnectionAndCode getTerms_res = LAN.termInfo(Login_vpn.this, cookie_after_login);
+//                                Log.e("login_thread() get terms", getTerms_res.code+"");
+//                                //if success, insert data into database
+//                                if (getTerms_res.code == 0){
+//                                    TermInfo_s terms = new Gson().fromJson(getTerms_res.comment, TermInfo_s.class);
+//                                    List<TermInfo> term_list = terms.getData();
+//                                    for (TermInfo t : term_list){
+//                                        //extract information and then insert into database
+//                                        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_terminfo_datetime_format));
+//                                        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format));
+//                                        String sts_string = LocalDateTime.parse(t.getStartdate(), server_formatter).format(ts_formatter);
+//                                        String ets_string = LocalDateTime.parse(t.getEnddate(), server_formatter).format(ts_formatter);
+//                                        long sts = Timestamp.valueOf(sts_string).getTime();
+//                                        long ets = Timestamp.valueOf(ets_string).getTime();
+//                                        tdao.insert(new com.telephone.coursetable.Database.TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
+//                                    }
+//                                }
+//                                /*
+//                                for each term stored in the database, try to get table for it. if the data list in
+//                                the response is not empty, extract information and then insert into "GoToClass" and
+//                                "ClassInfo"
+//                                 */
+//                                List<com.telephone.coursetable.Database.TermInfo> term_info_list = tdao.selectAll();
+//                                String sterm = pdao.getGrade().get(0).toString();
+//                                for (com.telephone.coursetable.Database.TermInfo t : term_info_list){
+//                                    //do not get table for before-enroll terms, remove them from database
+//                                    if (t.term.substring(0, 4).compareTo(sterm) < 0) {
+//                                        tdao.deleteTerm(t.term);
+//                                        continue;
+//                                    }
+//                                    HttpConnectionAndCode getTable_res = LAN.goToClass_ClassInfo(Login_vpn.this, cookie_after_login, t.term);
+//                                    Log.e("login_thread() get table " + t.term, getTable_res.code+"");
+//                                    //if success, insert data into database
+//                                    if (getTable_res.code == 0){
+//                                        GoToClass_ClassInfo_s table = new Gson().fromJson(getTable_res.comment, GoToClass_ClassInfo_s.class);
+//                                        List<GoToClass_ClassInfo> table_node_list = table.getData();
+//                                        for (GoToClass_ClassInfo table_node : table_node_list){
+//                                            //extract information and then insert into "GoToClass"
+//                                            gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
+//                                            //extract information and then insert into "ClassInfo"
+//                                            cdao.insert(new ClassInfo(table_node.getCourseno(), table_node.getCtype(), table_node.getTname(), table_node.getExamt(), table_node.getDptname(), table_node.getDptno(), table_node.getSpname(), table_node.getSpno(), table_node.getGrade(), table_node.getCname(), table_node.getTeacherno(), table_node.getName(),
+//                                                    table_node.getCourseid(), table_node.getComm(), table_node.getMaxcnt(), table_node.getXf(), table_node.getLlxs(), table_node.getSyxs(), table_node.getSjxs(), table_node.getQtxs(), table_node.getSctcnt()));
+//                                        }
+//                                    }
+//                                }
+//                                //update hours info
+//                                HttpConnectionAndCode getHours_res = LAN.hour(Login_vpn.this, cookie_after_login);
+//                                Log.e("login_thread() get hours", getHours_res.code+"");
+//                                //if success, insert data into SharedPreferences
+//                                if (getHours_res.code == 0){
+//                                    Hour_s hours = new Gson().fromJson(getHours_res.comment, Hour_s.class);
+//                                    List<Hour> hour_list = hours.getData();
+//                                    for (Hour h : hour_list){
+//                                        String memo = h.getMemo();
+//                                        if (memo == null){
+//                                            continue;
+//                                        }
+//                                        String des = h.getNodename();
+//                                        int index = memo.indexOf('-');
+//                                        String stime = memo.substring(0, index);
+//                                        String etime = memo.substring(index + 1);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_suffix), stime);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_suffix), etime);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_suffix), des);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_backup_suffix), stime);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_backup_suffix), etime);
+//                                        editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_backup_suffix), des);
+//                                    }
+//                                    editor.commit();
+//                                }
+//                                //locate today
+//                                long nts = Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format)))).getTime();
+//                                DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
+//                                Locate locate_res = locateNow(nts, tdao, hours_pref, MyApp.times, server_hours_time_formatter,
+//                                        getResources().getString(R.string.pref_hour_start_suffix),
+//                                        getResources().getString(R.string.pref_hour_end_suffix),
+//                                        getResources().getString(R.string.pref_hour_des_suffix));
+//                                if (locate_res.term != null){
+//                                    Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
+//                                }else{
+//                                    Log.e("login_thread() which term", getResources().getString(R.string.term_vacation));
+//                                }
+//                                Log.e("login_thread() which week", locate_res.week + "");
+//                                Log.e("login_thread() which weekday", locate_res.weekday + "");
+//                                Log.e("login_thread() which month", locate_res.month + "");
+//                                Log.e("login_thread() which day", locate_res.day + "");
+//                                Log.e("login_thread() which time", locate_res.time + " | " + locate_res.time_description);
+//                                Log.e("login_thread() now timestamp", nts + "");
+//                                /**
+//                                 * ******************************** UPDATE DATA END ********************************
+//                                 */
+//                                editor.commit();
+//                                udao.activateUser(sid);
+//                                updating = false;
+//                                editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), updating);
+//                                editor.commit();
+//                                com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
+//                                Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
+//                                runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+//                                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
+////                                      Snackbar.make(view, getResources().getString(R.string.toast_update_success), BaseTransientBottomBar.LENGTH_SHORT).show();
+//                                        //make a tip to show data-update status
+//                                        getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
+//                                    }
+//                                });
+//                                Intent intent = new Intent(Login_vpn.this, MainActivity.class);
+//                                startActivity(intent);
+//                            }
+//                        }).start();
                     }
                 },
                 new DialogInterface.OnClickListener() {

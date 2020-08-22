@@ -84,7 +84,7 @@ public class Parse {
 
                     String cno = text_rows[j + 2].split("：")[1];
 
-                    res.add(new GoToClass(term, weekday, i+"", cno, 0, room, startweek, endweek, false, 0));
+                    res.add(new GoToClass(term, weekday, i+"", cno, startweek, endweek, false, 0, room, 0));
                 }
             }
         }

@@ -26,11 +26,8 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
-import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
-import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
-import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
@@ -38,21 +35,12 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
-import com.telephone.coursetable.Gson.Hour;
-import com.telephone.coursetable.Gson.Hour_s;
 import com.telephone.coursetable.Gson.LoginResponse;
-import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
-import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
-import com.telephone.coursetable.Gson.TermInfo;
-import com.telephone.coursetable.Gson.TermInfo_s;
-import com.telephone.coursetable.Gson.GraduationScore_s;
-import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
+import com.telephone.coursetable.Merge.Merge;
 import com.telephone.coursetable.OCR.OCR;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -468,6 +456,58 @@ public class Login extends AppCompatActivity {
     }
 
     /**
+     * @non-ui
+     * 1. pull all user-related data from internet
+     * 2. save the pulled data to database and shared preference
+     * @return
+     * - true : everything is ok
+     * - false : something went wrong
+     * @clear
+     */
+    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor){
+        final String NAME = "fetch_merge()";
+        HttpConnectionAndCode res;
+        res = LAN.personInfo(c, cookie);
+        HttpConnectionAndCode res_add = LAN.studentInfo(c, cookie);
+        if (res.code != 0 || res_add.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.personInfo(res.comment, res_add.comment, pdao);
+        res = LAN.termInfo(c, cookie);
+        if (res.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.termInfo(c, res.comment, tdao);
+        List<String> terms = tdao.getTermsSince(
+                pdao.getGrade().get(0) + "-" + (pdao.getGrade().get(0) + 1) + "_1"
+        );
+        for (String term : terms){
+            res = LAN.goToClass_ClassInfo(c, cookie, term);
+            if (res.code != 0){
+                Log.e(NAME, "fail");
+                return false;
+            }
+            Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
+        }
+        res = LAN.graduationScore(c, cookie);
+        if (res.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.graduationScore(res.comment, gsdao);
+        res = LAN.hour(c, cookie);
+        if (res.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.hour(c, res.comment, editor);
+        Log.e(NAME, "success");
+        return true;
+    }
+
+    /**
      * @ui
      * 1. call {@link #clearAllIMAndFocus()}
      * 2. get student id, credit system password, credit system check-code from input box
@@ -507,6 +547,30 @@ public class Login extends AppCompatActivity {
      *              9. commit shared preference
      *              10. show tip snack-bar, change title
      *              11. call {@link #deleteOldDataFromDatabase()}
+     *              12. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}
+     *              13. commit shared preference
+     *              14. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}:
+     *                  - if everything is ok:
+     *                      1. locate now, print the locate-result to log
+     *                      2. activate the user
+     *                      3. print the user's student id and name to log
+     *                      4. put <{@link R.string#pref_user_updating_key} : false> into shared preference
+     *                      5. commit shared preference
+     *                      6. call {@link #unlock(boolean)} with false
+     *                      7. show tip toast, change title
+     *                      8. start {@link MainActivity}
+     *                  - if something went wrong:
+     *                      1. put <{@link R.string#pref_user_updating_key} : false> into shared preference
+     *                      2. commit shared preference
+     *                      3. call {@link #unlock(boolean)} with true
+     *                      4. show tip snack-bar, change title
+     *              ******************************* UPDATE DATA END *******************************
+     *      - Press-no : nothing will happen
+     * 6. start a new thread:
+     *      1. try to get the user who has the inputted student id from the database, if exist:
+     *          1. fill the user's aaw-password and his vpn-password in the AlertDialog's input box
+     *      2. show the AlertDialog obtained before
+     * @clear
      */
     public void login_thread(final View view){
         final String NAME = "login_thread()";
@@ -522,7 +586,7 @@ public class Login extends AppCompatActivity {
         View extra_pwd_dialog_layout = getLayoutInflater().inflate(R.layout.extra_password, null);
         /** get an AlertDialog */
         AlertDialog extra_pwd_dialog = getAlertDialog(null,
-                (DialogInterface.OnClickListener) (dialogInterface, i) -> {
+                (dialogInterface, i) -> {
                     /** call {@link #clearAllIMAndFocus()} */
                     clearAllIMAndFocus();
                     /** call {@link #lock()} */
@@ -531,7 +595,7 @@ public class Login extends AppCompatActivity {
                     final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
                     final String vpn_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).getText().toString();
                     /** start a new thread */
-                    new Thread((Runnable) () -> {
+                    new Thread(() -> {
                         /** call {@link #login(Context, String, String, String, String, StringBuilder)} , passing {@link #cookie_builder} */
                         HttpConnectionAndCode login_res = login(Login.this, sid, pwd, ck, cookie_before_login, cookie_builder);
                         /** if credit system login fail */
@@ -615,131 +679,58 @@ public class Login extends AppCompatActivity {
                         });
                         /** call {@link #deleteOldDataFromDatabase()} */
                         deleteOldDataFromDatabase();
-
-
-                        //update graduation score
-                        HttpConnectionAndCode getGraduationScore_res = LAN.graduationScore(Login.this, cookie_after_login);
-                        Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
-                        //if success, insert data into database
-                        if (getGraduationScore_res.code == 0){
-                            GraduationScore_s vs = new Gson().fromJson(getGraduationScore_res.comment, GraduationScore_s.class);
-                            List<GraduationScore> vd_list = vs.getData();
-                            for (GraduationScore vd : vd_list){
-                                //extract information and then insert into database
-                                gsdao.insert(new com.telephone.coursetable.Database.GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
-                                        vd.getTerm(), vd.getCourseid(), vd.getPlanxf(), vd.getCredithour(), vd.getCoursetype(), vd.getLvl(), vd.getSterm(),
-                                        vd.getCourseno(), vd.getScid(), vd.getScname(), vd.getScore(), vd.getZpxs(), vd.getXf(), vd.getStp()));
-                            }
-                        }
-                        //update terms info
-                        HttpConnectionAndCode getTerms_res = LAN.termInfo(Login.this, cookie_after_login);
-                        Log.e("login_thread() get terms", getTerms_res.code+"");
-                        //if success, insert data into database
-                        if (getTerms_res.code == 0){
-                            TermInfo_s terms = new Gson().fromJson(getTerms_res.comment, TermInfo_s.class);
-                            List<TermInfo> term_list = terms.getData();
-                            for (TermInfo t : term_list){
-                                //extract information and then insert into database
-                                DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_terminfo_datetime_format));
-                                DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format));
-                                String sts_string = LocalDateTime.parse(t.getStartdate(), server_formatter).format(ts_formatter);
-                                String ets_string = LocalDateTime.parse(t.getEnddate(), server_formatter).format(ts_formatter);
-                                long sts = Timestamp.valueOf(sts_string).getTime();
-                                long ets = Timestamp.valueOf(ets_string).getTime();
-                                tdao.insert(new com.telephone.coursetable.Database.TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
-                            }
-                        }
-                        /*
-                        for each term stored in the database, try to get table for it. if the data list in
-                        the response is not empty, extract information and then insert into "GoToClass" and
-                        "ClassInfo"
-                         */
-                        List<com.telephone.coursetable.Database.TermInfo> term_info_list = tdao.selectAll();
-                        String sterm = pdao.getGrade().get(0).toString();
-                        for (com.telephone.coursetable.Database.TermInfo t : term_info_list){
-                            //do not get table for before-enroll terms, remove them from database
-                            if (t.term.substring(0, 4).compareTo(sterm) < 0) {
-                                tdao.deleteTerm(t.term);
-                                continue;
-                            }
-                            HttpConnectionAndCode getTable_res = LAN.goToClass_ClassInfo(Login.this, cookie_after_login, t.term);
-                            Log.e("login_thread() get table " + t.term, getTable_res.code+"");
-                            //if success, insert data into database
-                            if (getTable_res.code == 0){
-                                GoToClass_ClassInfo_s table = new Gson().fromJson(getTable_res.comment, GoToClass_ClassInfo_s.class);
-                                List<GoToClass_ClassInfo> table_node_list = table.getData();
-                                for (GoToClass_ClassInfo table_node : table_node_list){
-                                    //extract information and then insert into "GoToClass"
-                                    gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
-                                    //extract information and then insert into "ClassInfo"
-                                    cdao.insert(new ClassInfo(table_node.getCourseno(), table_node.getCtype(), table_node.getTname(), table_node.getExamt(), table_node.getDptname(), table_node.getDptno(), table_node.getSpname(), table_node.getSpno(), table_node.getGrade(), table_node.getCname(), table_node.getTeacherno(), table_node.getName(),
-                                            table_node.getCourseid(), table_node.getComm(), table_node.getMaxcnt(), table_node.getXf(), table_node.getLlxs(), table_node.getSyxs(), table_node.getSjxs(), table_node.getQtxs(), table_node.getSctcnt()));
-                                }
-                            }
-                        }
-                        //update hours info
-                        HttpConnectionAndCode getHours_res = LAN.hour(Login.this, cookie_after_login);
-                        Log.e("login_thread() get hours", getHours_res.code+"");
-                        //if success, insert data into SharedPreferences
-                        if (getHours_res.code == 0){
-                            Hour_s hours = new Gson().fromJson(getHours_res.comment, Hour_s.class);
-                            List<Hour> hour_list = hours.getData();
-                            for (Hour h : hour_list){
-                                String memo = h.getMemo();
-                                if (memo == null){
-                                    continue;
-                                }
-                                String des = h.getNodename();
-                                int index = memo.indexOf('-');
-                                String stime = memo.substring(0, index);
-                                String etime = memo.substring(index + 1);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_suffix), stime);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_suffix), etime);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_suffix), des);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_start_backup_suffix), stime);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_end_backup_suffix), etime);
-                                editor.putString(h.getNodeno() + getResources().getString(R.string.pref_hour_des_backup_suffix), des);
-                            }
+                        /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
+                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor);
+                        /** commit shared preference */
+                        editor.commit();
+                        if (fetch_merge_res){
+                            /** locate now, print the locate-result to log */
+                            Log.e(
+                                    NAME + " " + "locate now",
+                                    Clock.locateNow(
+                                            Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
+                                            DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                            getResources().getString(R.string.pref_hour_start_suffix),
+                                            getResources().getString(R.string.pref_hour_end_suffix),
+                                            getResources().getString(R.string.pref_hour_des_suffix)
+                                    )+""
+                            );
+                            /** activate the user */
+                            udao.activateUser(sid);
+                            /** print the user's student id and name to log */
+                            Log.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
+                            /** put <{@link R.string#pref_user_updating_key} : false> into shared preference */
+                            editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
+                            /** commit shared preference */
                             editor.commit();
+                            runOnUiThread(() -> {
+                                /** call {@link #unlock(boolean)} with false */
+                                unlock(false);
+                                /** show tip toast, change title */
+                                Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
+                                getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
+                                /** start {@link MainActivity} */
+                                startActivity(new Intent(Login.this, MainActivity.class));
+                            });
+                        }else {
+                            /** put <{@link R.string#pref_user_updating_key} : false> into shared preference */
+                            editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
+                            /** commit shared preference */
+                            editor.commit();
+                            runOnUiThread(() -> {
+                                /** call {@link #unlock(boolean)} with true */
+                                unlock(true);
+                                /** show tip snack-bar, change title */
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
+                                getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                            });
                         }
-                        //locate today
-                        long nts = Clock.nowTimeStamp();
-                        DateTimeFormatter server_hours_time_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format));
-                        Locate locate_res = Clock.locateNow(nts, tdao, shared_pref, MyApp.times, server_hours_time_formatter,
-                                getResources().getString(R.string.pref_hour_start_suffix),
-                                getResources().getString(R.string.pref_hour_end_suffix),
-                                getResources().getString(R.string.pref_hour_des_suffix));
-                        if (locate_res.term != null){
-                            Log.e("login_thread() which term", locate_res.term.term + " | " + locate_res.term.termname);
-                        }else{
-                            Log.e("login_thread() which term", getResources().getString(R.string.term_vacation));
-                        }
-                        Log.e("login_thread() which week", locate_res.week + "");
-                        Log.e("login_thread() which weekday", locate_res.weekday + "");
-                        Log.e("login_thread() which month", locate_res.month + "");
-                        Log.e("login_thread() which day", locate_res.day + "");
-                        Log.e("login_thread() which time", locate_res.time + " | " + locate_res.time_description);
-                        Log.e("login_thread() now timestamp", nts + "");
                         /**
                          * ******************************** UPDATE DATA END ********************************
                          */
-                        editor.commit();
-                        udao.activateUser(sid);
-                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
-                        editor.commit();
-                        com.telephone.coursetable.Database.PersonInfo acuser = pdao.selectAll().get(0);
-                        Log.e("login_thread() user activated", acuser.stid + " " + acuser.name);
-                        runOnUiThread((Runnable) () -> {
-                            ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                            Toast.makeText(Login.this, getResources().getString(R.string.toast_update_success), Toast.LENGTH_SHORT).show();
-                            //make a tip to show data-update status
-                            getSupportActionBar().setTitle(getResources().getString(R.string.title_login_updated));
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            startActivity(intent);
-                        });
                     }).start();
                 },
-                (DialogInterface.OnClickListener) (dialogInterface, i) -> {},
+                (dialogInterface, i) -> {},
                 extra_pwd_dialog_layout,
                 getResources().getString(R.string.extra_password_title));
         new Thread(() -> {

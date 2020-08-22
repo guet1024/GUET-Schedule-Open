@@ -32,4 +32,7 @@ public interface TermInfoDao {
 
     @Query("select term from TermInfo where termname=:termname")
     List<String> getTermCodeByTermName(String termname);
+
+    @Query("select term from TermInfo where term>=:term")
+    List<String> getTermsSince(String term);
 }
