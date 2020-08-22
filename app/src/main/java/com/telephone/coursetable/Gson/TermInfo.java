@@ -1,6 +1,10 @@
 package com.telephone.coursetable.Gson;
 
-public class Term {
+
+/**
+ * @clear
+ */
+public class TermInfo {
     private String term;
     private String startdate;
     private String enddate;

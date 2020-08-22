@@ -6,6 +6,7 @@ import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.TermInfoDao;
 
 public class DATALIST {
     /**
@@ -49,5 +50,16 @@ public class DATALIST {
      */
     public final String GraduationScore = null;
 
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.TermInfo}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#termInfo(Context, String)}
+     * @database
+     *      {@link com.telephone.coursetable.Database.TermInfo}
+     * @merge
+     *      {@link com.telephone.coursetable.Merge.Merge#termInfo(Context, String, TermInfoDao)}
+     * @clear
+     */
     public final String TermInfo = null;
 }

@@ -6,6 +6,9 @@ import androidx.room.Entity;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/**
+ * @clear
+ */
 @Entity(primaryKeys = {"term"})
 public class TermInfo {
     @NonNull
@@ -20,15 +23,7 @@ public class TermInfo {
     public long sts;
     public long ets;
 
-    public TermInfo(String term,
-                    String startdate,
-                    String enddate,
-                    String weeknum,
-                    String termname,
-                    String schoolyear,
-                    String comm,
-                    long sts,
-                    long ets){
+    public TermInfo(@NonNull String term, String startdate, String enddate, String weeknum, String termname, String schoolyear, String comm, long sts, long ets) {
         this.term = term;
         this.startdate = startdate;
         this.enddate = enddate;

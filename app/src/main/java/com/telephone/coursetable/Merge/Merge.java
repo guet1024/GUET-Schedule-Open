@@ -1,5 +1,7 @@
 package com.telephone.coursetable.Merge;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,7 @@ import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
@@ -19,9 +22,15 @@ import com.telephone.coursetable.Gson.GraduationScore_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.StudentInfo;
+import com.telephone.coursetable.Gson.TermInfo;
+import com.telephone.coursetable.Gson.TermInfo_s;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Login;
+import com.telephone.coursetable.R;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Merge {
@@ -89,6 +98,30 @@ public class Merge {
                             i.getStid(), i.getTerm(), i.getCourseid(), i.getPlanxf(), i.getCredithour(),
                             i.getCoursetype(), i.getLvl(), i.getSterm(), i.getCourseno(), i.getScid(),
                             i.getScname(), i.getScore(), i.getZpxs(), i.getXf(), i.getStp()
+                    )
+            );
+        }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void termInfo(@NonNull Context c, @NonNull String origin_t, @NonNull TermInfoDao tdao){
+        TermInfo_s t_s = new Gson().fromJson(origin_t, TermInfo_s.class);
+        List<TermInfo> t = t_s.getData();
+        Resources r = c.getResources();
+        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.server_terminfo_datetime_format));
+        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.ts_datetime_format));
+        for (TermInfo i : t){
+            String sts_string = LocalDateTime.parse(i.getStartdate(), server_formatter).format(ts_formatter);
+            String ets_string = LocalDateTime.parse(i.getEnddate(), server_formatter).format(ts_formatter);
+            long sts = Timestamp.valueOf(sts_string).getTime();
+            long ets = Timestamp.valueOf(ets_string).getTime();
+            tdao.insert(
+                    new com.telephone.coursetable.Database.TermInfo(
+                            i.getTerm(), i.getStartdate(), i.getEnddate(), i.getWeeknum(), i.getTermname(),
+                            i.getSchoolyear(), i.getComm(), sts, ets
                     )
             );
         }

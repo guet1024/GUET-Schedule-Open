@@ -57,7 +57,7 @@ public class LAN {
      * - code == other : fail
      * @clear
      */
-    public static HttpConnectionAndCode terms(Context c, String cookie){
+    public static HttpConnectionAndCode termInfo(Context c, String cookie){
         Resources r = c.getResources();
         return Get.get(
                 r.getString(R.string.lan_get_terms_url),

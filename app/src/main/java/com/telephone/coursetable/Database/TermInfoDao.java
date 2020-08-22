@@ -7,6 +7,9 @@ import androidx.room.Query;
 
 import java.util.List;
 
+/**
+ * @clear
+ */
 @Dao
 public interface TermInfoDao {
     @Query("delete from TermInfo")
@@ -21,8 +24,8 @@ public interface TermInfoDao {
     @Query("delete from TermInfo where term=:term")
     void deleteTerm(String term);
 
-    @Query("select * from TermInfo where sts<=:date and ets>=:date")
-    List<TermInfo> whichTerm(long date);
+    @Query("select * from TermInfo where sts<=:nts and ets>=:nts")
+    List<TermInfo> whichTerm(long nts);
 
     @Query("select weeknum from TermInfo where termname=:termname")
     List<String> getWeekNumByTermName(String termname);

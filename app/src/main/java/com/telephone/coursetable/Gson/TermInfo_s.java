@@ -2,10 +2,13 @@ package com.telephone.coursetable.Gson;
 
 import java.util.List;
 
-public class Terms {
+/**
+ * @clear
+ */
+public class TermInfo_s {
     private boolean success;
     private long total;
-    private List<Term> data;
+    private List<TermInfo> data;
 
 
     public boolean isSuccess() {
@@ -16,7 +19,7 @@ public class Terms {
         return total;
     }
 
-    public List<Term> getData() {
+    public List<TermInfo> getData() {
         return data;
     }
 }

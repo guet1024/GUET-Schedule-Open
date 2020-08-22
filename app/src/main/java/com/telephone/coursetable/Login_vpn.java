@@ -34,7 +34,6 @@ import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
-import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
@@ -48,8 +47,8 @@ import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
-import com.telephone.coursetable.Gson.Term;
-import com.telephone.coursetable.Gson.Terms;
+import com.telephone.coursetable.Gson.TermInfo;
+import com.telephone.coursetable.Gson.TermInfo_s;
 import com.telephone.coursetable.Gson.GraduationScore_s;
 import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
@@ -505,7 +504,7 @@ public class Login_vpn extends AppCompatActivity {
      */
     public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter server_hours_time_format, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
         Locate res = new Locate(null, 0, 0, 0, 0, null, null);
-        List<TermInfo> which_term_res = tdao.whichTerm(nts);
+        List<com.telephone.coursetable.Database.TermInfo> which_term_res = tdao.whichTerm(nts);
         if (!which_term_res.isEmpty()){
             res.term = which_term_res.get(0);
             res.week = whichWeek(res.term.sts, nts);
@@ -741,13 +740,13 @@ public class Login_vpn extends AppCompatActivity {
                                     }
                                 }
                                 //update terms info
-                                HttpConnectionAndCode getTerms_res = LAN.terms(Login_vpn.this, cookie_after_login);
+                                HttpConnectionAndCode getTerms_res = LAN.termInfo(Login_vpn.this, cookie_after_login);
                                 Log.e("login_thread() get terms", getTerms_res.code+"");
                                 //if success, insert data into database
                                 if (getTerms_res.code == 0){
-                                    Terms terms = new Gson().fromJson(getTerms_res.comment, Terms.class);
-                                    List<Term> term_list = terms.getData();
-                                    for (Term t : term_list){
+                                    TermInfo_s terms = new Gson().fromJson(getTerms_res.comment, TermInfo_s.class);
+                                    List<TermInfo> term_list = terms.getData();
+                                    for (TermInfo t : term_list){
                                         //extract information and then insert into database
                                         DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.server_terminfo_datetime_format));
                                         DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(getResources().getString(R.string.ts_datetime_format));
@@ -755,7 +754,7 @@ public class Login_vpn extends AppCompatActivity {
                                         String ets_string = LocalDateTime.parse(t.getEnddate(), server_formatter).format(ts_formatter);
                                         long sts = Timestamp.valueOf(sts_string).getTime();
                                         long ets = Timestamp.valueOf(ets_string).getTime();
-                                        tdao.insert(new TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
+                                        tdao.insert(new com.telephone.coursetable.Database.TermInfo(t.getTerm(), t.getStartdate(), t.getEnddate(), t.getWeeknum(), t.getTermname(), t.getSchoolyear(), t.getComm(), sts, ets));
                                     }
                                 }
                                 /*
@@ -763,9 +762,9 @@ public class Login_vpn extends AppCompatActivity {
                                 the response is not empty, extract information and then insert into "GoToClass" and
                                 "ClassInfo"
                                  */
-                                List<TermInfo> term_info_list = tdao.selectAll();
+                                List<com.telephone.coursetable.Database.TermInfo> term_info_list = tdao.selectAll();
                                 String sterm = pdao.getGrade().get(0).toString();
-                                for (TermInfo t : term_info_list){
+                                for (com.telephone.coursetable.Database.TermInfo t : term_info_list){
                                     //do not get table for before-enroll terms, remove them from database
                                     if (t.term.substring(0, 4).compareTo(sterm) < 0) {
                                         tdao.deleteTerm(t.term);
