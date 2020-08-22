@@ -7,6 +7,9 @@ import androidx.room.Query;
 
 import java.util.List;
 
+/**
+ * @clear
+ */
 @Dao
 public interface GraduationScoreDao {
     @Query("select * from GraduationScore order by sterm DESC, scname ASC")

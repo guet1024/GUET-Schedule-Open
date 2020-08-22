@@ -1,28 +1,30 @@
 package com.telephone.coursetable.Gson;
 
-//有效学分
-
-public class ValidScoreQuery_Data {
+/**
+ * 有效学分
+ * @clear
+ */
+public class GraduationScore {
     private String name;
     private String cname;
     private String engname;
     private String engcj;
-    private String tname;//	"通识必修" 课程性质 √√√√√√√√√
+    private String tname;
     private String stid;
     private String term;
     private String courseid;
-    private double planxf;//	0 计划中的学分（换成勾和叉） √√√√√√√√√
-    private double credithour;//	3.5 已得学分（换成勾和叉） √√√√√√√√√
+    private double planxf;
+    private double credithour;
     private String coursetype;
     private double lvl;
-    private String sterm;//	"2019-2020_1" 选修学期 √√√√√√√√√
-    private String courseno;//	"1911082" 课号 √√√√√√√√√
-    private String scid;//	"BG0000006X0" 课程代号 √√√√√√√√√
-    private String scname;//	"大学英语3" 课程名称 √√√√√√√√√
-    private long score;//	73 成绩 √√√√√√√√√
+    private String sterm;
+    private String courseno;
+    private String scid;
+    private String scname;
+    private long score;
     private String zpxs;
-    private double xf;//	3.5 课程学分 √√√√√√√√√
-    private String stp;//	"BG" 课程性质代码 √√√√√√√√√
+    private double xf;
+    private String stp;
 
     public String getName() {
         return name;

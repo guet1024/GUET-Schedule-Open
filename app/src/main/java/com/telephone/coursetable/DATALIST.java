@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 
 public class DATALIST {
@@ -35,5 +36,18 @@ public class DATALIST {
      */
     public final String GoToClass_ClassInfo = null;
 
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.GraduationScore}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#graduationScore(Context, String)}
+     * @database
+     *      {@link com.telephone.coursetable.Database.GraduationScore}
+     * @merge
+     *      {@link com.telephone.coursetable.Merge.Merge#graduationScore(String, GraduationScoreDao)}
+     * @clear
+     */
+    public final String GraduationScore = null;
 
+    public final String TermInfo = null;
 }

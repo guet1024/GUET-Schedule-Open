@@ -32,7 +32,6 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
-import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
@@ -47,8 +46,8 @@ import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
-import com.telephone.coursetable.Gson.ValidScoreQueryS;
-import com.telephone.coursetable.Gson.ValidScoreQuery_Data;
+import com.telephone.coursetable.Gson.GraduationScore_s;
+import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 import com.telephone.coursetable.OCR.OCR;
@@ -624,11 +623,11 @@ public class Login extends AppCompatActivity {
                         Log.e("login_thread() get graduation score", getGraduationScore_res.code+"");
                         //if success, insert data into database
                         if (getGraduationScore_res.code == 0){
-                            ValidScoreQueryS vs = new Gson().fromJson(getGraduationScore_res.comment, ValidScoreQueryS.class);
-                            List<ValidScoreQuery_Data> vd_list = vs.getData();
-                            for (ValidScoreQuery_Data vd : vd_list){
+                            GraduationScore_s vs = new Gson().fromJson(getGraduationScore_res.comment, GraduationScore_s.class);
+                            List<GraduationScore> vd_list = vs.getData();
+                            for (GraduationScore vd : vd_list){
                                 //extract information and then insert into database
-                                gsdao.insert(new GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
+                                gsdao.insert(new com.telephone.coursetable.Database.GraduationScore(vd.getName(), vd.getCname(), vd.getEngname(), vd.getEngcj(), vd.getTname(), vd.getStid(),
                                         vd.getTerm(), vd.getCourseid(), vd.getPlanxf(), vd.getCredithour(), vd.getCoursetype(), vd.getLvl(), vd.getSterm(),
                                         vd.getCourseno(), vd.getScid(), vd.getScname(), vd.getScore(), vd.getZpxs(), vd.getXf(), vd.getStp()));
                             }

@@ -1,13 +1,15 @@
 package com.telephone.coursetable.Gson;
 
-//有效学分
-
 import java.util.List;
 
-public class ValidScoreQueryS {
+/**
+ * 有效学分
+ * @clear
+ */
+public class GraduationScore_s {
     private boolean success;
     private long total;
-    private List<ValidScoreQuery_Data> data;
+    private List<GraduationScore> data;
 
     public boolean isSuccess() {
         return success;
@@ -17,7 +19,7 @@ public class ValidScoreQueryS {
         return total;
     }
 
-    public List<ValidScoreQuery_Data> getData() {
+    public List<GraduationScore> getData() {
         return data;
     }
 }

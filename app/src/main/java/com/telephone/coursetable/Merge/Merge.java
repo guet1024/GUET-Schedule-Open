@@ -9,10 +9,13 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
+import com.telephone.coursetable.Gson.GraduationScore;
+import com.telephone.coursetable.Gson.GraduationScore_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.StudentInfo;
@@ -67,6 +70,25 @@ public class Merge {
                             i.getDptno(), i.getSpname(), i.getSpno(), i.getGrade(), i.getCname(),
                             i.getTeacherno(), i.getName(), i.getCourseid(), i.getComm(), i.getMaxcnt(),
                             i.getXf(), i.getLlxs(), i.getSyxs(), i.getSjxs(), i.getQtxs(), i.getSctcnt()
+                    )
+            );
+        }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void graduationScore(@NonNull String origin_g, @NonNull GraduationScoreDao gdao){
+        GraduationScore_s g_s = new Gson().fromJson(origin_g, GraduationScore_s.class);
+        List<GraduationScore> g = g_s.getData();
+        for (GraduationScore i : g){
+            gdao.insert(
+                    new com.telephone.coursetable.Database.GraduationScore(
+                            i.getName(), i.getCname(), i.getEngname(), i.getEngcj(), i.getTname(),
+                            i.getStid(), i.getTerm(), i.getCourseid(), i.getPlanxf(), i.getCredithour(),
+                            i.getCoursetype(), i.getLvl(), i.getSterm(), i.getCourseno(), i.getScid(),
+                            i.getScname(), i.getScore(), i.getZpxs(), i.getXf(), i.getStp()
                     )
             );
         }
