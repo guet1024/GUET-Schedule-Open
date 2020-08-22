@@ -3,6 +3,9 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+/**
+ * @clear
+ */
 @Entity(primaryKeys = {"courseno"})
 public class ClassInfo {
     @NonNull
@@ -29,27 +32,7 @@ public class ClassInfo {
     public double qtxs;
     public long sctcnt;
 
-    public ClassInfo(String courseno,
-                     String ctype,
-                     String tname,
-                     String examt,
-                     String dptname,
-                     String dptno,
-                     String spname,
-                     String spno,
-                     String grade,
-                     String cname,
-                     String teacherno,
-                     String name,
-                     String courseid,
-                     String comm,
-                     long maxcnt,
-                     double xf,
-                     double llxs,
-                     double syxs,
-                     double sjxs,
-                     double qtxs,
-                     long sctcnt){
+    public ClassInfo(@NonNull String courseno, String ctype, String tname, String examt, String dptname, String dptno, String spname, String spno, String grade, String cname, String teacherno, String name, String courseid, String comm, long maxcnt, double xf, double llxs, double syxs, double sjxs, double qtxs, long sctcnt) {
         this.courseno = courseno;
         this.ctype = ctype;
         this.tname = tname;

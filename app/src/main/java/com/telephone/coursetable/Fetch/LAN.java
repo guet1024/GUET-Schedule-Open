@@ -80,7 +80,7 @@ public class LAN {
      * - code == other : fail
      * @clear
      */
-    public static HttpConnectionAndCode table(Context c, String cookie, String term){
+    public static HttpConnectionAndCode goToClass_ClassInfo(Context c, String cookie, String term){
         Resources r = c.getResources();
         return Get.get(
                 r.getString(R.string.lan_get_table_url),

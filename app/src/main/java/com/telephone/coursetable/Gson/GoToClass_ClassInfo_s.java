@@ -2,10 +2,13 @@ package com.telephone.coursetable.Gson;
 
 import java.util.List;
 
-public class Table {
+/**
+ * @clear
+ */
+public class GoToClass_ClassInfo_s {
     private boolean success;
     private long total;
-    private List<TableNode> data;
+    private List<GoToClass_ClassInfo> data;
 
     public boolean isSuccess() {
         return success;
@@ -15,7 +18,7 @@ public class Table {
         return total;
     }
 
-    public List<TableNode> getData() {
+    public List<GoToClass_ClassInfo> getData() {
         return data;
     }
 }

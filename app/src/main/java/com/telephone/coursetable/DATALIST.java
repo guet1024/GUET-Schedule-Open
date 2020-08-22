@@ -2,6 +2,8 @@ package com.telephone.coursetable;
 
 import android.content.Context;
 
+import com.telephone.coursetable.Database.ClassInfoDao;
+import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 
 public class DATALIST {
@@ -19,4 +21,17 @@ public class DATALIST {
      * @clear
      */
     public final String PersonInfo = null;
+
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.GoToClass_ClassInfo}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#goToClass_ClassInfo(Context, String, String)}
+     * @database
+     *      {@link com.telephone.coursetable.Database.GoToClass} + {@link com.telephone.coursetable.Database.ClassInfo}
+     * @merge
+     *      {@link com.telephone.coursetable.Merge.Merge#goToClass_ClassInfo(String, GoToClassDao, ClassInfoDao)}
+     * @clear
+     */
+    public final String GoToClass_ClassInfo = null;
 }

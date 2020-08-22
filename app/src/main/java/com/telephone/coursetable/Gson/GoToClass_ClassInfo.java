@@ -1,6 +1,9 @@
 package com.telephone.coursetable.Gson;
 
-public class TableNode {
+/**
+ * @clear
+ */
+public class GoToClass_ClassInfo {
     private long id;
     private String ctype;
     private String tname;
@@ -30,7 +33,7 @@ public class TableNode {
     private double sjxs;
     private double qtxs;
     private long sctcnt;
-    private long hours;
+    private double hours;
 
     public long getId() {
         return id;
@@ -148,7 +151,7 @@ public class TableNode {
         return sctcnt;
     }
 
-    public long getHours() {
+    public double getHours() {
         return hours;
     }
 }

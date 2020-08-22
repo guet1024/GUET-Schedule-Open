@@ -47,8 +47,8 @@ import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.StudentInfo;
-import com.telephone.coursetable.Gson.Table;
-import com.telephone.coursetable.Gson.TableNode;
+import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
+import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.Term;
 import com.telephone.coursetable.Gson.Terms;
 import com.telephone.coursetable.Gson.ValidScoreQueryS;
@@ -772,13 +772,13 @@ public class Login_vpn extends AppCompatActivity {
                                         tdao.deleteTerm(t.term);
                                         continue;
                                     }
-                                    HttpConnectionAndCode getTable_res = LAN.table(Login_vpn.this, cookie_after_login, t.term);
+                                    HttpConnectionAndCode getTable_res = LAN.goToClass_ClassInfo(Login_vpn.this, cookie_after_login, t.term);
                                     Log.e("login_thread() get table " + t.term, getTable_res.code+"");
                                     //if success, insert data into database
                                     if (getTable_res.code == 0){
-                                        Table table = new Gson().fromJson(getTable_res.comment, Table.class);
-                                        List<TableNode> table_node_list = table.getData();
-                                        for (TableNode table_node : table_node_list){
+                                        GoToClass_ClassInfo_s table = new Gson().fromJson(getTable_res.comment, GoToClass_ClassInfo_s.class);
+                                        List<GoToClass_ClassInfo> table_node_list = table.getData();
+                                        for (GoToClass_ClassInfo table_node : table_node_list){
                                             //extract information and then insert into "GoToClass"
                                             gdao.insert(new GoToClass(table_node.getTerm(), table_node.getWeek(), table_node.getSeq(), table_node.getCourseno(), table_node.getId(), table_node.getCroomno(), table_node.getStartweek(), table_node.getEndweek(), table_node.isOddweek(), table_node.getHours()));
                                             //extract information and then insert into "ClassInfo"
