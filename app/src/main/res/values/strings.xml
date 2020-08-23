@@ -55,6 +55,8 @@
     <string name="lan_title_login_updated">同步 | 同步成功</string>
     <string name="lan_title_login_updated_fail">同步 | 请重试</string>
 
+    <string name="lan_extra_password_title">还差一步  😋</string>
+
     <string name="lan_get_checkcode_url">http://bkjw.guet.edu.cn/login/GetValidateCode?id=0.7117051736083029</string>
     <string name="lan_get_checkcode_referer">http://bkjw.guet.edu.cn/</string>
     <string name="lan_get_person_url">http://bkjw.guet.edu.cn/Student/GetPerson</string>
@@ -80,22 +82,29 @@
 
 
 
+    <string name="wan_get_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
+    <string name="wan_get_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
+    <string name="wan_vpn_get_ticket_url">https://v.guet.edu.cn/</string>
+    <string name="wan_vpn_get_ticket_referer">https://v.guet.edu.cn/</string>
+    <string name="wan_vpn_login_url">https://v.guet.edu.cn/do-login</string>
+    <string name="wan_vpn_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_vpn_login_success_contain_response_text">\"success\": true</string>
+    <string name="wan_vpn_login_need_confirm_contain_response_text">\"error\": \"NEED_CONFIRM\"</string>
+    <string name="wan_vpn_confirm_login_url">https://v.guet.edu.cn/do-confirm-login</string>
+    <string name="wan_vpn_confirm_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_vpn_login_ip_forbidden_contain_response_text">\"error\": \"IP_FORBIDDEN\"</string>
+
+    <string name="wan_vpn_ip_forbidden">ip</string>
 
 
 
-    <string name="vpn_get_ticket_url">https://v.guet.edu.cn/</string>
-    <string name="vpn_login_url">https://v.guet.edu.cn/do-login</string>
-    <string name="vpn_confirm_login_url">https://v.guet.edu.cn/do-confirm-login</string>
-    <string name="vpn_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
-
-    <string name="vpn_get_ticket_referer">https://v.guet.edu.cn/</string>
-    <string name="vpn_login_referer">https://v.guet.edu.cn/login</string>
-    <string name="vpn_confirm_login_referer">https://v.guet.edu.cn/login</string>
-    <string name="vpn_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
 
 
 
-    <string name="vpn_login_success_contain_response_text">\"success\": true</string>
+
+
+
+
 
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
 
@@ -140,6 +149,4 @@
     <string name="pref_current_term_key">current_term</string>
     <string name="pref_current_week_key">current_week</string>
     <string name="pref_user_updating_key">updating</string>
-    <string name="extra_password_title">还差一步  😋</string>
-    <string name="wan_vpn_ip_forbidden">ip</string>
 </resources>

@@ -62,6 +62,7 @@ public class Login extends AppCompatActivity {
      * 2. get check-code, if success:
      *      1. update image, cookie
      *      2. auto recognize the image and fill in the check-code input box
+     *      3. clear focus of the check-code input box
      * @clear
      */
     public void changeCode(View view){
@@ -86,6 +87,7 @@ public class Login extends AppCompatActivity {
                 runOnUiThread(() -> {
                     im.setImageBitmap((Bitmap) (res.obj));
                     et.setText(ocr);
+                    et.clearFocus();
                 });
             }
         }).start();
@@ -514,7 +516,7 @@ public class Login extends AppCompatActivity {
      * 3. get cookie before logging in the credit system
      * 4. get a dialog View
      * 5. get an AlertDialog:
-     *      - Message : null
+     *      - Message : ""
      *      - View : the View obtained before
      *      - Title : the String specified in resources file
      *      - Press-yes :
@@ -585,7 +587,7 @@ public class Login extends AppCompatActivity {
         /** get a dialog View */
         View extra_pwd_dialog_layout = getLayoutInflater().inflate(R.layout.extra_password, null);
         /** get an AlertDialog */
-        AlertDialog extra_pwd_dialog = getAlertDialog(null,
+        AlertDialog extra_pwd_dialog = getAlertDialog("",
                 (dialogInterface, i) -> {
                     /** call {@link #clearAllIMAndFocus()} */
                     clearAllIMAndFocus();
@@ -732,7 +734,7 @@ public class Login extends AppCompatActivity {
                 },
                 (dialogInterface, i) -> {},
                 extra_pwd_dialog_layout,
-                getResources().getString(R.string.extra_password_title));
+                getResources().getString(R.string.lan_extra_password_title));
         new Thread(() -> {
             List<User> u = udao.selectUser(sid);
             String aaw_pwd = "";

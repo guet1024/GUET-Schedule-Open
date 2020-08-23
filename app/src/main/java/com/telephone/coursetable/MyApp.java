@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.room.Room;
 
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Http.Get;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -55,11 +56,17 @@ public class MyApp extends Application {
     }
 
     public static boolean isLAN(){
-        try {
-            return InetAddress.getByName("bkjw.guet.edu.cn").isReachable(300);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return Get.get(
+                "http://bkjw.guet.edu.cn/",
+                null,
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36",
+                "",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ).resp_code == 200;
     }
 }

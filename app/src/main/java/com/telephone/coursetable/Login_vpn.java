@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,35 +27,20 @@ import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Clock.TimeAndDescription;
 import com.telephone.coursetable.Database.AppDatabase;
-import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
-import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
-import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Fetch.WAN;
-import com.telephone.coursetable.Gson.Hour;
-import com.telephone.coursetable.Gson.Hour_s;
 import com.telephone.coursetable.Gson.LoginResponse;
-import com.telephone.coursetable.Gson.PersonInfo_s;
-import com.telephone.coursetable.Gson.PersonInfo;
-import com.telephone.coursetable.Gson.StudentInfo;
-import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
-import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
-import com.telephone.coursetable.Gson.TermInfo;
-import com.telephone.coursetable.Gson.TermInfo_s;
-import com.telephone.coursetable.Gson.GraduationScore_s;
-import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 import com.telephone.coursetable.OCR.OCR;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -341,6 +325,15 @@ public class Login_vpn extends AppCompatActivity {
         return login_res;
     }
 
+    /**
+     * @ui/non-ui
+     * get encrypted password
+     * @param pwd origin password
+     * @return
+     * - String : the encrypted password
+     * - null : fail
+     * @clear
+     */
     public static String encrypt(String pwd){
         int[] key = {134, 8, 187, 0, 251, 59, 238, 74, 176, 180, 24, 67, 227, 252, 205, 80};
         //for good, pwd's length should not be 0
@@ -374,27 +367,31 @@ public class Login_vpn extends AppCompatActivity {
 
     /**
      * @non-ui
+     * try to login GUET web vpn, if success:
+     *      1. return cookie containing web vpn ticket
      * @return
      * - cookie containing ticket : success
-     * - R.string.vpn_ip_forbidden : ip forbidden
+     * - {@link R.string#wan_vpn_ip_forbidden} : fail, ip forbidden
      * - null : fail
+     * @clear
      */
-    public static String vpn_login(Context c, final String id, String pwd){
+    public static String vpn_login(Context c, String id, String pwd){
+        final String NAME = "vpn_login()";
         Resources r = c.getResources();
         String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
-        Log.e("vpn_login_test() body", body);
+        Log.e(NAME + " " + "body", body);
         if (pwd.length() <= 0){
-            Log.e("vpn_login_test() login", "fail");
+            Log.e(NAME, "fail");
             return null;
         }
         pwd = encrypt(pwd);
         body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
-        Log.e("vpn_login_test() encrypted body", body);
+        Log.e(NAME + " " + "encrypted body", body);
         HttpConnectionAndCode get_ticket_res = com.telephone.coursetable.Https.Get.get(
-                r.getString(R.string.vpn_get_ticket_url),
+                r.getString(R.string.wan_vpn_get_ticket_url),
                 null,
                 r.getString(R.string.user_agent),
-                r.getString(R.string.vpn_get_ticket_referer),
+                r.getString(R.string.wan_vpn_get_ticket_referer),
                 null,
                 null,
                 r.getString(R.string.cookie_delimiter),
@@ -403,34 +400,34 @@ public class Login_vpn extends AppCompatActivity {
                 null
         );
         String cookie = get_ticket_res.cookie;
-        Log.e("vpn_login_test() ticket cookie", cookie);
+        Log.e(NAME + " " + "ticket cookie", cookie);
         HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
-                r.getString(R.string.vpn_login_url),
+                r.getString(R.string.wan_vpn_login_url),
                 null,
                 r.getString(R.string.user_agent),
-                r.getString(R.string.vpn_login_referer),
+                r.getString(R.string.wan_vpn_login_referer),
                 body,
                 cookie,
                 "}",
                 r.getString(R.string.cookie_delimiter),
-                r.getString(R.string.vpn_login_success_contain_response_text),
+                r.getString(R.string.wan_vpn_login_success_contain_response_text),
                 null,
                 null
         );
         if (try_to_login_res.comment != null){
-            Log.e("vpn_login_test() try to login", try_to_login_res.comment);
+            Log.e(NAME + " " + "try to login response", try_to_login_res.comment);
         }
         if (try_to_login_res.code == 0){
-            Log.e("vpn_login_test() login", "success");
+            Log.e(NAME, "success");
             return cookie;
         }else {
-            if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"NEED_CONFIRM\"")){
-                Log.e("vpn_login_test() confirm login", "confirm...");
+            if (try_to_login_res.comment != null && try_to_login_res.comment.contains(r.getString(R.string.wan_vpn_login_need_confirm_contain_response_text))){
+                Log.e(NAME + " " + "need confirm", "confirm...");
                 HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
-                        r.getString(R.string.vpn_confirm_login_url),
+                        r.getString(R.string.wan_vpn_confirm_login_url),
                         null,
                         r.getString(R.string.user_agent),
-                        r.getString(R.string.vpn_confirm_login_referer),
+                        r.getString(R.string.wan_vpn_confirm_login_referer),
                         null,
                         cookie,
                         null,
@@ -440,14 +437,14 @@ public class Login_vpn extends AppCompatActivity {
                         null
                 );
                 if (confirm_login_res.code == 0){
-                    Log.e("vpn_login_test() login", "success");
+                    Log.e(NAME, "success");
                     return cookie;
                 }
-            }else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"IP_FORBIDDEN\"")){
-                Log.e("vpn_login_test() login", "fail | ip forbidden");
+            }else if (try_to_login_res.comment != null && try_to_login_res.comment.contains(r.getString(R.string.wan_vpn_login_ip_forbidden_contain_response_text))){
+                Log.e(NAME, "fail | ip forbidden");
                 return r.getString(R.string.wan_vpn_ip_forbidden);
             }
-            Log.e("vpn_login_test() login", "fail");
+            Log.e(NAME, "fail");
             return null;
         }
     }
@@ -861,7 +858,7 @@ public class Login_vpn extends AppCompatActivity {
                     }
                 },
                 extra_pwd_dialog_layout,
-                getResources().getString(R.string.extra_password_title));
+                getResources().getString(R.string.lan_extra_password_title));
         new Thread(new Runnable() {
             @Override
             public void run() {
