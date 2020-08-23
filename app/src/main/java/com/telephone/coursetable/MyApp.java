@@ -1,11 +1,19 @@
 package com.telephone.coursetable;
 
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.room.Room;
 
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
 
 import java.io.IOException;
@@ -14,15 +22,29 @@ import java.net.InetAddress;
 public class MyApp extends Application {
     private static MyApp app;
     private static AppDatabase db;
-    public static String[] times = {"1","2","3","4","5"};
-    public static int[] timetvIds = {
+    private static AppTestDatabase db_test;
+    private static SharedPreferences sp;
+    private static SharedPreferences sp_test;
+    private static SharedPreferences.Editor editor;
+    private static SharedPreferences.Editor editor_test;
+
+    public static MainActivity main = null;
+
+    final public static String ocr_lang_code = "telephone";
+    final public static String notification_channel_id_normal = "normal";
+    final public static String notification_channel_name_normal = "普通通知";
+    final public static String notification_channel_des_normal = "常规通知";
+    final public static int notification_id_fetch_service_foreground = 1800301129;
+    final public static long service_fetch_interval = 600000;   // 10 min
+    final public static String[] times = {"1","2","3","4","5"};
+    final public static int[] timetvIds = {
             R.id.textView_time1, //times[0]
             R.id.textView_time2, //times[1]
             R.id.textView_time3, //times[2]
             R.id.textView_time4, //times[3]
             R.id.textView_time5 //times[4]
     };
-    public static int[] weekdaytvIds = {
+    final public static int[] weekdaytvIds = {
             R.id.textView_wd1,
             R.id.textView_wd2,
             R.id.textView_wd3,
@@ -31,7 +53,7 @@ public class MyApp extends Application {
             R.id.textView_wd6,
             R.id.textView_wd7
     };
-    public static int[][] nodeIds = {
+    final public static int[][] nodeIds = {
             {R.id.textView1,R.id.textView2,R.id.textView3,R.id.textView4,R.id.textView5,R.id.textView6,R.id.textView7},//times[0]
             {R.id.textView8,R.id.textView9,R.id.textView10,R.id.textView11,R.id.textView12,R.id.textView13,R.id.textView14},//times[1]
             {R.id.textView15,R.id.textView16,R.id.textView17,R.id.textView18,R.id.textView19,R.id.textView20,R.id.textView21},//times[2]
@@ -44,7 +66,21 @@ public class MyApp extends Application {
         super.onCreate();
         app = this;
         db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").build();
-        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
+        db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").build();
+        sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
+        sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
+        editor = sp.edit();
+        editor_test = sp_test.edit();
+        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
+        editor.putBoolean(getResources().getString(R.string.pref_service_updating_key), false);
+        editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), false);
+        editor.commit();
+        editor_test.commit();
+        NotificationChannel channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(notification_channel_des_normal);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+        FetchService.startAction_START_FETCH_DATA(this, 20000);
     }
 
     public static MyApp getCurrentApp(){
@@ -53,6 +89,26 @@ public class MyApp extends Application {
 
     public static AppDatabase getCurrentAppDB(){
         return db;
+    }
+
+    public static AppTestDatabase getCurrentAppDB_Test(){
+        return db_test;
+    }
+
+    public static SharedPreferences getCurrentSharedPreference(){
+        return sp;
+    }
+
+    public static SharedPreferences getCurrentSharedPreference_Test(){
+        return sp_test;
+    }
+
+    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor(){
+        return editor;
+    }
+
+    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor_Test(){
+        return editor_test;
     }
 
     public static boolean isLAN(){

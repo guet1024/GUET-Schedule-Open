@@ -133,6 +133,7 @@
     <string name="server_hours_time_format">H:mm</string>
 
     <string name="preference_file_name">com.telephone.coursetable.preference</string>
+    <string name="preference_file_name_test">com.telephone.coursetable.preference.test</string>
 
     <string name="pref_hour_start_suffix">S</string>
     <string name="pref_hour_end_suffix">E</string>
@@ -149,4 +150,6 @@
     <string name="pref_current_term_key">current_term</string>
     <string name="pref_current_week_key">current_week</string>
     <string name="pref_user_updating_key">updating</string>
+    <string name="pref_service_updating_key">service_updating</string>
+    <string name="pref_logging_in_key">logging</string>
 </resources>

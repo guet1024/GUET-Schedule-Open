@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.main = this;
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 //init title
                 List<User> acuser = udao.getActivatedUser();
                 if (acuser.isEmpty()){
-                    if (pref.getBoolean(getResources().getString(R.string.pref_user_updating_key), false)){
+                    if (pref.getBoolean(getResources().getString(R.string.pref_user_updating_key), false) || pref.getBoolean(getResources().getString(R.string.pref_service_updating_key), false)){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -329,6 +330,12 @@ public class MainActivity extends AppCompatActivity {
                 showTable();
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.main = null;
+        super.onDestroy();
     }
 
     @Override

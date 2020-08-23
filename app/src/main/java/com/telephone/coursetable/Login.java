@@ -31,10 +31,12 @@ import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
@@ -82,7 +84,7 @@ public class Login extends AppCompatActivity {
             Log.e(NAME + " " + "the code of get check code res", res.code+"");
             //if success, set
             if (res.obj != null){
-                String ocr = OCR.getTextFromBitmap(Login.this, (Bitmap)res.obj, "telephone");
+                String ocr = OCR.getTextFromBitmap(Login.this, (Bitmap)res.obj, MyApp.ocr_lang_code);
                 cookie_builder.append(res.cookie);
                 runOnUiThread(() -> {
                     im.setImageBitmap((Bitmap) (res.obj));
@@ -253,7 +255,7 @@ public class Login extends AppCompatActivity {
      * 1. delete all user-related data from database(not including user login information)
      * @clear
      */
-    private void deleteOldDataFromDatabase(){
+    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao){
         gdao.deleteAll();
         cdao.deleteAll();
         tdao.deleteAll();
@@ -395,13 +397,15 @@ public class Login extends AppCompatActivity {
     /**
      * @ui
      * 1. super onCreate()
-     * 2. initialize DAOs
-     * 3. call {@link #initContentView()}
+     * 2. put <{@link R.string#pref_logging_in_key} : true> into shared preference, commit it
+     * 3. initialize DAOs
+     * 4. call {@link #initContentView()}
      * @clear
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_logging_in_key), true).commit();
         AppDatabase db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -410,6 +414,18 @@ public class Login extends AppCompatActivity {
         pdao = db.personInfoDao();
         gsdao = db.graduationScoreDao();
         initContentView();
+    }
+
+    /**
+     * @ui
+     * 1. put <{@link R.string#pref_logging_in_key} : false> into shared preference, commit it
+     * 2. super onDestroy()
+     * @clear
+     */
+    @Override
+    protected void onDestroy() {
+        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_logging_in_key), false).commit();
+        super.onDestroy();
     }
 
     /**
@@ -545,10 +561,10 @@ public class Login extends AppCompatActivity {
      *              6. insert/replace new user into database
      *              ******************************* UPDATE DATA START *******************************
      *              7. deactivate all user in database
-     *              8. clear shared preference, put <{@link R.string#pref_user_updating_key} : true> into shared preference
+     *              8. clear shared preference, put <{@link R.string#pref_user_updating_key} : true> <{@link R.string#pref_logging_in_key} : true> <{@link R.string#pref_service_updating_key} : false> into shared preference
      *              9. commit shared preference
      *              10. show tip snack-bar, change title
-     *              11. call {@link #deleteOldDataFromDatabase()}
+     *              11. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao)}
      *              12. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}
      *              13. commit shared preference
      *              14. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}:
@@ -660,8 +676,8 @@ public class Login extends AppCompatActivity {
                         /** get cookie after successfully logging in the credit system */
                         final String cookie_after_login = cookie_builder.toString();
                         /** get shared preference and its editor */
-                        final SharedPreferences shared_pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
-                        final SharedPreferences.Editor editor = shared_pref.edit();
+                        final SharedPreferences shared_pref = MyApp.getCurrentSharedPreference();
+                        final SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
                         /** insert/replace new user into database */
                         udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
                         /**
@@ -669,9 +685,12 @@ public class Login extends AppCompatActivity {
                          */
                         /** deactivate all user in database */
                         udao.disableAllUser();
-                        /** clear shared preference, put <{@link R.string#pref_user_updating_key} : true> into shared preference */
+                        /** clear shared preference,
+                         *  put <{@link R.string#pref_user_updating_key} : true> <{@link R.string#pref_logging_in_key} : true> <{@link R.string#pref_service_updating_key} : false> into shared preference */
                         editor.clear();
                         editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), true);
+                        editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), true);
+                        editor.putBoolean(getResources().getString(R.string.pref_service_updating_key), false);
                         /** commit shared preference */
                         editor.commit();
                         /** show tip snack-bar, change title */
@@ -680,7 +699,7 @@ public class Login extends AppCompatActivity {
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
                         /** call {@link #deleteOldDataFromDatabase()} */
-                        deleteOldDataFromDatabase();
+                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao);
                         /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
                         boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor);
                         /** commit shared preference */
