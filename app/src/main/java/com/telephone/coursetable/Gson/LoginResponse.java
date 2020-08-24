@@ -1,5 +1,8 @@
 package com.telephone.coursetable.Gson;
 
+/**
+ * @clear
+ */
 public class LoginResponse {
     private boolean success;
     private String msg;

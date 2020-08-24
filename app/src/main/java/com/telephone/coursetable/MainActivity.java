@@ -74,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
+    public void openFunctionMenu(View view){
+        startActivity(new Intent(this, FunctionMenu.class));
+    }
+
     public void refresh(){
         runOnUiThread(()->{
             startActivity(new Intent(MainActivity.this, MainActivity.class));

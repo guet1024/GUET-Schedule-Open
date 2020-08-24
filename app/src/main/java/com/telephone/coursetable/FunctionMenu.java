@@ -2,6 +2,8 @@ package com.telephone.coursetable;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
@@ -24,6 +26,11 @@ public class FunctionMenu extends AppCompatActivity {
     private PersonInfoDao pdao;
     private GraduationScoreDao gsdao;
     private ExpandableListView menu_list;
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class));
+    }
 
     @Override
     protected void onDestroy() {
@@ -159,19 +166,30 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("计划");
                 children.add(child);
                 double credit_hour_total = 0;
+                String last_sterm = null;
                 for (GraduationScore gs : graduation_score_list){
+                    if (!gs.sterm.equals(last_sterm)){
+                        child = new LinkedList<>();
+                        child.add("---------------------------------");
+                        child.add("-----");
+                        child.add("-----");
+                        child.add("-----");
+                        child.add("-----");
+                        children.add(child);
+                    }
+                    last_sterm = gs.sterm;
                     child = new LinkedList<>();
                     child.add(gs.scname);
                     child.add(gs.score+"");
                     child.add(gs.xf+"");
                     if (gs.credithour == 0){
-                        child.add("×");
+                        child.add(" ");
                     }else {
                         credit_hour_total += gs.credithour;
                         child.add("√");
                     }
                     if (gs.planxf == 0){
-                        child.add("×");
+                        child.add(" ");
                     }else {
                         child.add("√");
                     }

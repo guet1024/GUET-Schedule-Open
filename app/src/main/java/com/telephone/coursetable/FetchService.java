@@ -2,6 +2,7 @@ package com.telephone.coursetable;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
@@ -123,7 +125,7 @@ public class FetchService extends IntentService {
     }
 
     private void service_fetch_wan(){
-
+        lan_notify_login_wrong_password();
     }
 
     private void service_fetch_lan(){
@@ -171,7 +173,7 @@ public class FetchService extends IntentService {
                 continue;
             }else {
                 Log.e(NAME, "fail | login fail");
-                lan_fetch_service_loginFail();
+                lan_fetch_service_loginFail(login_res);
                 lan_end();
                 return;
             }
@@ -287,9 +289,28 @@ public class FetchService extends IntentService {
         }
     }
 
-    private void lan_fetch_service_loginFail(){
+    private void lan_notify_login_wrong_password(){
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Notification notification =
+                new Notification.Builder(this, MyApp.notification_channel_id_normal)
+                        .setContentTitle("同步失败了 ಥ_ಥ")
+                        .setContentText("您的学分制系统密码是否已更改? 请再次登录以更新您的密码 >>")
+                        .setSmallIcon(R.drawable.guet_logo_white)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .setTicker("同步失败了 ಥ_ಥ")
+                        .build();
+        NotificationManagerCompat.from(this).notify(MyApp.notification_id_fetch_service_lan_password_wrong, notification);
+    }
+
+    private void lan_fetch_service_loginFail(HttpConnectionAndCode res){
         final String NAME = "lan_fetch_service_loginFail()";
         Log.e(NAME,"it fail...");
+        if (res.comment != null && res.comment.contains("密码")) {
+            lan_notify_login_wrong_password();
+        }
     }
 
     /**
