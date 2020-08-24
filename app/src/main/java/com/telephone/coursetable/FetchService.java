@@ -28,6 +28,7 @@ import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.OCR.OCR;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public class FetchService extends IntentService {
         Notification notification =
                 new Notification.Builder(this, MyApp.notification_channel_id_normal)
                         .setContentTitle("加油~今天也要打起精神来")
-                        .setSmallIcon(R.drawable.guet_logo)
+                        .setSmallIcon(R.drawable.guet_logo_white)
                         .setContentIntent(pendingIntent)
                         .setTicker("加油~今天也要打起精神来")
                         .build();
@@ -129,10 +130,13 @@ public class FetchService extends IntentService {
         final String NAME = "service_fetch_lan()";
         Resources r = getResources();
         if (
-                MyApp.getCurrentSharedPreference().getBoolean(r.getString(R.string.pref_logging_in_key), true) ||
-                        MyApp.getCurrentSharedPreference().getBoolean(r.getString(R.string.pref_user_updating_key), true)
+                MyApp.running_main != null ||
+                        MyApp.running_change_hours != null ||
+                        MyApp.running_function_menu != null ||
+                        MyApp.running_login != null ||
+                        MyApp.running_login_thread
         ){
-            Log.e(NAME, "skip | logging(user updating)");
+            Log.e(NAME, "skip | some activity is active or data is being updated");
             return;
         }
         lan_start();
@@ -211,6 +215,9 @@ public class FetchService extends IntentService {
         /** migrate the pulled data to the database */
         Log.e(NAME, "migrate the pulled data to the database...");
         lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test);
+        /** re-insert user */
+        Log.e(NAME, "re-insert user...");
+        udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
         /** activate user */
         Log.e(NAME, "activate user...");
         udao.activateUser(user.username);
@@ -262,19 +269,21 @@ public class FetchService extends IntentService {
 
     private void lan_start(){
         final String NAME = "lan_start()";
-        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_service_updating_key), true).commit();
-        if (MyApp.main != null){
+        Log.e(NAME, "start...");
+        MyApp.running_fetch_service = true;
+        if (MyApp.running_main != null){
             Log.e(NAME, "refresh main activity...");
-            startActivity(new Intent(FetchService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            MyApp.running_main.refresh();
         }
     }
 
     private void lan_end(){
         final String NAME = "lan_end()";
-        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_service_updating_key), false).commit();
-        if (MyApp.main != null){
+        Log.e(NAME, "end...");
+        MyApp.running_fetch_service = false;
+        if (MyApp.running_main != null){
             Log.e(NAME, "refresh main activity...");
-            startActivity(new Intent(FetchService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            MyApp.running_main.refresh();
         }
     }
 

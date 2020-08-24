@@ -36,7 +36,6 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
-import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
@@ -397,7 +396,7 @@ public class Login extends AppCompatActivity {
     /**
      * @ui
      * 1. super onCreate()
-     * 2. put <{@link R.string#pref_logging_in_key} : true> into shared preference, commit it
+     * 2. set {@link MyApp#running_login} to this pointer
      * 3. initialize DAOs
      * 4. call {@link #initContentView()}
      * @clear
@@ -405,7 +404,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_logging_in_key), true).commit();
+        MyApp.running_login = this;
         AppDatabase db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -418,13 +417,13 @@ public class Login extends AppCompatActivity {
 
     /**
      * @ui
-     * 1. put <{@link R.string#pref_logging_in_key} : false> into shared preference, commit it
+     * 1. set {@link MyApp#running_login} to null
      * 2. super onDestroy()
      * @clear
      */
     @Override
     protected void onDestroy() {
-        MyApp.getCurrentSharedPreferenceEditor().putBoolean(getResources().getString(R.string.pref_logging_in_key), false).commit();
+        MyApp.running_login = null;
         super.onDestroy();
     }
 
@@ -501,6 +500,11 @@ public class Login extends AppCompatActivity {
         List<String> terms = tdao.getTermsSince(
                 pdao.getGrade().get(0) + "-" + (pdao.getGrade().get(0) + 1) + "_1"
         );
+        List<TermInfo> term_list = tdao.selectAll();
+        for (TermInfo term : term_list){
+            if (terms.contains(term.term))continue;
+            tdao.deleteTerm(term.term);
+        }
         for (String term : terms){
             res = LAN.goToClass_ClassInfo(c, cookie, term);
             if (res.code != 0){
@@ -561,27 +565,31 @@ public class Login extends AppCompatActivity {
      *              6. insert/replace new user into database
      *              ******************************* UPDATE DATA START *******************************
      *              7. deactivate all user in database
-     *              8. clear shared preference, put <{@link R.string#pref_user_updating_key} : true> <{@link R.string#pref_logging_in_key} : true> <{@link R.string#pref_service_updating_key} : false> into shared preference
-     *              9. commit shared preference
-     *              10. show tip snack-bar, change title
-     *              11. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao)}
-     *              12. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}
-     *              13. commit shared preference
-     *              14. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}:
+     *              8. set {@link MyApp#running_login_thread} to true
+     *              9. clear shared preference
+     *              10. commit shared preference
+     *              11. show tip snack-bar, change title
+     *              12. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao)}
+     *              13. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}
+     *              14. commit shared preference
+     *              15. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
      *                      3. print the user's student id and name to log
-     *                      4. put <{@link R.string#pref_user_updating_key} : false> into shared preference
-     *                      5. commit shared preference
-     *                      6. call {@link #unlock(boolean)} with false
-     *                      7. show tip toast, change title
-     *                      8. start {@link MainActivity}
+     *                      4. set {@link MyApp#running_login_thread} to false
+     *                      5. call {@link #unlock(boolean)} with false
+     *                      6. show tip toast, change title
+     *                      7. start a new {@link MainActivity}
      *                  - if something went wrong:
-     *                      1. put <{@link R.string#pref_user_updating_key} : false> into shared preference
-     *                      2. commit shared preference
-     *                      3. call {@link #unlock(boolean)} with true
-     *                      4. show tip snack-bar, change title
+     *                      1. set {@link MyApp#running_login_thread} to false
+     *                      2. {@link MyApp#running_main}:
+     *                          - if not null:
+     *                              1. show tip toast
+     *                              2. call {@link MainActivity#refresh()}
+     *                          - if null:
+     *                              1. call {@link #unlock(boolean)} with true
+     *                              2. show tip snack-bar, change title
      *              ******************************* UPDATE DATA END *******************************
      *      - Press-no : nothing will happen
      * 6. start a new thread:
@@ -685,12 +693,10 @@ public class Login extends AppCompatActivity {
                          */
                         /** deactivate all user in database */
                         udao.disableAllUser();
-                        /** clear shared preference,
-                         *  put <{@link R.string#pref_user_updating_key} : true> <{@link R.string#pref_logging_in_key} : true> <{@link R.string#pref_service_updating_key} : false> into shared preference */
+                        /** set {@link MyApp#running_login_thread} to true */
+                        MyApp.running_login_thread = true;
+                        /** clear shared preference */
                         editor.clear();
-                        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), true);
-                        editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), true);
-                        editor.putBoolean(getResources().getString(R.string.pref_service_updating_key), false);
                         /** commit shared preference */
                         editor.commit();
                         /** show tip snack-bar, change title */
@@ -720,31 +726,37 @@ public class Login extends AppCompatActivity {
                             udao.activateUser(sid);
                             /** print the user's student id and name to log */
                             Log.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
-                            /** put <{@link R.string#pref_user_updating_key} : false> into shared preference */
-                            editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
-                            /** commit shared preference */
-                            editor.commit();
+                            /** set {@link MyApp#running_login_thread} to false */
+                            MyApp.running_login_thread = false;
                             runOnUiThread(() -> {
                                 /** call {@link #unlock(boolean)} with false */
                                 unlock(false);
                                 /** show tip toast, change title */
                                 Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
                                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
-                                /** start {@link MainActivity} */
+                                /** start a new {@link MainActivity} */
                                 startActivity(new Intent(Login.this, MainActivity.class));
                             });
                         }else {
-                            /** put <{@link R.string#pref_user_updating_key} : false> into shared preference */
-                            editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
-                            /** commit shared preference */
-                            editor.commit();
-                            runOnUiThread(() -> {
-                                /** call {@link #unlock(boolean)} with true */
-                                unlock(true);
-                                /** show tip snack-bar, change title */
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
-                                getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
-                            });
+                            /** set {@link MyApp#running_login_thread} to false */
+                            MyApp.running_login_thread = false;
+                            /** {@link MyApp#running_main} */
+                            if (MyApp.running_main != null){
+                                runOnUiThread(() -> {
+                                    /** show tip toast */
+                                    Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
+                                    /** call {@link MainActivity#refresh()} */
+                                    MyApp.running_main.refresh();
+                                });
+                            }else {
+                                runOnUiThread(() -> {
+                                    /** call {@link #unlock(boolean)} with true */
+                                    unlock(true);
+                                    /** show tip snack-bar, change title */
+                                    Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
+                                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                                });
+                            }
                         }
                         /**
                          * ******************************** UPDATE DATA END ********************************

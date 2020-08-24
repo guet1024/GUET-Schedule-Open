@@ -28,14 +28,19 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
-    public static MainActivity main = null;
+    volatile public static MainActivity running_main = null;
+    volatile public static Login running_login = null;
+    volatile public static boolean running_login_thread = false;
+    volatile public static boolean running_fetch_service = false;
+    volatile public static FunctionMenu running_function_menu = null;
+    volatile public static ChangeHours running_change_hours = null;
 
     final public static String ocr_lang_code = "telephone";
     final public static String notification_channel_id_normal = "normal";
     final public static String notification_channel_name_normal = "普通通知";
     final public static String notification_channel_des_normal = "常规通知";
     final public static int notification_id_fetch_service_foreground = 1800301129;
-    final public static long service_fetch_interval = 600000;   // 10 min
+    final public static long service_fetch_interval = 5000;   // 10 min
     final public static String[] times = {"1","2","3","4","5"};
     final public static int[] timetvIds = {
             R.id.textView_time1, //times[0]
@@ -71,16 +76,11 @@ public class MyApp extends Application {
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
         editor_test = sp_test.edit();
-        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
-        editor.putBoolean(getResources().getString(R.string.pref_service_updating_key), false);
-        editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), false);
-        editor.commit();
-        editor_test.commit();
         NotificationChannel channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(notification_channel_des_normal);
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
-        FetchService.startAction_START_FETCH_DATA(this, 20000);
+        FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval);
     }
 
     public static MyApp getCurrentApp(){

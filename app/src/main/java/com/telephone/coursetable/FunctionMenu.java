@@ -26,8 +26,15 @@ public class FunctionMenu extends AppCompatActivity {
     private ExpandableListView menu_list;
 
     @Override
+    protected void onDestroy() {
+        MyApp.running_function_menu = null;
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.running_function_menu = this;
         setContentView(R.layout.activity_function_menu);
 
         pdao = MyApp.getCurrentAppDB().personInfoDao();

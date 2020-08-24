@@ -74,10 +74,16 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
+    public void refresh(){
+        runOnUiThread(()->{
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+        });
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.main = this;
+        MyApp.running_main = this;
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
@@ -144,28 +150,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final boolean lockdown = MyApp.running_login_thread || MyApp.running_fetch_service;
+        if (lockdown) {
+            ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
+            updating = true;
+            return;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //init title
                 List<User> acuser = udao.getActivatedUser();
-                if (acuser.isEmpty()){
-                    if (pref.getBoolean(getResources().getString(R.string.pref_user_updating_key), false) || pref.getBoolean(getResources().getString(R.string.pref_service_updating_key), false)){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TextView)findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
-                            }
-                        });
-                        updating = true;
-                    }else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
-                            }
-                        });
-                    }
+                if (acuser.isEmpty()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
+                        }
+                    });
                     return;
                 }else{
                     has_user = true;
@@ -334,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        MyApp.main = null;
+        MyApp.running_main = null;
         super.onDestroy();
     }
 

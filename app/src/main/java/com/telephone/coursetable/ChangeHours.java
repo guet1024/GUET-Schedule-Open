@@ -146,8 +146,15 @@ public class ChangeHours extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        MyApp.running_change_hours = null;
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.running_change_hours = this;
         setContentView(R.layout.activity_change_hours);
 
         tvids = new int[]{
