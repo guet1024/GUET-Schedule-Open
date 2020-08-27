@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -69,7 +70,8 @@ public class FetchService extends IntentService {
                         .setTicker("加油~今天也要打起精神来")
                         .build();
         startForeground(MyApp.notification_id_fetch_service_foreground, notification);
-        return super.onStartCommand(intent, flags, startId);
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     /**
@@ -107,6 +109,9 @@ public class FetchService extends IntentService {
      */
     private void handleAction_START_FETCH_DATA(long milliseconds) {
         final String NAME = "handleAction_START_FETCH_DATA()";
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
+        wakeLock.acquire();
         while (true){
             if (MyApp.isLAN()){
                 Log.e(NAME, "LAN");
@@ -125,7 +130,6 @@ public class FetchService extends IntentService {
     }
 
     private void service_fetch_wan(){
-        lan_notify_login_wrong_password();
     }
 
     private void service_fetch_lan(){

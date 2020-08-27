@@ -162,4 +162,26 @@ public class LAN {
                 null
         );
     }
+
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     * @clear
+     */
+    public static HttpConnectionAndCode grades(Context c, String cookie){
+        Resources r = c.getResources();
+        return Get.get(
+                r.getString(R.string.lan_get_grades_url),
+                new String[]{"term="},
+                r.getString(R.string.user_agent),
+                r.getString(R.string.lan_get_grades_referer),
+                cookie,
+                "}]}",
+                null,
+                r.getString(R.string.lan_get_grades_success_contain_response_text),
+                null,
+                null
+        );
+    }
 }

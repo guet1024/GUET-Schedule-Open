@@ -77,6 +77,9 @@
     <string name="lan_get_graduation_score_url">http://bkjw.guet.edu.cn/student/Getyxxf</string>
     <string name="lan_get_graduation_score_referer">http://bkjw.guet.edu.cn</string>
     <string name="lan_get_graduation_score_success_contain_response_text">\"success\":true</string>
+    <string name="lan_get_grades_url">http://bkjw.guet.edu.cn/Student/GetStuScore</string>
+    <string name="lan_get_grades_referer">http://bkjw.guet.edu.cn/Login/MainDesktop</string>
+    <string name="lan_get_grades_success_contain_response_text">\"success\":true</string>
 
 
 

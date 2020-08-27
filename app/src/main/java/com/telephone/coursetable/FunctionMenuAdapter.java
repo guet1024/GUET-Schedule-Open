@@ -24,13 +24,15 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
     private List<Map.Entry<String, List<List<String>>>> groups;
     private boolean singleExpanded;
     private ExpandableListView list;
+    private FunctionMenu menu;
 
-    public FunctionMenuAdapter(Context context, List<Map.Entry<String, List<List<String>>>> groups, boolean singleExpanded, ExpandableListView list) {
+    public FunctionMenuAdapter(Context context, List<Map.Entry<String, List<List<String>>>> groups, boolean singleExpanded, ExpandableListView list, FunctionMenu menu) {
         this.context = context;
         this.dataSetObservable = new DataSetObservable();
         this.groups = groups;
         this.singleExpanded = singleExpanded;
         this.list = list;
+        this.menu = menu;
     }
 
     @Override
@@ -83,25 +85,23 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
         if(view == null){
             view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
         }
-//        if (isExpanded) {
-//            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group Expanded");
-//        }else {
-//            ((TextView) view.findViewById(R.id.textView_group_text)).setText("Group");
-//        }
         ((TextView)view.findViewById(R.id.textView_group_text)).setText(groups.get(i).getKey());
         return view;
     }
 
     @Override
     public View getChildView(int i, int i1, boolean isLastChild, View view, ViewGroup viewGroup) {
+        View.OnClickListener collapse = view1 -> list.collapseGroup(i);
         switch (i){
             case 0:
                 if (view != null &&  ((TextView)view.findViewById(R.id.textView_pinfo_key)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_person_info, viewGroup, false);
+                view.setOnClickListener(collapse);
                 break;
             case 1:
-                if (view != null &&  ((TextView)view.findViewById(R.id.textView_graduation_score_cname)) != null)break;
+//                if (view != null &&  ((TextView)view.findViewById(R.id.textView_graduation_score_cname)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_graduation_score, viewGroup, false);
+                view.setOnClickListener(collapse);
                 break;
         }
         switch (i){
@@ -115,6 +115,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.textView_graduation_score_xf)).setText(groups.get(i).getValue().get(i1).get(2));
                 ((TextView)view.findViewById(R.id.textView_graduation_score_success)).setText(groups.get(i).getValue().get(i1).get(3));
                 ((TextView)view.findViewById(R.id.textView_graduation_score_plan)).setText(groups.get(i).getValue().get(i1).get(4));
+                if (groups.get(i).getValue().get(i1).get(5) != null){
+                    ((TextView)view.findViewById(R.id.textView_graduation_score_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
+                }
                 break;
         }
         return view;

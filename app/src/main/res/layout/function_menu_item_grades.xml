@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constrainedHeight="true">
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView_pinfo_key"
+        android:id="@+id/grades_cname"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:gravity="center"
@@ -15,13 +14,14 @@
         android:textAlignment="center"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_pinfo_value"
-        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintEnd_toStartOf="@+id/grades_grade"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_pinfo_value"
+        android:id="@+id/grades_grade"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:gravity="center"
@@ -30,7 +30,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="6"
-        app:layout_constraintStart_toEndOf="@+id/textView_pinfo_key"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/grades_cname"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

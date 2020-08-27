@@ -1,44 +1,46 @@
 package com.telephone.coursetable.Gson;
 
-//成绩查询
-
-public class ScoreQuery_Data {
+/**
+ * 成绩查询
+ * @clear
+ */
+public class Grades {
     private String dptno;
-    private String dptname;//	"计算机与信息安全学院"
-    private String spno;//	"080640S"
-    private String spname;//	"物联网工程"
-    private String bj;//	"18003503"
-    private long grade;//	2018 --居然不是String类型?!
-    private String stid;//	"1800301127"
-    private String name;//	"潘鹏宇"
-    private String term;	//"2019-2020_2"
-    private String courseid;//	"BT0307003X0"
-    private String courseno;//	"1920699"
-    private String cname;//	"单片机原理与应用"
-    private String courselevel;//	null
-    private long score;//	81
-    private String zpxs;//	"81"
-    private String kctype;//	"专业基础必修"
-    private String typeno;//	"BT"
-    private String cid;//	"BT0307003X0"
-    private String cno;//	"1920699"
-    private long sycj;//	89
-    private long qzcj;//	0
-    private long pscj;//	89
-    private long khcj;//	75
-    private long zpcj;//	81
-    private String kslb;//	"正考"
-    private String cjlb;//	"正常"
-    private long kssj;//	1
-    private double xf;//	2.5
-    private String xslb;//	null
-    private String tname1;//	null
-    private String stage;//	0
-    private String examt;//	"考查"
-    private long xs;//	0
-    private long cjlx;//	0
-    private long chk;//	1
-    private String comm;//	null
+    private String dptname;
+    private String spno;
+    private String spname;
+    private String bj;
+    private long grade;
+    private String stid;
+    private String name;
+    private String term;    //"2019-2020_2" //选修学期
+    private String courseid;
+    private String courseno;    //"1920699" //课号
+    private String cname;   //"单片机原理与应用" //课程名称
+    private String courselevel;
+    private long score;
+    private String zpxs;    //"81" //总成绩
+    private String kctype;
+    private String typeno;
+    private String cid;
+    private String cno;
+    private long sycj;  //89 //实验成绩
+    private long qzcj;  //0 //期中成绩
+    private long pscj;  //89 //平时成绩
+    private long khcj;  //75 //考核成绩
+    private long zpcj;  //81 //总评成绩
+    private String kslb;
+    private String cjlb;
+    private double kssj;
+    private double xf;  //2.5 //课程学分
+    private String xslb;
+    private String tname1;
+    private String stage;
+    private String examt;
+    private double xs;
+    private double cjlx;
+    private double chk;
+    private String comm;
 
     public String getDptno() {
         return dptno;
@@ -144,7 +146,7 @@ public class ScoreQuery_Data {
         return cjlb;
     }
 
-    public long getKssj() {
+    public double getKssj() {
         return kssj;
     }
 
@@ -168,15 +170,15 @@ public class ScoreQuery_Data {
         return examt;
     }
 
-    public long getXs() {
+    public double getXs() {
         return xs;
     }
 
-    public long getCjlx() {
+    public double getCjlx() {
         return cjlx;
     }
 
-    public long getChk() {
+    public double getChk() {
         return chk;
     }
 

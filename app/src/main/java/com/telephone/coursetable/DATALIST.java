@@ -76,4 +76,12 @@ public class DATALIST {
      * @clear
      */
     public final String Hour = null;
+
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.Grades}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#grades(Context, String)}
+     */
+    public final String Grades = null;
 }

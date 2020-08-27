@@ -2,12 +2,12 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu1"
+        android:id="@+id/change_hour_menu1"
 
         android:title="重置"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu2"
+        android:id="@+id/change_hour_menu2"
         android:title="保存"
         app:showAsAction="ifRoom" />
 </menu>

@@ -1,23 +1,15 @@
 package com.telephone.coursetable;
 
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.util.Log;
 
 import androidx.room.Room;
 
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
-
-import java.io.IOException;
-import java.net.InetAddress;
 
 public class MyApp extends Application {
     private static MyApp app;
@@ -60,8 +52,8 @@ public class MyApp extends Application {
             R.id.textView_wd7
     };
     final public static int[][] nodeIds = {
-            {R.id.textView1,R.id.textView2,R.id.textView3,R.id.textView4,R.id.textView5,R.id.textView6,R.id.textView7},//times[0]
-            {R.id.textView8,R.id.textView9,R.id.textView10,R.id.textView11,R.id.textView12,R.id.textView13,R.id.textView14},//times[1]
+            {R.id.change_hour_textView1,R.id.change_hour_textView2,R.id.change_hour_textView3,R.id.change_hour_textView4,R.id.change_hour_textView5,R.id.change_hour_textView6,R.id.change_hour_textView7},//times[0]
+            {R.id.change_hour_textView8,R.id.change_hour_textView9,R.id.change_hour_textView10,R.id.textView11,R.id.textView12,R.id.textView13,R.id.textView14},//times[1]
             {R.id.textView15,R.id.textView16,R.id.textView17,R.id.textView18,R.id.textView19,R.id.textView20,R.id.textView21},//times[2]
             {R.id.textView22,R.id.textView23,R.id.textView24,R.id.textView25,R.id.textView26,R.id.textView27,R.id.textView28},//times[3]
             {R.id.textView29,R.id.textView30,R.id.textView31,R.id.textView32,R.id.textView33,R.id.textView34,R.id.textView35}//times[4]

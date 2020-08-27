@@ -1,13 +1,15 @@
 package com.telephone.coursetable.Gson;
 
-//成绩查询
-
 import java.util.List;
 
-public class ScoreQueryS {
+/**
+ * 成绩查询
+ * @clear
+ */
+public class Grades_s {
     private boolean success;
     private long total;
-    private List<ScoreQuery_Data> data;
+    private List<Grades> data;
 
     public boolean isSuccess() {
         return success;
@@ -17,7 +19,7 @@ public class ScoreQueryS {
         return total;
     }
 
-    public List<ScoreQuery_Data> getData() {
+    public List<Grades> getData() {
         return data;
     }
 }

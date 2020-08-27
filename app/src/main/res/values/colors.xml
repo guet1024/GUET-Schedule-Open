@@ -13,6 +13,7 @@
 
     <color name="colorForgetButton">#A0CFD5</color>
     <color name="colorCurrentWeekday">#A0CFD5</color>
+    <color name="colorFunctionMenuColor_0">#A0CFD5</color>
 
     <color name="colorLoginButton">#5D6161</color>
     <color name="colorLoginTextFill">#ECECEC</color>
