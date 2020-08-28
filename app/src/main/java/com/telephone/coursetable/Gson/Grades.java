@@ -24,11 +24,11 @@ public class Grades {
     private String typeno;
     private String cid;
     private String cno;
-    private long sycj;  //89 //实验成绩
-    private long qzcj;  //0 //期中成绩
-    private long pscj;  //89 //平时成绩
-    private long khcj;  //75 //考核成绩
-    private long zpcj;  //81 //总评成绩
+    private double sycj;  //89 //实验成绩
+    private double qzcj;  //0 //期中成绩
+    private double pscj;  //89 //平时成绩
+    private double khcj;  //75 //考核成绩
+    private double zpcj;  //81 //总评成绩
     private String kslb;
     private String cjlb;
     private double kssj;
@@ -118,23 +118,23 @@ public class Grades {
         return cno;
     }
 
-    public long getSycj() {
+    public double getSycj() {
         return sycj;
     }
 
-    public long getQzcj() {
+    public double getQzcj() {
         return qzcj;
     }
 
-    public long getPscj() {
+    public double getPscj() {
         return pscj;
     }
 
-    public long getKhcj() {
+    public double getKhcj() {
         return khcj;
     }
 
-    public long getZpcj() {
+    public double getZpcj() {
         return zpcj;
     }
 
@@ -185,5 +185,4 @@ public class Grades {
     public String getComm() {
         return comm;
     }
-
 }

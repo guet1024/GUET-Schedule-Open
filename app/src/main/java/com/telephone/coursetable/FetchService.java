@@ -19,6 +19,8 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.Grades;
+import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
@@ -188,6 +190,7 @@ public class FetchService extends IntentService {
         ClassInfoDao cdao_test = MyApp.getCurrentAppDB_Test().classInfoDao();
         GraduationScoreDao gsdao_test = MyApp.getCurrentAppDB_Test().graduationScoreDao();
         SharedPreferences pref_test = MyApp.getCurrentSharedPreference_Test();
+        GradesDao grdao_test = MyApp.getCurrentAppDB_Test().gradesDao();
         SharedPreferences.Editor editor_test = MyApp.getCurrentSharedPreferenceEditor_Test();
         PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
         TermInfoDao tdao = MyApp.getCurrentAppDB().termInfoDao();
@@ -195,9 +198,10 @@ public class FetchService extends IntentService {
         ClassInfoDao cdao = MyApp.getCurrentAppDB().classInfoDao();
         GraduationScoreDao gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
         SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
+        GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
         UserDao udao = MyApp.getCurrentAppDB().userDao();
         Login.deleteOldDataFromDatabase(
-            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test
+            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test
         );
         editor_test.clear().commit();
         boolean fetch_merge_res = Login.fetch_merge(
@@ -208,7 +212,8 @@ public class FetchService extends IntentService {
                 gdao_test,
                 cdao_test,
                 gsdao_test,
-                editor_test
+                editor_test,
+                grdao_test
         );
         if (!fetch_merge_res){
             Log.e(NAME, "fail | fetch fail");
@@ -220,7 +225,7 @@ public class FetchService extends IntentService {
         udao.disableAllUser();
         /** migrate the pulled data to the database */
         Log.e(NAME, "migrate the pulled data to the database...");
-        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test);
+        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test);
         /** re-insert user */
         Log.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
@@ -236,10 +241,10 @@ public class FetchService extends IntentService {
         lan_end();
     }
 
-    private void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
-                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
-                           SharedPreferences.Editor editor, SharedPreferences pref_t){
-        Login.deleteOldDataFromDatabase(g, c, t, p, gs);
+    public void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
+                          ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
+                          SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t){
+        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr);
         editor.clear();
         editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
         editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), false);
@@ -271,6 +276,10 @@ public class FetchService extends IntentService {
             editor.putString(key, value);
         }
         editor.commit();
+        List<Grades> gr_t_all = gr_t.selectAll();
+        for (Grades gr_a : gr_t_all){
+            gr.insert(gr_a);
+        }
     }
 
     private void lan_start(){

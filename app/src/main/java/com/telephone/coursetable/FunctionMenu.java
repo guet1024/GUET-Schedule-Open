@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.telephone.coursetable.Database.Grades;
+import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
@@ -33,6 +35,7 @@ public class FunctionMenu extends AppCompatActivity {
 
     private PersonInfoDao pdao;
     private GraduationScoreDao gsdao;
+    private GradesDao grdao;
     private ExpandableListView menu_list;
 
     @Override
@@ -54,6 +57,7 @@ public class FunctionMenu extends AppCompatActivity {
 
         pdao = MyApp.getCurrentAppDB().personInfoDao();
         gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
+        grdao = MyApp.getCurrentAppDB().gradesDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
 
         final ExpandableListView menu_listf = menu_list;
@@ -203,7 +207,7 @@ public class FunctionMenu extends AppCompatActivity {
                 children.add(child);
             }
             child = new LinkedList<>();
-            child.add("");
+            child.add("有效学分");
             child.add("");
             child.add("");
             child.add(credit_hour_total+"");
@@ -217,10 +221,38 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(graduation_score_group, children));
 
-//            String graduation_score_group = "毕业学分";
-//            List<GraduationScore> graduation_score_list = gsdao.selectAll();
-//            children = new LinkedList<>();
-//            child = new LinkedList<>();
+            String grades_group = "成绩单";
+            List<Grades> grades_list = grdao.selectAll();
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("课程名称");
+            child.add("成绩");
+            child.add("平时");
+            child.add("实验");
+            child.add("考核");
+            child.add(null);
+            children.add(child);
+            last_sterm = null;
+            color = false;
+            for (Grades gr : grades_list){
+                child = new LinkedList<>();
+                child.add(gr.cname);
+                child.add(gr.zpxs);
+                child.add(gr.pscj+"");
+                child.add(gr.sycj+"");
+                child.add(gr.khcj+"");
+                if (!gr.term.equals(last_sterm)){
+                    color = !color;
+                }
+                last_sterm = gr.term;
+                if (color){
+                    child.add("0");
+                }else {
+                    child.add(null);
+                }
+                children.add(child);
+            }
+            menus.add(Map.entry(grades_group, children));
 
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();

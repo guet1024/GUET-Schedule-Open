@@ -103,6 +103,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_graduation_score, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
+            case 2:
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_grades, viewGroup, false);
+                view.setOnClickListener(collapse);
+                break;
         }
         switch (i){
             case 0:
@@ -117,6 +121,16 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.textView_graduation_score_plan)).setText(groups.get(i).getValue().get(i1).get(4));
                 if (groups.get(i).getValue().get(i1).get(5) != null){
                     ((TextView)view.findViewById(R.id.textView_graduation_score_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
+                }
+                break;
+            case 2:
+                ((TextView)view.findViewById(R.id.grades_cname)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.grades_grade)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.grades_usual)).setText(groups.get(i).getValue().get(i1).get(2));
+                ((TextView)view.findViewById(R.id.grades_exp)).setText(groups.get(i).getValue().get(i1).get(3));
+                ((TextView)view.findViewById(R.id.grades_test)).setText(groups.get(i).getValue().get(i1).get(4));
+                if (groups.get(i).getValue().get(i1).get(5) != null){
+                    ((TextView)view.findViewById(R.id.grades_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
                 }
                 break;
         }

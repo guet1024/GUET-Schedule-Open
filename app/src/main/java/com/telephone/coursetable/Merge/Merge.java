@@ -11,11 +11,14 @@ import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
+import com.telephone.coursetable.Gson.Grades;
+import com.telephone.coursetable.Gson.Grades_s;
 import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Gson.GraduationScore_s;
 import com.telephone.coursetable.Gson.Hour;
@@ -158,5 +161,27 @@ public class Merge {
             editor.putString(node_no + dbs, des);
         }
         editor.commit();
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void grades(@NonNull String origin_g, @NonNull GradesDao gdao){
+        Grades_s g_s = new Gson().fromJson(origin_g, Grades_s.class);
+        List<Grades> g = g_s.getData();
+        for (Grades i : g){
+            gdao.insert(
+                    new com.telephone.coursetable.Database.Grades(
+                            i.getDptno(), i.getDptname(), i.getSpno(), i.getSpname(), i.getBj(), i.getGrade(),
+                            i.getStid(), i.getName(), i.getTerm(), i.getCourseid(), i.getCourseno(),
+                            i.getCname(), i.getCourselevel(), i.getScore(), i.getZpxs(), i.getKctype(),
+                            i.getTypeno(), i.getCid(), i.getCno(), i.getSycj(), i.getQzcj(), i.getPscj(),
+                            i.getKhcj(), i.getZpcj(), i.getKslb(), i.getCjlb(), i.getKssj(), i.getXf(),
+                            i.getXslb(), i.getTname1(), i.getStage(), i.getExamt(), i.getXs(), i.getCjlx(),
+                            i.getChk(), i.getComm()
+                    )
+            );
+        }
     }
 }
