@@ -35,12 +35,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String current_term;
-    private CurrentWeek current_week;
+    private boolean term_week_is_changing = false;
 
+    private String current_term = null;
+    private CurrentWeek current_week = null;
+
+    /** the timestamp of last pressing back */
     private long exit_ts = 0;
-    private boolean has_user = false;
-    private boolean updating = false;
 
     private GoToClassDao gdao;
     private TermInfoDao tdao;
@@ -49,39 +50,28 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private NumberPicker.OnValueChangeListener term_value_change_listener;
-    private NumberPicker.OnValueChangeListener week_value_change_listener_init;
-    private NumberPicker.OnValueChangeListener week_value_change_listener_dynamic;
 
     private PickerPanel pickerPanel;
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.login_menu, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()){
-//            case R.id.login_menu_login:
-//                Intent intent = new Intent(this, Login.class);
-//                startActivity(intent);
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    private NumberPicker.OnScrollListener scroll = (numberPicker, i) -> {
+        switch (i){
+            case NumberPicker.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: default:
+                term_week_is_changing = true;
+                break;
+            case NumberPicker.OnScrollListener.SCROLL_STATE_IDLE:
+                term_week_is_changing = false;
+                break;
+        }
+    };
 
-    public void openFunctionMenu(View view){
-        startActivity(new Intent(this, FunctionMenu.class));
-    }
-
-    public void refresh(){
-        runOnUiThread(()->{
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
-        });
+    /**
+     * @ui
+     * @clear
+     */
+    @Override
+    protected void onDestroy() {
+        MyApp.running_main = null;
+        super.onDestroy();
     }
 
     @Override
@@ -99,15 +89,69 @@ public class MainActivity extends AppCompatActivity {
                 (TextView) findViewById(R.id.week_picker_text),
                 (FloatingActionButton) findViewById(R.id.floatingActionButton2)
         );
-
-        ((TextView)findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
-        ((FloatingActionButton)findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
-        pickerPanel.hide(MainActivity.this);
-
+        pref = MyApp.getCurrentSharedPreference();
+        editor = MyApp.getCurrentSharedPreferenceEditor();
         gdao = MyApp.getCurrentAppDB().goToClassDao();
         tdao = MyApp.getCurrentAppDB().termInfoDao();
         udao = MyApp.getCurrentAppDB().userDao();
         pdao = MyApp.getCurrentAppDB().personInfoDao();
+
+        pickerPanel.hide(this);
+
+        final boolean lockdown = MyApp.running_login_thread || MyApp.running_fetch_service;
+        if (lockdown){
+            ((TextView)findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
+            ((TextView)findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+            ((ImageView)findViewById(R.id.imageView3)).setOnClickListener(null);
+            for (int id : MyApp.timetvIds){
+                ((TextView)findViewById(id)).setOnClickListener(null);
+            }
+            ((FloatingActionButton)findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+        }else {
+            new Thread(()->{
+                if (udao.getActivatedUser().isEmpty()){
+                    runOnUiThread(()-> {
+                        ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
+                        ((TextView) findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+                        ((ImageView) findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                        for (int id : MyApp.timetvIds) {
+                            ((TextView) findViewById(id)).setOnClickListener(null);
+                        }
+                        ((FloatingActionButton) findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+                    });
+                }else {
+                    User u = udao.getActivatedUser().get(0);
+                    String name = pdao.selectAll().get(0).name;
+                    Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                            DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                            getResources().getString(R.string.pref_hour_start_suffix),
+                            getResources().getString(R.string.pref_hour_end_suffix),
+                            getResources().getString(R.string.pref_hour_des_suffix)
+                            );
+                    List<TermInfo> terms = tdao.selectAll();
+                    List<String> term_names = new LinkedList<>();
+                    for (TermInfo term : terms){
+                        term_names.add(term.termname);
+                    }
+                    String[] term_names_array = term_names.toArray(new String[0]);
+                    ((TextView)findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
+                    ((TextView)findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
+                    ((TextView)findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
+                    ((TextView)findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
+                    ((ImageView)findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                    for (int id : MyApp.timetvIds) {
+                        ((TextView)findViewById(id)).setOnClickListener(MainActivity.this::setTime);
+                    }
+                    ((FloatingActionButton)findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
+                    ((NumberPicker)findViewById(R.id.pick))
+                }
+            }).start();
+        }
+
+        ((TextView)findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+
+        pickerPanel.hide(MainActivity.this);
+
 
         pref = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         editor = pref.edit();
@@ -337,12 +381,7 @@ public class MainActivity extends AppCompatActivity {
                 showTable();
             }
         }).start();
-    }
 
-    @Override
-    protected void onDestroy() {
-        MyApp.running_main = null;
-        super.onDestroy();
     }
 
     @Override
@@ -379,30 +418,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * @ui
+     * @clear
+     */
+    public void openFunctionMenu(View view){
+        startActivity(new Intent(this, FunctionMenu.class));
+    }
+
+    public void refresh(){
+        runOnUiThread(()->{
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+        });
+    }
+
+    /**
+     * @ui
      * jump to Login Activity
+     * @clear
      */
     public void Login(View view){
-        if (updating)return;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (MyApp.isLAN()){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(MainActivity.this, Login.class);
-                            startActivity(intent);
-                        }
-                    });
-                }else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(MainActivity.this, Login_vpn.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
+        new Thread(() -> {
+            if (MyApp.isLAN()){
+                runOnUiThread(() -> {
+                    Intent intent = new Intent(MainActivity.this, Login.class);
+                    startActivity(intent);
+                });
+            }else {
+                runOnUiThread(() -> {
+                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
+                    startActivity(intent);
+                });
             }
         }).start();
     }
@@ -558,11 +603,13 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * @ui
+     * @clear
+     */
     public void setTime(View view){
-        if (!pickerPanel.isShown() && has_user){
-            Intent intent = new Intent(this, ChangeHours.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, ChangeHours.class);
+        startActivity(intent);
     }
 
     public void highLight(final long weekday, String time, final long month, final long day){

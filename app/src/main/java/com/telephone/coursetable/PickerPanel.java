@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**
+ * @clear
+ */
 public class PickerPanel {
     public ImageView im;
     public NumberPicker p1;
@@ -27,30 +30,24 @@ public class PickerPanel {
     }
 
     public void hide(Activity c){
-        c.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                im.setVisibility(View.INVISIBLE);
-                p1.setVisibility(View.INVISIBLE);
-                p2.setVisibility(View.INVISIBLE);
-                t1.setVisibility(View.INVISIBLE);
-                t2.setVisibility(View.INVISIBLE);
-                btn.setVisibility(View.INVISIBLE);
-            }
+        c.runOnUiThread(() -> {
+            im.setVisibility(View.INVISIBLE);
+            p1.setVisibility(View.INVISIBLE);
+            p2.setVisibility(View.INVISIBLE);
+            t1.setVisibility(View.INVISIBLE);
+            t2.setVisibility(View.INVISIBLE);
+            btn.setVisibility(View.INVISIBLE);
         });
     }
 
     public void show(Activity c){
-        c.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                im.setVisibility(View.VISIBLE);
-                p1.setVisibility(View.VISIBLE);
-                p2.setVisibility(View.VISIBLE);
-                t1.setVisibility(View.VISIBLE);
-                t2.setVisibility(View.VISIBLE);
-                btn.setVisibility(View.VISIBLE);
-            }
+        c.runOnUiThread(() -> {
+            im.setVisibility(View.VISIBLE);
+            p1.setVisibility(View.VISIBLE);
+            p2.setVisibility(View.VISIBLE);
+            t1.setVisibility(View.VISIBLE);
+            t2.setVisibility(View.VISIBLE);
+            btn.setVisibility(View.VISIBLE);
         });
     }
 

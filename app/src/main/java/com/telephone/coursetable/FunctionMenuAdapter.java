@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
+/**
+ * @clear
+ */
 public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     private Context context;

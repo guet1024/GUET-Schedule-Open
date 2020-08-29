@@ -25,6 +25,9 @@ import java.util.Map.Entry;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @clear
+ */
 public class FunctionMenu extends AppCompatActivity {
 
     public static Map<String, Integer> colors = new HashMap<String, Integer>(){

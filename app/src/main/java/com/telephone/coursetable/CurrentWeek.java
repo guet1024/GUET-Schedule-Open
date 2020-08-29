@@ -3,6 +3,9 @@ package com.telephone.coursetable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * @clear
+ */
 public class CurrentWeek extends ViewModel {
 
     private MutableLiveData<Long> current_week;

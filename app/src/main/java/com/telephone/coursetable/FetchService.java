@@ -43,6 +43,9 @@ import java.util.Set;
  * <p>
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
+ *
+ * @clear
+ *
  */
 public class FetchService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
@@ -245,11 +248,7 @@ public class FetchService extends IntentService {
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
                           SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t){
         Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr);
-        editor.clear();
-        editor.putBoolean(getResources().getString(R.string.pref_user_updating_key), false);
-        editor.putBoolean(getResources().getString(R.string.pref_logging_in_key), false);
-        editor.putBoolean(getResources().getString(R.string.pref_service_updating_key), true);
-        editor.commit();
+        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
             p.insert(p_a);

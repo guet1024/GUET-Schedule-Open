@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @clear
+ */
 public class ChangeHours extends AppCompatActivity {
 
     private int[] tvids = {
