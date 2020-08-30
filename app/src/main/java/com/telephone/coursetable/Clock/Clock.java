@@ -16,6 +16,8 @@ import java.util.List;
 
 public class Clock {
 
+    public static final long NO_TERM = 0;
+
     /**
      * @param sts the timestamp of start
      * @param nts the timestamp of current
@@ -78,16 +80,16 @@ public class Clock {
      * @param pref_d_suffix {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
      * @return a {@link Locate}
      *      - res.{@link Locate#term} : corresponding {@link TermInfo} of specified current time, null if not found
-     *      - res.{@link Locate#week} : corresponding week num of specified current time, 0 if res.{@link Locate#term} is null
+     *      - res.{@link Locate#week} : corresponding week num of specified current time, {@link #NO_TERM} if res.{@link Locate#term} is null
      *      - res.{@link Locate#weekday} : weekday of specified current time
      *      - res.{@link Locate#month} : month of specified current time
      *      - res.{@link Locate#day} : day of specified current time
-     *      - res.{@link Locate#time} : corresponding time code of specified current time, null if not found or res.{@link Locate#term} is null
-     *      - res.{@link Locate#time_description} : corresponding time description of specified current time, null if not found or res.{@link Locate#term} is null
+     *      - res.{@link Locate#time} : corresponding time code of specified current time, null if not found
+     *      - res.{@link Locate#time_description} : corresponding time description of specified current time, null if not found
      * @clear
      */
     public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter pref_time_period_formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
-        Locate res = new Locate(null, 0, 0, 0, 0, null, null);
+        Locate res = new Locate(null, NO_TERM, 0, 0, 0, null, null);
         LocalDateTime n = Instant.ofEpochMilli(nts).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
         List<TermInfo> which_term_res = tdao.whichTerm(nts);
         if (!which_term_res.isEmpty()){
@@ -98,7 +100,7 @@ public class Clock {
         res.month = n.getMonthValue();
         res.day = n.getDayOfMonth();
         TimeAndDescription which_time_res = whichTime(nts, pref, times, pref_time_period_formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
-        if (which_time_res != null && (!which_term_res.isEmpty())){
+        if (which_time_res != null){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
         }

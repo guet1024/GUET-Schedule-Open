@@ -838,7 +838,7 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/colorCurrentWeekday"
         android:clickable="true"
-        android:onClick="resetTermWeek"
+        android:onClick="returnToday"
         android:scaleType="fitCenter"
         android:tint="@color/colorCurrentWeekdayText"
         app:backgroundTint="@color/colorCurrentWeekday"
@@ -895,8 +895,8 @@
 
     <TextView
         android:id="@+id/week_picker_text"
-        android:layout_width="26dp"
-        android:layout_height="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="周数"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
@@ -909,13 +909,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.56" />
+        app:layout_constraintGuide_percent="0.58" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.21" />
+        app:layout_constraintGuide_percent="0.19" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
