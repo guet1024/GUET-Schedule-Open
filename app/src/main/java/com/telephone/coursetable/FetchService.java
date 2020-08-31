@@ -77,7 +77,7 @@ public class FetchService extends IntentService {
         Notification notification =
                 new Notification.Builder(this, MyApp.notification_channel_id_normal)
                         .setContentTitle("加油~今天也要打起精神来")
-                        .setSmallIcon(R.drawable.guet_logo_white)
+                        .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
                         .setTicker("加油~今天也要打起精神来")
                         .build();
