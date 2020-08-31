@@ -58,12 +58,19 @@ public class FetchService extends IntentService {
     private static final String EXTRA_PARAM2 = "com.telephone.coursetable.extra.PARAM2";
     private static final String EXTRA_interval_milliseconds = "com.telephone.coursetable.extra.interval_milliseconds";
 
+    private boolean started = false;
+
     public FetchService() {
         super("MyIntentService");
     }
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        final String NAME = "onStartCommand()";
+        if (started){
+            Log.e(NAME, "the fetch service has started");
+            return START_STICKY;
+        }
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -75,6 +82,7 @@ public class FetchService extends IntentService {
                         .setTicker("加油~今天也要打起精神来")
                         .build();
         startForeground(MyApp.notification_id_fetch_service_foreground, notification);
+        started = true;
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -90,7 +98,7 @@ public class FetchService extends IntentService {
         Intent intent = new Intent(context, FetchService.class);
         intent.setAction(ACTION_START_FETCH_DATA);
         intent.putExtra(EXTRA_interval_milliseconds, milliseconds);
-        context.startService(intent);
+        context.startForegroundService(intent);
     }
 
     /**
