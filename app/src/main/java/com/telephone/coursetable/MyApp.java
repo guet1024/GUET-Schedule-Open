@@ -12,6 +12,8 @@ import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
 
 public class MyApp extends Application {
+    final public static String PACKAGE_NAME = "com.telephone.coursetable";
+
     private static MyApp app;
     private static AppDatabase db;
     private static AppTestDatabase db_test;

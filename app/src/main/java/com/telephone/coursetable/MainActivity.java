@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }else {
                 runOnUiThread(() -> {
-                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
+                    Intent intent = new Intent(MainActivity.this, Login.class);
                     startActivity(intent);
                 });
             }

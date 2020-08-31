@@ -1,8 +1,11 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.BroadcastReceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.telephone.coursetable.FetchService;
+import com.telephone.coursetable.MyApp;
 
 public class BootReceiver extends BroadcastReceiver {
     @Override

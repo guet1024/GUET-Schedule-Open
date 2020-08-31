@@ -23,8 +23,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <receiver android:name=".AppWidgetProvider.List" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info_list"/>
+        </receiver>
+
         <receiver
-            android:name=".BootReceiver"
+            android:name=".BroadcastReceiver.BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

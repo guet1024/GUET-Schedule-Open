@@ -60,7 +60,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     @Override
     public Object getGroup(int i) {
-        return groups.get(i);
+        return groups.get(i).getKey();
     }
 
     @Override
@@ -102,7 +102,6 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view.setOnClickListener(collapse);
                 break;
             case 1:
-//                if (view != null &&  ((TextView)view.findViewById(R.id.textView_graduation_score_cname)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_graduation_score, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
