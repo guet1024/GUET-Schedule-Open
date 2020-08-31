@@ -352,26 +352,38 @@ public class MainActivity extends AppCompatActivity {
                             ShowTableNode my_node = my_node_list.get(i);
                             if (my_node_list.size() > 1){
                                 if (i > 0){
-                                    text.append(">>>>>>>\n");
+                                    text.append("▬▬▬▬\n");
                                 }
                                 if (my_node.cname != null) {
                                     text.append(my_node.cname).append("\n");
+                                }else {
+                                    text.append(" ").append("\n");
                                 }
                                 if (my_node.croomno != null) {
                                     text.append("(").append(my_node.croomno).append(")").append("\n");
+                                }else {
+                                    text.append("()").append("\n");
                                 }
                             }else {
                                 if (my_node.courseno != null) {
                                     text.append("[").append(my_node.courseno).append("]").append("\n");
+                                }else {
+                                    text.append("[]").append("\n");
                                 }
                                 if (my_node.cname != null) {
                                     text.append(my_node.cname).append("\n");
+                                }else {
+                                    text.append(" ").append("\n");
                                 }
                                 if (my_node.name != null) {
                                     text.append("@").append(my_node.name).append("\n");
+                                }else {
+                                    text.append("@").append("\n");
                                 }
                                 if (my_node.croomno != null) {
                                     text.append("(").append(my_node.croomno).append(")").append("\n");
+                                }else {
+                                    text.append("()").append("\n");
                                 }
                             }
                         }
