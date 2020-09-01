@@ -36,6 +36,18 @@ public class MyApp extends Application {
     final public static int notification_id_fetch_service_foreground = 1800301129;
     final public static int notification_id_fetch_service_lan_password_wrong = 1800301127;
     final public static long service_fetch_interval = 60000;   // 60s
+    final public static String[] appwidget_list_time_descriptions = {
+            "今天: 第一大节 (上午)",
+            "今天: 第二大节 (上午)",
+            "今天: 第三大节 (下午)",
+            "今天: 第四大节 (下午)",
+            "今天: 第五大节 (晚上)",
+            "明天: 第一大节 (上午)",
+            "明天: 第二大节 (上午)",
+            "明天: 第三大节 (下午)",
+            "明天: 第四大节 (下午)",
+            "明天: 第五大节 (晚上)"
+    };
     final public static String[] times = {"1","2","3","4","5"};
     final public static int[] timetvIds = {
             R.id.textView_time1, //times[0]

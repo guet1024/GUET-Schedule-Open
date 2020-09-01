@@ -7,6 +7,6 @@ public class ListRemoteViewsService extends RemoteViewsService {
     final public static String EXTRA_DATA_ARRAY_LIST_OF_STRING = "com.telephone.coursetable.ListRemoteViewsService.extra.data";
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListAdapter(intent.getStringArrayListExtra(EXTRA_DATA_ARRAY_LIST_OF_STRING));
+        return new ListAdapter(getApplicationContext(), intent.getStringArrayListExtra(EXTRA_DATA_ARRAY_LIST_OF_STRING));
     }
 }

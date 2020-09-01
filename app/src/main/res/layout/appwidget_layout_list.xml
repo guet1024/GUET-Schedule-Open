@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView37"
+        android:id="@+id/appwidget_list_title"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+        android:layout_alignParentTop="true"
         android:background="#2196F3"
-        android:gravity="center"
-        android:text="课程表"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:text="" />
 
     <ListView
         android:id="@+id/appwidget_list_listview"
+        android:layout_below="@id/appwidget_list_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/appwidget_list_title_text"
+        android:layout_alignTop="@id/appwidget_list_title"
+        android:layout_alignStart="@id/appwidget_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="#00FFFFFF"
+        android:textColor="#FFFFFFFF"
+        android:gravity="center"
+        android:text="    课程表"
+        android:textSize="16sp"
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/appwidget_list_title_date"
+        android:layout_alignTop="@id/appwidget_list_title"
+        android:layout_alignEnd="@id/appwidget_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="#00FFFFFF"
+        android:textColor="#FFFFFFFF"
+        android:gravity="center"
+        android:text=" 月 日星期     "
+        android:textSize="14sp"
+        android:textAlignment="viewEnd" />
+
+</RelativeLayout>

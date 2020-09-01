@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <service android:name=".AppWidgetProvider.ListRemoteViewsService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <receiver android:name=".AppWidgetProvider.List" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

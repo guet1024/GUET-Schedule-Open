@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <!--  content  -->
     <TextView
         android:id="@+id/appwidget_list_item_tv"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="35dp"
+        android:background="#FFFFFFFF"
         android:gravity="center"
-        android:text="TextView" />
-</LinearLayout>
+        android:text="    课程"
+        android:textAlignment="viewStart" />
+
+    <!--  today time  -->
+    <TextView
+        android:id="@+id/appwidget_list_item_tv_time"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="#CDE8AF"
+        android:gravity="center"
+        android:text="时间"
+        android:textAlignment="center"
+        android:textStyle="bold"/>
+
+    <!--  tomorrow time  -->
+    <TextView
+        android:id="@+id/appwidget_list_item_tv_time_tomorrow"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="#BEEAFD"
+        android:gravity="center"
+        android:text="时间"
+        android:textAlignment="center"
+        android:textStyle="bold"/>
+</RelativeLayout>
