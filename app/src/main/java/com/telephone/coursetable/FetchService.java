@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.telephone.coursetable.AppWidgetProvider.ListAdapter;
@@ -289,6 +290,7 @@ public class FetchService extends IntentService {
     }
 
     private void service_fetch_wan(){
+//        lan_notify_login_wrong_password();
     }
 
     private void service_fetch_lan(){
@@ -456,10 +458,10 @@ public class FetchService extends IntentService {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
-                new Notification.Builder(this, MyApp.notification_channel_id_normal)
+                new NotificationCompat.Builder(this, MyApp.notification_channel_id_normal)
                         .setContentTitle("同步失败了 ಥ_ಥ")
-                        .setContentText("您的学分制系统密码是否已更改? 请再次登录以更新您的密码 >>")
-                        .setSmallIcon(R.drawable.guet_logo_white)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("您的学分制系统密码是否已更改? 请再次登录以更新您的密码 >>"))
+                        .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(true)
                         .setTicker("同步失败了 ಥ_ಥ")
