@@ -29,6 +29,8 @@
         <receiver android:name=".AppWidgetProvider.List" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.telephone.coursetable.action.UPDATE_THE_DATASET_OF_ALL_LIST_APPWIDGET" />
+                <action android:name="com.telephone.coursetable.action.START_FETCH_SERVIE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_info_list"/>

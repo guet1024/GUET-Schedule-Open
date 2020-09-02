@@ -75,7 +75,14 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
-        MyApp.running_main = null;
+        final String NAME = "onDestroy()";
+        Log.e(NAME, "Main Activity on destroy = " + this.toString());
+        Log.e(NAME, "cached Main Activity Pointer = " + MyApp.running_main.toString());
+        if (MyApp.running_main.toString().equals(this.toString())) {
+            MyApp.running_main = null;
+            if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN)) MyApp.running_activity = MyApp.RunningActivity.NULL;
+            Log.e(NAME, "remove cached Main Activity Pointer = " + this.toString());
+        }
         super.onDestroy();
     }
 
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApp.running_main = this;
+        MyApp.running_activity = MyApp.RunningActivity.MAIN;
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
@@ -355,7 +363,11 @@ public class MainActivity extends AppCompatActivity {
                                     text.append("▬▬▬▬\n");
                                 }
                                 if (my_node.cname != null) {
-                                    text.append(my_node.cname).append("\n");
+                                    String my_cname = my_node.cname;
+                                    if (my_cname.length() > 6){
+                                        my_cname = my_cname.substring(0, 6) + "...";
+                                    }
+                                    text.append(my_cname).append("\n");
                                 }else {
                                     text.append(" ").append("\n");
                                 }

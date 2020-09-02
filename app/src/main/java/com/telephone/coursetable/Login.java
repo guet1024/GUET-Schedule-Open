@@ -399,7 +399,7 @@ public class Login extends AppCompatActivity {
     /**
      * @ui
      * 1. super onCreate()
-     * 2. set {@link MyApp#running_login} to this pointer
+     * 2. set {@link MyApp#running_activity} to {@link MyApp.RunningActivity#LOGIN}
      * 3. initialize DAOs
      * 4. call {@link #initContentView()}
      * @clear
@@ -407,7 +407,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.running_login = this;
+        MyApp.running_activity = MyApp.RunningActivity.LOGIN;
         AppDatabase db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -421,13 +421,14 @@ public class Login extends AppCompatActivity {
 
     /**
      * @ui
-     * 1. set {@link MyApp#running_login} to null
+     * 1. if {@link MyApp#running_activity} is {@link MyApp.RunningActivity#LOGIN}:
+     *      1. set {@link MyApp#running_activity} to {@link MyApp.RunningActivity#NULL}
      * 2. super onDestroy()
      * @clear
      */
     @Override
     protected void onDestroy() {
-        MyApp.running_login = null;
+        if (MyApp.running_activity.equals(MyApp.RunningActivity.LOGIN)) MyApp.running_activity = MyApp.RunningActivity.NULL;
         super.onDestroy();
     }
 
@@ -593,11 +594,11 @@ public class Login extends AppCompatActivity {
      *                      7. start a new {@link MainActivity}
      *                  - if something went wrong:
      *                      1. set {@link MyApp#running_login_thread} to false
-     *                      2. {@link MyApp#running_main}:
-     *                          - if not null:
+     *                      2. {@link MainActivity}:
+     *                          - if running:
      *                              1. show tip toast
      *                              2. call {@link MainActivity#refresh()}
-     *                          - if null:
+     *                          - if not running:
      *                              1. call {@link #unlock(boolean)} with true
      *                              2. show tip snack-bar, change title
      *              ******************************* UPDATE DATA END *******************************
@@ -751,7 +752,7 @@ public class Login extends AppCompatActivity {
                             /** set {@link MyApp#running_login_thread} to false */
                             MyApp.running_login_thread = false;
                             /** {@link MyApp#running_main} */
-                            if (MyApp.running_main != null){
+                            if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
                                 runOnUiThread(() -> {
                                     /** show tip toast */
                                     Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();

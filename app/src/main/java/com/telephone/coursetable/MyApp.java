@@ -11,6 +11,8 @@ import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
 
+import java.util.ArrayList;
+
 public class MyApp extends Application {
     final public static String PACKAGE_NAME = "com.telephone.coursetable";
 
@@ -22,12 +24,18 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
+    volatile public static ArrayList<String> data_list = null;
+
     volatile public static MainActivity running_main = null;
-    volatile public static Login running_login = null;
     volatile public static boolean running_login_thread = false;
     volatile public static boolean running_fetch_service = false;
-    volatile public static FunctionMenu running_function_menu = null;
-    volatile public static ChangeHours running_change_hours = null;
+
+    public enum RunningActivity{
+            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, NULL
+    }
+    volatile public static RunningActivity running_activity = RunningActivity.NULL;
+
+
 
     final public static String ocr_lang_code = "telephone";
     final public static String notification_channel_id_normal = "normal";
@@ -35,13 +43,15 @@ public class MyApp extends Application {
     final public static String notification_channel_des_normal = "常规通知";
     final public static int notification_id_fetch_service_foreground = 1800301129;
     final public static int notification_id_fetch_service_lan_password_wrong = 1800301127;
-    final public static long service_fetch_interval = 60000;   // 60s
-    final public static String[] appwidget_list_time_descriptions = {
+    final public static long service_fetch_interval = 15000;   // 15s
+    final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
             "今天: 第二大节 (上午)",
             "今天: 第三大节 (下午)",
             "今天: 第四大节 (下午)",
-            "今天: 第五大节 (晚上)",
+            "今天: 第五大节 (晚上)"
+    };
+    final public static String[] appwidget_list_tomorrow_time_descriptions = {
             "明天: 第一大节 (上午)",
             "明天: 第二大节 (上午)",
             "明天: 第三大节 (下午)",
@@ -77,7 +87,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").build();
+        db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").enableMultiInstanceInvalidation().build();
         db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").build();
         sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);

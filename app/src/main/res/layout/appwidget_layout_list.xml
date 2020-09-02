@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,16 +20,16 @@
 
     <TextView
         android:id="@+id/appwidget_list_title_text"
-        android:layout_alignTop="@id/appwidget_list_title"
-        android:layout_alignStart="@id/appwidget_list_title"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
+        android:layout_alignStart="@id/appwidget_list_title"
+        android:layout_alignTop="@id/appwidget_list_title"
         android:background="#00FFFFFF"
-        android:textColor="#FFFFFFFF"
         android:gravity="center"
-        android:text="    课程表"
-        android:textSize="16sp"
-        android:textAlignment="viewStart" />
+        android:text="    课程表 ↺"
+        android:textAlignment="viewStart"
+        android:textColor="#FFFFFFFF"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/appwidget_list_title_date"

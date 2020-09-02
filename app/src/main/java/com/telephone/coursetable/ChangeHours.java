@@ -140,14 +140,14 @@ public class ChangeHours extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        MyApp.running_change_hours = null;
+        if (MyApp.running_activity.equals(MyApp.RunningActivity.CHANGE_HOURS)) MyApp.running_activity = MyApp.RunningActivity.NULL;
         super.onDestroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.running_change_hours = this;
+        MyApp.running_activity = MyApp.RunningActivity.CHANGE_HOURS;
         setContentView(R.layout.activity_change_hours);
 
         sharedPreferences = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);

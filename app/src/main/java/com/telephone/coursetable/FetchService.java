@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +16,11 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.telephone.coursetable.AppWidgetProvider.ListAdapter;
+import com.telephone.coursetable.AppWidgetProvider.ListRemoteViewsService;
+import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
@@ -25,6 +31,7 @@ import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
@@ -34,6 +41,10 @@ import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.OCR.OCR;
 
 import java.nio.file.FileAlreadyExistsException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -126,6 +137,7 @@ public class FetchService extends IntentService {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
         wakeLock.acquire();
         while (true){
+            updateListAppWidgets();
             if (MyApp.isLAN()){
                 Log.e(NAME, "LAN");
                 service_fetch_lan();
@@ -142,6 +154,140 @@ public class FetchService extends IntentService {
         }
     }
 
+    private void updateListAppWidgets(){
+        final String NAME = "updateListAppWidgets()";
+        ArrayList<String> data_list = getListForListAppWidgets();
+        if (data_list != null){
+            Intent intent = new Intent("com.telephone.coursetable.action.UPDATE_THE_DATASET_OF_ALL_LIST_APPWIDGET");
+            intent.setComponent(new ComponentName(MyApp.PACKAGE_NAME, com.telephone.coursetable.AppWidgetProvider.List.CLASS_NAME));
+            intent.putStringArrayListExtra(ListRemoteViewsService.EXTRA_ARRAY_LIST_OF_STRING_TO_GET_A_NEW_REMOTE_ADAPTER, data_list);
+            sendBroadcast(intent);
+            Log.e(NAME, "the intent to remind the app-widget-provider to update all list app-widgets has been sent");
+        }
+    }
+
+    private ArrayList<String> getListForListAppWidgets(){
+        final String NAME = "getListForListAppWidgets()";
+        if (
+                MyApp.running_activity.equals(MyApp.RunningActivity.LOGIN) ||
+                        MyApp.running_activity.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
+                        MyApp.running_activity.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.running_login_thread
+        ){
+            Log.e(NAME,"data is being change, list app-widgets NOT updated");
+            return null;
+        }
+        AppDatabase appDatabase = MyApp.getCurrentAppDB();
+        UserDao udao = appDatabase.userDao();
+        TermInfoDao tdao = appDatabase.termInfoDao();
+        GoToClassDao gdao = appDatabase.goToClassDao();
+        SharedPreferences preferences = MyApp.getCurrentSharedPreference();
+        if (udao.getActivatedUser().isEmpty()){
+            ArrayList<String > data = new ArrayList<>();
+            for (String des : MyApp.appwidget_list_today_time_descriptions) {
+                data.add(ListAdapter.TODAY);
+                data.add(des);
+            }
+            for (String des : MyApp.appwidget_list_tomorrow_time_descriptions){
+                data.add(ListAdapter.TOMORROW);
+                data.add(des);
+            }
+            Log.e(NAME,"no user, set all list app-widgets to default");
+            return data;
+        }
+        long today = Clock.nowTimeStamp();
+        long tomorrow = today + 86400000;
+        Locate today_locate = Clock.locateNow(today,
+                tdao,
+                preferences,
+                MyApp.times,
+                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix),
+                getResources().getString(R.string.pref_hour_des_suffix)
+        );
+        Locate tomorrow_locate = Clock.locateNow(tomorrow,
+                tdao,
+                preferences,
+                MyApp.times,
+                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix),
+                getResources().getString(R.string.pref_hour_des_suffix)
+        );
+        ArrayList<String> res = new ArrayList<>();
+        for (String des : MyApp.appwidget_list_today_time_descriptions){
+            res.add(ListAdapter.TODAY);
+            res.add(des);
+            if (today_locate.term == null){
+                continue;
+            }else {
+                String corresponding_time = MyApp.times[Arrays.asList(MyApp.appwidget_list_today_time_descriptions).indexOf(des)];
+                String now_time = today_locate.time;
+                List<ShowTableNode> courses_list = gdao.getNode(today_locate.term.term, today_locate.week, today_locate.weekday, corresponding_time);
+                for (ShowTableNode course : courses_list){
+                    res.add(null);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    if (now_time != null && now_time.equals(corresponding_time)){
+                        stringBuilder.append("➤ ");
+                    }
+                    if (course.croomno != null){
+                        stringBuilder.append(course.croomno).append("    ");
+                    }else {
+                        stringBuilder.append("--------").append("    ");
+                    }
+                    if (course.cname != null){
+                        String cname = course.cname;
+                        if (cname.length() > 10){
+                            cname = cname.substring(0, 10) + "...";
+                        }
+                        stringBuilder.append(cname).append(" @");
+                    }else {
+                        stringBuilder.append(" ").append(" @");
+                    }
+                    if (course.name != null){
+                        stringBuilder.append(course.name);
+                    }
+                    res.add(stringBuilder.toString());
+                }
+            }
+        }
+        for (String des : MyApp.appwidget_list_tomorrow_time_descriptions){
+            res.add(ListAdapter.TOMORROW);
+            res.add(des);
+            if (tomorrow_locate.term == null){
+                continue;
+            }else {
+                String corresponding_time = MyApp.times[Arrays.asList(MyApp.appwidget_list_tomorrow_time_descriptions).indexOf(des)];
+                List<ShowTableNode> courses_list = gdao.getNode(tomorrow_locate.term.term, tomorrow_locate.week, tomorrow_locate.weekday, corresponding_time);
+                for (ShowTableNode course : courses_list){
+                    res.add(null);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    if (course.croomno != null){
+                        stringBuilder.append(course.croomno).append("    ");
+                    }else {
+                        stringBuilder.append("--------").append("    ");
+                    }
+                    if (course.cname != null){
+                        String cname = course.cname;
+                        if (cname.length() > 10){
+                            cname = cname.substring(0, 10) + "...";
+                        }
+                        stringBuilder.append(cname).append(" @");
+                    }else {
+                        stringBuilder.append(" ").append(" @");
+                    }
+                    if (course.name != null){
+                        stringBuilder.append(course.name);
+                    }
+                    res.add(stringBuilder.toString());
+                }
+            }
+        }
+        Log.e(NAME,"the new data-list for all list app-widgets has been made");
+        return res;
+    }
+
     private void service_fetch_wan(){
     }
 
@@ -149,11 +295,7 @@ public class FetchService extends IntentService {
         final String NAME = "service_fetch_lan()";
         Resources r = getResources();
         if (
-                MyApp.running_main != null ||
-                        MyApp.running_change_hours != null ||
-                        MyApp.running_function_menu != null ||
-                        MyApp.running_login != null ||
-                        MyApp.running_login_thread
+                !MyApp.running_activity.equals(MyApp.RunningActivity.NULL) || MyApp.running_login_thread
         ){
             Log.e(NAME, "skip | some activity is active or data is being updated");
             return;
@@ -256,7 +398,7 @@ public class FetchService extends IntentService {
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
                           SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t){
         Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr);
-        editor.clear().commit();
+//        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
             p.insert(p_a);
@@ -277,12 +419,12 @@ public class FetchService extends IntentService {
         for (GraduationScore gs_a : gs_t_all){
             gs.insert(gs_a);
         }
-        Set<String> keys = pref_t.getAll().keySet();
-        for (String key : keys){
-            String value = pref_t.getString(key, null);
-            editor.putString(key, value);
-        }
-        editor.commit();
+//        Set<String> keys = pref_t.getAll().keySet();
+//        for (String key : keys){
+//            String value = pref_t.getString(key, null);
+//            editor.putString(key, value);
+//        }
+//        editor.commit();
         List<Grades> gr_t_all = gr_t.selectAll();
         for (Grades gr_a : gr_t_all){
             gr.insert(gr_a);
@@ -293,7 +435,7 @@ public class FetchService extends IntentService {
         final String NAME = "lan_start()";
         Log.e(NAME, "start...");
         MyApp.running_fetch_service = true;
-        if (MyApp.running_main != null){
+        if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
             Log.e(NAME, "refresh main activity...");
             MyApp.running_main.refresh();
         }
@@ -303,7 +445,7 @@ public class FetchService extends IntentService {
         final String NAME = "lan_end()";
         Log.e(NAME, "end...");
         MyApp.running_fetch_service = false;
-        if (MyApp.running_main != null){
+        if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
             Log.e(NAME, "refresh main activity...");
             MyApp.running_main.refresh();
         }

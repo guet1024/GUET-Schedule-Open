@@ -1,10 +1,14 @@
 package com.telephone.coursetable.AppWidgetProvider;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,32 +17,57 @@ import android.widget.BaseAdapter;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.room.Room;
+
+import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class ListAdapter implements RemoteViewsService.RemoteViewsFactory {
     public static final String TODAY = "166263635514";
     public static final String TOMORROW = "1662636359634";
 
-    private List<String> data;
-    private Context c;
+    private ArrayList<String> data = null;
+    private boolean first = true;
 
-    public ListAdapter(Context c, List<String> data){
-        this.c = c;
-        this.data = data;
+    public ListAdapter() {
     }
 
     @Override
-    public void onCreate() {
-
+    public void onCreate() {// on create, use the default data-list
+        data = new ArrayList<>();
+        for (String des : MyApp.appwidget_list_today_time_descriptions) {
+            data.add(ListAdapter.TODAY);
+            data.add(des);
+        }
+        for (String des : MyApp.appwidget_list_tomorrow_time_descriptions) {
+            data.add(ListAdapter.TOMORROW);
+            data.add(des);
+        }
     }
 
     @Override
     public void onDataSetChanged() {
-
+        final String NAME = "onDataSetChanged()";
+        if (first){
+            Log.e(NAME, "first added, NOT fetch");
+            first = false;
+            return;
+        }
+        data = MyApp.data_list;
+        Log.e(NAME, "fetch new data");
     }
 
     @Override
@@ -74,7 +103,7 @@ public class ListAdapter implements RemoteViewsService.RemoteViewsFactory {
             view.setInt(R.id.appwidget_list_item_tv, "setVisibility", View.INVISIBLE);
             view.setInt(R.id.appwidget_list_item_tv_time, "setVisibility", View.VISIBLE);
             view.setInt(R.id.appwidget_list_item_tv_time_tomorrow, "setVisibility", View.INVISIBLE);
-        }else if (data.get(color_index).equals(TOMORROW)){//tomorrow time
+        } else if (data.get(color_index).equals(TOMORROW)){//tomorrow time
             if (data.get(text_index) != null) {
                 view.setTextViewText(R.id.appwidget_list_item_tv_time_tomorrow, data.get(text_index));
             } else {
