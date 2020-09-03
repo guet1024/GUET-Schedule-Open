@@ -87,7 +87,7 @@ public class List extends AppWidgetProvider {
                 super.onUpdate(context, m, w_ids);
 
                 // so that, we put the new data-list in MyAPP's static variable
-                MyApp.data_list = intent.getStringArrayListExtra(ListRemoteViewsService.EXTRA_ARRAY_LIST_OF_STRING_TO_GET_A_NEW_REMOTE_ADAPTER);
+                MyApp.setData_list(intent.getStringArrayListExtra(ListRemoteViewsService.EXTRA_ARRAY_LIST_OF_STRING_TO_GET_A_NEW_REMOTE_ADAPTER));
                 // then notify all app-widgets's remote adapter to get new data-list and refresh view
                 m.notifyAppWidgetViewDataChanged(w_ids, R.id.appwidget_list_listview);
 

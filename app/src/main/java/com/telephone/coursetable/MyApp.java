@@ -24,18 +24,56 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
-    volatile public static ArrayList<String> data_list = null;
+    private static ArrayList<String> data_list = null;
 
-    volatile public static MainActivity running_main = null;
-    volatile public static boolean running_login_thread = false;
-    volatile public static boolean running_fetch_service = false;
+    private static MainActivity running_main = null;
+    private static boolean running_login_thread = false;
+    private static boolean running_fetch_service = false;
 
     public enum RunningActivity{
             MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, NULL
     }
-    volatile public static RunningActivity running_activity = RunningActivity.NULL;
+    private static RunningActivity running_activity = RunningActivity.NULL;
 
+    public static synchronized ArrayList<String> getData_list() {
+        return data_list;
+    }
 
+    public static synchronized void setData_list(ArrayList<String> data_list) {
+        MyApp.data_list = data_list;
+    }
+
+    public static synchronized MainActivity getRunning_main() {
+        return running_main;
+    }
+
+    public static synchronized void setRunning_main(MainActivity running_main) {
+        MyApp.running_main = running_main;
+    }
+
+    public static synchronized boolean isRunning_login_thread() {
+        return running_login_thread;
+    }
+
+    public static synchronized void setRunning_login_thread(boolean running_login_thread) {
+        MyApp.running_login_thread = running_login_thread;
+    }
+
+    public static synchronized boolean isRunning_fetch_service() {
+        return running_fetch_service;
+    }
+
+    public static synchronized void setRunning_fetch_service(boolean running_fetch_service) {
+        MyApp.running_fetch_service = running_fetch_service;
+    }
+
+    public static synchronized RunningActivity getRunning_activity() {
+        return running_activity;
+    }
+
+    public static synchronized void setRunning_activity(RunningActivity running_activity) {
+        MyApp.running_activity = running_activity;
+    }
 
     final public static String ocr_lang_code = "telephone";
     final public static String notification_channel_id_normal = "normal";

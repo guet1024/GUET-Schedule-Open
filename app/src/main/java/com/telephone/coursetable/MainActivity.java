@@ -77,10 +77,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         final String NAME = "onDestroy()";
         Log.e(NAME, "Main Activity on destroy = " + this.toString());
-        Log.e(NAME, "cached Main Activity Pointer = " + MyApp.running_main.toString());
-        if (MyApp.running_main.toString().equals(this.toString())) {
-            MyApp.running_main = null;
-            if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN)) MyApp.running_activity = MyApp.RunningActivity.NULL;
+        Log.e(NAME, "cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
+        if (MyApp.getRunning_main().toString().equals(this.toString())) {
+            MyApp.setRunning_main(null);
+            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN)) MyApp.setRunning_activity(MyApp.RunningActivity.NULL);
             Log.e(NAME, "remove cached Main Activity Pointer = " + this.toString());
         }
         super.onDestroy();
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.running_main = this;
-        MyApp.running_activity = MyApp.RunningActivity.MAIN;
+        MyApp.setRunning_main(this);
+        MyApp.setRunning_activity(MyApp.RunningActivity.MAIN);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         pickerPanel.hide(this);
 
-        final boolean lockdown = MyApp.running_login_thread || MyApp.running_fetch_service;
+        final boolean lockdown = MyApp.isRunning_login_thread() || MyApp.isRunning_fetch_service();
         if (lockdown) {
             ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
             ((TextView) findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);

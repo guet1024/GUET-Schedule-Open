@@ -66,7 +66,7 @@ public class ListAdapter implements RemoteViewsService.RemoteViewsFactory {
             first = false;
             return;
         }
-        data = MyApp.data_list;
+        data = MyApp.getData_list();
         Log.e(NAME, "fetch new data");
     }
 

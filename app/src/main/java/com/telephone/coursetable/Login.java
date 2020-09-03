@@ -399,7 +399,7 @@ public class Login extends AppCompatActivity {
     /**
      * @ui
      * 1. super onCreate()
-     * 2. set {@link MyApp#running_activity} to {@link MyApp.RunningActivity#LOGIN}
+     * 2. set {@link MyApp#setRunning_activity(MyApp.RunningActivity)} to {@link MyApp.RunningActivity#LOGIN}
      * 3. initialize DAOs
      * 4. call {@link #initContentView()}
      * @clear
@@ -407,7 +407,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.running_activity = MyApp.RunningActivity.LOGIN;
+        MyApp.setRunning_activity(MyApp.RunningActivity.LOGIN);
         AppDatabase db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -421,14 +421,14 @@ public class Login extends AppCompatActivity {
 
     /**
      * @ui
-     * 1. if {@link MyApp#running_activity} is {@link MyApp.RunningActivity#LOGIN}:
-     *      1. set {@link MyApp#running_activity} to {@link MyApp.RunningActivity#NULL}
+     * 1. if {@link MyApp#getRunning_activity()} is {@link MyApp.RunningActivity#LOGIN}:
+     *      1. set {@link MyApp#setRunning_activity(MyApp.RunningActivity)} to {@link MyApp.RunningActivity#NULL}
      * 2. super onDestroy()
      * @clear
      */
     @Override
     protected void onDestroy() {
-        if (MyApp.running_activity.equals(MyApp.RunningActivity.LOGIN)) MyApp.running_activity = MyApp.RunningActivity.NULL;
+        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN)) MyApp.setRunning_activity(MyApp.RunningActivity.NULL);
         super.onDestroy();
     }
 
@@ -576,7 +576,7 @@ public class Login extends AppCompatActivity {
      *              6. insert/replace new user into database
      *              ******************************* UPDATE DATA START *******************************
      *              7. deactivate all user in database
-     *              8. set {@link MyApp#running_login_thread} to true
+     *              8. set {@link MyApp#setRunning_login_thread(boolean)} to true
      *              9. clear shared preference
      *              10. commit shared preference
      *              11. show tip snack-bar, change title
@@ -588,12 +588,12 @@ public class Login extends AppCompatActivity {
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
      *                      3. print the user's student id and name to log
-     *                      4. set {@link MyApp#running_login_thread} to false
+     *                      4. set {@link MyApp#setRunning_login_thread(boolean)} to false
      *                      5. call {@link #unlock(boolean)} with false
      *                      6. show tip toast, change title
      *                      7. start a new {@link MainActivity}
      *                  - if something went wrong:
-     *                      1. set {@link MyApp#running_login_thread} to false
+     *                      1. set {@link MyApp#setRunning_login_thread(boolean)} to false
      *                      2. {@link MainActivity}:
      *                          - if running:
      *                              1. show tip toast
@@ -705,7 +705,7 @@ public class Login extends AppCompatActivity {
                         /** deactivate all user in database */
                         udao.disableAllUser();
                         /** set {@link MyApp#running_login_thread} to true */
-                        MyApp.running_login_thread = true;
+                        MyApp.setRunning_login_thread(true);
                         /** clear shared preference */
                         editor.clear();
                         /** commit shared preference */
@@ -738,7 +738,7 @@ public class Login extends AppCompatActivity {
                             /** print the user's student id and name to log */
                             Log.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
                             /** set {@link MyApp#running_login_thread} to false */
-                            MyApp.running_login_thread = false;
+                            MyApp.setRunning_login_thread(false);
                             runOnUiThread(() -> {
                                 /** call {@link #unlock(boolean)} with false */
                                 unlock(false);
@@ -750,14 +750,14 @@ public class Login extends AppCompatActivity {
                             });
                         }else {
                             /** set {@link MyApp#running_login_thread} to false */
-                            MyApp.running_login_thread = false;
+                            MyApp.setRunning_login_thread(false);
                             /** {@link MyApp#running_main} */
-                            if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
+                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
                                 runOnUiThread(() -> {
                                     /** show tip toast */
                                     Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
                                     /** call {@link MainActivity#refresh()} */
-                                    MyApp.running_main.refresh();
+                                    MyApp.getRunning_main().refresh();
                                 });
                             }else {
                                 runOnUiThread(() -> {

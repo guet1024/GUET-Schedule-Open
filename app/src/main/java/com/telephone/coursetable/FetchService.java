@@ -170,10 +170,10 @@ public class FetchService extends IntentService {
     private ArrayList<String> getListForListAppWidgets(){
         final String NAME = "getListForListAppWidgets()";
         if (
-                MyApp.running_activity.equals(MyApp.RunningActivity.LOGIN) ||
-                        MyApp.running_activity.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
-                        MyApp.running_activity.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
-                        MyApp.running_login_thread
+                MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.isRunning_login_thread()
         ){
             Log.e(NAME,"data is being change, list app-widgets NOT updated");
             return null;
@@ -297,7 +297,7 @@ public class FetchService extends IntentService {
         final String NAME = "service_fetch_lan()";
         Resources r = getResources();
         if (
-                !MyApp.running_activity.equals(MyApp.RunningActivity.NULL) || MyApp.running_login_thread
+                !MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL) || MyApp.isRunning_login_thread()
         ){
             Log.e(NAME, "skip | some activity is active or data is being updated");
             return;
@@ -436,20 +436,20 @@ public class FetchService extends IntentService {
     private void lan_start(){
         final String NAME = "lan_start()";
         Log.e(NAME, "start...");
-        MyApp.running_fetch_service = true;
-        if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
+        MyApp.setRunning_fetch_service(true);
+        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
             Log.e(NAME, "refresh main activity...");
-            MyApp.running_main.refresh();
+            MyApp.getRunning_main().refresh();
         }
     }
 
     private void lan_end(){
         final String NAME = "lan_end()";
         Log.e(NAME, "end...");
-        MyApp.running_fetch_service = false;
-        if (MyApp.running_activity.equals(MyApp.RunningActivity.MAIN) && MyApp.running_main != null){
+        MyApp.setRunning_fetch_service(false);
+        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
             Log.e(NAME, "refresh main activity...");
-            MyApp.running_main.refresh();
+            MyApp.getRunning_main().refresh();
         }
     }
 
