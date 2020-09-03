@@ -20,4 +20,7 @@
     <color name="colorLoginProgressBar">#ACB4BA</color>
     <color name="colorCurrentDateText">#00BCD4</color>
     <color name="colorTableNodeBackground">#EDEDED</color>
+
+    <color name="colorLibraryLocalBackground">#D1E9E9</color>
+    <color name="colorLibraryInfoBackground">#E0E0E0</color>
 </resources>
