@@ -72,8 +72,9 @@ public class GetBitmap {
             }else {
                 cnt.setInstanceFollowRedirects(redirect);
             }
+            cnt.setReadTimeout(4000);
             cnt.connect();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
@@ -81,7 +82,7 @@ public class GetBitmap {
             resp_code = cnt.getResponseCode();
             response = "";
             bmp = BitmapFactory.decodeStream(cnt.getInputStream());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-5);
         }

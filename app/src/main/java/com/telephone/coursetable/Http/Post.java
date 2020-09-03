@@ -80,8 +80,9 @@ public class Post {
             }else {
                 cnt.setInstanceFollowRedirects(redirect);
             }
+            cnt.setReadTimeout(4000);
             cnt.connect();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
@@ -91,7 +92,7 @@ public class Post {
         }
         try {
             dos = new DataOutputStream(cnt.getOutputStream());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-3);
         }
@@ -99,7 +100,7 @@ public class Post {
             dos.writeBytes(body);
             dos.flush();
             dos.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-4);
         }
@@ -126,7 +127,7 @@ public class Post {
                     response = response.substring(0, response.indexOf(tail) + tail.length());
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-5);
         }
