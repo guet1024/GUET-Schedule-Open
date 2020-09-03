@@ -400,6 +400,10 @@ public class Login_vpn extends AppCompatActivity {
                 null
         );
         String cookie = get_ticket_res.cookie;
+        if (cookie == null || cookie.isEmpty()){
+            Log.e(NAME, "fail | can not get init vpn ticket");
+            return null;
+        }
         Log.e(NAME + " " + "ticket cookie", cookie);
         HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
                 r.getString(R.string.wan_vpn_login_url),

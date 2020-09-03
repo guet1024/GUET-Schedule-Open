@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:text=" "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_publisher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_publishdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_isbn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_ssh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_flh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_ys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_jg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_fbs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_zgs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_ljts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/message_info_ljcs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:text=" "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorLoginTextBorder"
+        android:background="@color/colorLibraryInfoBackground"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:text=" "
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        tools:ignore="MissingConstraints" />
+
+</LinearLayout>
