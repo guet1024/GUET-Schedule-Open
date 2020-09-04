@@ -22,6 +22,8 @@ public class TermInfo {
     public String comm;
     public long sts;
     public long ets;
+    public long sts_backup;
+    public int delay_week;
 
     public TermInfo(@NonNull String term, String startdate, String enddate, String weeknum, String termname, String schoolyear, String comm, long sts, long ets) {
         this.term = term;
@@ -33,5 +35,14 @@ public class TermInfo {
         this.comm = comm;
         this.sts = sts;
         this.ets = ets;
+        this.sts_backup = sts;
+        this.delay_week = 0;
+    }
+
+    public void setDelay(int delay_week){
+        this.delay_week = delay_week;
+        this.sts = sts_backup;
+        this.sts += delay_week * 86400000 * 7;
+        if (this.sts >= this.ets) sts = sts_backup;
     }
 }

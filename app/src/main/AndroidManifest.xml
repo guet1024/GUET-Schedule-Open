@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.DEVICE_POWER"
+    <uses-permission
+        android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -23,19 +24,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <service android:name=".AppWidgetProvider.ListRemoteViewsService"
-        android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name=".AppWidgetProvider.List" >
+        <service
+            android:name=".AppWidgetProvider.ListRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".AppWidgetProvider.List">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.telephone.coursetable.action.UPDATE_THE_DATASET_OF_ALL_LIST_APPWIDGET" />
                 <action android:name="com.telephone.coursetable.action.START_FETCH_SERVIE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/appwidget_info_list"/>
-        </receiver>
 
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info_list" />
+        </receiver>
         <receiver
             android:name=".BroadcastReceiver.BootReceiver"
             android:enabled="true"
@@ -49,6 +53,17 @@
             android:name=".FetchService"
             android:exported="false" />
 
+        <activity android:name=".ChangeTerms"
+            android:parentActivityName=".FunctionMenu"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_ChangeTerms">
+
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
         <activity
             android:name=".Library.LibraryActivity"
             android:parentActivityName=".FunctionMenu"

@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -375,12 +376,23 @@ public class FetchService extends IntentService {
             lan_end();
             return;
         }
+        /** get old delay_week */
+        List<Integer> delay_week_to_apply = new LinkedList<>();
+        List<TermInfo> new_terms = tdao_test.selectAll();
+        for (TermInfo new_term : new_terms){
+            List<Integer> old_delay_list = tdao.getDelayWeekNum(new_term.term);
+            if (old_delay_list.isEmpty()){
+                delay_week_to_apply.add(0);
+            }else {
+                delay_week_to_apply.add(old_delay_list.get(0));
+            }
+        }
         /** deactivate all user */
         Log.e(NAME, "deactivate all user...");
         udao.disableAllUser();
         /** migrate the pulled data to the database */
         Log.e(NAME, "migrate the pulled data to the database...");
-        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test);
+        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply);
         /** re-insert user */
         Log.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
@@ -398,7 +410,7 @@ public class FetchService extends IntentService {
 
     public void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
-                          SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t){
+                          SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply){
         Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
@@ -406,7 +418,9 @@ public class FetchService extends IntentService {
             p.insert(p_a);
         }
         List<TermInfo> t_t_all = t_t.selectAll();
-        for (TermInfo t_a : t_t_all){
+        for (int i = 0; i < t_t_all.size(); i++){
+            TermInfo t_a = t_t_all.get(i);
+            t_a.setDelay(delay_week_to_apply.get(i));
             t.insert(t_a);
         }
         List<GoToClass> g_t_all = g_t.selectAll();

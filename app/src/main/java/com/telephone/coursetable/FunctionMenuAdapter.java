@@ -122,6 +122,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     context.startActivity(intent);
                 }).start());
                 break;
+            case 4:
+                if (view != null &&  ((TextView)view.findViewById(R.id.change_term_item)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_change_terms, viewGroup, false);
+                view.setOnClickListener(view12 -> context.startActivity(new Intent(context, ChangeTerms.class)));
+                break;
         }
         switch (i){
             case 0:
@@ -150,6 +155,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 3:
                 ((TextView)view.findViewById(R.id.library)).setText(groups.get(i).getValue().get(i1).get(0));
+                break;
+            case 4:
+                ((TextView)view.findViewById(R.id.change_term_item)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }
         return view;
