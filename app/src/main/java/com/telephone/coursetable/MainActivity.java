@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
         Log.e(NAME, "Main Activity on destroy = " + this.toString());
         Log.e(NAME, "cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
         if (MyApp.getRunning_main().toString().equals(this.toString())) {
+            Log.e(NAME, "remove cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
             MyApp.setRunning_main(null);
-            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN)) MyApp.setRunning_activity(MyApp.RunningActivity.NULL);
-            Log.e(NAME, "remove cached Main Activity Pointer = " + this.toString());
         }
+        MyApp.clearRunningActivity(this);
         super.onDestroy();
     }
 
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         MyApp.setRunning_main(this);
         MyApp.setRunning_activity(MyApp.RunningActivity.MAIN);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 

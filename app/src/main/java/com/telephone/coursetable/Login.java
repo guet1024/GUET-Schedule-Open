@@ -408,6 +408,7 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApp.setRunning_activity(MyApp.RunningActivity.LOGIN);
+        MyApp.setRunning_activity_pointer(this);
         AppDatabase db = MyApp.getCurrentAppDB();
         gdao = db.goToClassDao();
         cdao = db.classInfoDao();
@@ -428,7 +429,7 @@ public class Login extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
-        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN)) MyApp.setRunning_activity(MyApp.RunningActivity.NULL);
+        MyApp.clearRunningActivity(this);
         super.onDestroy();
     }
 

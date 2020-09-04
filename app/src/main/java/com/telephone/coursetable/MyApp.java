@@ -4,7 +4,9 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import com.telephone.coursetable.Database.AppDatabase;
@@ -34,6 +36,32 @@ public class MyApp extends Application {
             MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, NULL
     }
     private static RunningActivity running_activity = RunningActivity.NULL;
+    private static AppCompatActivity running_activity_pointer = null;
+
+    public static synchronized void clearRunningActivity(AppCompatActivity ac){
+        final String NAME = "clearRunningActivity()";
+        if (ac != null){
+            Log.e(NAME, "on destroy activity pointer = " + ac.toString());
+        }
+        if (running_activity_pointer != null){
+            Log.e(NAME, "cached running activity: " + running_activity + " pointer = " + running_activity_pointer.toString());
+        }
+        if (ac != null && running_activity_pointer != null){
+            if (ac.toString().equals(running_activity_pointer.toString())){
+                running_activity = RunningActivity.NULL;
+                Log.e(NAME, "remove cached running activity pointer = " + running_activity_pointer.toString());
+                running_activity_pointer = null;
+            }
+        }
+    }
+
+    public static synchronized AppCompatActivity getRunning_activity_pointer() {
+        return running_activity_pointer;
+    }
+
+    public static synchronized void setRunning_activity_pointer(AppCompatActivity running_activity_pointer) {
+        MyApp.running_activity_pointer = running_activity_pointer;
+    }
 
     public static synchronized ArrayList<String> getData_list() {
         return data_list;

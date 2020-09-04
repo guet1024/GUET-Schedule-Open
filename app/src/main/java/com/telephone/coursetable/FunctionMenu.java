@@ -48,7 +48,7 @@ public class FunctionMenu extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.FUNCTION_MENU)) MyApp.setRunning_activity(MyApp.RunningActivity.NULL);
+        MyApp.clearRunningActivity(this);
         super.onDestroy();
     }
 
@@ -56,6 +56,7 @@ public class FunctionMenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApp.setRunning_activity(MyApp.RunningActivity.FUNCTION_MENU);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_function_menu);
 
         pdao = MyApp.getCurrentAppDB().personInfoDao();
