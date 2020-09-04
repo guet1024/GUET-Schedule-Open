@@ -33,7 +33,7 @@ public class MyApp extends Application {
     private static boolean running_fetch_service = false;
 
     public enum RunningActivity{
-            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, NULL
+            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, NULL
     }
     private static RunningActivity running_activity = RunningActivity.NULL;
     private static AppCompatActivity running_activity_pointer = null;

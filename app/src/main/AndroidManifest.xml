@@ -50,6 +50,19 @@
             android:exported="false" />
 
         <activity
+            android:name=".Library.LibraryActivity"
+            android:parentActivityName=".FunctionMenu"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_LibrarySearch">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
             android:name=".FunctionMenu"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"

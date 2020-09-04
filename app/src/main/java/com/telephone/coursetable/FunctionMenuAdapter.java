@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.Map;
 
+import android.content.Intent;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+
+import com.telephone.coursetable.Library.LibraryActivity;
 
 import java.util.List;
 
@@ -109,6 +112,16 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_grades, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
+            case 3:
+                if (view != null &&  ((TextView)view.findViewById(R.id.library)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_library, viewGroup, false);
+                view.setOnClickListener(view12 -> new Thread(() -> {
+                    Intent intent = new Intent(context, LibraryActivity.class);
+                    intent.putExtra(LibraryActivity.EXTRA_USERNAME, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username);
+                    intent.putExtra(LibraryActivity.EXTRA_VPN_PASSWORD, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).vpn_password);
+                    context.startActivity(intent);
+                }).start());
+                break;
         }
         switch (i){
             case 0:
@@ -134,6 +147,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 if (groups.get(i).getValue().get(i1).get(5) != null){
                     ((TextView)view.findViewById(R.id.grades_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
                 }
+                break;
+            case 3:
+                ((TextView)view.findViewById(R.id.library)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }
         return view;

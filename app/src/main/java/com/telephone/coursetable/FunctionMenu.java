@@ -258,6 +258,13 @@ public class FunctionMenu extends AppCompatActivity {
             }
             menus.add(Map.entry(grades_group, children));
 
+            String library_group = "图书馆藏";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("图书馆藏查询");
+            children.add(child);
+            menus.add(Map.entry(library_group, children));
+
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();
     }

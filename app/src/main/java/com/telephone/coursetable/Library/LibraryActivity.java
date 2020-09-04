@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.Login_vpn;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import org.jsoup.Jsoup;
@@ -28,6 +30,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LibraryActivity extends AppCompatActivity {
+
+    public final static String EXTRA_USERNAME = "com.telephone.coursetable.library.username";
+    public final static String EXTRA_VPN_PASSWORD = "com.telephone.coursetable.library.password";
 
     private ExpandableListView menu_list;
     private String username;
@@ -43,8 +48,22 @@ public class LibraryActivity extends AppCompatActivity {
     volatile private String html;
 
     @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, FunctionMenu.class));
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.LIBRARY);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.library_activity);
 
         final EditText etMessage = findViewById(R.id.message);
@@ -57,8 +76,8 @@ public class LibraryActivity extends AppCompatActivity {
         inputMethodManager =(InputMethodManager) LibraryActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         Intent intent = getIntent();
-        username = intent.getStringExtra("com.telephone.coursetable.library.username");
-        password = intent.getStringExtra("com.telephone.coursetable.library.password");
+        username = intent.getStringExtra(EXTRA_USERNAME);
+        password = intent.getStringExtra(EXTRA_VPN_PASSWORD);
 
 //        username = "**********";
 //        password = "******";
