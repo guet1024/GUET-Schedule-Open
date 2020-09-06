@@ -1,56 +1,58 @@
 package com.telephone.coursetable.Gson;
 
-//考试安排查询
-
-public class ExamQuery_Data {
-    private String croomno;//	"02204Y"
-    private String croomname;//	null
-    private String tch;//	null
-    private String tch1;//	null
-    private String tch2;//	null
-    private String js;//	null
-    private String js1;//	null
-    private String js2;//	null
-    private long roomrs;//	30
-    private String term;//	"2019-2020_2"
-    private String grade;//	"2018"
-    private String dpt;//	null
-    private String spno;//	"080640S"
-    private String spname;//	"物联网工程"
-    private String courseid;//	"BT0300167X0"
-    private String courseno;//	"1920736"
-    private String labno;//	null
-    private String labname;//	null
-    private String dptno;//	"3"
-    private String teacherno;//	"240402"
-    private String name;//	"陈宏"
-    private String xf;//	null
-    private String cname;//	"计算机组成原理B"
-    private String sctcnt;//	"110"
-    private String stucnt;//	"110"
-    private String scoretype;//	null
-    private String examt;//	null
-    private String kctype;//	null
-    private String typeno;//	null
-    private String examdate;//	"2020-07-15"
-    private String examtime;//	null
-    private long examstate;//	1
-    private String exammode;//	null
-    private String xm;//	null
-    private String refertime;//	null
-    private long zc;//	17
-    private long xq;//	3
-    private String ksjc;//	"3"
-    private String jsjc;//	"3"
-    private long bkzt;//	1
-    private String kssj;//	"14:00-16:00"
-    private String comm;//	null
-    private String rooms;//	"ls43997.451048"
-    private String lsh;//	null
-    private long zone;//	2
-    private String checked1;//	null
-    private String postdate;//	null
-    private String operator;//	null
+/**
+ * 考试安排查询
+ * @clear
+ */
+public class ExamInfo {
+    private String croomno;//	"02204Y"    教室
+    private String croomname;
+    private String tch;
+    private String tch1;
+    private String tch2;
+    private String js;
+    private String js1;
+    private String js2;
+    private long roomrs;
+    private String term;//	"2019-2020_2"   考试学期
+    private String grade;
+    private String dpt;
+    private String spno;
+    private String spname;
+    private String courseid;
+    private String courseno;//	"1920736"   课号
+    private String labno;
+    private String labname;
+    private String dptno;
+    private String teacherno;
+    private String name;//	"陈宏"    任课教师
+    private String xf;
+    private String cname;//	"计算机组成原理B"  课程名称
+    private String sctcnt;
+    private String stucnt;
+    private String scoretype;
+    private String examt;
+    private String kctype;
+    private String typeno;
+    private String examdate;//	"2020-07-15"    日期
+    private String examtime;
+    private long examstate;
+    private String exammode;
+    private String xm;
+    private String refertime;
+    private long zc;
+    private long xq;
+    private String ksjc;
+    private String jsjc;
+    private long bkzt;
+    private String kssj;//	"14:00-16:00"   考试时间
+    private String comm;
+    private String rooms;
+    private String lsh;
+    private long zone;
+    private String checked1;
+    private String postdate;
+    private String operator;
 
     public String getCroomno() {
         return croomno;

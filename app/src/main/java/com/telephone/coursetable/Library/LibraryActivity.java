@@ -200,7 +200,7 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                checkActivity_tvToastISTrue("登陆中...", true);
+                checkActivity_tvToastISTrue("登录中...", true);
                 cookie = Login_vpn.vpn_login(LibraryActivity.this, username, password);
                 if (cookie == null) {
                     checkActivity_progressBarISTrue(false);
