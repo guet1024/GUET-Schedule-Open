@@ -21,6 +21,7 @@
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_info_name"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorLoginTextBorder"

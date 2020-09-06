@@ -26,17 +26,17 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
-    private static ArrayList<String> data_list = null;
+    private volatile static ArrayList<String> data_list = null;
 
-    private static MainActivity running_main = null;
-    private static boolean running_login_thread = false;
-    private static boolean running_fetch_service = false;
+    private volatile static MainActivity running_main = null;
+    private volatile static boolean running_login_thread = false;
+    private volatile static boolean running_fetch_service = false;
 
     public enum RunningActivity{
             MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, NULL
     }
-    private static RunningActivity running_activity = RunningActivity.NULL;
-    private static AppCompatActivity running_activity_pointer = null;
+    private volatile static RunningActivity running_activity = RunningActivity.NULL;
+    private volatile static AppCompatActivity running_activity_pointer = null;
 
     public static synchronized void clearRunningActivity(AppCompatActivity ac){
         final String NAME = "clearRunningActivity()";
