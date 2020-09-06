@@ -201,6 +201,21 @@ public class LibraryActivity extends AppCompatActivity {
             public void run() {
 
                 checkActivity_tvToastISTrue("登陆中...", true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1500);
+                            if ( tvToast.getText().toString().equals("登陆中...") ) {
+                                checkActivity_tvToastISTrue("用校园网更快哦~", true);
+                            }
+                        } catch (InterruptedException e) {
+                            // Restore interrupt status.
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }).start();
+
                 cookie = Login_vpn.vpn_login(LibraryActivity.this, username, password);
                 if (cookie == null) {
                     checkActivity_progressBarISTrue(false);
@@ -231,6 +246,20 @@ public class LibraryActivity extends AppCompatActivity {
                 });
 
                 checkActivity_tvToastISTrue("搜索中...", true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1500);
+                            if ( tvToast.getText().toString().equals("搜索中...") ) {
+                                checkActivity_tvToastISTrue("用校园网更快哦~", true);
+                            }
+                        } catch (InterruptedException e) {
+                            // Restore interrupt status.
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }).start();
 
                 html = getHtml_(1);
                 if (html == null) {
@@ -294,6 +323,7 @@ public class LibraryActivity extends AppCompatActivity {
                                         etMessage.clearFocus();
                                         btPlus.setEnabled(true);
                                         btReduce.setEnabled(true);
+                                        checkActivity_tvToastISTrue("", true);
                                         checkActivity_tvToastISTrue("", false);
                                         checkActivity_progressBarISTrue(false);
                                         menu_listf.setGroupIndicator(null);
