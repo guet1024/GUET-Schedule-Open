@@ -319,7 +319,7 @@ public class FunctionMenu extends AppCompatActivity {
             String update_group = "应用更新";
             children = new LinkedList<>();
             child = new LinkedList<>();
-            child.add("当前是 0.1 版本");
+            child.add("当前是 " + BuildConfig.VERSION_NAME + " 版本");
             children.add(child);
             menus.add(Map.entry(update_group, children));
 
