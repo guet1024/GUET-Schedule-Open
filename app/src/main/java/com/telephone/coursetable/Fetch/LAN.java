@@ -149,6 +149,19 @@ public class LAN {
      */
     public static HttpConnectionAndCode graduationScore(Context c, String cookie){
         Resources r = c.getResources();
+        HttpConnectionAndCode gen = Post.post(
+                "http://bkjw.guet.edu.cn/student/genyxxf",
+                null,
+                r.getString(R.string.user_agent),
+                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "stid=1",
+                cookie,
+                "}",
+                null,
+                "\"success\":true",
+                null,
+                null
+        );
         return Get.get(
                 r.getString(R.string.lan_get_graduation_score_url),
                 null,
@@ -158,6 +171,41 @@ public class LAN {
                 "}]}",
                 null,
                 r.getString(R.string.lan_get_graduation_score_success_contain_response_text),
+                null,
+                null
+        );
+    }
+
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     * @clear
+     */
+    public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
+        Resources r = c.getResources();
+        HttpConnectionAndCode gen = Post.post(
+                "http://bkjw.guet.edu.cn/student/genyxxf",
+                null,
+                r.getString(R.string.user_agent),
+                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "stid=1",
+                cookie,
+                "}",
+                null,
+                "\"success\":true",
+                null,
+                null
+        );
+        return Get.get(
+                "http://bkjw.guet.edu.cn/student/getplancj",
+                null,
+                r.getString(R.string.user_agent),
+                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                cookie,
+                "}]}",
+                null,
+                "\"success\":true",
                 null,
                 null
         );
