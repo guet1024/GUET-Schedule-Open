@@ -45,10 +45,11 @@ public class DATALIST {
      *      - {@link com.telephone.coursetable.Gson.GraduationScore}
      * @fetch
      *      - {@link com.telephone.coursetable.Fetch.LAN#graduationScore(Context, String)}
+     *      - {@link com.telephone.coursetable.Fetch.LAN#graduationScore2(Context, String)}
      * @database
      *      {@link com.telephone.coursetable.Database.GraduationScore}
      * @merge
-     *      {@link com.telephone.coursetable.Merge.Merge#graduationScore(String, GraduationScoreDao)}
+     *      {@link com.telephone.coursetable.Merge.Merge#graduationScore(String, String, GraduationScoreDao)}
      * @clear
      */
     public final String GraduationScore = null;

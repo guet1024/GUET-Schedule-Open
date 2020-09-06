@@ -525,11 +525,12 @@ public class Login extends AppCompatActivity {
             Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
         }
         res = LAN.graduationScore(c, cookie);
-        if (res.code != 0){
+        res_add = LAN.graduationScore2(c, cookie);
+        if (res.code != 0 || res_add.code != 0){
             Log.e(NAME, "fail");
             return false;
         }
-        Merge.graduationScore(res.comment, gsdao);
+        Merge.graduationScore(res.comment, res_add.comment, gsdao);
         res = LAN.hour(c, cookie);
         if (res.code != 0){
             Log.e(NAME, "fail");
