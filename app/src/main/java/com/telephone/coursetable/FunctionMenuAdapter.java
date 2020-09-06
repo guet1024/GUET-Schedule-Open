@@ -7,6 +7,7 @@ import java.util.Map;
 import android.content.Intent;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,6 +132,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_exam, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
+            case 6:
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
+                view.setOnClickListener(view13 -> {
+                    Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                });
+                break;
         }
         switch (i){
             case 0:
@@ -178,6 +186,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
                 }
+                break;
+            case 6:
+                ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }
         return view;

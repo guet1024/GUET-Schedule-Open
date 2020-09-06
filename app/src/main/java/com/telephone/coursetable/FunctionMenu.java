@@ -316,6 +316,13 @@ public class FunctionMenu extends AppCompatActivity {
             }
             menus.add(Map.entry(exams_group, children));
 
+            String update_group = "应用更新";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("当前是 0.1 版本");
+            children.add(child);
+            menus.add(Map.entry(update_group, children));
+
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();
     }
