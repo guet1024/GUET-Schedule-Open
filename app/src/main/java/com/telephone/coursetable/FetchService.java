@@ -24,6 +24,8 @@ import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
+import com.telephone.coursetable.Database.ExamInfo;
+import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.Grades;
@@ -347,6 +349,7 @@ public class FetchService extends IntentService {
         GraduationScoreDao gsdao_test = MyApp.getCurrentAppDB_Test().graduationScoreDao();
         SharedPreferences pref_test = MyApp.getCurrentSharedPreference_Test();
         GradesDao grdao_test = MyApp.getCurrentAppDB_Test().gradesDao();
+        ExamInfoDao edao_test = MyApp.getCurrentAppDB_Test().examInfoDao();
         SharedPreferences.Editor editor_test = MyApp.getCurrentSharedPreferenceEditor_Test();
         PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
         TermInfoDao tdao = MyApp.getCurrentAppDB().termInfoDao();
@@ -355,9 +358,10 @@ public class FetchService extends IntentService {
         GraduationScoreDao gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
         SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
         GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
+        ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
         UserDao udao = MyApp.getCurrentAppDB().userDao();
         Login.deleteOldDataFromDatabase(
-            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test
+            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test
         );
         editor_test.clear().commit();
         boolean fetch_merge_res = Login.fetch_merge(
@@ -369,7 +373,8 @@ public class FetchService extends IntentService {
                 cdao_test,
                 gsdao_test,
                 editor_test,
-                grdao_test
+                grdao_test,
+                edao_test
         );
         if (!fetch_merge_res){
             Log.e(NAME, "fail | fetch fail");
@@ -392,7 +397,7 @@ public class FetchService extends IntentService {
         udao.disableAllUser();
         /** migrate the pulled data to the database */
         Log.e(NAME, "migrate the pulled data to the database...");
-        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply);
+        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply, edao, edao_test);
         /** re-insert user */
         Log.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
@@ -410,8 +415,10 @@ public class FetchService extends IntentService {
 
     public void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
-                          SharedPreferences.Editor editor, SharedPreferences pref_t, GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply){
-        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr);
+                          SharedPreferences.Editor editor, SharedPreferences pref_t,
+                          GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply,
+                          ExamInfoDao e, ExamInfoDao e_t){
+        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
@@ -444,6 +451,10 @@ public class FetchService extends IntentService {
         List<Grades> gr_t_all = gr_t.selectAll();
         for (Grades gr_a : gr_t_all){
             gr.insert(gr_a);
+        }
+        List<ExamInfo> e_t_all = e_t.selectAll();
+        for (ExamInfo e_a : e_t_all){
+            e.insert(e_a);
         }
     }
 

@@ -38,4 +38,7 @@ public interface TermInfoDao {
 
     @Query("select delay_week from TermInfo where term=:term")
     List<Integer> getDelayWeekNum(String term);
+
+    @Query("select * from TermInfo where term=:term")
+    List<TermInfo> select(String term);
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.telephone.coursetable.Database.ClassInfoDao;
+import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
@@ -90,9 +91,22 @@ public class DATALIST {
      * @clear
      */
     public final String Grades = null;
+
+    /**
+     * @gson
+     *      - {@link com.telephone.coursetable.Gson.ExamInfo}
+     * @fetch
+     *      - {@link com.telephone.coursetable.Fetch.LAN#examInfo(Context, String)}
+     * @database
+     *      {@link com.telephone.coursetable.Database.ExamInfo}
+     * @merge
+     *      {@link com.telephone.coursetable.Merge.Merge#examInfo(String, ExamInfoDao)}
+     * @clear
+     */
+    public final String ExamInfo = null;
 }
 /**
- * - {@link com.telephone.coursetable.Login#fetch_merge(android.content.Context, java.lang.String, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, android.content.SharedPreferences.Editor, com.telephone.coursetable.Database.GradesDao)}
- * - {@link com.telephone.coursetable.Login#deleteOldDataFromDatabase(com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, com.telephone.coursetable.Database.GradesDao)}
- * - {@link com.telephone.coursetable.FetchService#lan_merge(com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, com.telephone.coursetable.Database.GraduationScoreDao, android.content.SharedPreferences.Editor, android.content.SharedPreferences, com.telephone.coursetable.Database.GradesDao, com.telephone.coursetable.Database.GradesDao)}
+ * - {@link com.telephone.coursetable.Login#fetch_merge(android.content.Context, java.lang.String, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, android.content.SharedPreferences.Editor, com.telephone.coursetable.Database.GradesDao, com.telephone.coursetable.Database.ExamInfoDao)}
+ * - {@link com.telephone.coursetable.Login#deleteOldDataFromDatabase(com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, com.telephone.coursetable.Database.GradesDao, com.telephone.coursetable.Database.ExamInfoDao)}
+ * - {@link com.telephone.coursetable.FetchService#lan_merge(com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, com.telephone.coursetable.Database.GraduationScoreDao, android.content.SharedPreferences.Editor, android.content.SharedPreferences, com.telephone.coursetable.Database.GradesDao, com.telephone.coursetable.Database.GradesDao, java.util.List, com.telephone.coursetable.Database.ExamInfoDao, com.telephone.coursetable.Database.ExamInfoDao)}
  */

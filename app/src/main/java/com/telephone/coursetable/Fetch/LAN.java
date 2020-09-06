@@ -184,4 +184,26 @@ public class LAN {
                 null
         );
     }
+
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     * @clear
+     */
+    public static HttpConnectionAndCode examInfo(Context c, String cookie){
+        Resources r = c.getResources();
+        return Get.get(
+                "http://bkjw.guet.edu.cn/student/getexamap?&term=",
+                null,
+                r.getString(R.string.user_agent),
+                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                cookie,
+                "}]}",
+                null,
+                "\"success\":true",
+                null,
+                null
+        );
+    }
 }
