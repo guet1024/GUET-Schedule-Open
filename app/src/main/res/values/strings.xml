@@ -29,8 +29,6 @@
     <string name="picker_cancel_btn">取消</string>
 
 
-
-
     <string name="lan_login_url">http://bkjw.guet.edu.cn/Login/SubmitLogin</string>
     <string name="lan_login_referer">http://bkjw.guet.edu.cn/</string>
     <string name="lan_login_success_contain_response_text">\"success\":true</string>
@@ -82,9 +80,6 @@
     <string name="lan_get_grades_success_contain_response_text">\"success\":true</string>
 
 
-
-
-
     <string name="wan_get_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
     <string name="wan_get_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
     <string name="wan_vpn_get_ticket_url">https://v.guet.edu.cn/</string>
@@ -100,17 +95,7 @@
     <string name="wan_vpn_ip_forbidden">ip</string>
 
 
-
-
-
-
-
-
-
-
-
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
-
 
 
     <string name="snackbar_login_fail_vpn">登录失败, 检查网络连接后重试</string>

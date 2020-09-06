@@ -7,6 +7,7 @@ import java.util.Map;
 import android.content.Intent;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,6 +123,22 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     context.startActivity(intent);
                 }).start());
                 break;
+            case 4:
+                if (view != null &&  ((TextView)view.findViewById(R.id.change_term_item)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_change_terms, viewGroup, false);
+                view.setOnClickListener(view12 -> context.startActivity(new Intent(context, ChangeTerms.class)));
+                break;
+            case 5:
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_exam, viewGroup, false);
+                view.setOnClickListener(collapse);
+                break;
+            case 6:
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
+                view.setOnClickListener(view13 -> {
+                    Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                });
+                break;
         }
         switch (i){
             case 0:
@@ -150,6 +167,28 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 3:
                 ((TextView)view.findViewById(R.id.library)).setText(groups.get(i).getValue().get(i1).get(0));
+                break;
+            case 4:
+                ((TextView)view.findViewById(R.id.change_term_item)).setText(groups.get(i).getValue().get(i1).get(0));
+                break;
+            case 5:
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setText(groups.get(i).getValue().get(i1).get(2));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setText(groups.get(i).getValue().get(i1).get(3));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setText(groups.get(i).getValue().get(i1).get(4));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setText(groups.get(i).getValue().get(i1).get(5));
+                if (groups.get(i).getValue().get(i1).get(6) != null){
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                }
+                break;
+            case 6:
+                ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }
         return view;

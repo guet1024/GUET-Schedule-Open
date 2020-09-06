@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.ClassInfoDao;
+import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
@@ -40,6 +41,7 @@ import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
+import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.Merge.Merge;
 import com.telephone.coursetable.OCR.OCR;
 
@@ -58,6 +60,7 @@ public class Login extends AppCompatActivity {
     private PersonInfoDao pdao = null;
     private GraduationScoreDao gsdao = null;
     private GradesDao grdao = null;
+    private ExamInfoDao edao = null;
 
     /**
      * @ui
@@ -256,13 +259,14 @@ public class Login extends AppCompatActivity {
      * 1. delete all user-related data from database(not including user login information)
      * @clear
      */
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao){
+    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao){
         gdao.deleteAll();
         cdao.deleteAll();
         tdao.deleteAll();
         pdao.deleteAll();
         gsdao.deleteAll();
         grdao.deleteAll();
+        edao.deleteAll();
     }
 
     /**
@@ -417,6 +421,7 @@ public class Login extends AppCompatActivity {
         pdao = db.personInfoDao();
         gsdao = db.graduationScoreDao();
         grdao = db.gradesDao();
+        edao = db.examInfoDao();
         initContentView();
     }
 
@@ -487,7 +492,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao){
+    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
         res = LAN.personInfo(c, cookie);
@@ -537,6 +542,12 @@ public class Login extends AppCompatActivity {
             return false;
         }
         Merge.grades(res.comment, grdao);
+        res = LAN.examInfo(c, cookie);
+        if (res.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.examInfo(res.comment, edao);
         Log.e(NAME, "success");
         return true;
     }
@@ -574,17 +585,18 @@ public class Login extends AppCompatActivity {
      *                      3. end this thread
      *              4. get cookie after successfully logging in the credit system
      *              5. get shared preference and its editor
-     *              6. insert/replace new user into database
+     *              6. detect new activity
+     *              7. insert/replace new user into database
      *              ******************************* UPDATE DATA START *******************************
-     *              7. deactivate all user in database
-     *              8. set {@link MyApp#setRunning_login_thread(boolean)} to true
-     *              9. clear shared preference
-     *              10. commit shared preference
-     *              11. show tip snack-bar, change title
-     *              12. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao)}
-     *              13. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao)}
-     *              14. commit shared preference
-     *              15. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao)}:
+     *              8. deactivate all user in database
+     *              9. set {@link MyApp#setRunning_login_thread(boolean)} to true
+     *              10. clear shared preference
+     *              11. commit shared preference
+     *              12. show tip snack-bar, change title
+     *              13. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao)}
+     *              14. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao)}
+     *              15. commit shared preference
+     *              16. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -698,6 +710,14 @@ public class Login extends AppCompatActivity {
                         /** get shared preference and its editor */
                         final SharedPreferences shared_pref = MyApp.getCurrentSharedPreference();
                         final SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
+                        /** detect new activity */
+                        Log.e(NAME, "login activity pointer = " + Login.this.toString());
+                        Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
+                        if (!Login.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
+                            Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login.this.toString() + " canceled");
+                            runOnUiThread(()->Toast.makeText(Login.this, "登录取消", Toast.LENGTH_SHORT).show());
+                            return;
+                        }
                         /** insert/replace new user into database */
                         udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
                         /**
@@ -717,9 +737,9 @@ public class Login extends AppCompatActivity {
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
                         /** call {@link #deleteOldDataFromDatabase()} */
-                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao);
+                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao);
                         /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao);
+                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao);
                         /** commit shared preference */
                         editor.commit();
                         if (fetch_merge_res){

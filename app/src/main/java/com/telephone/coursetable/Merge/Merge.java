@@ -9,12 +9,15 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
+import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.Gson.ExamInfo;
+import com.telephone.coursetable.Gson.ExamInfo_s;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo_s;
 import com.telephone.coursetable.Gson.Grades;
@@ -182,6 +185,28 @@ public class Merge {
                             i.getChk(), i.getComm()
                     )
             );
+        }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao){
+        ExamInfo_s e_s = new Gson().fromJson(origin_e, ExamInfo_s.class);
+        List<ExamInfo> e = e_s.getData();
+        for (ExamInfo i : e){
+            edao.insert(new com.telephone.coursetable.Database.ExamInfo(
+                    i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
+                    i.getJs1(), i.getJs2(), i.getRoomrs(), i.getTerm(), i.getGrade(), i.getDpt(),
+                    i.getSpno(), i.getSpname(), i.getCourseid(),i.getCourseno(), i.getLabno(), i.getLabname(),
+                    i.getDptno(), i.getTeacherno(), i.getName(), i.getXf(), i.getCname(), i.getSctcnt(),
+                    i.getStucnt(), i.getScoretype(), i.getExamt(), i.getKctype(), i.getTypeno(),
+                    i.getExamdate(), i.getExamtime(), i.getExamstate(), i.getExammode(), i.getXm(),
+                    i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
+                    i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
+                    i.getPostdate(), i.getOperator()
+            ));
         }
     }
 }

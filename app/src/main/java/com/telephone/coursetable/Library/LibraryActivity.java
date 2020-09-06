@@ -200,13 +200,13 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                checkActivity_tvToastISTrue("登陆中...", true);
+                checkActivity_tvToastISTrue("登录中...", true);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             Thread.sleep(1500);
-                            if ( tvToast.getText().toString().equals("登陆中...") ) {
+                            if ( tvToast.getText().toString().equals("登录中...") ) {
                                 checkActivity_tvToastISTrue("用校园网更快哦~", true);
                             }
                         } catch (InterruptedException e) {

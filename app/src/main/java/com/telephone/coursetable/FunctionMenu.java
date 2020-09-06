@@ -10,12 +10,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Database.ExamInfo;
+import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.Grades;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.TermInfoDao;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,13 +36,16 @@ public class FunctionMenu extends AppCompatActivity {
 
     public static Map<String, Integer> colors = new HashMap<String, Integer>(){
         {
-            put("0", 0xFFA0CFD5);
+            put("0", 0xFFDEF2EF);
+            put("1", 0xFFDEF2EF);
         }
     };
 
     private PersonInfoDao pdao;
     private GraduationScoreDao gsdao;
     private GradesDao grdao;
+    private ExamInfoDao edao;
+    private TermInfoDao tdao;
     private ExpandableListView menu_list;
 
     @Override
@@ -62,6 +69,8 @@ public class FunctionMenu extends AppCompatActivity {
         pdao = MyApp.getCurrentAppDB().personInfoDao();
         gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
         grdao = MyApp.getCurrentAppDB().gradesDao();
+        edao = MyApp.getCurrentAppDB().examInfoDao();
+        tdao = MyApp.getCurrentAppDB().termInfoDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
 
         final ExpandableListView menu_listf = menu_list;
@@ -264,6 +273,55 @@ public class FunctionMenu extends AppCompatActivity {
             child.add("图书馆藏查询");
             children.add(child);
             menus.add(Map.entry(library_group, children));
+
+            String change_term_group = "学期调整";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("调整学期时间");
+            children.add(child);
+            menus.add(Map.entry(change_term_group, children));
+
+            String exams_group = "考试安排";
+            List<ExamInfo> exam_list = edao.selectAll();
+            children = new LinkedList<>();
+            String cno = "";
+            String edate = "";
+            String etime = "";
+            List<ExamInfo> filter_elist = new LinkedList<>();
+            for (ExamInfo e : exam_list){
+                if (e.courseno.equals(cno) && e.examdate.equals(edate) && e.kssj.equals(etime)){
+                    filter_elist.get(filter_elist.size() - 1).croomno += ", " + e.croomno;
+                }else {
+                    filter_elist.add(e);
+                }
+                cno = e.courseno;
+                edate = e.examdate;
+                etime = e.kssj;
+            }
+            exam_list = filter_elist;
+            for (ExamInfo e : exam_list){
+                child = new LinkedList<>();
+                child.add("学期: " + tdao.select(e.term).get(0).termname);
+                child.add("课程名称: " + e.cname);
+                child.add("课号: " + e.courseno);
+                child.add("日期: " + e.examdate);
+                child.add("时间: " + e.kssj);
+                child.add("教室: " + e.croomno);
+                if (e.ets >= Clock.nowTimeStamp()){
+                    child.add("1");
+                }else {
+                    child.add(null);
+                }
+                children.add(child);
+            }
+            menus.add(Map.entry(exams_group, children));
+
+            String update_group = "应用更新";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("当前是 0.1 版本");
+            children.add(child);
+            menus.add(Map.entry(update_group, children));
 
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();
