@@ -73,6 +73,7 @@ public class GetBitmap {
                 cnt.setInstanceFollowRedirects(redirect);
             }
             cnt.setReadTimeout(4000);
+            cnt.setConnectTimeout(2000);
             cnt.connect();
         } catch (Exception e) {
             e.printStackTrace();

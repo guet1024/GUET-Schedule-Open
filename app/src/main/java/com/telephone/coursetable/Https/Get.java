@@ -79,8 +79,9 @@ public class Get {
                 cnt.setInstanceFollowRedirects(redirect);
             }
             cnt.setReadTimeout(4000);
+            cnt.setConnectTimeout(2000);
             cnt.connect();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
