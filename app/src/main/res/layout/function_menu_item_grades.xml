@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/grades_cname"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"
@@ -23,7 +23,7 @@
     <TextView
         android:id="@+id/grades_grade"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"
@@ -38,7 +38,7 @@
     <TextView
         android:id="@+id/grades_usual"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"
@@ -52,7 +52,7 @@
     <TextView
         android:id="@+id/grades_exp"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"
@@ -66,7 +66,7 @@
     <TextView
         android:id="@+id/grades_test"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"

@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Dao
 public interface GraduationScoreDao {
-    @Query("select * from GraduationScore order by sterm DESC, scname ASC")
+    @Query("select * from GraduationScore order by sterm DESC, cname ASC")
     List<GraduationScore> selectAll();
 
     @Query("delete from GraduationScore")

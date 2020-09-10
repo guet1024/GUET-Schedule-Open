@@ -178,59 +178,39 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(person_group, children));
 
-            String graduation_score_group = "毕业学分";
+            String graduation_score_group = "毕业计划课程";
             List<GraduationScore> graduation_score_list = gsdao.selectAll();
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("课程名称");
-            child.add("成绩");
             child.add("学分");
-            child.add("有效");
-            child.add("计划");
+            child.add("成绩");
+            child.add("☑");
             child.add(null);
             children.add(child);
             double credit_hour_total = 0;
-            String last_sterm = null;
-            boolean color = false;
+            double credit_hour_total_got = 0;
             for (GraduationScore gs : graduation_score_list){
                 child = new LinkedList<>();
-                child.add(gs.scname);
-                child.add(gs.score+"");
-                child.add(gs.xf+"");
-                if (gs.credithour == 0){
+                child.add(gs.cname);
+                child.add(gs.credithour+"");
+                child.add(gs.zpxs);
+                if (gs.courseno == null){
                     child.add(" ");
                 }else {
-                    credit_hour_total += gs.credithour;
+                    credit_hour_total_got += gs.credithour;
                     child.add("√");
                 }
-                if (gs.planxf == 0){
-                    child.add(" ");
-                }else {
-                    child.add("√");
-                }
-                if (!gs.sterm.equals(last_sterm)){
-                    color = !color;
-                }
-                last_sterm = gs.sterm;
-                if (color){
-                    child.add("0");
-                }else {
-                    child.add(null);
-                }
+                child.add(null);
+                credit_hour_total += gs.credithour;
                 children.add(child);
             }
             child = new LinkedList<>();
-            child.add("有效学分");
-            child.add("");
-            child.add("");
+            child.add("毕业学分");
             child.add(credit_hour_total+"");
             child.add("");
-            color = !color;
-            if (color){
-                child.add("0");
-            }else {
-                child.add(null);
-            }
+            child.add(credit_hour_total_got+"");
+            child.add(null);
             children.add(child);
             menus.add(Map.entry(graduation_score_group, children));
 
@@ -245,8 +225,8 @@ public class FunctionMenu extends AppCompatActivity {
             child.add("考核");
             child.add(null);
             children.add(child);
-            last_sterm = null;
-            color = false;
+            String last_sterm = null;
+            boolean color = false;
             for (Grades gr : grades_list){
                 child = new LinkedList<>();
                 child.add(gr.cname);
@@ -315,6 +295,13 @@ public class FunctionMenu extends AppCompatActivity {
                 children.add(child);
             }
             menus.add(Map.entry(exams_group, children));
+
+            String teachers_eva_group = "评教";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("一键评教");
+            children.add(child);
+            menus.add(Map.entry(teachers_eva_group, children));
 
             String update_group = "应用更新";
             children = new LinkedList<>();

@@ -138,7 +138,7 @@ public class TeachersEvaluation {//评教
                             null,
                             null);
                     for (int i=0;post_res.code != 0 && i<3;i++) {
-                        c.runOnUiThread(() -> Toast.makeText(c, "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师", Toast.LENGTH_LONG).show());
+                        c.runOnUiThread(() -> Toast.makeText(c, "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师", Toast.LENGTH_SHORT).show());
                                 post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                                 new String[]{t.term},
                                 user_agent,
@@ -166,7 +166,7 @@ public class TeachersEvaluation {//评教
             }
             if(flag1 == 2){
                 int finalFlag = flag1;
-                c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + Integer.toString(finalFlag) + " 个学期", Toast.LENGTH_LONG).show());
+                c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + finalFlag + " 个学期", Toast.LENGTH_LONG).show());
                 Log.e("PJterm",finalFlag+"");
                 return;
             }
@@ -177,7 +177,7 @@ public class TeachersEvaluation {//评教
             return;
         } else {
             int finalFlag = flag1;
-            c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + Integer.toString(finalFlag) + " 个学期", Toast.LENGTH_LONG).show());
+            c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + finalFlag + " 个学期", Toast.LENGTH_LONG).show());
             Log.e("PJterm",finalFlag+"");
         }
     }
