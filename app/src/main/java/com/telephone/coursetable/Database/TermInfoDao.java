@@ -15,7 +15,7 @@ public interface TermInfoDao {
     @Query("delete from TermInfo")
     void deleteAll();
 
-    @Query("select * from TermInfo")
+    @Query("select * from TermInfo order by term DESC")
     List<TermInfo> selectAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
