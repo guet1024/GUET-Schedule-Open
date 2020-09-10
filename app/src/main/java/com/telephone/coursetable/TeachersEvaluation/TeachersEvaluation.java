@@ -103,13 +103,18 @@ public class TeachersEvaluation {//评教
                 c.runOnUiThread(() -> Toast.makeText(c, "评教失败，检查校园网连接后重试", Toast.LENGTH_LONG).show());
                 return;
             }
-            if (httpURLConnection.comment.contains("\"data\":[]}")) {
+            if (httpURLConnection.comment.contains("\"data\":[]}" ) || httpURLConnection.comment.contains("\"can\": false")) {
+                c.runOnUiThread(() -> Toast.makeText(c, t.termname+" 评教未开放", Toast.LENGTH_SHORT).show());
                 flag++;
             } else {
                 String sss = httpURLConnection.comment;
                 final PJGetValue_DataS res = new Gson().fromJson(httpURLConnection.comment, PJGetValue_DataS.class);
                 final List<PJGetValue_Data> pvdlist = res.getData();
                 for (PJGetValue_Data g : pvdlist) {
+                    if(g.getChk()!=0){
+                        c.runOnUiThread(() -> Toast.makeText(c, t.termname+" "+g.getName()+" 老师已提交", Toast.LENGTH_SHORT).show());
+                        continue;
+                    }
                     StringBuilder post_body_builder = new StringBuilder();
                     post_body_builder.append("term=").append(g.getTerm()).append("&courseno=").append(g.getCourseno())
                             .append("&stid=").append(g.getStid()).append("&cname=").append(URLEncoder.encode(g.getCname()))
@@ -171,8 +176,8 @@ public class TeachersEvaluation {//评教
             Log.e("PJterm","All terms are closed");
             return;
         } else {
-            int finalFlag = flag;
-            c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + Integer.toString(list.size() - finalFlag) + " 个学期", Toast.LENGTH_LONG).show());
+            int finalFlag = flag1;
+            c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + Integer.toString(finalFlag) + " 个学期", Toast.LENGTH_LONG).show());
             Log.e("PJterm",finalFlag+"");
         }
     }
