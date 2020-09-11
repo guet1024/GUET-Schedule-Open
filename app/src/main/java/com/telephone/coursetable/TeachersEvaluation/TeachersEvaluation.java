@@ -1,6 +1,8 @@
 package com.telephone.coursetable.TeachersEvaluation;
 
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,16 +23,68 @@ import com.telephone.coursetable.OCR.OCR;
 import com.telephone.coursetable.R;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class TeachersEvaluation {//评教
+    private static List<Map.Entry<String, Integer>> toastlist = new LinkedList<>();
+    private static boolean end = false;
 
+    synchronized public static void addtoast(String s, int len, boolean end){
+        toastlist.add(Map.entry(s, len));
+        TeachersEvaluation.end = end;
+    }
+    synchronized public static Map.Entry<String, Integer> gettoast(){
+        if(toastlist.isEmpty())
+            return null;
+        Map.Entry<String, Integer> res=toastlist.get(0);
+        toastlist.remove(0);
+        return res;
+    }
+    synchronized public static boolean isEnd(){
+        return end;
+    }
     public static void evaluation(AppCompatActivity c, String id, String pwd, TermInfoDao tdao) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    Map.Entry<String, Integer> toast = gettoast();
+                    if(toast!=null){
+                        c.runOnUiThread(()->Toast.makeText(c, toast.getKey(), toast.getValue()).show());
+                        switch (toast.getValue()){
+                            case Toast.LENGTH_SHORT: default:
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    // Restore interrupt status.
+                                    Thread.currentThread().interrupt();
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case Toast.LENGTH_LONG:
+                                try {
+                                    Thread.sleep(3500);
+                                } catch (InterruptedException e) {
+                                    // Restore interrupt status.
+                                    Thread.currentThread().interrupt();
+                                    e.printStackTrace();
+                                }
+                                break;
+                        }
+                    }else {
+                        if (isEnd())return;
+                    }
+                }
+            }
+        }).start();
 
-        c.runOnUiThread(() -> Toast.makeText(c, "评教登录中，请耐心等待", Toast.LENGTH_SHORT).show());
+        addtoast("评教登录中，请耐心等待",Toast.LENGTH_SHORT,false);
         HttpConnectionAndCode httpConnectionAndCode = LAN.checkcode(c);
         if (httpConnectionAndCode.obj == null) {
-            c.runOnUiThread(() -> Toast.makeText(c, "检查校园网连接后重试", Toast.LENGTH_LONG).show());
+            addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
             return;
         }
         Bitmap bitmap = (Bitmap) httpConnectionAndCode.obj;
@@ -40,18 +94,18 @@ public class TeachersEvaluation {//评教
         String ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
         HttpConnectionAndCode H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
         if (H.code != 0 && H.code != -6) {
-            c.runOnUiThread(() -> Toast.makeText(c, "评教登录失败,检查校园网连接后重试", Toast.LENGTH_LONG).show());
+            addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
             return;
         } else {
             for (; H.code != 0; ) {
 
                 if (H.comment.contains("密码")) {
-                    c.runOnUiThread(() -> Toast.makeText(c, "评教登录密码错误, 再次登录以更新密码", Toast.LENGTH_LONG).show());
+                    addtoast("评教登录密码错误, 再次登录以更新密码",Toast.LENGTH_LONG,true);
                     return;
                 } else if (H.comment.contains("验证码")) {
                     httpConnectionAndCode = LAN.checkcode(c);
                     if (httpConnectionAndCode.obj == null) {
-                        c.runOnUiThread(() -> Toast.makeText(c, "检查校园网连接后重试", Toast.LENGTH_LONG).show());
+                        addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
                         return;
                     }
                     cookie = httpConnectionAndCode.cookie;
@@ -61,13 +115,13 @@ public class TeachersEvaluation {//评教
                     ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
                     H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
                     if (H.code != 0 && H.code!=-6) {
-                        c.runOnUiThread(() -> Toast.makeText(c, "评教登录失败,检查校园网连接后重试", Toast.LENGTH_LONG).show());
+                        addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
                         return;
                     }
                 }
             }
         }
-        c.runOnUiThread(() -> Toast.makeText(c, "登录成功,开始评教", Toast.LENGTH_SHORT).show());
+        addtoast("登录成功,开始评教",Toast.LENGTH_SHORT,false);
         cookie = stringBuilder.toString();
         String referer = "http://bkjw.guet.edu.cn/Login/MainDesktop";
         String user_agent = c.getResources().getString(R.string.user_agent);
@@ -76,7 +130,7 @@ public class TeachersEvaluation {//评教
         List<TermInfo> list = tdao.selectAll();
 
         for (TermInfo t : list) {
-            c.runOnUiThread(() -> Toast.makeText(c, "正在获取 "+t.termname+" 的评教信息", Toast.LENGTH_SHORT).show());
+            addtoast( "正在获取 "+t.termname+" 的评教信息",Toast.LENGTH_SHORT,false);
             HttpConnectionAndCode httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
                     new String[]{"term=" + t.term},
                     user_agent,
@@ -100,11 +154,11 @@ public class TeachersEvaluation {//评教
                         null);
             }
             if (httpURLConnection.code != 0) {
-                c.runOnUiThread(() -> Toast.makeText(c, "评教失败，检查校园网连接后重试", Toast.LENGTH_LONG).show());
+                addtoast( "评教失败，检查校园网连接后重试",Toast.LENGTH_LONG,true);
                 return;
             }
             if (httpURLConnection.comment.contains("\"data\":[]}" ) || httpURLConnection.comment.contains("\"can\": false")) {
-                c.runOnUiThread(() -> Toast.makeText(c, t.termname+" 评教未开放", Toast.LENGTH_SHORT).show());
+                addtoast( t.termname+" 评教未开放",Toast.LENGTH_SHORT,false);
                 flag++;
             } else {
                 String sss = httpURLConnection.comment;
@@ -112,20 +166,18 @@ public class TeachersEvaluation {//评教
                 final List<PJGetValue_Data> pvdlist = res.getData();
                 for (PJGetValue_Data g : pvdlist) {
                     if(g.getChk()!=0){
-                        c.runOnUiThread(() -> Toast.makeText(c, t.termname+" "+g.getName()+" 老师已提交", Toast.LENGTH_SHORT).show());
+                        addtoast(  t.termname+" "+g.getName()+" 老师已提交",Toast.LENGTH_SHORT,false);
                         continue;
                     }
-                    StringBuilder post_body_builder = new StringBuilder();
-                    post_body_builder.append("term=").append(g.getTerm()).append("&courseno=").append(g.getCourseno())
-                            .append("&stid=").append(g.getStid()).append("&cname=").append(URLEncoder.encode(g.getCname()))
-                            .append("&name=").append(URLEncoder.encode(g.getName()))
-                            .append("&teacherno=").append(g.getTeacherno())
-                            .append("&courseid=").append(g.getCourseid())
-                            .append("&lb=").append(g.getLb())
-                            .append("&chk=").append(g.getChk())
-                            .append("&can=").append(g.isCan())
-                            .append("&userid=").append("&bz=%E5%A5%BD").append("&score=100");
-                    String post_body = post_body_builder.toString();
+                    String post_body = "term=" + g.getTerm() + "&courseno=" + g.getCourseno() +
+                            "&stid=" + g.getStid() + "&cname=" + URLEncoder.encode(g.getCname()) +
+                            "&name=" + URLEncoder.encode(g.getName()) +
+                            "&teacherno=" + g.getTeacherno() +
+                            "&courseid=" + g.getCourseid() +
+                            "&lb=" + g.getLb() +
+                            "&chk=" + g.getChk() +
+                            "&can=" + g.isCan() +
+                            "&userid=" + "&bz=%E5%A5%BD" + "&score=100";
                     HttpConnectionAndCode post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                             new String[]{t.term},
                             user_agent,
@@ -138,8 +190,8 @@ public class TeachersEvaluation {//评教
                             null,
                             null);
                     for (int i=0;post_res.code != 0 && i<3;i++) {
-                        c.runOnUiThread(() -> Toast.makeText(c, "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师", Toast.LENGTH_SHORT).show());
-                                post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
+                        addtoast(  "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师",Toast.LENGTH_SHORT,false);
+                        post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                                 new String[]{t.term},
                                 user_agent,
                                 referer,
@@ -152,7 +204,7 @@ public class TeachersEvaluation {//评教
                                 null);
                     }
                     if(post_res.code!=0){
-                        c.runOnUiThread(() -> Toast.makeText(c, "评教失败，检查校园网连接后重试", Toast.LENGTH_LONG).show());
+                        addtoast(  "评教失败，检查校园网连接后重试",Toast.LENGTH_LONG,true);
                         return;
                     }
                     Log.e("term", t.term);
@@ -160,25 +212,23 @@ public class TeachersEvaluation {//评教
                     Log.e("resp_code", post_res.resp_code + "");
                     Log.e("response", post_res.comment);
                     Log.e("--------------", "------------------------------------");
-                    c.runOnUiThread(() -> Toast.makeText(c, "正在评价 "+t.termname+" "+g.getName()+" 老师", Toast.LENGTH_SHORT).show());
+                    addtoast(  "正在评价 "+t.termname+" "+g.getName()+" 老师",Toast.LENGTH_SHORT,false);
                 }
                 flag1++;
             }
             if(flag1 == 2){
-                int finalFlag = flag1;
-                c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + finalFlag + " 个学期", Toast.LENGTH_LONG).show());
-                Log.e("PJterm",finalFlag+"");
+                addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
+                Log.e("PJterm", flag1 +"");
                 return;
             }
         }
         if (flag == list.size()) {
-            c.runOnUiThread(() -> Toast.makeText(c, "评教未开放", Toast.LENGTH_LONG).show());
+            addtoast(  "评教未开放",Toast.LENGTH_LONG,true);
             Log.e("PJterm","All terms are closed");
             return;
         } else {
-            int finalFlag = flag1;
-            c.runOnUiThread(() -> Toast.makeText(c, "评教成功，一共评教了 " + finalFlag + " 个学期", Toast.LENGTH_LONG).show());
-            Log.e("PJterm",finalFlag+"");
+            addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
+            Log.e("PJterm", flag1 +"");
         }
     }
 }
