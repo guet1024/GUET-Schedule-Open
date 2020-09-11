@@ -29,24 +29,38 @@ import java.util.List;
 import java.util.Map;
 
 public class TeachersEvaluation {//评教
-    private static List<Map.Entry<String, Integer>> toastlist = new LinkedList<>();
-    private static boolean end = false;
+    private static volatile List<Map.Entry<String, Integer>> toastlist = new LinkedList<>();
+    private static volatile boolean end = false;
+    private static volatile Thread thread = null;
 
-    synchronized public static void addtoast(String s, int len, boolean end){
+    synchronized private static void addtoast(String s, int len, boolean end){
         toastlist.add(Map.entry(s, len));
         TeachersEvaluation.end = end;
     }
-    synchronized public static Map.Entry<String, Integer> gettoast(){
+    synchronized private static Map.Entry<String, Integer> gettoast(){
         if(toastlist.isEmpty())
             return null;
         Map.Entry<String, Integer> res=toastlist.get(0);
         toastlist.remove(0);
         return res;
     }
-    synchronized public static boolean isEnd(){
+    synchronized private static Thread getThread(){
+        return thread;
+    }
+    synchronized private static void setThread(Thread thread){
+        TeachersEvaluation.thread = thread;
+    }
+    synchronized private static boolean isEnd(){
         return end;
     }
+
     public static void evaluation(AppCompatActivity c, String id, String pwd, TermInfoDao tdao) {
+        final String NAME = "evaluation()";
+        if (getThread() != null){
+            Log.e(NAME, "duplicated evaluation!");
+            return;
+        }
+        Thread toastThread =
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -75,11 +89,15 @@ public class TeachersEvaluation {//评教
                                 break;
                         }
                     }else {
-                        if (isEnd())return;
+                        if (isEnd()){
+                            setThread(null);
+                        }
                     }
                 }
             }
-        }).start();
+        });
+        setThread(toastThread);
+        toastThread.start();
 
         addtoast("评教登录中，请耐心等待",Toast.LENGTH_SHORT,false);
         HttpConnectionAndCode httpConnectionAndCode = LAN.checkcode(c);
