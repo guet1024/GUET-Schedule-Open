@@ -1,78 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constrainedHeight="true">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/textView_graduation_score_cname"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_weight="4"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:text="TextView"
         android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_graduation_score_score"
-        app:layout_constraintHorizontal_weight="4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_graduation_score_score"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-        android:gravity="center"
-        android:text="TextView"
-        android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_graduation_score_xf"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/textView_graduation_score_cname"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="TextView" />
 
     <TextView
         android:id="@+id/textView_graduation_score_xf"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:layout_height="40dp"
         android:gravity="center"
-        android:text="TextView"
         android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_graduation_score_success"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/textView_graduation_score_score"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="TextView" />
 
     <TextView
-        android:id="@+id/textView_graduation_score_success"
+        android:id="@+id/textView_graduation_score_score"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:layout_height="40dp"
         android:gravity="center"
-        android:text="TextView"
         android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView_graduation_score_plan"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/textView_graduation_score_xf"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="TextView" />
 
     <TextView
-        android:id="@+id/textView_graduation_score_plan"
+        android:id="@+id/textView_graduation_score_check"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_weight="0.8"
+        android:layout_height="40dp"
         android:gravity="center"
-        android:text="TextView"
         android:textAlignment="center"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="0.8"
-        app:layout_constraintStart_toEndOf="@+id/textView_graduation_score_success"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="TextView" />
+
+</LinearLayout>

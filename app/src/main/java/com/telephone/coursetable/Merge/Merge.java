@@ -94,34 +94,18 @@ public class Merge {
      * @clear
      */
     public static void graduationScore(@NonNull String origin_g, @NonNull String origin_g2, @NonNull GraduationScoreDao gdao){
-        GraduationScore_s g_s = new Gson().fromJson(origin_g, GraduationScore_s.class);
-        GraduationScore_s g_s2 = new Gson().fromJson(origin_g2, GraduationScore_s.class);
-        List<GraduationScore> g = g_s.getData();
-        List<GraduationScore> g2 = g_s2.getData();
-        for (int index = 0; index < g.size(); index++){
-            GraduationScore i = g.get(index);
-            String cno = i.getCourseno();
-            int found_index = -1;
-            for (int find_index = 0; find_index < g2.size(); find_index++){
-                String g2_cno = g2.get(find_index).getCourseno();
-                if (g2_cno != null && g2_cno.equals(cno)){
-                    found_index = find_index;
-                    break;
-                }
-            }
-            double planxf = i.getPlanxf();
-            double credit_hour = i.getCredithour();
-            if (found_index != -1){
-                GraduationScore i2 = g2.get(found_index);
-                planxf = Math.max(planxf, i2.getPlanxf());
-                credit_hour = Math.max(credit_hour, i2.getCredithour());
-            }
+        GraduationScore_s yxxf = new Gson().fromJson(origin_g, GraduationScore_s.class);
+        GraduationScore_s plan_cj = new Gson().fromJson(origin_g2, GraduationScore_s.class);
+        List<GraduationScore> yxxf_list = yxxf.getData();
+        List<GraduationScore> plan_cj_list = plan_cj.getData();
+        //plan cj
+        for (GraduationScore cj : plan_cj_list){
             gdao.insert(
                     new com.telephone.coursetable.Database.GraduationScore(
-                            i.getName(), i.getCname(), i.getEngname(), i.getEngcj(), i.getTname(),
-                            i.getStid(), i.getTerm(), i.getCourseid(), planxf, credit_hour,
-                            i.getCoursetype(), i.getLvl(), i.getSterm(), i.getCourseno(), i.getScid(),
-                            i.getScname(), i.getScore(), i.getZpxs(), i.getXf(), i.getStp()
+                            cj.getName(), cj.getCname(), cj.getEngname(), cj.getEngcj(), cj.getTname(),
+                            cj.getStid(), cj.getTerm(), cj.getCourseid(), cj.getPlanxf(), cj.getCredithour(),
+                            cj.getCoursetype(), cj.getLvl(), cj.getSterm(), cj.getCourseno(), cj.getScid(),
+                            cj.getScname(), cj.getScore(), cj.getZpxs(), cj.getXf(), cj.getStp()
                     )
             );
         }

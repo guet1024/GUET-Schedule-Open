@@ -9,6 +9,8 @@ import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,10 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.telephone.coursetable.Library.LibraryActivity;
+import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 
 import java.util.List;
 
@@ -106,10 +111,12 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view.setOnClickListener(collapse);
                 break;
             case 1:
+                if (view != null &&  ((TextView)view.findViewById(R.id.textView_graduation_score_cname)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_graduation_score, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
             case 2:
+                if (view != null &&  ((TextView)view.findViewById(R.id.grades_cname)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_grades, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
@@ -129,10 +136,21 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view.setOnClickListener(view12 -> context.startActivity(new Intent(context, ChangeTerms.class)));
                 break;
             case 5:
+                if (view != null &&  ((TextView)view.findViewById(R.id.function_menu_itemtv_term)) != null)break;
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_exam, viewGroup, false);
                 view.setOnClickListener(collapse);
                 break;
             case 6:
+                if (view != null &&  ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_teachers_evaluation, viewGroup, false);
+                view.setOnClickListener(view14 -> new Thread(() -> TeachersEvaluation.evaluation(
+                        (AppCompatActivity)context,
+                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password,
+                        MyApp.getCurrentAppDB().termInfoDao()
+                        )).start());
+                break;
+            case 7:
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
                 view.setOnClickListener(view13 -> {
                     Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
@@ -147,13 +165,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 1:
                 ((TextView)view.findViewById(R.id.textView_graduation_score_cname)).setText(groups.get(i).getValue().get(i1).get(0));
-                ((TextView)view.findViewById(R.id.textView_graduation_score_score)).setText(groups.get(i).getValue().get(i1).get(1));
-                ((TextView)view.findViewById(R.id.textView_graduation_score_xf)).setText(groups.get(i).getValue().get(i1).get(2));
-                ((TextView)view.findViewById(R.id.textView_graduation_score_success)).setText(groups.get(i).getValue().get(i1).get(3));
-                ((TextView)view.findViewById(R.id.textView_graduation_score_plan)).setText(groups.get(i).getValue().get(i1).get(4));
-                if (groups.get(i).getValue().get(i1).get(5) != null){
-                    ((TextView)view.findViewById(R.id.textView_graduation_score_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
-                }
+                ((TextView)view.findViewById(R.id.textView_graduation_score_xf)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_score)).setText(groups.get(i).getValue().get(i1).get(2));
+                ((TextView)view.findViewById(R.id.textView_graduation_score_check)).setText(groups.get(i).getValue().get(i1).get(3));
                 break;
             case 2:
                 ((TextView)view.findViewById(R.id.grades_cname)).setText(groups.get(i).getValue().get(i1).get(0));
@@ -163,6 +177,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.grades_test)).setText(groups.get(i).getValue().get(i1).get(4));
                 if (groups.get(i).getValue().get(i1).get(5) != null){
                     ((TextView)view.findViewById(R.id.grades_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(5)));
+                }else {
+                    TypedValue a = new TypedValue();
+                    context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+                    ((TextView)view.findViewById(R.id.grades_cname)).setBackgroundColor(a.data);
                 }
                 break;
             case 3:
@@ -185,9 +203,21 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                }else {
+                    TypedValue a = new TypedValue();
+                    context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(a.data);
                 }
                 break;
             case 6:
+                ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)).setText(groups.get(i).getValue().get(i1).get(0));
+                break;
+            case 7:
                 ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }
