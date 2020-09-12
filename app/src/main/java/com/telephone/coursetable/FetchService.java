@@ -174,6 +174,7 @@ public class FetchService extends IntentService {
         final String NAME = "getListForListAppWidgets()";
         if (
                 MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
