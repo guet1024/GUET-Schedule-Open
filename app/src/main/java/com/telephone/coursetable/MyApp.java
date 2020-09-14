@@ -153,8 +153,8 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").enableMultiInstanceInvalidation().build();
-        db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").build();
+        db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
+        db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").fallbackToDestructiveMigration().build();
         sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
