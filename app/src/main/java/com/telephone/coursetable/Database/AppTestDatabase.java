@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 /**
  * @clear
  */
-@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class}, version = 2, exportSchema = false)
+@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class}, version = 3, exportSchema = false)
 public abstract class AppTestDatabase extends RoomDatabase {
     public abstract GoToClassDao goToClassDao();
     public abstract ClassInfoDao classInfoDao();
