@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
@@ -61,6 +62,7 @@ public class Login extends AppCompatActivity {
     private GraduationScoreDao gsdao = null;
     private GradesDao grdao = null;
     private ExamInfoDao edao = null;
+    private CETDao cetDao = null;
 
     /**
      * @ui
@@ -259,7 +261,7 @@ public class Login extends AppCompatActivity {
      * 1. delete all user-related data from database(not including user login information)
      * @clear
      */
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao){
+    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao){
         gdao.deleteAll();
         cdao.deleteAll();
         tdao.deleteAll();
@@ -267,6 +269,7 @@ public class Login extends AppCompatActivity {
         gsdao.deleteAll();
         grdao.deleteAll();
         edao.deleteAll();
+        cetDao.deleteAll();
     }
 
     /**
@@ -422,6 +425,7 @@ public class Login extends AppCompatActivity {
         gsdao = db.graduationScoreDao();
         grdao = db.gradesDao();
         edao = db.examInfoDao();
+        cetDao = db.cetDao();
         initContentView();
     }
 
@@ -492,7 +496,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao){
+    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
         res = LAN.personInfo(c, cookie);
@@ -547,6 +551,12 @@ public class Login extends AppCompatActivity {
             return false;
         }
         Merge.examInfo(res.comment, edao);
+        res = LAN.cet(c, cookie);
+        if (res.code != 0){
+            Log.e(NAME, "fail");
+            return false;
+        }
+        Merge.cet(res.comment, cetDao);
         Log.e(NAME, "success");
         return true;
     }
@@ -592,10 +602,10 @@ public class Login extends AppCompatActivity {
      *              10. clear shared preference
      *              11. commit shared preference
      *              12. show tip snack-bar, change title
-     *              13. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao)}
-     *              14. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao)}
+     *              13. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao)}
+     *              14. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao)}
      *              15. commit shared preference
-     *              16. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao)}:
+     *              16. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -742,9 +752,9 @@ public class Login extends AppCompatActivity {
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
                         /** call {@link #deleteOldDataFromDatabase()} */
-                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao);
+                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
                         /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao);
+                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao);
                         /** commit shared preference */
                         editor.commit();
                         if (fetch_merge_res){

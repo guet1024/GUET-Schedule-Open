@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.ExamInfoDao;
@@ -16,6 +17,8 @@ import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.Gson.CET;
+import com.telephone.coursetable.Gson.CET_s;
 import com.telephone.coursetable.Gson.ExamInfo;
 import com.telephone.coursetable.Gson.ExamInfo_s;
 import com.telephone.coursetable.Gson.GoToClass_ClassInfo;
@@ -209,6 +212,22 @@ public class Merge {
                     i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
                     i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
                     i.getPostdate(), i.getOperator()
+            ));
+        }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void cet(@NonNull String origin_cet, @NonNull CETDao cetDao){
+        CET_s c_s = new Gson().fromJson(origin_cet, CET_s.class);
+        List<CET> c = c_s.getData();
+        for (CET i : c){
+            cetDao.insert(new com.telephone.coursetable.Database.CET(
+                    i.getName(), i.getSex(), i.getPostdate(), i.getDptno(), i.getDptname(), i.getSpno(),
+                    i.getSpname(), i.getGrade(), i.getBj(), i.getTerm(), i.getStid(), i.getCode(),
+                    i.getScore(), i.getStage(), i.getCard(), i.getOperator()
             ));
         }
     }

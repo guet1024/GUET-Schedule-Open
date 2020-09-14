@@ -1,30 +1,34 @@
 package com.telephone.coursetable.Gson;
 
-//已选课程
-public class CourseSelected_Data {
-    private String xf;
+/**
+ * 已选课程
+ * @clear
+ */
+public class SelectedCourses {
+    private String xf;//        学分
     private String classno;
+    private String spno;
     private String spname;
-    private String tname;//通识必修
-    private String tname1;//必修课
-    private String grade;//2018
-    private String cname;//课程名，例如：形势与政策
-    private String pycc;//本科
+    private String tname;//     课程性质
+    private String tname1;//    课程类型
+    private String grade;
+    private String cname;//     课程名称
+    private String pycc;
     private String dptno;
     private String xm;
-    private String demo;
-    private String stid;//学号
+    private String demo;//      备注
+    private String stid;
     private String name;
-    private String term;
+    private String term;//      上课学期
     private String courseid;
-    private String courseno;
-    private String stype;//正常
+    private String courseno;//  课号
+    private String stype;//     选修类型
     private String khsj;
-    private long state;
+    private double state;
     private String xksj;
-    private String id;
-    private String comm;
-    private long checked;
+    private String ip;
+    private String comm;//      选课备注
+    private double checked;
     private String pscj;
     private String khzt;
     private String cjf;
@@ -37,6 +41,10 @@ public class CourseSelected_Data {
 
     public String getClassno() {
         return classno;
+    }
+
+    public String getSpno() {
+        return spno;
     }
 
     public String getSpname() {
@@ -103,7 +111,7 @@ public class CourseSelected_Data {
         return khsj;
     }
 
-    public long getState() {
+    public double getState() {
         return state;
     }
 
@@ -111,15 +119,15 @@ public class CourseSelected_Data {
         return xksj;
     }
 
-    public String getId() {
-        return id;
+    public String getIp() {
+        return ip;
     }
 
     public String getComm() {
         return comm;
     }
 
-    public long getChecked() {
+    public double getChecked() {
         return checked;
     }
 
