@@ -11,6 +11,8 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Database.CET;
+import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ExamInfo;
 import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.Grades;
@@ -46,6 +48,7 @@ public class FunctionMenu extends AppCompatActivity {
     private GradesDao grdao;
     private ExamInfoDao edao;
     private TermInfoDao tdao;
+    private CETDao cetDao;
     private ExpandableListView menu_list;
 
     @Override
@@ -71,6 +74,7 @@ public class FunctionMenu extends AppCompatActivity {
         grdao = MyApp.getCurrentAppDB().gradesDao();
         edao = MyApp.getCurrentAppDB().examInfoDao();
         tdao = MyApp.getCurrentAppDB().termInfoDao();
+        cetDao = MyApp.getCurrentAppDB().cetDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
 
         final ExpandableListView menu_listf = menu_list;
@@ -302,6 +306,20 @@ public class FunctionMenu extends AppCompatActivity {
             child.add("一键评教");
             children.add(child);
             menus.add(Map.entry(teachers_eva_group, children));
+
+            String cet_group = "等级考试成绩";
+            children = new LinkedList<>();
+            List<CET> cet_list = cetDao.selectAll();
+            for (CET cet : cet_list){
+                child = new LinkedList<>();
+                child.add("学期: " + cet.term);
+                child.add(cet.code);
+                child.add("考试成绩: " + cet.stage);
+                child.add("折算成绩: " + cet.score);
+                child.add("证书编号: " + cet.card);
+                children.add(child);
+            }
+            menus.add(Map.entry(cet_group, children));
 
             String update_group = "应用更新";
             children = new LinkedList<>();

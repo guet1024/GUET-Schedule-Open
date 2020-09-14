@@ -22,6 +22,8 @@ import com.telephone.coursetable.AppWidgetProvider.ListRemoteViewsService;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.CET;
+import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.ExamInfo;
@@ -351,6 +353,7 @@ public class FetchService extends IntentService {
         SharedPreferences pref_test = MyApp.getCurrentSharedPreference_Test();
         GradesDao grdao_test = MyApp.getCurrentAppDB_Test().gradesDao();
         ExamInfoDao edao_test = MyApp.getCurrentAppDB_Test().examInfoDao();
+        CETDao cetDao_test = MyApp.getCurrentAppDB_Test().cetDao();
         SharedPreferences.Editor editor_test = MyApp.getCurrentSharedPreferenceEditor_Test();
         PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
         TermInfoDao tdao = MyApp.getCurrentAppDB().termInfoDao();
@@ -360,9 +363,10 @@ public class FetchService extends IntentService {
         SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
         GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
         ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
+        CETDao cetDao = MyApp.getCurrentAppDB().cetDao();
         UserDao udao = MyApp.getCurrentAppDB().userDao();
         Login.deleteOldDataFromDatabase(
-            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test
+            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test, cetDao_test
         );
         editor_test.clear().commit();
         boolean fetch_merge_res = Login.fetch_merge(
@@ -375,7 +379,8 @@ public class FetchService extends IntentService {
                 gsdao_test,
                 editor_test,
                 grdao_test,
-                edao_test
+                edao_test,
+                cetDao_test
         );
         if (!fetch_merge_res){
             Log.e(NAME, "fail | fetch fail");
@@ -398,7 +403,7 @@ public class FetchService extends IntentService {
         udao.disableAllUser();
         /** migrate the pulled data to the database */
         Log.e(NAME, "migrate the pulled data to the database...");
-        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply, edao, edao_test);
+        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply, edao, edao_test, cetDao, cetDao_test);
         /** re-insert user */
         Log.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
@@ -418,8 +423,9 @@ public class FetchService extends IntentService {
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
                           SharedPreferences.Editor editor, SharedPreferences pref_t,
                           GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply,
-                          ExamInfoDao e, ExamInfoDao e_t){
-        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e);
+                          ExamInfoDao e, ExamInfoDao e_t,
+                          CETDao cet, CETDao cet_t){
+        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e, cet);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
@@ -456,6 +462,10 @@ public class FetchService extends IntentService {
         List<ExamInfo> e_t_all = e_t.selectAll();
         for (ExamInfo e_a : e_t_all){
             e.insert(e_a);
+        }
+        List<CET> cet_t_all = cet_t.selectAll();
+        for (CET cet_a : cet_t_all){
+            cet.insert(cet_a);
         }
     }
 

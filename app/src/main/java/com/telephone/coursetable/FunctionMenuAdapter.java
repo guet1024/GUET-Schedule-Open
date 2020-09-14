@@ -151,6 +151,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                         )).start());
                 break;
             case 7:
+                if (view != null &&  ((TextView)view.findViewById(R.id.cet_card_id)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_cet, viewGroup, false);
+                view.setOnClickListener(collapse);
+                break;
+            case 8:
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
                 view.setOnClickListener(view13 -> {
                     Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
@@ -218,6 +223,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
             case 7:
+                ((TextView)view.findViewById(R.id.cet_term)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.cet_exam)).setText(groups.get(i).getValue().get(i1).get(1));
+                ((TextView)view.findViewById(R.id.cet_score)).setText(groups.get(i).getValue().get(i1).get(2));
+                ((TextView)view.findViewById(R.id.cet_percentile_score)).setText(groups.get(i).getValue().get(i1).get(3));
+                ((TextView)view.findViewById(R.id.cet_card_id)).setText(groups.get(i).getValue().get(i1).get(4));
+                break;
+            case 8:
                 ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
                 break;
         }

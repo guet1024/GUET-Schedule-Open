@@ -2,12 +2,14 @@ package com.telephone.coursetable.Gson;
 
 import java.util.List;
 
-//已选课程
-public class CourseSelectedS {
-
+/**
+ * 已选课程
+ * @clear
+ */
+public class SelectedCourses_s {
     private boolean success;
     private long total;
-    private List<CourseSelected_Data> data;
+    private List<SelectedCourses> data;
 
     public boolean isSuccess() {
         return success;
@@ -17,7 +19,7 @@ public class CourseSelectedS {
         return total;
     }
 
-    public List<CourseSelected_Data> getData() {
+    public List<SelectedCourses> getData() {
         return data;
     }
 }
