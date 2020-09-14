@@ -1,13 +1,15 @@
 package com.telephone.coursetable.Gson;
 
-//实验成绩
-
 import java.util.List;
 
-public class ExperimentScoreQueryS {
+/**
+ * 等级考试成绩
+ * @clear
+ */
+public class CET_s {
     private boolean success;
     private long total;
-    private List<ExperimentScoreQuery_Data> data;
+    private List<CET> data;
 
     public boolean isSuccess() {
         return success;
@@ -17,7 +19,7 @@ public class ExperimentScoreQueryS {
         return total;
     }
 
-    public List<ExperimentScoreQuery_Data> getData() {
+    public List<CET> getData() {
         return data;
     }
 }

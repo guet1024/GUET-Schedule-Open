@@ -1,29 +1,30 @@
 package com.telephone.coursetable.Gson;
 
-
-//实验成绩
-
-public class ExperimentScoreQuery_Data {
-    private String name;//	"潘鹏宇"
-    private String cname;//	"计算机组成原理B"
-    private String tname;//	"王诗文"
-    private String spno;//	"080640S"
-    private String spname;//	null
-    private String grade;//	"2018"
-    private String stid;//	"1800301127"
-    private String term;//	"2019-2020_2"
-    private String labid;//	"018121244"
-    private long testtime;//	1
-    private String courseid;//	"BT0300167X0"
-    private String chk;//	"f"
-    private long pscj;//	94
-    private long khcj;//	90
-    private long zpcj;//	92
-    private String cjlb;//	"正常"
-    private String kslb;//	"正考"
-    private String astype;//	null
-    private String teacherno;//	"033415"
-    private String comm;//	null
+/**
+ * 实验成绩
+ * @clear
+ */
+public class ExperimentGrade {
+    private String name;
+    private String cname;// 实验名称
+    private String tname;
+    private String spno;
+    private String spname;
+    private String grade;
+    private String stid;
+    private String term;//  学期代码
+    private String labid;
+    private double testtime;
+    private String courseid;
+    private String chk;
+    private double pscj;//  平时成绩
+    private double khcj;//  考核成绩
+    private double zpcj;//  总评成绩
+    private String cjlb;
+    private String kslb;
+    private String astype;
+    private String teacherno;
+    private String comm;
 
     public String getName() {
         return name;
@@ -61,7 +62,7 @@ public class ExperimentScoreQuery_Data {
         return labid;
     }
 
-    public long getTesttime() {
+    public double getTesttime() {
         return testtime;
     }
 
@@ -73,15 +74,15 @@ public class ExperimentScoreQuery_Data {
         return chk;
     }
 
-    public long getPscj() {
+    public double getPscj() {
         return pscj;
     }
 
-    public long getKhcj() {
+    public double getKhcj() {
         return khcj;
     }
 
-    public long getZpcj() {
+    public double getZpcj() {
         return zpcj;
     }
 
@@ -104,7 +105,4 @@ public class ExperimentScoreQuery_Data {
     public String getComm() {
         return comm;
     }
-
-
-
 }
