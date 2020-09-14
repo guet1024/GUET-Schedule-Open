@@ -206,7 +206,7 @@ public class FunctionMenu extends AppCompatActivity {
                 children.add(child);
             }
             child = new LinkedList<>();
-            child.add("毕业学分");
+            child.add("毕业计划学分");
             child.add(credit_hour_total+"");
             child.add("");
             child.add(credit_hour_total_got+"");

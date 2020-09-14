@@ -1,13 +1,15 @@
 package com.telephone.coursetable.Gson;
 
-//毕业学位
-
 import java.util.List;
 
-public class GraduationScoreS {
+/**
+ * 毕业学位评估
+ * @clear
+ */
+public class GraduationDegreeEvaluation_s {
     private boolean success;
     private long total;
-    private List<GraduationScore_Data> data;
+    private List<GraduationDegreeEvaluation> data;
 
     public boolean isSuccess() {
         return success;
@@ -17,7 +19,7 @@ public class GraduationScoreS {
         return total;
     }
 
-    public List<GraduationScore_Data> getData() {
+    public List<GraduationDegreeEvaluation> getData() {
         return data;
     }
 }

@@ -31,7 +31,7 @@ public class DATALIST {
      * @gson
      *      - {@link com.telephone.coursetable.Gson.GoToClass_ClassInfo}
      * @fetch
-     *      - {@link com.telephone.coursetable.Fetch.LAN#goToClass_ClassInfo(Context, String, String)}
+     *      - {@link com.telephone.coursetable.Fetch.LAN#goToClass_ClassInfo(Context, String)}
      * @database
      *      {@link com.telephone.coursetable.Database.GoToClass} + {@link com.telephone.coursetable.Database.ClassInfo}
      * @merge
@@ -105,6 +105,12 @@ public class DATALIST {
      * @clear
      */
     public final String ExamInfo = null;
+
+    /**
+     * @gson
+     *
+     */
+    public final String CET = null;
 }
 /**
  * - {@link com.telephone.coursetable.Login#fetch_merge(android.content.Context, java.lang.String, com.telephone.coursetable.Database.PersonInfoDao, com.telephone.coursetable.Database.TermInfoDao, com.telephone.coursetable.Database.GoToClassDao, com.telephone.coursetable.Database.ClassInfoDao, com.telephone.coursetable.Database.GraduationScoreDao, android.content.SharedPreferences.Editor, com.telephone.coursetable.Database.GradesDao, com.telephone.coursetable.Database.ExamInfoDao)}

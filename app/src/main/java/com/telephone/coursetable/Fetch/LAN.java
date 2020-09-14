@@ -74,17 +74,16 @@ public class LAN {
     }
 
     /**
-     * @param term the termcode
      * @return
      * - code == 0 : success
      * - code == other : fail
      * @clear
      */
-    public static HttpConnectionAndCode goToClass_ClassInfo(Context c, String cookie, String term){
+    public static HttpConnectionAndCode goToClass_ClassInfo(Context c, String cookie){
         Resources r = c.getResources();
         return Get.get(
                 r.getString(R.string.lan_get_table_url),
-                new String[]{"term="+term},
+                null,
                 r.getString(R.string.user_agent),
                 r.getString(R.string.lan_get_table_referer),
                 cookie,

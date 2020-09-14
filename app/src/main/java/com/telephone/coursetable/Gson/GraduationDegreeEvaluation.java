@@ -1,34 +1,34 @@
 package com.telephone.coursetable.Gson;
 
-//毕业学位
-
-public class GraduationScore_Data {
-    private String name;//	"潘鹏宇"
-    private String dptno;//	"3"
-    private String dptname;//	"计算机与信息安全学院"
-    private String spno;//	"080640S"
-    private String spname;//	"物联网工程"
-    private String engname;//	"Internet of Things Engineering"
-    private String dno;//	null
-    private String gno;//	null
-    private String _class;//	"18003503"
-    private String grade;//	"2018"
-    private String cetshow;//	" CET4：499分 CET6：421分"
-    private String stid;//	"1800301127"
-    private String term;//"2019-2020_2"
-    private long ms;//	26
-    private double hjxf;//	76.5
-    private long xfj;//	72
-    private String cet;//	"CET4 "
-    private String cetcj;//	"70.3"
-    private long cetpass;//	6
-    private long graduate;//	0
-    private long degree;//	0
-    private long checked;//	0
-    private long fpjf;//	55
-    private String comm;//	"未设置毕业条件"
-    private long cjxf;//	5505
-
+/**
+ * 毕业学位评估
+ * @clear
+ */
+public class GraduationDegreeEvaluation {
+    private String name;
+    private String dptno;
+    private String dptname;
+    private String spno;
+    private String spname;
+    private String engname;
+    private String dno;
+    private String gno;
+    private String grade;
+    private String cetshow;
+    private String stid;
+    private String term;
+    private long ms;
+    private double hjxf;
+    private double xfj;//   学分绩
+    private String cet;//   毕业计算等级考试名称
+    private String cetcj;// 毕业计算等级考试成绩
+    private double cetpass;
+    private double graduate;
+    private double degree;
+    private double checked;
+    private double fpjf;//  外语平均分
+    private String comm;
+    private double cjxf;
 
     public String getName() {
         return name;
@@ -62,10 +62,6 @@ public class GraduationScore_Data {
         return gno;
     }
 
-    public String get_class() {
-        return _class;
-    }
-
     public String getGrade() {
         return grade;
     }
@@ -90,7 +86,7 @@ public class GraduationScore_Data {
         return hjxf;
     }
 
-    public long getXfj() {
+    public double getXfj() {
         return xfj;
     }
 
@@ -102,23 +98,23 @@ public class GraduationScore_Data {
         return cetcj;
     }
 
-    public long getCetpass() {
+    public double getCetpass() {
         return cetpass;
     }
 
-    public long getGraduate() {
+    public double getGraduate() {
         return graduate;
     }
 
-    public long getDegree() {
+    public double getDegree() {
         return degree;
     }
 
-    public long getChecked() {
+    public double getChecked() {
         return checked;
     }
 
-    public long getFpjf() {
+    public double getFpjf() {
         return fpjf;
     }
 
@@ -126,9 +122,7 @@ public class GraduationScore_Data {
         return comm;
     }
 
-    public long getCjxf() {
+    public double getCjxf() {
         return cjxf;
     }
-
-
 }

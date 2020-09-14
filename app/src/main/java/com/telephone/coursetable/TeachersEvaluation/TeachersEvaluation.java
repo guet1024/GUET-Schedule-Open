@@ -67,6 +67,10 @@ public class TeachersEvaluation {//评教
                 while (true) {
                     Map.Entry<String, Integer> toast = gettoast();
                     if(toast!=null){
+                        if (MyApp.getRunning_activity_pointer() == null){
+                            setThread(null);
+                            return;
+                        }
                         c.runOnUiThread(()->Toast.makeText(c, toast.getKey(), toast.getValue()).show());
                         switch (toast.getValue()){
                             case Toast.LENGTH_SHORT: default:
@@ -91,6 +95,7 @@ public class TeachersEvaluation {//评教
                     }else {
                         if (isEnd()){
                             setThread(null);
+                            return;
                         }
                     }
                 }
