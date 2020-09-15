@@ -5,6 +5,7 @@ import android.content.Context;
 import java.util.Map;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -16,12 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
+import com.telephone.coursetable.Update.Update;
 
 import java.util.List;
 
@@ -157,10 +160,56 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 8:
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
-                view.setOnClickListener(view13 -> {
-                    Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                });
+                final View view_f = view;
+                final TextView update_textview = (TextView)view_f.findViewById(R.id.update_update);
+                final ProgressBar update_progressbar = (ProgressBar)view_f.findViewById(R.id.update_progressBar);
+                final AppCompatActivity c = (AppCompatActivity) context;
+                update_progressbar.setVisibility(View.INVISIBLE);
+                class Check implements Runnable{
+                    TextView t;
+                    ProgressBar p;
+                    View v;
+                    AppCompatActivity a;
+
+                    public Check(TextView t, ProgressBar p, View v, AppCompatActivity a) {
+                        this.t = t;
+                        this.p = p;
+                        this.v = v;
+                        this.a = a;
+                    }
+
+                    @Override
+                    public void run() {
+                        a.runOnUiThread(()->{
+                            t.setText(groups.get(i).getValue().get(i1).get(0));
+                            p.setVisibility(View.VISIBLE);
+                            v.setOnClickListener(view18 -> Log.e("Update Check", "duplicated check"));
+                            Update.whatIsNew(
+                                    context,
+                                    ()-> a.runOnUiThread(()->{
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "(网络错误，点击重试)");
+                                        p.setVisibility(View.INVISIBLE);
+                                        v.setOnClickListener(view15 -> Check.this.run());
+                                    }),
+                                    ()-> a.runOnUiThread(()->{
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "(有新版本⬆)");
+                                        p.setVisibility(View.INVISIBLE);
+                                        v.setOnClickListener(view17 -> {
+                                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
+                                            context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                                        });
+                                    }),
+                                    ()-> a.runOnUiThread(()->{
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "(已是最新版本😋)");
+                                        p.setVisibility(View.INVISIBLE);
+                                        v.setOnClickListener(view16 -> Check.this.run());
+                                    })
+                            );
+                        });
+                    }
+                }
+                Check check = new Check(update_textview, update_progressbar, view_f, c);
+                view.setOnClickListener(view13 -> check.run());
                 break;
         }
         switch (i){
@@ -186,6 +235,25 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     TypedValue a = new TypedValue();
                     context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
                     ((TextView)view.findViewById(R.id.grades_cname)).setBackgroundColor(a.data);
+                }
+                double grade;
+                String grade_s = groups.get(i).getValue().get(i1).get(1);
+                try {
+                    grade = Double.parseDouble(grade_s);
+                }catch (Exception e){
+                    grade = -1;
+                }
+                if(i1 > 0 && (grade_s.contains("旷") ||
+                        grade_s.contains("缺") ||
+                        grade_s.contains("取消") ||
+                        grade_s.contains("不") ||
+                        (grade >= 0 && grade < 60))){
+                    ((TextView)view.findViewById(R.id.grades_grade)).setTextColor(0xFFE18989);
+                }else if (i1 == 0){
+                    ColorStateList old = ((TextView)view.findViewById(R.id.grades_usual)).getTextColors();
+                    ((TextView)view.findViewById(R.id.grades_grade)).setTextColor(old);
+                }else {
+                    ((TextView)view.findViewById(R.id.grades_grade)).setTextColor(0xFF82B983);
                 }
                 break;
             case 3:

@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/update_update"
         android:layout_width="match_parent"
         android:layout_height="35dp"
+        app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"
-        android:text="TextView"
         android:textAlignment="center" />
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/update_progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="15dp"
+        app:layout_constraintDimensionRatio="w,1:1"
+        android:progress="50"
+        app:layout_constraintEnd_toEndOf="@id/update_update"
+        app:layout_constraintTop_toTopOf="@id/update_update"
+        app:layout_constraintBottom_toBottomOf="@id/update_update"
+        tools:visibility="invisible" />
+</androidx.constraintlayout.widget.ConstraintLayout>
