@@ -198,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
                         ((NumberPicker) findViewById(R.id.weekPicker)).setMinValue(0);
                         ((NumberPicker) findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
                         ((NumberPicker) findViewById(R.id.termPicker)).setOnScrollListener(scroll);
+                        ((NumberPicker) findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                         ((NumberPicker) findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
+                        ((NumberPicker) findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                         current_week = new CurrentWeek(MainActivity.this);
                         ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
                         if (locate.term != null) {

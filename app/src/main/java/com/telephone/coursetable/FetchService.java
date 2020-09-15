@@ -2,7 +2,6 @@ package com.telephone.coursetable;
 
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -44,15 +43,13 @@ import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.OCR.OCR;
+import com.telephone.coursetable.Update.Update;
 
-import java.nio.file.FileAlreadyExistsException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -92,7 +89,7 @@ public class FetchService extends IntentService {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
-                new Notification.Builder(this, MyApp.notification_channel_id_normal)
+                new Notification.Builder(this, MyApp.notification_channel_id_running)
                         .setContentTitle("加油~今天也要打起精神来")
                         .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
@@ -151,6 +148,7 @@ public class FetchService extends IntentService {
                 Log.e(NAME, "WAN");
                 service_fetch_wan();
             }
+            Update.whatIsNew(this, null, null, null, null, null, null);
             try {
                 Thread.sleep(milliseconds + 1);
             } catch (InterruptedException e) {
@@ -494,7 +492,7 @@ public class FetchService extends IntentService {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
-                new NotificationCompat.Builder(this, MyApp.notification_channel_id_normal)
+                new NotificationCompat.Builder(this, MyApp.notification_channel_id_fetch_fail)
                         .setContentTitle("同步失败了 ಥ_ಥ")
                         .setStyle(new NotificationCompat.BigTextStyle().bigText("您的学分制系统密码是否已更改? 请再次登录以更新您的密码 >>"))
                         .setSmallIcon(R.drawable.feather_pen_trans)
