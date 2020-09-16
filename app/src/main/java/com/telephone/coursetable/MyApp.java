@@ -33,7 +33,7 @@ public class MyApp extends Application {
     private volatile static boolean running_fetch_service = false;
 
     public enum RunningActivity{
-            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, NULL
+            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, ABOUT, USAGE, NULL
     }
     private volatile static RunningActivity running_activity = RunningActivity.NULL;
     private volatile static AppCompatActivity running_activity_pointer = null;
@@ -104,11 +104,18 @@ public class MyApp extends Application {
     }
 
     final public static String ocr_lang_code = "telephone";
-    final public static String notification_channel_id_normal = "normal";
-    final public static String notification_channel_name_normal = "普通通知";
-    final public static String notification_channel_des_normal = "常规通知";
+    final public static String notification_channel_id_running = "running";
+    final public static String notification_channel_id_update = "update";
+    final public static String notification_channel_id_fetch_fail = "fetch_fail";
+    final public static String notification_channel_name_running = "前台服务通知";
+    final public static String notification_channel_name_update = "应用更新通知";
+    final public static String notification_channel_name_fetch_fail = "自动同步异常通知";
+    final public static String notification_channel_des_running = "展示APP正在运行的通知";
+    final public static String notification_channel_des_update = "提醒APP有新版本发布的通知";
+    final public static String notification_channel_des_fetch_fail = "提醒自动同步出现异常的通知";
     final public static int notification_id_fetch_service_foreground = 1800301129;
     final public static int notification_id_fetch_service_lan_password_wrong = 1800301127;
+    final public static int notification_id_new_version = 1800301128;
     final public static long service_fetch_interval = 15000;   // 15s
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
@@ -160,8 +167,15 @@ public class MyApp extends Application {
         editor = sp.edit();
         editor_test = sp_test.edit();
 
-        NotificationChannel channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_normal);
+        NotificationChannel channel;
+        channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(notification_channel_des_running);
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(notification_channel_des_update);
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(notification_channel_des_fetch_fail);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval);

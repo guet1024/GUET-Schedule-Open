@@ -28,7 +28,6 @@ public class ChangeTerms extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, FunctionMenu.class));
-        super.onBackPressed();
     }
 
     @Override
@@ -186,6 +185,7 @@ public class ChangeTerms extends AppCompatActivity {
                 ((NumberPicker)findViewById(R.id.term)).setDisplayedValues(values.toArray(new String[0]));
                 ((NumberPicker)findViewById(R.id.term)).setMinValue(0);
                 ((NumberPicker)findViewById(R.id.term)).setMaxValue(values.size() - 1);
+                ((NumberPicker)findViewById(R.id.term)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 ((EditText)findViewById(R.id.delay_week)).setText(terms_data.get(((NumberPicker)findViewById(R.id.term)).getValue()).delay_week+"");
             });
         }).start();

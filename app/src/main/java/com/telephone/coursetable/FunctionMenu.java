@@ -328,6 +328,16 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(update_group, children));
 
+            String about_group = "关于GUET课程表";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("使用说明书📕");
+            children.add(child);
+            child = new LinkedList<>();
+            child.add("👉GUET课程表");
+            children.add(child);
+            menus.add(Map.entry(about_group, children));
+
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();
     }
