@@ -78,6 +78,18 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".FunctionMenu"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_AboutUS">
+
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+        </activity>
+        <activity
             android:name=".FunctionMenu"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
@@ -132,11 +144,11 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
     </application>
 

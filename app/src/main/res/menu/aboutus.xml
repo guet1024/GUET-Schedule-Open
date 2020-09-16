@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    android:icon="@drawable/qq"-->
+    <item
+        android:id="@+id/itqq"
+        app:showAsAction="never"
+        android:title="加入QQ交流群" />
+<!--    android:icon="@drawable/github"-->
+    <item
+        android:id="@+id/itgh"
+        app:showAsAction="never"
+        android:title="在浏览器中浏览GitHub" />
+</menu>
