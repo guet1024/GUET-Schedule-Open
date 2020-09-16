@@ -73,6 +73,7 @@ public class FetchService extends IntentService {
     private static final String EXTRA_interval_milliseconds = "com.telephone.coursetable.extra.interval_milliseconds";
 
     private boolean started = false;
+    private int dog = 90;
 
     public FetchService() {
         super("MyIntentService");
@@ -148,7 +149,12 @@ public class FetchService extends IntentService {
                 Log.e(NAME, "WAN");
                 service_fetch_wan();
             }
-            Update.whatIsNew(this, null, null, null, null, null, null);
+            if (dog == 90){
+                Update.whatIsNew(this, null, null, null, null, null, null);
+            }else if (dog == 0){
+                dog = 91;
+            }
+            dog--;
             try {
                 Thread.sleep(milliseconds + 1);
             } catch (InterruptedException e) {

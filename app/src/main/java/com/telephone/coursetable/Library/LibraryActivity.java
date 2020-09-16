@@ -67,7 +67,6 @@ public class LibraryActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, FunctionMenu.class));
-        super.onBackPressed();
     }
 
     @Override

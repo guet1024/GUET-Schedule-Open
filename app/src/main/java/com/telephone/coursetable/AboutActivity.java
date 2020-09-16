@@ -16,8 +16,21 @@ import com.google.android.material.snackbar.Snackbar;
 public class AboutActivity extends AppCompatActivity {
 
     @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, FunctionMenu.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.ABOUT);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.about_us);
     }
 
@@ -31,6 +44,9 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(AboutActivity.this, FunctionMenu.class));
+                return true;
             case R.id.itqq:
                 boolean blQQ = joinQQGroup("Jm2emUYqOfaVWX3WL17GY0nN2wOBN1wG");
                 if ( !blQQ ) {

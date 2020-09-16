@@ -331,10 +331,10 @@ public class FunctionMenu extends AppCompatActivity {
             String about_group = "关于GUET课程表";
             children = new LinkedList<>();
             child = new LinkedList<>();
-            child.add("使用说明");
+            child.add("使用说明书📕");
             children.add(child);
             child = new LinkedList<>();
-            child.add("GUET课程表");
+            child.add("👉GUET课程表");
             children.add(child);
             menus.add(Map.entry(about_group, children));
 

@@ -304,9 +304,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 9:
                 ((TextView)view.findViewById(R.id.about_about)).setText(groups.get(i).getValue().get(i1).get(0));
                 if (i1 == 0){
-                    view.setOnClickListener(collapse);
+                    view.setOnClickListener(view19 -> context.startActivity(new Intent(context, UsageActivity.class)));
                 }else if (i1 == 1){
-                    view.setOnClickListener(collapse);
+                    view.setOnClickListener(view17 -> context.startActivity(new Intent(context, AboutActivity.class)));
                 }
                 break;
         }
