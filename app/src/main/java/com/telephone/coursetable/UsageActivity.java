@@ -1,11 +1,15 @@
 package com.telephone.coursetable;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 public class UsageActivity extends AppCompatActivity {
+
+    UserGuideAdapter userGuideAdapter;
+    private ViewPager2 viewPager;
 
     @Override
     public void onBackPressed() {
@@ -24,5 +28,8 @@ public class UsageActivity extends AppCompatActivity {
         MyApp.setRunning_activity(MyApp.RunningActivity.USAGE);
         MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_usage);
+        viewPager = (ViewPager2) findViewById(R.id.viewpage);
+        userGuideAdapter = new UserGuideAdapter();
+        viewPager.setAdapter(userGuideAdapter);
     }
 }
