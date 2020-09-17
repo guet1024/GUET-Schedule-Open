@@ -1,9 +1,13 @@
 package com.telephone.coursetable;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -13,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -69,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
     private String[] termValues = null;
     private String[] weekValues = null;
 
+    private View view;
+
+    public View getView(){
+        return view;
+    }
+
     /**
      * @ui
      * @clear
@@ -92,20 +104,21 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         MyApp.setRunning_main(this);
         MyApp.setRunning_activity(MyApp.RunningActivity.MAIN);
         MyApp.setRunning_activity_pointer(this);
-        setContentView(R.layout.activity_main);
+        view = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.activity_main, null, false);
         getSupportActionBar().hide();
 
         pickerPanel = new PickerPanel(
-                (ImageView) findViewById(R.id.termPickerBackground),
-                (NumberPicker) findViewById(R.id.termPicker),
-                (NumberPicker) findViewById(R.id.weekPicker),
-                (TextView) findViewById(R.id.term_picker_text),
-                (TextView) findViewById(R.id.week_picker_text),
-                (FloatingActionButton) findViewById(R.id.floatingActionButton2)
+                (ImageView) MainActivity.this.view.findViewById(R.id.termPickerBackground),
+                (NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker),
+                (NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker),
+                (TextView) MainActivity.this.view.findViewById(R.id.term_picker_text),
+                (TextView) MainActivity.this.view.findViewById(R.id.week_picker_text),
+                (FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton2)
         );
         pref = MyApp.getCurrentSharedPreference();
         editor = MyApp.getCurrentSharedPreferenceEditor();
@@ -118,24 +131,46 @@ public class MainActivity extends AppCompatActivity {
 
         final boolean lockdown = MyApp.isRunning_login_thread() || MyApp.isRunning_fetch_service();
         if (lockdown) {
-            ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
-            ((TextView) findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
-            ((ImageView) findViewById(R.id.imageView3)).setOnClickListener(null);
+            ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
+            ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+            ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(null);
             for (int id : MyApp.timetvIds) {
-                ((TextView) findViewById(id)).setOnClickListener(null);
+                ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
             }
-            ((FloatingActionButton) findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+            ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+            setContentView(view);
         } else {
             new Thread(() -> {
                 if (udao.getActivatedUser().isEmpty()) {
+                    boolean islan = MyApp.isLAN();
                     runOnUiThread(() -> {
-                        ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
-                        ((TextView) findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
-                        ((ImageView) findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+                        ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
                         for (int id : MyApp.timetvIds) {
-                            ((TextView) findViewById(id)).setOnClickListener(null);
+                            ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
                         }
-                        ((FloatingActionButton) findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+                        Intent notificationIntent;
+                        if (islan){
+                            notificationIntent = new Intent(MainActivity.this, Login.class);
+                        }else {
+                            notificationIntent = new Intent(MainActivity.this, Login.class);
+                        }
+                        PendingIntent pendingIntent =
+                                PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
+                        Notification notification =
+                                new NotificationCompat.Builder(MainActivity.this, MyApp.notification_channel_id_normal)
+                                        .setContentTitle("您还未登录")
+                                        .setStyle(new NotificationCompat.BigTextStyle().bigText("点击登录 >>"))
+                                        .setSmallIcon(R.drawable.feather_pen_trans)
+                                        .setContentIntent(pendingIntent)
+                                        .setAutoCancel(true)
+                                        .setTicker("您还未登录")
+                                        .build();
+                        NotificationManagerCompat.from(MainActivity.this).notify(MyApp.notification_id_click_to_login, notification);
+                        ((TextView)MainActivity.this.view.findViewById(R.id.textView_title)).setOnClickListener(MainActivity.this::Login);
+                        setContentView(view);
                     });
                 } else {
                     User u = udao.getActivatedUser().get(0);
@@ -154,19 +189,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                     termValues = term_names.toArray(new String[0]);
                     runOnUiThread(()->{
-                        ((TextView) findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
-                        ((TextView) findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
-                        ((TextView) findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
-                        ((TextView) findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
-                        ((ImageView) findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
+                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
+                        ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
                         for (int id : MyApp.timetvIds) {
-                            ((TextView) findViewById(id)).setOnClickListener(MainActivity.this::setTime);
+                            ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(MainActivity.this::setTime);
                         }
-                        ((FloatingActionButton) findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setDisplayedValues(termValues);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setMinValue(0);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setMaxValue(termValues.length - 1);
+                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDisplayedValues(termValues);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMinValue(0);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMaxValue(termValues.length - 1);
                         weekValues = new String[]{
                                 "0",
                                 "1",
@@ -194,25 +229,26 @@ public class MainActivity extends AppCompatActivity {
                                 "23",
                                 "24"
                         };
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setDisplayedValues(weekValues);
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setMinValue(0);
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setOnScrollListener(scroll);
-                        ((NumberPicker) findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDisplayedValues(weekValues);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMinValue(0);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setOnScrollListener(scroll);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                         current_week = new CurrentWeek(MainActivity.this);
-                        ((NumberPicker) findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
                         if (locate.term != null) {
-                            ((NumberPicker) findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
-                            ((NumberPicker) findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
+                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
+                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
                             current_week.setValue(Math.toIntExact(locate.week));
                         } else {
-                            ((NumberPicker) findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
-                            ((NumberPicker) findViewById(R.id.weekPicker)).setValue(0);
+                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
+                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                             current_week.setValue(0);
                         }
                         showTable(locate);
+                        setContentView(view);
                     });
                 }
             }).start();
@@ -228,8 +264,8 @@ public class MainActivity extends AppCompatActivity {
         final String NAME = "onBackPressed()";
         if (pickerPanel.isShown()){
             if (term_week_is_changing) return;
-            String selected_term_name = termValues[((NumberPicker)findViewById(R.id.termPicker)).getValue()];
-            long selected_week = ((NumberPicker)findViewById(R.id.weekPicker)).getValue();
+            String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+            long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
                 Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                         DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
@@ -285,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
      * @clear
      */
     public void Login(View view){
+        NotificationManagerCompat.from(MainActivity.this).cancel(MyApp.notification_id_click_to_login);
         new Thread(() -> {
             if (MyApp.isLAN()){
                 runOnUiThread(() -> {
@@ -322,12 +359,12 @@ public class MainActivity extends AppCompatActivity {
                     getResources().getString(R.string.pref_hour_des_suffix));
             runOnUiThread(()->{
                 if (locate.term != null) {
-                    ((NumberPicker) findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
-                    ((NumberPicker) findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
                     current_week.setValue(Math.toIntExact(locate.week));
                 } else {
-                    ((NumberPicker) findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
-                    ((NumberPicker) findViewById(R.id.weekPicker)).setValue(0);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                     current_week.setValue(0);
                 }
             });
@@ -408,26 +445,26 @@ public class MainActivity extends AppCompatActivity {
             }
             runOnUiThread(()-> {
                 for (int id : MyApp.weekdaytvIds) {
-                    ((TextView) findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
-                    ((TextView) findViewById(id)).setTextColor(((TextView) findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                    ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
+                    ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(((TextView) MainActivity.this.view.findViewById(R.id.term_picker_text)).getCurrentTextColor());
                 }
                 for (int id : MyApp.timetvIds) {
-                    ((TextView) findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
-                    ((TextView) findViewById(id)).setTextColor(((TextView) findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                    ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorWeekdayAndTimeBackground, getTheme()));
+                    ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(((TextView) MainActivity.this.view.findViewById(R.id.term_picker_text)).getCurrentTextColor());
                 }
                 for (int[] id_list : MyApp.nodeIds) {
                     for (int id : id_list) {
-                        ((TextView) findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorTableNodeBackground, getTheme()));
-                        ((TextView) findViewById(id)).setTextColor(((TextView) findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                        ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorTableNodeBackground, getTheme()));
+                        ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(((TextView) MainActivity.this.view.findViewById(R.id.term_picker_text)).getCurrentTextColor());
                     }
                 }
                 for (int row_index = 0; row_index < MyApp.nodeIds.length; row_index++) {
                     for (int column_index = 0; column_index < MyApp.weekdaytvIds.length; column_index++) {
                         String node_text = texts.get(row_index * MyApp.weekdaytvIds.length + column_index);
-                        ((TextView)findViewById(MyApp.nodeIds[row_index][column_index])).setText(node_text);
+                        ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setText(node_text);
                     }
                 }
-                ((TextView)findViewById(R.id.textView_date)).setText(locate.month + "/" + locate.day);
+                ((TextView)MainActivity.this.view.findViewById(R.id.textView_date)).setText(locate.month + "/" + locate.day);
                 int time_tv_ids_index = -1;
                 if (locate.time != null) {
                     time_tv_ids_index = Arrays.asList(MyApp.times).indexOf(locate.time);
@@ -435,15 +472,15 @@ public class MainActivity extends AppCompatActivity {
                 int weekday_tv_ids_index = -1;
                 weekday_tv_ids_index = (int) (locate.weekday - 1);
                 if (time_tv_ids_index != -1){
-                    ((TextView)findViewById(MyApp.timetvIds[time_tv_ids_index])).setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
-                    ((TextView)findViewById(MyApp.timetvIds[time_tv_ids_index])).setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
+                    ((TextView)MainActivity.this.view.findViewById(MyApp.timetvIds[time_tv_ids_index])).setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                    ((TextView)MainActivity.this.view.findViewById(MyApp.timetvIds[time_tv_ids_index])).setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
                 }
                 if (weekday_tv_ids_index != -1){
-                    ((TextView)findViewById(MyApp.weekdaytvIds[weekday_tv_ids_index])).setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
-                    ((TextView)findViewById(MyApp.weekdaytvIds[weekday_tv_ids_index])).setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
+                    ((TextView)MainActivity.this.view.findViewById(MyApp.weekdaytvIds[weekday_tv_ids_index])).setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                    ((TextView)MainActivity.this.view.findViewById(MyApp.weekdaytvIds[weekday_tv_ids_index])).setTextColor(getResources().getColor(R.color.colorCurrentWeekdayText, getTheme()));
                 }
                 if (time_tv_ids_index != -1 && weekday_tv_ids_index != -1){
-                    TextView node_tv = (TextView)findViewById(MyApp.nodeIds[time_tv_ids_index][weekday_tv_ids_index]);
+                    TextView node_tv = (TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[time_tv_ids_index][weekday_tv_ids_index]);
                     if (!node_tv.getText().toString().isEmpty()){
                         node_tv.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
                     }
@@ -460,8 +497,8 @@ public class MainActivity extends AppCompatActivity {
     public void openOrHidePanel(View view){
         if (pickerPanel.isShown()){
             if (term_week_is_changing) return;
-            String selected_term_name = termValues[((NumberPicker)findViewById(R.id.termPicker)).getValue()];
-            long selected_week = ((NumberPicker)findViewById(R.id.weekPicker)).getValue();
+            String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+            long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
                 Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                         DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
