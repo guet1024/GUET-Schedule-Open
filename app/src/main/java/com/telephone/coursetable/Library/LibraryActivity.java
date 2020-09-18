@@ -172,7 +172,7 @@ public class LibraryActivity extends AppCompatActivity {
 //            return;
 //        } else check_time = now_time;
 
-        if ( LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
+        if ( MyApp.getRunning_activity_pointer() != null && LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
             progressBar.setVisibility(View.VISIBLE);
             tvToast.setVisibility(View.INVISIBLE);
         }
@@ -290,7 +290,7 @@ public class LibraryActivity extends AppCompatActivity {
 
                     Log.e("my", LibraryActivity.this.toString());
                     Log.e("running", MyApp.getRunning_activity_pointer().toString());
-                    if (!LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
+                    if ( MyApp.getRunning_activity_pointer() == null || !LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
                         Log.e("new search activity detected, exit", LibraryActivity.this.toString());
                         return;
                     }
@@ -310,7 +310,7 @@ public class LibraryActivity extends AppCompatActivity {
                     }
                     for (Map.Entry<List<Map.Entry<String, String>>, List<List<Map.Entry<String, String>>>> book_num : books_page) {
 
-                        if ( LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
+                        if ( MyApp.getRunning_activity_pointer() != null && LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
                             books.add(book_num);
 
                             if (books.size() == 1) {
@@ -365,7 +365,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void checkActivity_tvToastISTrue(String message, boolean display) {
         runOnUiThread(()->{
-            if ( LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
+            if ( MyApp.getRunning_activity_pointer() != null && LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
                 if (display) {
                     tvToast.setVisibility(View.VISIBLE);
                     tvToast.setText(message);
@@ -377,7 +377,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void checkActivity_progressBarISTrue(boolean display) {
         runOnUiThread(()-> {
-            if (LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString())) {
+            if ( MyApp.getRunning_activity_pointer() != null && LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString())) {
                 if (display) progressBar.setVisibility(View.VISIBLE);
                 else progressBar.setVisibility(View.INVISIBLE);
             }
