@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -31,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 public class Update {
 
-    public static void whatIsNew(@NonNull Context c, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view) {
+    public static void whatIsNew(@NonNull Context c, @Nullable AppCompatActivity app, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view) {
         final String NAME = "whatIsNew()";
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(c);
@@ -56,15 +57,15 @@ public class Update {
                             if (new_version != null) {
                                 new_version.run();
                             }
-                            if (tv != null && origin != null) {
-                                tv.setText(origin + "    new " + latest_tag + "⇧");
+                            if (tv != null && origin != null && app != null) {
+                                app.runOnUiThread(()->tv.setText(origin + "    new " + latest_tag + "⇧"));
                             }
-                            if (view != null) {
-                                view.setOnClickListener(view1 -> {
+                            if (view != null && app != null) {
+                                app.runOnUiThread(()->view.setOnClickListener(view1 -> {
                                     Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
 //                                    Uri uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
                                     c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                                });
+                                }));
                             }
                             Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
 //                            Uri uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
@@ -92,6 +93,15 @@ public class Update {
                     Log.e(NAME, "error: " + net_error);
                     if (error != null) {
                         error.run();
+                    }
+                    if (tv != null && origin != null && app != null) {
+                        app.runOnUiThread(()->tv.setText(origin + "　网络错误，请重试/✈"));
+                    }
+                    if (view != null && app != null) {
+                        app.runOnUiThread(()->view.setOnClickListener(view1 -> {
+                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
+                            c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                        }));
                     }
                 }
 //        );

@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -154,7 +155,7 @@ public class FetchService extends IntentService {
                 service_fetch_wan();
             }
             if (dog == 90){
-                Update.whatIsNew(this, null, null, null, null, null, null);
+                Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null);
             }else if (dog == 0){
                 dog = 91;
             }
