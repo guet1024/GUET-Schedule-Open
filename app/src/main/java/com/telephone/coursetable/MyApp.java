@@ -3,17 +3,26 @@ package com.telephone.coursetable;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
 
 import java.util.ArrayList;
+
+import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 
 public class MyApp extends Application {
     final public static String PACKAGE_NAME = "com.telephone.coursetable";
@@ -107,15 +116,19 @@ public class MyApp extends Application {
     final public static String notification_channel_id_running = "running";
     final public static String notification_channel_id_update = "update";
     final public static String notification_channel_id_fetch_fail = "fetch_fail";
+    final public static String notification_channel_id_normal = "normal";
     final public static String notification_channel_name_running = "前台服务通知";
     final public static String notification_channel_name_update = "应用更新通知";
     final public static String notification_channel_name_fetch_fail = "自动同步异常通知";
+    final public static String notification_channel_name_normal = "常规通知";
     final public static String notification_channel_des_running = "展示APP正在运行的通知";
     final public static String notification_channel_des_update = "提醒APP有新版本发布的通知";
     final public static String notification_channel_des_fetch_fail = "提醒自动同步出现异常的通知";
+    final public static String notification_channel_des_normal = "普通通知";
     final public static int notification_id_fetch_service_foreground = 1800301129;
     final public static int notification_id_fetch_service_lan_password_wrong = 1800301127;
     final public static int notification_id_new_version = 1800301128;
+    final public static int notification_id_click_to_login = 1800301130;
     final public static long service_fetch_interval = 15000;   // 15s
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
@@ -177,6 +190,9 @@ public class MyApp extends Application {
         channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(notification_channel_des_fetch_fail);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(notification_channel_des_normal);
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval);
     }
@@ -222,5 +238,15 @@ public class MyApp extends Application {
                 null,
                 null
         ).resp_code == 200;
+    }
+
+    public static void batteryOptimization(AppCompatActivity c) {
+        String pac_name = "com.telephone.coursetable";
+        PowerManager pm = (PowerManager) c.getSystemService(Context.POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(pac_name)) {
+            c.startActivity(new Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + pac_name)));
+        }else {
+            c.runOnUiThread(()-> Toast.makeText(c, "忽略电池优化已设置成功", Toast.LENGTH_LONG).show());
+        }
     }
 }

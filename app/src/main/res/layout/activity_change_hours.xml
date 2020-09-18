@@ -132,7 +132,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView8"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/change_hour_editTextTime5"
@@ -147,7 +148,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView5"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/change_hour_editTextTime6"
@@ -162,7 +164,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView6"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true"/>
 
     <EditText
         android:id="@+id/change_hour_editTextTime7"
@@ -177,7 +180,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView7"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/change_hour_editTextTime4"
@@ -192,7 +196,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView4"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/change_hour_editTextTime2"
@@ -207,7 +212,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView2"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true"/>
 
     <EditText
         android:id="@+id/change_hour_editTextTime1"
@@ -222,7 +228,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView1"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true"/>
 
     <EditText
         android:id="@+id/change_hour_editTextTime3"
@@ -237,7 +244,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView3"
         app:layout_constraintEnd_toStartOf="@id/guideline13"
-        app:layout_constraintStart_toEndOf="@id/guideline11" />
+        app:layout_constraintStart_toEndOf="@id/guideline11"
+        android:singleLine="true"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline10"
@@ -302,7 +310,8 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView9"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintStart_toStartOf="@+id/guideline11"
-        app:layout_constraintWidth_default="spread" />
+        app:layout_constraintWidth_default="spread"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/change_hour_editTextTime10"
@@ -318,7 +327,8 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/change_hour_textView10"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintStart_toStartOf="@+id/guideline11"
-        app:layout_constraintWidth_default="spread" />
+        app:layout_constraintWidth_default="spread"
+        android:singleLine="true" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline12"
