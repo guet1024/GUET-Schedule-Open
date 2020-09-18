@@ -115,7 +115,10 @@ public class TeachersEvaluation {//评教
         toastThread.start();
 
         addtoast("评教登录中，请耐心等待",Toast.LENGTH_SHORT,false);
-        if ( MyApp.getRunning_activity_pointer() == null || !(c.toString().equals(MyApp.getRunning_activity_pointer().toString()))){
+        if ( MyApp.getRunning_activity_pointer() == null ||
+                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                !c.isVisible()
+        ){
             return;
         }
         HttpConnectionAndCode httpConnectionAndCode = LAN.checkcode(c);
@@ -128,7 +131,10 @@ public class TeachersEvaluation {//评教
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(cookie);
         String ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
-        if ( MyApp.getRunning_activity_pointer() == null || !(c.toString().equals(MyApp.getRunning_activity_pointer().toString()))){
+        if ( MyApp.getRunning_activity_pointer() == null ||
+                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                !c.isVisible()
+        ){
             return;
         }
         HttpConnectionAndCode H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
@@ -170,7 +176,10 @@ public class TeachersEvaluation {//评教
 
         for (TermInfo t : list) {
             addtoast( "正在获取 "+t.termname+" 的评教信息",Toast.LENGTH_SHORT,false);
-            if ( MyApp.getRunning_activity_pointer() == null || !(c.toString().equals(MyApp.getRunning_activity_pointer().toString()))){
+            if ( MyApp.getRunning_activity_pointer() == null ||
+                    !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                    !c.isVisible()
+            ){
                 return;
             }
             HttpConnectionAndCode httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
@@ -220,7 +229,10 @@ public class TeachersEvaluation {//评教
                             "&chk=" + g.getChk() +
                             "&can=" + g.isCan() +
                             "&userid=" + "&bz=%E5%A5%BD" + "&score=100";
-                    if ( MyApp.getRunning_activity_pointer() == null || !(c.toString().equals(MyApp.getRunning_activity_pointer().toString()))){
+                    if ( MyApp.getRunning_activity_pointer() == null ||
+                            !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                            !c.isVisible()
+                    ){
                         return;
                     }
                     HttpConnectionAndCode post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
