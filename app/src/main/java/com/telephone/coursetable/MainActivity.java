@@ -69,6 +69,42 @@ public class MainActivity extends AppCompatActivity {
     private String[] termValues = null;
     private String[] weekValues = null;
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean isVisible(){
+        return visible;
+    }
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
     /**
      * @ui
      * @clear

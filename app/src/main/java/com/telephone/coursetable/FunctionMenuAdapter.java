@@ -284,7 +284,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 6:
                 ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)).setText(groups.get(i).getValue().get(i1).get(0));
                 view.setOnClickListener(view14 -> new Thread(() -> TeachersEvaluation.evaluation(
-                        (AppCompatActivity)context,
+                        (FunctionMenu) context,
                         MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
                         MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password,
                         MyApp.getCurrentAppDB().termInfoDao()

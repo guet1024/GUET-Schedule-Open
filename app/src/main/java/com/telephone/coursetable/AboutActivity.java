@@ -15,6 +15,38 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class AboutActivity extends AppCompatActivity {
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, FunctionMenu.class));
