@@ -62,5 +62,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"使用说明"</item>
     </style>
+    
+    <style name="Launcher" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/start_page_2</item>
+    </style>
 
 </resources>

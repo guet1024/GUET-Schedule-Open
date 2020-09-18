@@ -55,7 +55,7 @@ public class CurrentWeek extends ViewModel {
                     R.drawable.week_29,
                     R.drawable.week_30
             };
-            CurrentWeek.this.main.runOnUiThread(()->((FloatingActionButton)CurrentWeek.this.main.findViewById(R.id.floatingActionButton)).setImageResource(weekIconIds[Math.toIntExact(aLong)]));
+            CurrentWeek.this.main.runOnUiThread(()->((FloatingActionButton)CurrentWeek.this.main.getView().findViewById(R.id.floatingActionButton)).setImageResource(weekIconIds[Math.toIntExact(aLong)]));
         };
         current_week.observe(this.main, observer);
     }

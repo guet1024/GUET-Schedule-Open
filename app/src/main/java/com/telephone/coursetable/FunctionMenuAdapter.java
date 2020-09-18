@@ -169,7 +169,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                             Update.whatIsNew(
                                     a,
                                     ()-> a.runOnUiThread(()->{
-                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "(网络错误，点击重试)");
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，稍后重试/✈");
                                         p.setVisibility(View.INVISIBLE);
                                         v.setOnClickListener(view15 -> Check.this.run());
                                     }),
@@ -177,7 +177,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                                         p.setVisibility(View.INVISIBLE);
                                     }),
                                     ()-> a.runOnUiThread(()->{
-                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "(已是最新版本😋)");
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　已是最新版本");
                                         p.setVisibility(View.INVISIBLE);
                                         v.setOnClickListener(view16 -> Check.this.run());
                                     }),
