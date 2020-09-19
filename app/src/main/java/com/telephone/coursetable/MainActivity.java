@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         if (islan){
                             notificationIntent = new Intent(MainActivity.this, Login.class);
                         }else {
-                            notificationIntent = new Intent(MainActivity.this, Login.class);
+                            notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
                         }
                         PendingIntent pendingIntent =
                                 PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
