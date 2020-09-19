@@ -539,13 +539,16 @@ public class Login_vpn extends AppCompatActivity {
         }
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApp.setRunning_activity(MyApp.RunningActivity.LOGIN);
+        MyApp.setRunning_activity(MyApp.RunningActivity.LOGIN_VPN);
         MyApp.setRunning_activity_pointer(this);
         AppDatabase db = MyApp.getCurrentAppDB();
 
@@ -568,19 +571,6 @@ public class Login_vpn extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
-
-    @Override
-    protected void onStop() {
-        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), false).commit();
-        super.onStop();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_user_updating_key), updating).commit();
-    }
-
 
     /**
      * @ui 1. call {@link #clearIMAndFocus()}
@@ -959,7 +949,7 @@ public class Login_vpn extends AppCompatActivity {
                             /** show tip toast */
                             Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
                             /** if main activity is current running activity */
-                            if (MyApp.getRunning_main() != null){
+                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
                                 Log.e(NAME, "refresh the Main Activity...");
                                 /** call {@link MainActivity#refresh()} */
                                 MyApp.getRunning_main().refresh();
