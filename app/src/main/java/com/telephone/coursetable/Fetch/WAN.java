@@ -124,7 +124,7 @@ public class WAN {
     //有效学分
     public static HttpConnectionAndCode graduationScore(Context c,String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = com.telephone.coursetable.Http.Post.post(
+        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
                 null,
                 r.getString(R.string.user_agent),
@@ -154,7 +154,7 @@ public class WAN {
     //计划学分
     public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = com.telephone.coursetable.Http.Post.post(
+        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
                 null,
                 r.getString(R.string.user_agent),
@@ -167,7 +167,7 @@ public class WAN {
                 null,
                 null
         );
-        return com.telephone.coursetable.Http.Get.get(
+        return com.telephone.coursetable.Https.Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getplancj",
                 null,
                 r.getString(R.string.user_agent),
@@ -186,7 +186,7 @@ public class WAN {
 
     public static HttpConnectionAndCode grades(Context c, String cookie){
         Resources r = c.getResources();
-        return com.telephone.coursetable.Http.Get.get(
+        return com.telephone.coursetable.Https.Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Student/GetStuScore",
                 new String[]{"term="},
                 r.getString(R.string.user_agent),
@@ -203,7 +203,7 @@ public class WAN {
 
     public static HttpConnectionAndCode examInfo(Context c, String cookie){
         Resources r = c.getResources();
-        return com.telephone.coursetable.Http.Get.get(
+        return com.telephone.coursetable.Https.Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getexamap?&term=",
                 null,
                 r.getString(R.string.user_agent),
@@ -221,7 +221,7 @@ public class WAN {
     public static HttpConnectionAndCode cet(Context c, String cookie){
 
         Resources r = c.getResources();
-        return com.telephone.coursetable.Http.Get.get(
+        return com.telephone.coursetable.Https.Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/GetLvlScore?term=",
                 null,
                 r.getString(R.string.user_agent),
@@ -235,23 +235,6 @@ public class WAN {
         );
 
 
-    }
-
-
-    public static HttpConnectionAndCode graduationDegree(Context c,String cookie){
-        Resources r = c.getResources();
-        return com.telephone.coursetable.Http.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getbyxw",
-                null,
-                r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
-                cookie,
-                "}]}",
-                null,
-                r.getString(R.string.lan_get_grades_success_contain_response_text),//"\"success\":true",
-                null,
-                null
-        );
     }
 
 
