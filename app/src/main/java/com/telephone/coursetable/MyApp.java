@@ -200,7 +200,7 @@ public class MyApp extends Application {
         channel.setDescription(notification_channel_des_normal);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
-        FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval);
+        FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
     }
 
     public static MyApp getCurrentApp(){

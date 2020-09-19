@@ -12,7 +12,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))
         {
-            FetchService.startAction_START_FETCH_DATA(context, MyApp.service_fetch_interval);
+            FetchService.startAction_START_FETCH_DATA(context, MyApp.service_fetch_interval, null);
         }
     }
 }
