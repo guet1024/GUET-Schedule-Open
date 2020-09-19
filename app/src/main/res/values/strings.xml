@@ -42,6 +42,8 @@
 
     <string name="lan_snackbar_vpn_test_login_fail_ip">WebVPN登录验证失败次数过多，请稍后重试</string>
     <string name="lan_snackbar_vpn_test_login_fail">WebVPN登录验证失败</string>
+    <string name="lan_snackbar_sys_pwd_login_fail">登录失败 - 学分制系统密码不正确</string>
+    <string name="wan_snackbar_outside_test_login_fail">登录失败 - 教务网站密码不正确</string>
     <string name="lan_snackbar_outside_test_login_fail">教务网站登录验证失败</string>
 
     <string name="lan_snackbar_data_updating">登录成功，正在同步数据...请勿离开</string>

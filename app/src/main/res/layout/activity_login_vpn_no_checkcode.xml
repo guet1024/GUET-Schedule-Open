@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login">
+    tools:context=".Login_vpn">
 
     <TextView
         android:id="@+id/change_hour_textView7"
@@ -52,7 +52,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/login_btn_border"
-        android:onClick="login_thread"
+        android:onClick="login_thread_1"
         android:text="@string/login_btn"
         android:textColor="@color/colorLoginButtonText"
         android:textSize="14sp"
@@ -100,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.7" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"
@@ -130,7 +130,9 @@
         android:background="@drawable/login_text_border"
         android:completionThreshold="0"
         android:gravity="center"
+        android:singleLine="true"
         android:inputType="number"
+        android:imeOptions="actionDone"
         android:textAlignment="center"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/passwd_input"
@@ -152,6 +154,8 @@
         android:id="@+id/passwd_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
         android:background="@drawable/login_text_border"
         android:gravity="center"
         android:inputType="textPassword"
@@ -161,6 +165,17 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toEndOf="@id/barrier2"
         app:layout_constraintTop_toBottomOf="@+id/sid_input" />
+
+    <Button
+        android:id="@+id/show_pwd"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/eye_close"
+        app:layout_constraintBottom_toBottomOf="@+id/passwd_input"
+        app:layout_constraintDimensionRatio="w, 1:1"
+        app:layout_constraintEnd_toEndOf="@+id/passwd_input"
+        app:layout_constraintTop_toTopOf="@+id/passwd_input" />
+
 
     <Button
         android:id="@+id/button2"
