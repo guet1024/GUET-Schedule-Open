@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.Gson.TeachersEvaluation.PJGetValue_Data;
 import com.telephone.coursetable.Gson.TeachersEvaluation.PJGetValue_DataS;
 import com.telephone.coursetable.Http.Get;
@@ -44,6 +45,11 @@ public class TeachersEvaluation {//评教
         toastlist.remove(0);
         return res;
     }
+
+    synchronized private static void clearall(){
+        toastlist.clear();
+    }
+
     synchronized private static Thread getThread(){
         return thread;
     }
@@ -54,12 +60,13 @@ public class TeachersEvaluation {//评教
         return end;
     }
 
-    public static void evaluation(AppCompatActivity c, String id, String pwd, TermInfoDao tdao) {
+    public static void evaluation(FunctionMenu c, String id, String pwd, TermInfoDao tdao) {
         final String NAME = "evaluation()";
         if (getThread() != null){
             Log.e(NAME, "duplicated evaluation!");
             return;
         }
+        clearall();
         Thread toastThread =
         new Thread(new Runnable() {
             @Override
@@ -67,7 +74,10 @@ public class TeachersEvaluation {//评教
                 while (true) {
                     Map.Entry<String, Integer> toast = gettoast();
                     if(toast!=null){
-                        if (MyApp.getRunning_activity_pointer() == null){
+                        if (MyApp.getRunning_activity_pointer() == null ||
+                                !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                                !c.isVisible()
+                        ){
                             setThread(null);
                             return;
                         }
@@ -75,7 +85,7 @@ public class TeachersEvaluation {//评教
                         switch (toast.getValue()){
                             case Toast.LENGTH_SHORT: default:
                                 try {
-                                    Thread.sleep(2000);
+                                    Thread.sleep(2500);
                                 } catch (InterruptedException e) {
                                     // Restore interrupt status.
                                     Thread.currentThread().interrupt();
@@ -84,7 +94,7 @@ public class TeachersEvaluation {//评教
                                 break;
                             case Toast.LENGTH_LONG:
                                 try {
-                                    Thread.sleep(3500);
+                                    Thread.sleep(4000);
                                 } catch (InterruptedException e) {
                                     // Restore interrupt status.
                                     Thread.currentThread().interrupt();
@@ -105,6 +115,12 @@ public class TeachersEvaluation {//评教
         toastThread.start();
 
         addtoast("评教登录中，请耐心等待",Toast.LENGTH_SHORT,false);
+        if ( MyApp.getRunning_activity_pointer() == null ||
+                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                !c.isVisible()
+        ){
+            return;
+        }
         HttpConnectionAndCode httpConnectionAndCode = LAN.checkcode(c);
         if (httpConnectionAndCode.obj == null) {
             addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -115,6 +131,12 @@ public class TeachersEvaluation {//评教
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(cookie);
         String ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
+        if ( MyApp.getRunning_activity_pointer() == null ||
+                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                !c.isVisible()
+        ){
+            return;
+        }
         HttpConnectionAndCode H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
         if (H.code != 0 && H.code != -6) {
             addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -126,6 +148,12 @@ public class TeachersEvaluation {//评教
                     addtoast("评教登录密码错误, 再次登录以更新密码",Toast.LENGTH_LONG,true);
                     return;
                 } else if (H.comment.contains("验证码")) {
+                    if (MyApp.getRunning_activity_pointer() == null ||
+                            !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                            !c.isVisible()
+                    ){
+                        return;
+                    }
                     httpConnectionAndCode = LAN.checkcode(c);
                     if (httpConnectionAndCode.obj == null) {
                         addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -136,6 +164,12 @@ public class TeachersEvaluation {//评教
                     stringBuilder.append(cookie);
                     bitmap = (Bitmap) httpConnectionAndCode.obj;
                     ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
+                    if ( MyApp.getRunning_activity_pointer() == null ||
+                            !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                            !c.isVisible()
+                    ){
+                        return;
+                    }
                     H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
                     if (H.code != 0 && H.code!=-6) {
                         addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -154,6 +188,12 @@ public class TeachersEvaluation {//评教
 
         for (TermInfo t : list) {
             addtoast( "正在获取 "+t.termname+" 的评教信息",Toast.LENGTH_SHORT,false);
+            if ( MyApp.getRunning_activity_pointer() == null ||
+                    !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                    !c.isVisible()
+            ){
+                return;
+            }
             HttpConnectionAndCode httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
                     new String[]{"term=" + t.term},
                     user_agent,
@@ -168,6 +208,12 @@ public class TeachersEvaluation {//评教
                     null
             );
             for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
+                if (MyApp.getRunning_activity_pointer() == null ||
+                        !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                        !c.isVisible()
+                ){
+                    return;
+                }
                 httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
                         new String[]{"term=" + t.term},
                         user_agent,
@@ -207,6 +253,12 @@ public class TeachersEvaluation {//评教
                             "&chk=" + g.getChk() +
                             "&can=" + g.isCan() +
                             "&userid=" + "&bz=%E5%A5%BD" + "&score=100";
+                    if ( MyApp.getRunning_activity_pointer() == null ||
+                            !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                            !c.isVisible()
+                    ){
+                        return;
+                    }
                     HttpConnectionAndCode post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                             new String[]{t.term},
                             user_agent,
@@ -220,6 +272,12 @@ public class TeachersEvaluation {//评教
                             null);
                     for (int i=0;post_res.code != 0 && i<3;i++) {
                         addtoast(  "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师",Toast.LENGTH_SHORT,false);
+                        if (MyApp.getRunning_activity_pointer() == null ||
+                                !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                                !c.isVisible()
+                        ){
+                            return;
+                        }
                         post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                                 new String[]{t.term},
                                 user_agent,

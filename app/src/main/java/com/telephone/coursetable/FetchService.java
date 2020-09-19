@@ -43,6 +43,7 @@ import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.OCR.OCR;
 import com.telephone.coursetable.Update.Update;
 
@@ -308,11 +309,34 @@ public class FetchService extends IntentService {
 //        lan_notify_login_wrong_password();
     }
 
+    private boolean tryOutdated(MyApp.RunningActivity type, AppCompatActivity activity){
+        switch (type){
+            case MAIN:
+                return ((MainActivity)activity).setOutdated();
+            case USAGE:
+                return ((UsageActivity)activity).setOutdated();
+            case FUNCTION_MENU:
+                return ((FunctionMenu)activity).setOutdated();
+            case ABOUT:
+                return ((AboutActivity)activity).setOutdated();
+            case LIBRARY:
+                return ((LibraryActivity)activity).setOutdated();
+            default: return false;
+        }
+    }
+
     private void service_fetch_lan(){
         final String NAME = "service_fetch_lan()";
         Resources r = getResources();
+        MyApp.RunningActivity ra = MyApp.getRunning_activity();
+        AppCompatActivity rap = MyApp.getRunning_activity_pointer();
         if (
-                !MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL) || MyApp.isRunning_login_thread()
+                MyApp.isRunning_login_thread() ||
+                        ra.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
+                        ra.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        ra.equals(MyApp.RunningActivity.LOGIN) ||
+                        ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        (rap != null && !tryOutdated(ra, rap))
         ){
             Log.e(NAME, "skip | some activity is active or data is being updated");
             return;
@@ -482,7 +506,7 @@ public class FetchService extends IntentService {
         final String NAME = "lan_start()";
         Log.e(NAME, "start...");
         MyApp.setRunning_fetch_service(true);
-        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
+        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null && MyApp.getRunning_main().isVisible()){
             Log.e(NAME, "refresh main activity...");
             MyApp.getRunning_main().refresh();
         }
@@ -492,7 +516,7 @@ public class FetchService extends IntentService {
         final String NAME = "lan_end()";
         Log.e(NAME, "end...");
         MyApp.setRunning_fetch_service(false);
-        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
+        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null && MyApp.getRunning_main().isVisible()){
             Log.e(NAME, "refresh main activity...");
             MyApp.getRunning_main().refresh();
         }
