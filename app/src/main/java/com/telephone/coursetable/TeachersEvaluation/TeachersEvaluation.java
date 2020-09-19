@@ -148,6 +148,12 @@ public class TeachersEvaluation {//评教
                     addtoast("评教登录密码错误, 再次登录以更新密码",Toast.LENGTH_LONG,true);
                     return;
                 } else if (H.comment.contains("验证码")) {
+                    if (MyApp.getRunning_activity_pointer() == null ||
+                            !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                            !c.isVisible()
+                    ){
+                        return;
+                    }
                     httpConnectionAndCode = LAN.checkcode(c);
                     if (httpConnectionAndCode.obj == null) {
                         addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -158,6 +164,12 @@ public class TeachersEvaluation {//评教
                     stringBuilder.append(cookie);
                     bitmap = (Bitmap) httpConnectionAndCode.obj;
                     ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
+                    if ( MyApp.getRunning_activity_pointer() == null ||
+                            !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
+                            !c.isVisible()
+                    ){
+                        return;
+                    }
                     H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
                     if (H.code != 0 && H.code!=-6) {
                         addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
@@ -196,6 +208,12 @@ public class TeachersEvaluation {//评教
                     null
             );
             for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
+                if (MyApp.getRunning_activity_pointer() == null ||
+                        !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                        !c.isVisible()
+                ){
+                    return;
+                }
                 httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
                         new String[]{"term=" + t.term},
                         user_agent,
@@ -254,6 +272,12 @@ public class TeachersEvaluation {//评教
                             null);
                     for (int i=0;post_res.code != 0 && i<3;i++) {
                         addtoast(  "网络波动，正在重新评价 "+t.termname+" "+g.getName()+" 老师",Toast.LENGTH_SHORT,false);
+                        if (MyApp.getRunning_activity_pointer() == null ||
+                                !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                                !c.isVisible()
+                        ){
+                            return;
+                        }
                         post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
                                 new String[]{t.term},
                                 user_agent,
