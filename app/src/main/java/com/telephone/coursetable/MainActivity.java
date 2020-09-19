@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         hide();
         super.onPause();
     }
-    
+  
     private View view;
 
     public View getView(){
@@ -191,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                         if (islan){
                             notificationIntent = new Intent(MainActivity.this, Login.class);
                         }else {
-                            notificationIntent = new Intent(MainActivity.this, Login.class);
+                            notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
                         }
                         PendingIntent pendingIntent =
                                 PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
@@ -366,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }else {
                 runOnUiThread(() -> {
-                    Intent intent = new Intent(MainActivity.this, Login.class);
+                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
                     startActivity(intent);
                 });
             }

@@ -168,10 +168,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                             v.setOnClickListener(view18 -> Log.e("Update Check", "duplicated check"));
                             Update.whatIsNew(
                                     a,
+                                    a,
                                     ()-> a.runOnUiThread(()->{
-                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，稍后重试/✈");
+//                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，请重试/✈");
                                         p.setVisibility(View.INVISIBLE);
-                                        v.setOnClickListener(view15 -> Check.this.run());
+//                                        v.setOnClickListener(view15 -> Check.this.run());
                                     }),
                                     ()-> a.runOnUiThread(()->{
                                         p.setVisibility(View.INVISIBLE);
