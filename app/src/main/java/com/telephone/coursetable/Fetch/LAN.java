@@ -47,6 +47,8 @@ public class LAN {
                 null,
                 r.getString(R.string.lan_get_person_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -68,6 +70,8 @@ public class LAN {
                 "]}",
                 null,
                 r.getString(R.string.lan_get_terms_success_contain_response_text),
+                null,
+                null,
                 null,
                 null
         );
@@ -91,6 +95,8 @@ public class LAN {
                 null,
                 r.getString(R.string.lan_get_table_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -112,6 +118,8 @@ public class LAN {
                 "]}",
                 null,
                 r.getString(R.string.lan_get_hours_success_contain_response_text),
+                null,
+                null,
                 null,
                 null
         );
@@ -171,6 +179,8 @@ public class LAN {
                 null,
                 r.getString(R.string.lan_get_graduation_score_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -206,6 +216,8 @@ public class LAN {
                 null,
                 "\"success\":true",
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -227,6 +239,8 @@ public class LAN {
                 "}]}",
                 null,
                 r.getString(R.string.lan_get_grades_success_contain_response_text),
+                null,
+                null,
                 null,
                 null
         );
@@ -250,6 +264,8 @@ public class LAN {
                 null,
                 "\"success\":true",
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -271,6 +287,8 @@ public class LAN {
                 "}]}",
                 null,
                 "\"success\":true",
+                null,
+                null,
                 null,
                 null
         );

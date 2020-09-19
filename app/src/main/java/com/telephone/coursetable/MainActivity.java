@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }else {
                 runOnUiThread(() -> {
-                    Intent intent = new Intent(MainActivity.this, Login.class);
+                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
                     startActivity(intent);
                 });
             }

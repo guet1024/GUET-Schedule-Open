@@ -40,7 +40,10 @@ public class Get {
                                             @Nullable final String cookie_delimiter,
                                             @Nullable final String success_resp_text,
                                             @Nullable final String[] accept_encodings,
-                                            @Nullable final Boolean redirect){
+                                            @Nullable final Boolean redirect,
+                                            @Nullable final Integer connect_timeout,
+                                            @Nullable final Integer read_timeout
+                                            ){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -77,8 +80,16 @@ public class Get {
             }else {
                 cnt.setInstanceFollowRedirects(redirect);
             }
-            cnt.setReadTimeout(4000);
-            cnt.setConnectTimeout(2000);
+            if (read_timeout == null) {
+                cnt.setReadTimeout(4000);
+            }else {
+                cnt.setReadTimeout(read_timeout);
+            }
+            if (connect_timeout == null) {
+                cnt.setConnectTimeout(2000);
+            }else {
+                cnt.setConnectTimeout(connect_timeout);
+            }
             cnt.connect();
         } catch (Exception e) {
             e.printStackTrace();
