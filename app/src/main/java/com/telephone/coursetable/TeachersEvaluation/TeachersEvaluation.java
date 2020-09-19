@@ -163,7 +163,10 @@ public class TeachersEvaluation {//评教
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null
+            );
             for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
                 httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
                         new String[]{"term=" + t.term},
@@ -174,7 +177,10 @@ public class TeachersEvaluation {//评教
                         null,
                         null,
                         null,
-                        null);
+                        null,
+                        null,
+                        null
+                );
             }
             if (httpURLConnection.code != 0) {
                 addtoast( "评教失败，检查校园网连接后重试",Toast.LENGTH_LONG,true);

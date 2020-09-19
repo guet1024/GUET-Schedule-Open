@@ -3,17 +3,32 @@ package com.telephone.coursetable;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
 
 import java.util.ArrayList;
+
+import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 
 public class MyApp extends Application {
     final public static String PACKAGE_NAME = "com.telephone.coursetable";
@@ -227,7 +242,19 @@ public class MyApp extends Application {
                 null,
                 null,
                 null,
-                null
+                null,
+                500,
+                500
         ).resp_code == 200;
+    }
+
+    public static void batteryOptimization(AppCompatActivity c) {
+        String pac_name = "com.telephone.coursetable";
+        PowerManager pm = (PowerManager) c.getSystemService(Context.POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(pac_name)) {
+            c.startActivity(new Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + pac_name)));
+        }else {
+            c.runOnUiThread(()-> Toast.makeText(c, "忽略电池优化已设置成功", Toast.LENGTH_LONG).show());
+        }
     }
 }

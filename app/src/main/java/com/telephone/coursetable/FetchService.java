@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.os.Build.BRAND;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -137,9 +140,11 @@ public class FetchService extends IntentService {
      */
     private void handleAction_START_FETCH_DATA(long milliseconds) {
         final String NAME = "handleAction_START_FETCH_DATA()";
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
-        wakeLock.acquire();
+        if (BRAND.toLowerCase().equals("huawei") || BRAND.toLowerCase().equals("honor")){
+            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
+            wakeLock.acquire();
+        }
         while (true){
             updateListAppWidgets();
             if (MyApp.isLAN()){
@@ -150,7 +155,7 @@ public class FetchService extends IntentService {
                 service_fetch_wan();
             }
             if (dog == 90){
-                Update.whatIsNew(this, null, null, null, null, null, null);
+                Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null);
             }else if (dog == 0){
                 dog = 91;
             }
