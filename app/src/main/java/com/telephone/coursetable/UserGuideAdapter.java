@@ -25,6 +25,8 @@ public class UserGuideAdapter extends RecyclerView.Adapter<UserGuideAdapter.View
         imgIdArray.add(R.drawable.userguide_xiaobujian);
         imgIdArray.add(R.drawable.userguide_noclass);
         imgIdArray.add(R.drawable.userguide_hasclass);
+        imgIdArray.add(R.drawable.userguide_keepalive);
+        imgIdArray.add(R.drawable.userpage_wakeapp);
     }
     private List<String> title = new ArrayList<>();
     {
@@ -36,6 +38,8 @@ public class UserGuideAdapter extends RecyclerView.Adapter<UserGuideAdapter.View
         title.add("GUET课程表小部件");
         title.add("GUET课程表小部件");
         title.add("GUET课程表小部件");
+        title.add("提示");
+        title.add("提示");
     }
     @NonNull
     @Override
