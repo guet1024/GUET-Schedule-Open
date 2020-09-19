@@ -238,21 +238,4 @@ public class WAN {
     }
 
 
-    public static HttpConnectionAndCode graduationDegree(Context c,String cookie){
-        Resources r = c.getResources();
-        return com.telephone.coursetable.Https.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getbyxw",
-                null,
-                r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
-                cookie,
-                "}]}",
-                null,
-                r.getString(R.string.lan_get_grades_success_contain_response_text),//"\"success\":true",
-                null,
-                null
-        );
-    }
-
-
 }
