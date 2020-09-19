@@ -146,7 +146,7 @@
     <string name="causes">\n　　为了让同学们能够在繁忙的学业中轻松地获取信息。\n　　考试安排，学分成绩，上课安排，常用链接......\n　　小手一点，信息汇聚呈现。\n</string>
     <string name="future">\n　　目前此APP还处于开发/测试阶段，新版本将陆续推出，敬请关注。</string>
     <string name="future2">　　未来预期功能：</string>
-    <string name="future3">通过WebVPN自动同步数据\n已选课程查询\n学分绩查询\n毕业条件查询\n事件提醒\n实验成绩查询\nGUET常用工具页\n······\n</string>
+    <string name="future3">通过WebVPN自动同步/更新数据\n已选课程查询\n学分绩查询\n毕业条件查询\n事件提醒\n实验成绩查询\nGUET常用工具页\n······\n</string>
     <string name="member">Telephone　</string>
     <string name="member1">　MC土块</string>
     <string name="member2">树獭　</string>
