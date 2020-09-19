@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,9 +76,12 @@ public class FetchService extends IntentService {
     private static final String EXTRA_PARAM1 = "com.telephone.coursetable.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "com.telephone.coursetable.extra.PARAM2";
     private static final String EXTRA_interval_milliseconds = "com.telephone.coursetable.extra.interval_milliseconds";
+    private static final String EXTRA_start_toast = "com.telephone.coursetable.extra.start_toast";
+
+    private PowerManager.WakeLock wakeLock;
 
     private boolean started = false;
-    private int dog = 90;
+    private int dog = 20;
 
     public FetchService() {
         super("MyIntentService");
@@ -113,10 +117,13 @@ public class FetchService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startAction_START_FETCH_DATA(Context context, long milliseconds) {
+    public static void startAction_START_FETCH_DATA(Context context, long milliseconds, @Nullable String tip) {
         Intent intent = new Intent(context, FetchService.class);
         intent.setAction(ACTION_START_FETCH_DATA);
         intent.putExtra(EXTRA_interval_milliseconds, milliseconds);
+        if (tip != null){
+            intent.putExtra(EXTRA_start_toast, tip);
+        }
         context.startForegroundService(intent);
     }
 
@@ -143,22 +150,23 @@ public class FetchService extends IntentService {
         final String NAME = "handleAction_START_FETCH_DATA()";
         if (BRAND.toLowerCase().equals("huawei") || BRAND.toLowerCase().equals("honor")){
             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
             wakeLock.acquire();
         }
         while (true){
             updateListAppWidgets();
-            if (MyApp.isLAN()){
-                Log.e(NAME, "LAN");
-                service_fetch_lan();
-            }else {
-                Log.e(NAME, "WAN");
-                service_fetch_wan();
-            }
-            if (dog == 90){
+            Log.e(NAME, "dog = " + dog);
+            if (dog == 20){
+                if (MyApp.isLAN()){
+                    Log.e(NAME, "LAN");
+                    service_fetch_lan();
+                }else {
+                    Log.e(NAME, "WAN");
+                    service_fetch_wan();
+                }
                 Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null);
             }else if (dog == 0){
-                dog = 91;
+                dog = 21;
             }
             dog--;
             try {
@@ -557,10 +565,17 @@ public class FetchService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        final String NAME = "onHandleIntent()";
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_START_FETCH_DATA.equals(action)) {
                 final long ms = intent.getLongExtra(EXTRA_interval_milliseconds, MyApp.service_fetch_interval);
+                final String tip = intent.getStringExtra(EXTRA_start_toast);
+                if (tip != null && !tip.isEmpty()){
+                    Log.e(NAME, "i have received a tip..........................");
+                    Log.e(NAME, tip);
+//                    Toast.makeText(this, tip, Toast.LENGTH_SHORT).show();
+                }
                 handleAction_START_FETCH_DATA(ms);
             } else if (ACTION_BAZ.equals(action)) {
                 final String param1 = intent.getStringExtra(EXTRA_PARAM1);

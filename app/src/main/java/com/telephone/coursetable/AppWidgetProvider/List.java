@@ -36,9 +36,10 @@ public class List extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         final String NAME = "onUpdate()";
         RemoteViews remoteViews = new RemoteViews(MyApp.PACKAGE_NAME, R.layout.appwidget_layout_list);
-        Intent open_intent = new Intent(context, MainActivity.class);
-        open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getActivity(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent open_intent = new Intent(context, List.class);
+        open_intent.setAction("com.telephone.coursetable.action.START_FETCH_SERVIE");
+//        open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getBroadcast(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
         Intent data_intent = new Intent(context, ListRemoteViewsService.class);
         // simply point to the remote views service, no need to add extra, nothing to add
         remoteViews.setRemoteAdapter(R.id.appwidget_list_listview, data_intent);
@@ -61,9 +62,10 @@ public class List extends AppWidgetProvider {
             if (w_ids != null && w_ids.length > 0) {
                 RemoteViews remoteViews = new RemoteViews(MyApp.PACKAGE_NAME, R.layout.appwidget_layout_list);
                 // open button
-                Intent open_intent = new Intent(context, MainActivity.class);
-                open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getActivity(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+                Intent open_intent = new Intent(context, List.class);
+                open_intent.setAction("com.telephone.coursetable.action.START_FETCH_SERVIE");
+//                open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getBroadcast(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
                 // refresh date
                 LocalDateTime now = LocalDateTime.now();
                 remoteViews.setTextViewText(R.id.appwidget_list_title_date,
@@ -96,7 +98,10 @@ public class List extends AppWidgetProvider {
                 Log.e(NAME, "no existing list app-widgets to update");
             }
         }else if (intent.getAction().equals("com.telephone.coursetable.action.START_FETCH_SERVIE")){
-            FetchService.startAction_START_FETCH_DATA(context, MyApp.service_fetch_interval);
+            String tip = "已唤醒";
+//            FetchService.startAction_START_FETCH_DATA(context, MyApp.service_fetch_interval, tip);
+            FetchService.startAction_START_FETCH_DATA(context, MyApp.service_fetch_interval, null);
+            Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
         }
         super.onReceive(context, intent);
     }
