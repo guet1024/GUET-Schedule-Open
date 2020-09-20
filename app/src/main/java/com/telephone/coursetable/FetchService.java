@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -108,6 +109,21 @@ public class FetchService extends IntentService {
         started = true;
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
+    }
+
+    private void update_foreground_notification(@NonNull String text){
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Notification notification =
+                new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
+                        .setContentTitle("加油~今天也要打起精神来")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                        .setSmallIcon(R.drawable.feather_pen_trans)
+                        .setContentIntent(pendingIntent)
+                        .setTicker("加油~今天也要打起精神来")
+                        .build();
+        NotificationManagerCompat.from(this).notify(MyApp.notification_id_fetch_service_foreground, notification);
     }
 
     /**
