@@ -319,6 +319,7 @@ public class FunctionMenu extends AppCompatActivity {
                 etime = e.kssj;
             }
             exam_list = filter_elist;
+            int dog = 0;
             for (ExamInfo e : exam_list){
                 child = new LinkedList<>();
                 child.add("学期: " + tdao.select(e.term).get(0).termname);
@@ -329,10 +330,14 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("教室: " + e.croomno);
                 if (e.ets >= Clock.nowTimeStamp()){
                     child.add("1");
+                    children.add(child);
                 }else {
                     child.add(null);
+                    if (dog < 2){
+                        children.add(child);
+                        dog++;
+                    }
                 }
-                children.add(child);
             }
             menus.add(Map.entry(exams_group, children));
 
