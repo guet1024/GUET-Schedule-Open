@@ -7,6 +7,14 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/main_drag_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_wd7"/>
+
+    <TextView
         android:id="@+id/textView_time5"
         android:layout_width="22dp"
         android:layout_height="0dp"

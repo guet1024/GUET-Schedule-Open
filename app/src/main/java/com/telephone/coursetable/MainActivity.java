@@ -1,13 +1,17 @@
 package com.telephone.coursetable;
 
+import android.animation.ObjectAnimator;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -114,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
   
-    private View view;
+    private volatile View view;
 
     public View getView(){
         return view;
@@ -237,6 +241,45 @@ public class MainActivity extends AppCompatActivity {
                             ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(MainActivity.this::setTime);
                         }
                         ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
+                        MainActivity.this.view.findViewById(R.id.main_drag_background).setOnDragListener(new View.OnDragListener() {
+                            @Override
+                            public boolean onDrag(View view, DragEvent dragEvent) {
+                                int action = dragEvent.getAction();
+                                switch (action) {
+                                    case DragEvent.ACTION_DRAG_STARTED:
+                                    case DragEvent.ACTION_DRAG_ENTERED:
+                                    case DragEvent.ACTION_DRAG_EXITED:
+                                    case DragEvent.ACTION_DROP:
+                                        break;
+                                    case DragEvent.ACTION_DRAG_ENDED:
+                                        MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.VISIBLE);
+                                        break;
+                                    case DragEvent.ACTION_DRAG_LOCATION:
+                                        float y = dragEvent.getY();
+                                        float h = MainActivity.this.view.findViewById(R.id.floatingActionButton).getHeight();
+                                        float margin = 10;
+                                        Log.i("FAB", "drag y(relative) = " + y);
+                                        if (y + h + margin > view.getHeight()){
+                                            Log.i("FAB", "lower boundary");
+                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(view.getHeight() - margin - h));
+                                        }else if (y - h - margin < 0){
+                                            Log.i("FAB", "upper boundary");
+                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(0 + margin + h));
+                                        }else {
+                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(y));
+                                        }
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setOnLongClickListener(view -> {
+                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                            MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
+                            view.startDragAndDrop(null, shadowBuilder, null, 0);
+                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                            return true;
+                        });
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDisplayedValues(termValues);
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMinValue(0);
@@ -292,6 +335,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).start();
         }
+    }
+
+    private float getAbsoluteYofScreenFromDragBackgroundRelativeY(float y){
+        View view = MainActivity.this.view.findViewById(R.id.main_drag_background);
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        return y + location[1];
+    }
+
+    private void setCenterToAbsoluteYofScreen(float y){
+        View view = MainActivity.this.view.findViewById(R.id.floatingActionButton);
+        int[] l = new int[2];
+        view.getLocationOnScreen(l);
+        float now_top_distance = l[1];
+        float height = view.getHeight();
+        float need_top_distance = y - height/2;
+        float more_top_distance = need_top_distance - now_top_distance;
+        view.setTop(view.getTop() + (int)more_top_distance);
+        view.setBottom(view.getBottom() + (int)more_top_distance);
     }
 
     /**
