@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentTop="true"
-        android:background="#2196F3"
+        android:background="#DD2196F3"
         android:text="" />
 
     <ListView
