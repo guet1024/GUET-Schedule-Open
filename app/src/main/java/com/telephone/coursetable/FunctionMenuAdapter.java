@@ -331,13 +331,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     @Override
     public void onGroupExpanded(int gp) {
-        if (singleExpanded) {
-            for (int i = 0; i < groups.size(); i++){
-                if (gp != i){
-                    list.collapseGroup(i);
-                }
-            }
-        }
+        if (singleExpanded) {}
     }
 
     @Override

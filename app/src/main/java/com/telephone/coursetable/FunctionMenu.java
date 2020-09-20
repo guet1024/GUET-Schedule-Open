@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -112,6 +113,37 @@ public class FunctionMenu extends AppCompatActivity {
         tdao = MyApp.getCurrentAppDB().termInfoDao();
         cetDao = MyApp.getCurrentAppDB().cetDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
+        menu_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                if (parent.isGroupExpanded(groupPosition)){
+                    parent.collapseGroup(groupPosition);
+                }else {
+                    int num = 0;
+                    for (int i = 0; i < parent.getCount(); i++){
+                        if (parent.isGroupExpanded(i)){
+                            parent.collapseGroup(i);
+                            num++;
+                        }
+                    }
+                    int num_f = num;
+                    new Thread(()->{
+                        if (num_f > 0) {
+                            try {
+                                Thread.sleep(1);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+                        runOnUiThread(()->{
+                            parent.expandGroup(groupPosition, true);
+                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
+                        });
+                    }).start();
+                }
+                return true;
+            }
+        });
 
         final ExpandableListView menu_listf = menu_list;
 
