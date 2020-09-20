@@ -304,7 +304,7 @@ public class Login extends AppCompatActivity {
                 null,
                 null
         );
-        if (login_res.comment != null && !login_res.comment.isEmpty()) {
+        if ( login_res.code == 0 ) {
             LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
         }

@@ -370,9 +370,13 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 null
         );
-        if (login_res.comment != null && !login_res.comment.isEmpty()) {
+        if ( login_res.code == 0 ) {
             LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
+        }else if ( login_res.code == -6 ) {
+            if ( login_res.comment.contains("<html") ) {
+                login_res.code = -7;
+            }
         }
         if (login_res.code == 0 && builder != null) {
             if (!builder.toString().isEmpty()) {
@@ -381,6 +385,7 @@ public class Login_vpn extends AppCompatActivity {
             builder.append(login_res.cookie);
         }
         Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+
         return login_res;
     }
 
@@ -403,11 +408,26 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 false
         );
-        if (login_res.code == 0 && login_res.resp_code == 302){
+        if ( login_res.code == 0 && login_res.resp_code == 302 && login_res.c.getHeaderFields().get("location").get(0).equals("menu.asp?menu=mnall.asp") ){
             Log.e(NAME + " " + "login status", "success");
         }else {
-            if (login_res.code == 0){
-                login_res.code = -6;
+            if (login_res.code == 0 ){
+                //200 + 2333333333
+                if ( login_res.resp_code == 200 && login_res.comment != null && login_res.comment.contains("77726476706e69737468656265737421a1a013d2766626013051d0") ) {
+                    //密码错误
+                    login_res.code = -6;
+                }
+                //200 + empty
+                else if ( login_res.resp_code == 200 && login_res.comment != null && login_res.comment.isEmpty() ) {
+                    //未知错误
+                    login_res.code = -7;
+                }
+                //302
+                //200 + else
+                else if ( login_res.resp_code == 302 || ( login_res.resp_code == 200 && login_res.comment != null ) ) {
+                    //外网被禁
+                    login_res.code = -8;
+                }
             }
             Log.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
         }
@@ -805,14 +825,21 @@ public class Login_vpn extends AppCompatActivity {
             login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, cookie_builder);
             outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd, cookie);
 
-            if( login_res.code != 0 || outside_login_res.code != 0 ){
+            if ( login_res.comment == null || outside_login_res.comment == null ) {
+                Snackbar.make(view, getResources().getString(R.string.snackbar_login_fail_vpn), BaseTransientBottomBar.LENGTH_SHORT).show();
+                runOnUiThread(()->{ unlock2(true); });
+                return;
+            }else if( ( login_res.comment.isEmpty() ) || outside_login_res.code == -7 ) {
+                Snackbar.make(view, "未知错误", BaseTransientBottomBar.LENGTH_SHORT).show();
+                runOnUiThread(()->{ unlock2(true); });
+                return;
+            }else if( login_res.code == -7 ){
+                Snackbar.make(view, "WebVPN维护中..." , BaseTransientBottomBar.LENGTH_SHORT).show();
+                runOnUiThread(()->{ unlock2(true); });
+                return;
+            }
 
-                if ( (login_res.code != 0 && login_res.code != -6) ||
-                        (outside_login_res.code !=0 && outside_login_res.code != -6) ) {
-                    Snackbar.make(view, getResources().getString(R.string.snackbar_login_fail_vpn), BaseTransientBottomBar.LENGTH_SHORT).show();
-                    runOnUiThread(()->{ unlock2(true); });
-                    return;
-                }
+            if( login_res.code != 0 || outside_login_res.code != 0 ){
 
                 int count_ck_loop = 0;
                 while ( login_res.comment.contains("验证码") ) {
@@ -823,8 +850,16 @@ public class Login_vpn extends AppCompatActivity {
                     }
                     login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, cookie_builder);
 
-                    if (login_res.code != 0 && login_res.code != -6) {
+                    if ( login_res.comment == null ) {
                         Snackbar.make(view, getResources().getString(R.string.snackbar_login_fail_vpn), BaseTransientBottomBar.LENGTH_SHORT).show();
+                        runOnUiThread(()->{ unlock2(true); });
+                        return;
+                    }else if( login_res.comment.isEmpty() ) {
+                        Snackbar.make(view, "未知错误", BaseTransientBottomBar.LENGTH_SHORT).show();
+                        runOnUiThread(()->{ unlock2(true); });
+                        return;
+                    }else if( login_res.code == -7 ){
+                        Snackbar.make(view, "WebVPN维护中..." , BaseTransientBottomBar.LENGTH_SHORT).show();
                         runOnUiThread(()->{ unlock2(true); });
                         return;
                     }
@@ -861,6 +896,10 @@ public class Login_vpn extends AppCompatActivity {
                         ((EditText)findViewById(R.id.aaw_pwd_input)).setText("");
                         unlock2(true);
                         setFocusToEditText((EditText)findViewById(R.id.aaw_pwd_input));
+                        return;
+                    }else if ( outside_login_res.code == -8 ) {
+                        Snackbar.make(view, "WebVPN维护中...", BaseTransientBottomBar.LENGTH_SHORT).show();
+                        unlock2(true);
                         return;
                     }else if ( login_res.code != 0 || outside_login_res.code != 0 ){
                         Snackbar.make(view, "验证失败，请重试。", BaseTransientBottomBar.LENGTH_SHORT).show();
