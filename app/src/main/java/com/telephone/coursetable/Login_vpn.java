@@ -859,7 +859,7 @@ public class Login_vpn extends AppCompatActivity {
                         runOnUiThread(()->{ unlock2(true); });
                         return;
                     }else if( login_res.code == -7 ){
-                        Snackbar.make(view, "外网学分制系统未开放。" , BaseTransientBottomBar.LENGTH_SHORT).show();
+                        Snackbar.make(view, "WebVPN维护中..." , BaseTransientBottomBar.LENGTH_SHORT).show();
                         runOnUiThread(()->{ unlock2(true); });
                         return;
                     }
@@ -898,7 +898,7 @@ public class Login_vpn extends AppCompatActivity {
                         setFocusToEditText((EditText)findViewById(R.id.aaw_pwd_input));
                         return;
                     }else if ( outside_login_res.code == -8 ) {
-                        Snackbar.make(view, "外网教务网站未开放", BaseTransientBottomBar.LENGTH_SHORT).show();
+                        Snackbar.make(view, "WebVPN维护中...", BaseTransientBottomBar.LENGTH_SHORT).show();
                         unlock2(true);
                         return;
                     }else if ( login_res.code != 0 || outside_login_res.code != 0 ){
