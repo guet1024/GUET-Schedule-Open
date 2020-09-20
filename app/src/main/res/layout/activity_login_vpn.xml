@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/sid_tip"
+        android:text=" 　学　号　 "
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constrainedHeight="true"
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="教务处密码"
+        android:text=" 教务处密码 "
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constrainedHeight="true"
@@ -186,6 +186,9 @@
         android:background="@drawable/eye_close"
         app:layout_constraintBottom_toBottomOf="@+id/aaw_pwd_input"
         app:layout_constraintDimensionRatio="w, 1:1"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/aaw_pwd_input"
         app:layout_constraintTop_toTopOf="@+id/aaw_pwd_input" />
 
@@ -213,6 +216,9 @@
         android:background="@drawable/eye_close"
         app:layout_constraintBottom_toBottomOf="@+id/sys_pwd_input"
         app:layout_constraintDimensionRatio="w, 1:1"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/sys_pwd_input"
         app:layout_constraintTop_toTopOf="@+id/sys_pwd_input" />
 

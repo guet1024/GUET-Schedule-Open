@@ -3,6 +3,7 @@ package com.telephone.coursetable.Update;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -32,7 +34,7 @@ import java.io.UnsupportedEncodingException;
 
 public class Update {
 
-    public static void whatIsNew(@NonNull Context c, @Nullable AppCompatActivity app, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view) {
+    public static void whatIsNew(@NonNull Context c, @Nullable AppCompatActivity app, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view, @Nullable String already) {
         final String NAME = "whatIsNew()";
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(c);
@@ -62,9 +64,22 @@ public class Update {
                             }
                             if (view != null && app != null) {
                                 app.runOnUiThread(()->view.setOnClickListener(view1 -> {
-                                    Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-//                                    Uri uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
-                                    c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                                    builder.setMessage("您想要查看最新版本更新详情吗?");
+                                    builder.setPositiveButton("查看详情",
+                                            (dialogInterface, i) -> {
+                                                Uri see_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
+//                                            Uri see_uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
+                                                c.startActivity(new Intent(Intent.ACTION_VIEW, see_uri));
+                                            })
+                                            .setNegativeButton("直接下载",
+                                                    (dialogInterface, i) -> {
+                                                        String body = latest.getBody();
+                                                        String apk_name = body.substring(0, body.indexOf(".apk") + 4);
+                                                        Uri download_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/download/" + latest_tag + "/" + apk_name);
+                                                        c.startActivity(new Intent(Intent.ACTION_VIEW, download_uri));
+                                                    });
+                                    builder.create().show();
                                 }));
                             }
                             Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
@@ -81,7 +96,11 @@ public class Update {
                                             .setAutoCancel(true)
                                             .setTicker("新版发布: " + latest_tag)
                                             .build();
+                            if (already != null && already.equals(latest_tag)){
+                                return;
+                            }
                             NotificationManagerCompat.from(c).notify(MyApp.notification_id_new_version, notification);
+                            MyApp.getCurrentApp().new_version = latest_tag;
                         } else {
                             if (no_new_version != null) {
                                 no_new_version.run();

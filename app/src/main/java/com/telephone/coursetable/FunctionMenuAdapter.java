@@ -184,7 +184,8 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                                     }),
                                     t,
                                     groups.get(i).getValue().get(i1).get(0),
-                                    view_f
+                                    view_f,
+                                    null
                             );
                         });
                     }
@@ -331,13 +332,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     @Override
     public void onGroupExpanded(int gp) {
-        if (singleExpanded) {
-            for (int i = 0; i < groups.size(); i++){
-                if (gp != i){
-                    list.collapseGroup(i);
-                }
-            }
-        }
+        if (singleExpanded) {}
     }
 
     @Override

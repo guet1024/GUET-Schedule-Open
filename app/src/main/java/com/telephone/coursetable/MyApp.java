@@ -41,6 +41,8 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
+    public volatile String new_version = "";
+
     private volatile static ArrayList<String> data_list = null;
 
     private volatile static MainActivity running_main = null;
@@ -187,7 +189,7 @@ public class MyApp extends Application {
         editor_test = sp_test.edit();
 
         NotificationChannel channel;
-        channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
         channel.setDescription(notification_channel_des_running);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
         channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);

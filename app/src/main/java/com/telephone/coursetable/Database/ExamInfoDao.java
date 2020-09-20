@@ -15,7 +15,7 @@ public interface ExamInfoDao {
     @Query("delete from ExamInfo")
     void deleteAll();
 
-    @Query("select * from ExamInfo order by sts ASC")
+    @Query("select * from ExamInfo order by sts DESC")
     List<ExamInfo> selectAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
