@@ -164,7 +164,7 @@ public class FetchService extends IntentService {
                     Log.e(NAME, "WAN");
                     service_fetch_wan();
                 }
-                Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null);
+                Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null, MyApp.getCurrentApp().new_version);
             }else if (dog == 0){
                 dog = 21;
             }

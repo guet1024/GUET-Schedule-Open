@@ -34,7 +34,7 @@ import java.io.UnsupportedEncodingException;
 
 public class Update {
 
-    public static void whatIsNew(@NonNull Context c, @Nullable AppCompatActivity app, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view) {
+    public static void whatIsNew(@NonNull Context c, @Nullable AppCompatActivity app, @Nullable Runnable error, @Nullable Runnable new_version, @Nullable Runnable no_new_version, @Nullable TextView tv, @Nullable String origin, @Nullable View view, @Nullable String already) {
         final String NAME = "whatIsNew()";
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(c);
@@ -96,7 +96,11 @@ public class Update {
                                             .setAutoCancel(true)
                                             .setTicker("新版发布: " + latest_tag)
                                             .build();
+                            if (already != null && already.equals(latest_tag)){
+                                return;
+                            }
                             NotificationManagerCompat.from(c).notify(MyApp.notification_id_new_version, notification);
+                            MyApp.getCurrentApp().new_version = latest_tag;
                         } else {
                             if (no_new_version != null) {
                                 no_new_version.run();

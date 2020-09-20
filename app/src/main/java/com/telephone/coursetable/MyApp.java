@@ -41,6 +41,8 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
 
+    public volatile String new_version = "";
+
     private volatile static ArrayList<String> data_list = null;
 
     private volatile static MainActivity running_main = null;
