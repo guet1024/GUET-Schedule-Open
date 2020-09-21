@@ -140,6 +140,7 @@ public class MyApp extends Application {
     final public static int notification_id_new_version = 1800301128;
     final public static int notification_id_click_to_login = 1800301130;
     final public static long service_fetch_interval = 15000;   // 15s
+    final public static long patient_time = 4000;   //4s
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
             "今天: 第二大节 (上午)",

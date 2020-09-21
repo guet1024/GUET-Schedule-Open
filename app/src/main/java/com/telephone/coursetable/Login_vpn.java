@@ -294,6 +294,7 @@ public class Login_vpn extends AppCompatActivity {
         ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setEnabled(clickable);
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((Button)findViewById(R.id.button2)).setEnabled(clickable);
+        findViewById(R.id.login_vpn_first_patient).setVisibility(View.INVISIBLE);
     }
 
     private void unlock2(boolean clickable){
@@ -750,6 +751,19 @@ public class Login_vpn extends AppCompatActivity {
             @Override
             public void run() {
 
+                new Thread(()->{
+                    try {
+                        sleep(MyApp.patient_time);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    View fpatient = findViewById(R.id.login_vpn_first_patient);
+                    View pbar = findViewById(R.id.progressBar);
+                    if (fpatient != null && pbar != null) {
+                        runOnUiThread(() -> fpatient.setVisibility(pbar.getVisibility()));
+                    }
+                }).start();
+
                 //get cookie
                 cookie = Login_vpn.vpn_login(Login_vpn.this, sid, vpn_pwd);
 
@@ -831,13 +845,15 @@ public class Login_vpn extends AppCompatActivity {
 
             new Thread(()->{
                 try {
-                    sleep(3000);
+                    sleep(MyApp.patient_time);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                runOnUiThread(()->{
-                    findViewById(R.id.login_vpn_second_patient).setVisibility(findViewById(R.id.progressBar).getVisibility());
-                });
+                View spatient = findViewById(R.id.login_vpn_second_patient);
+                View pbar = findViewById(R.id.progressBar);
+                if (spatient != null && pbar != null) {
+                    runOnUiThread(() -> spatient.setVisibility(pbar.getVisibility()));
+                }
             }).start();
 
             login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, cookie_builder);
