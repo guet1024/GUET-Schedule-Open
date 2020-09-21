@@ -43,7 +43,7 @@ public class UserGuideAdapter extends RecyclerView.Adapter<UserGuideAdapter.View
         title.add("GUET课程表小部件");
         title.add("提示");
         title.add("提示");
-        title.add("提示");
+        title.add("通知");
     }
     @NonNull
     @Override
