@@ -1,9 +1,14 @@
 package com.telephone.coursetable.Clock;
 
 import android.content.SharedPreferences;
+import android.widget.LinearLayout;
 
+import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
@@ -12,7 +17,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Clock {
 
@@ -113,5 +122,103 @@ public class Clock {
      */
     public static long nowTimeStamp(){
         return Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
+    }
+
+    /**
+     * @return
+     * null means can not get time from file
+     */
+    public static Map.Entry<Integer, Integer> findNowTime(long nts, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix) {
+        Map.Entry<Integer, Integer> res = null;
+        LocalTime start = LocalTime.parse("00:00", formatter);
+        LocalTime end = LocalTime.parse("23:59", formatter);
+        LocalTime n = Instant.ofEpochMilli(nts).atZone(ZoneOffset.ofHours(8)).toLocalTime();
+        List<Integer> timelist = new ArrayList<>();
+
+        timelist.add(-1);
+        for ( int i=0 ; i<MyApp.times.length ; i++ ){
+            timelist.add( i );
+            timelist.add( i );
+        }
+        timelist.add(-1);
+
+        for ( int i=0 ; i<timelist.size()-1 ; i++ ){
+            if ( !timelist.get(i).equals(-1) && !timelist.get(i+1).equals(-1) ) {
+                String sj;
+                String ej;
+                if (timelist.get(i).equals(timelist.get(i+1))) {
+                    sj = pref.getString(MyApp.times[timelist.get(i)] + s_suffix, null);
+                    ej = pref.getString(MyApp.times[timelist.get(i + 1)] + e_suffix, null);
+                }else {
+                    sj = pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null);
+                    ej = pref.getString(MyApp.times[timelist.get(i+1)] + s_suffix, null);
+                }
+                if (sj != null && ej != null) {
+                    LocalTime sl = LocalTime.parse(sj, formatter);
+                    LocalTime el = LocalTime.parse(ej, formatter);
+                    if ( timelist.get(i).equals(timelist.get(i+1)) ){
+                        if (sl.isBefore(n) || sl.equals(n)) {
+                            if (el.isAfter(n) || el.equals(n)) {
+                                res = Map.entry(timelist.get(i), timelist.get(i+1));
+                                break;
+                            }
+                        }
+                    }else {
+                        if (sl.isBefore(n)) {
+                            if (el.isAfter(n)) {
+                                res = Map.entry(timelist.get(i), timelist.get(i+1));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (timelist.get(i).equals(-1)){
+                LocalTime st = LocalTime.parse(pref.getString(MyApp.times[timelist.get(i+1)] + s_suffix, null), formatter);
+                if (start.isBefore(n) || start.equals(n)) {
+                    if (st!=null && st.isAfter(n)){
+                        res = Map.entry(timelist.get(i), timelist.get(i+1));
+                        break;
+                    }
+                }
+            }
+            else if (timelist.get(i+1).equals(-1)){
+                LocalTime et = LocalTime.parse(pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null), formatter);
+                if (et!=null && et.isBefore(n)) {
+                    if (end.isAfter(n) || end.equals(n)){
+                        res = Map.entry(timelist.get(i), timelist.get(i+1));
+                        break;
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * @return
+     * null 找不到当前时间段 || 处于假期 || 当天没课
+     */
+    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime(long nts, TermInfoDao tdao, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix) {
+        Map.Entry<Integer, Integer> nowTime = findNowTime(nts, pref, formatter, s_suffix, e_suffix);
+        List<ShowTableNode> surplus = new LinkedList<>();
+        Locate locateNow = locateNow(nts, tdao, pref, MyApp.times, formatter, s_suffix, e_suffix, d_suffix);
+        TermInfo term = locateNow.term;
+        long week = locateNow.week;
+        long weekday = locateNow.weekday;
+        if ( nowTime == null ) return null;
+        if ( MyApp.getCurrentAppDB().goToClassDao().getTodayLessons(term.term, week, weekday).isEmpty() ) return null;
+        int time = nowTime.getValue();
+        if ( time == -1 ) return new FindClassOfCurrentOrNextTimeRes(surplus);
+        if ( term == null ) return null;
+        do {
+            surplus = MyApp.getCurrentAppDB().goToClassDao().getNode(term.term, week, weekday, MyApp.times[time] );
+        }while ( surplus.isEmpty() && (++time) < MyApp.times.length );
+        if (nowTime.getKey().equals(time)){
+            return new FindClassOfCurrentOrNextTimeRes(surplus, true);
+        }else {
+            return new FindClassOfCurrentOrNextTimeRes(surplus, false);
+        }
     }
 }
