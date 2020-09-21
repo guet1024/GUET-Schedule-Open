@@ -330,8 +330,13 @@ public class MainActivity extends AppCompatActivity {
                             ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                             current_week.setValue(0);
                         }
-                        showTable(locate, getTime_enhanced());
-                        setContentView(view);
+                        new Thread(()->{
+                            Map.Entry<Integer, Integer> g = getTime_enhanced();
+                            runOnUiThread(()->{
+                                showTable(locate, g);
+                                setContentView(view);
+                            });
+                        }).start();
                     });
                 }
             }).start();
@@ -382,7 +387,8 @@ public class MainActivity extends AppCompatActivity {
                     locate.term = null;
                     locate.week = Clock.NO_TERM;
                 }
-                runOnUiThread(()-> showTable(locate, getTime_enhanced()));
+                Map.Entry<Integer, Integer> g = getTime_enhanced();
+                runOnUiThread(()-> showTable(locate, g));
             }).start();
         }else {
             long nts = Clock.nowTimeStamp();
@@ -628,7 +634,8 @@ public class MainActivity extends AppCompatActivity {
                     locate.term = null;
                     locate.week = Clock.NO_TERM;
                 }
-                runOnUiThread(()-> showTable(locate, getTime_enhanced()));
+                Map.Entry<Integer, Integer> g = getTime_enhanced();
+                runOnUiThread(()-> showTable(locate, g));
             }).start();
         }else{
             pickerPanel.show(MainActivity.this);
@@ -636,10 +643,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * @ui/non-ui
+     * @non-ui
      * @clear
      */
     private Map.Entry<Integer, Integer> getTime_enhanced(){
-        return Map.entry(-1, 1);
+        return Clock.findNowTime(Clock.nowTimeStamp(),
+                MyApp.getCurrentSharedPreference(),
+                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix));
     }
 }
