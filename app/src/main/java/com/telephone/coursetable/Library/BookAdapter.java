@@ -88,9 +88,12 @@ public class BookAdapter implements ExpandableListAdapter {
 
         if (groups.getKey().size()==14) {
             ((TextView) view.findViewById(R.id.message_info_id)).setText("    "+groups.getKey().get(0).getKey()+groups.getKey().get(0).getValue());
-            ((TextView) view.findViewById(R.id.message_info_name)).setText("    "+groups.getKey().get(1).getKey()+groups.getKey().get(1).getValue());
-            ((TextView) view.findViewById(R.id.message_info_author)).setText("    "+groups.getKey().get(2).getKey()+groups.getKey().get(2).getValue());
-            ((TextView) view.findViewById(R.id.message_info_publisher)).setText("    "+groups.getKey().get(3).getKey()+groups.getKey().get(3).getValue());
+            ((TextView) view.findViewById(R.id.message_info_mingcheng)).setText("    "+groups.getKey().get(1).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_name)).setText(groups.getKey().get(1).getValue());
+            ((TextView) view.findViewById(R.id.message_info_zuozhe)).setText("    "+groups.getKey().get(2).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_author)).setText(groups.getKey().get(2).getValue());
+            ((TextView) view.findViewById(R.id.message_info_chubanshe)).setText("    "+groups.getKey().get(3).getKey());
+            ((TextView) view.findViewById(R.id.message_info_publisher)).setText(groups.getKey().get(3).getValue());
             ((TextView) view.findViewById(R.id.message_info_publishdate)).setText("    "+groups.getKey().get(4).getKey()+groups.getKey().get(4).getValue());
             ((TextView) view.findViewById(R.id.message_info_isbn)).setText("    "+groups.getKey().get(5).getKey()+groups.getKey().get(5).getValue());
             ((TextView) view.findViewById(R.id.message_info_ssh)).setText("    "+groups.getKey().get(6).getKey()+groups.getKey().get(6).getValue());
@@ -105,9 +108,12 @@ public class BookAdapter implements ExpandableListAdapter {
 
         if (groups.getKey().size()==13) {
             ((TextView) view.findViewById(R.id.message_info_id)).setText("    "+groups.getKey().get(0).getKey()+groups.getKey().get(0).getValue());
-            ((TextView) view.findViewById(R.id.message_info_name)).setText("    "+groups.getKey().get(1).getKey()+groups.getKey().get(1).getValue());
-            ((TextView) view.findViewById(R.id.message_info_author)).setText("    "+groups.getKey().get(2).getKey()+groups.getKey().get(2).getValue());
-            ((TextView) view.findViewById(R.id.message_info_publisher)).setText("    "+groups.getKey().get(3).getKey()+groups.getKey().get(3).getValue());
+            ((TextView) view.findViewById(R.id.message_info_mingcheng)).setText("    "+groups.getKey().get(1).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_name)).setText(groups.getKey().get(1).getValue());
+            ((TextView) view.findViewById(R.id.message_info_zuozhe)).setText("    "+groups.getKey().get(2).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_author)).setText(groups.getKey().get(2).getValue());
+            ((TextView) view.findViewById(R.id.message_info_chubanshe)).setText("    "+groups.getKey().get(3).getKey());
+            ((TextView) view.findViewById(R.id.message_info_publisher)).setText(groups.getKey().get(3).getValue());
             ((TextView) view.findViewById(R.id.message_info_publishdate)).setText("    "+groups.getKey().get(4).getKey()+groups.getKey().get(4).getValue());
             ((TextView) view.findViewById(R.id.message_info_isbn)).setText("    "+groups.getKey().get(5).getKey()+groups.getKey().get(5).getValue());
             ((TextView) view.findViewById(R.id.message_info_ssh)).setText("    "+groups.getKey().get(6).getKey()+groups.getKey().get(6).getValue());
@@ -122,9 +128,12 @@ public class BookAdapter implements ExpandableListAdapter {
 
         if (groups.getKey().size()==12) {
             ((TextView) view.findViewById(R.id.message_info_id)).setText("    "+groups.getKey().get(0).getKey()+groups.getKey().get(0).getValue());
-            ((TextView) view.findViewById(R.id.message_info_name)).setText("    "+groups.getKey().get(1).getKey()+groups.getKey().get(1).getValue());
-            ((TextView) view.findViewById(R.id.message_info_author)).setText("    "+groups.getKey().get(2).getKey()+groups.getKey().get(2).getValue());
-            ((TextView) view.findViewById(R.id.message_info_publisher)).setText("    "+groups.getKey().get(3).getKey()+groups.getKey().get(3).getValue());
+            ((TextView) view.findViewById(R.id.message_info_mingcheng)).setText("    "+groups.getKey().get(1).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_name)).setText(groups.getKey().get(1).getValue());
+            ((TextView) view.findViewById(R.id.message_info_zuozhe)).setText("    "+groups.getKey().get(2).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_author)).setText(groups.getKey().get(2).getValue());
+            ((TextView) view.findViewById(R.id.message_info_chubanshe)).setText("    "+groups.getKey().get(3).getKey());
+            ((TextView) view.findViewById(R.id.message_info_publisher)).setText(groups.getKey().get(3).getValue());
             ((TextView) view.findViewById(R.id.message_info_publishdate)).setText("    "+groups.getKey().get(4).getKey()+groups.getKey().get(4).getValue());
             ((TextView) view.findViewById(R.id.message_info_isbn)).setText("    "+groups.getKey().get(5).getKey()+groups.getKey().get(5).getValue());
             ((TextView) view.findViewById(R.id.message_info_ssh)).setText("    "+groups.getKey().get(6).getKey()+groups.getKey().get(6).getValue());
@@ -139,9 +148,12 @@ public class BookAdapter implements ExpandableListAdapter {
 
         if (groups.getKey().size()==11) {
             ((TextView) view.findViewById(R.id.message_info_id)).setText("    "+groups.getKey().get(0).getKey()+groups.getKey().get(0).getValue());
-            ((TextView) view.findViewById(R.id.message_info_name)).setText("    "+groups.getKey().get(1).getKey()+groups.getKey().get(1).getValue());
-            ((TextView) view.findViewById(R.id.message_info_author)).setText("    "+groups.getKey().get(2).getKey()+groups.getKey().get(2).getValue());
-            ((TextView) view.findViewById(R.id.message_info_publisher)).setText("    "+groups.getKey().get(3).getKey()+groups.getKey().get(3).getValue());
+            ((TextView) view.findViewById(R.id.message_info_mingcheng)).setText("    "+groups.getKey().get(1).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_name)).setText(groups.getKey().get(1).getValue());
+            ((TextView) view.findViewById(R.id.message_info_zuozhe)).setText("    "+groups.getKey().get(2).getKey()+"　");
+            ((TextView) view.findViewById(R.id.message_info_author)).setText(groups.getKey().get(2).getValue());
+            ((TextView) view.findViewById(R.id.message_info_chubanshe)).setText("    "+groups.getKey().get(3).getKey());
+            ((TextView) view.findViewById(R.id.message_info_publisher)).setText(groups.getKey().get(3).getValue());
             ((TextView) view.findViewById(R.id.message_info_publishdate)).setText("    "+groups.getKey().get(4).getKey()+groups.getKey().get(4).getValue());
             ((TextView) view.findViewById(R.id.message_info_isbn)).setText("    "+groups.getKey().get(5).getKey()+groups.getKey().get(5).getValue());
             ((TextView) view.findViewById(R.id.message_info_ssh)).setText("    "+groups.getKey().get(6).getKey()+groups.getKey().get(6).getValue());
