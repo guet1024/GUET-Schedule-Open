@@ -137,7 +137,7 @@ public class FunctionMenu extends AppCompatActivity {
                         }
                         runOnUiThread(()->{
                             parent.expandGroup(groupPosition, true);
-                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
+//                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
                         });
                     }).start();
                 }
