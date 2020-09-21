@@ -240,4 +240,15 @@
         app:layout_constraintTop_toBottomOf="@+id/button"
         tools:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/login_vpn_second_patient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WebVPN网络状态较差，请耐心等待"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/button"
+        app:layout_constraintEnd_toEndOf="@id/button"
+        android:layout_marginBottom="8dp"
+        android:visibility="invisible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
