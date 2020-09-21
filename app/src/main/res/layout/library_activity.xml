@@ -84,7 +84,7 @@
 
             <Button
                 android:id="@+id/reduce"
-                android:text="上一页"
+                android:text="上一本"
                 android:layout_marginRight="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
@@ -100,7 +100,7 @@
 
             <Button
                 android:id="@+id/plus"
-                android:text="下一页"
+                android:text="下一本"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>

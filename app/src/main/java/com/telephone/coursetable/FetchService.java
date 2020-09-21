@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +21,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.telephone.coursetable.AppWidgetProvider.ListAdapter;
 import com.telephone.coursetable.AppWidgetProvider.ListRemoteViewsService;
 import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.FindClassOfCurrentOrNextTimeRes;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.CET;
@@ -172,6 +172,7 @@ public class FetchService extends IntentService {
             wakeLock.acquire();
         }
         while (true){
+            running_showLessons();
             updateListAppWidgets();
             Log.e(NAME, "dog = " + dog);
             if (dog == 20){
@@ -205,6 +206,80 @@ public class FetchService extends IntentService {
             intent.putStringArrayListExtra(ListRemoteViewsService.EXTRA_ARRAY_LIST_OF_STRING_TO_GET_A_NEW_REMOTE_ADAPTER, data_list);
             sendBroadcast(intent);
             Log.e(NAME, "the intent to remind the app-widget-provider to update all list app-widgets has been sent");
+        }
+    }
+
+    private void running_showLessons() {
+        final String NAME = "running_showLessons()";
+        if (
+                MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.isRunning_login_thread()
+        ){
+            Log.e(NAME,"data is being change, NOT update shown lessons");
+            return;
+        }
+        AppDatabase appDatabase = MyApp.getCurrentAppDB();
+        UserDao udao = appDatabase.userDao();
+        TermInfoDao tdao = appDatabase.termInfoDao();
+        SharedPreferences preferences = MyApp.getCurrentSharedPreference();
+        long today = Clock.nowTimeStamp();
+        if (udao.getActivatedUser().isEmpty()){
+            update_foreground_notification("未登录");
+            return;
+        }
+        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime(today,
+                tdao,
+                preferences,
+                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                getResources().getString(R.string.pref_hour_start_suffix),
+                getResources().getString(R.string.pref_hour_end_suffix),
+                getResources().getString(R.string.pref_hour_des_suffix)
+        );
+        if (currentOrNextTime!=null) {
+            if (currentOrNextTime.isNow) {
+                String text = "正在上课：";
+                for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                    ShowTableNode nt = currentOrNextTime.list.get(i);
+                    if (i > 0) {
+                        if (nt.croomno != null) {
+                            text = text + " ( " + nt.croomno + " " + nt.cname + " )";
+                        } else text = text + " (" + " *　" + nt.cname + " )";
+                    } else {
+                        if (nt.croomno != null) {
+                            text = text + nt.croomno + " " + nt.cname;
+                        } else text = text + " *　" + nt.cname;
+                    }
+                }
+                update_foreground_notification(text);
+            }
+            else {
+                if (currentOrNextTime.list.isEmpty()) {
+                    update_foreground_notification("今日课程已全部完成");
+                }
+                else {
+                    String text = "下一节课：";
+                    if ( currentOrNextTime.des!=null ) text = "下一节课(" + currentOrNextTime.des + ")：";
+                    for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                        ShowTableNode nt = currentOrNextTime.list.get(i);
+                        if (i > 0) {
+                            if (nt.croomno != null) {
+                                text = text + " ( " + nt.croomno + " " + nt.cname + " )";
+                            } else text = text + " (" + " *　" + nt.cname + " )";
+                        } else {
+                            if (nt.croomno != null) {
+                                text = text + nt.croomno + " " + nt.cname;
+                            } else text = text + " *　" + nt.cname;
+                        }
+                    }
+                    update_foreground_notification(text);
+                }
+            }
+        }
+        else {
+            update_foreground_notification("今日无课");
         }
     }
 
