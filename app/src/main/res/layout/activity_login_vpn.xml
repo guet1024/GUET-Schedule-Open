@@ -139,7 +139,7 @@
     <AutoCompleteTextView
         android:id="@+id/sid_input"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:background="@drawable/login_text_border"
@@ -147,12 +147,13 @@
         android:gravity="center"
         android:inputType="number"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/aaw_pwd_input"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintTop_toTopOf="@id/login_vpn_sid_tip"
+        app:layout_constraintBottom_toBottomOf="@id/login_vpn_sid_tip"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier2"
@@ -166,18 +167,19 @@
     <AutoCompleteTextView
         android:id="@+id/aaw_pwd_input"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@drawable/login_text_border"
         android:gravity="center"
-        android:singleLine="true"
-        android:inputType="textPassword"
         android:imeOptions="actionDone"
+        android:inputType="textPassword"
+        android:singleLine="true"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/sys_pwd_input"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/sid_input" />
+        app:layout_constraintTop_toTopOf="@id/login_vpn_aaw_tip"
+        app:layout_constraintBottom_toBottomOf="@id/login_vpn_aaw_tip"/>
 
     <Button
         android:id="@+id/show_pwd_21"
@@ -196,18 +198,19 @@
     <AutoCompleteTextView
         android:id="@+id/sys_pwd_input"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@drawable/login_text_border"
         android:gravity="center"
         android:imeOptions="actionDone"
-        android:singleLine="true"
         android:inputType="textPassword"
+        android:singleLine="true"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/aaw_pwd_input" />
+        app:layout_constraintTop_toTopOf="@id/login_vpn_sys_tip"
+        app:layout_constraintBottom_toBottomOf="@id/login_vpn_sys_tip"/>
 
     <Button
         android:id="@+id/show_pwd_22"

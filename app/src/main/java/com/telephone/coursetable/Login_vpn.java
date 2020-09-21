@@ -9,6 +9,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -99,6 +103,7 @@ public class Login_vpn extends AppCompatActivity {
     //clear
     private void first_login() {
         setContentView(R.layout.activity_login_vpn_no_checkcode);
+        setHintForEditText("上网登录页密码，默认为身份证后6位", 10, (EditText)findViewById(R.id.passwd_input));
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
 
         Button btn_pwd = ((Button)findViewById(R.id.show_pwd));
@@ -175,6 +180,7 @@ public class Login_vpn extends AppCompatActivity {
                     ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
 
                     setContentView(R.layout.activity_login_vpn);
+                    setHintForEditText("默认为身份证后6位", 10, (EditText)findViewById(R.id.aaw_pwd_input));
                     ((TextView) findViewById(R.id.sid_input)).setText(sid);
                     ((TextView) findViewById(R.id.sid_input)).setEnabled(false);
 
@@ -1013,6 +1019,17 @@ public class Login_vpn extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    /**
+     * @ui
+     * @clear
+     */
+    private void setHintForEditText(String hint, int size, EditText et){
+        SpannableString h = new SpannableString(hint);
+        AbsoluteSizeSpan s = new AbsoluteSizeSpan(size,true);//true means "sp"
+        h.setSpan(s, 0, h.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        et.setHint(new SpannedString(h));
     }
 }
 

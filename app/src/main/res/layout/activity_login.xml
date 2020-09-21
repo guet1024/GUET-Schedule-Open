@@ -201,7 +201,7 @@
         app:layout_constraintStart_toEndOf="@id/login_sid"
         app:layout_constraintEnd_toEndOf="@id/login_textView39"
         android:layout_marginStart="5dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:singleLine="true"/>
 
     <AutoCompleteTextView
@@ -218,7 +218,7 @@
         app:layout_constraintStart_toEndOf="@id/login_pwd"
         app:layout_constraintEnd_toEndOf="@id/login_textView40"
         android:layout_marginStart="5dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:singleLine="true"/>
 
     <AutoCompleteTextView
@@ -235,7 +235,7 @@
         app:layout_constraintStart_toEndOf="@id/login_ck"
         app:layout_constraintEnd_toEndOf="@id/login_textView41"
         android:layout_marginStart="5dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:singleLine="true"/>
 
     <Button
