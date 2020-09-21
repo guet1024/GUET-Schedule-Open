@@ -7,6 +7,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -254,6 +258,17 @@ public class Login extends AppCompatActivity {
             etv.setEnabled(!etv.isEnabled());
             etv.clearFocus();
         }
+    }
+
+    /**
+     * @ui
+     * @clear
+     */
+    private void setHintForEditText(String hint, int size, EditText et){
+        SpannableString h = new SpannableString(hint);
+        AbsoluteSizeSpan s = new AbsoluteSizeSpan(size,true);//true means "sp"
+        h.setSpan(s, 0, h.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        et.setHint(new SpannedString(h));
     }
 
     /**
@@ -836,6 +851,8 @@ public class Login extends AppCompatActivity {
             runOnUiThread(() -> {
                 ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).setText(aaw_pwdf);
                 ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).setText(vpn_pwdf);
+                setHintForEditText("默认为身份证后6位", 10, (EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input));
+                setHintForEditText("上网登录页密码，默认为身份证后6位", 8, (EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input));
                 extra_pwd_dialog.show();
             });
         }).start();

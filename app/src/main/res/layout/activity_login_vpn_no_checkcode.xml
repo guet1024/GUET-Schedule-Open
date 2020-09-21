@@ -7,7 +7,7 @@
     tools:context=".Login_vpn">
 
     <TextView
-        android:id="@+id/change_hour_textView7"
+        android:id="@+id/vpn_first_login_sid_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,14 +16,14 @@
         android:textSize="18sp"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/change_hour_textView8"
+        app:layout_constraintBottom_toTopOf="@+id/vpn_first_login_vpn_pwd_tip"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <TextView
-        android:id="@+id/change_hour_textView8"
+        android:id="@+id/vpn_first_login_vpn_pwd_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toBottomOf="@+id/change_hour_textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/vpn_first_login_sid_tip" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -126,7 +126,7 @@
     <AutoCompleteTextView
         android:id="@+id/sid_input"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@drawable/login_text_border"
         android:completionThreshold="0"
         android:gravity="center"
@@ -134,12 +134,13 @@
         android:inputType="number"
         android:imeOptions="actionDone"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/passwd_input"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintTop_toTopOf="@id/vpn_first_login_sid_tip"
+        app:layout_constraintBottom_toBottomOf="@id/vpn_first_login_sid_tip"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier2"
@@ -147,24 +148,25 @@
         android:layout_height="wrap_content"
         app:barrierDirection="end"
         app:barrierMargin="8dp"
-        app:constraint_referenced_ids="change_hour_textView7,change_hour_textView8"
+        app:constraint_referenced_ids="vpn_first_login_sid_tip,vpn_first_login_vpn_pwd_tip"
         tools:layout_editor_absoluteX="411dp" />
 
     <AutoCompleteTextView
         android:id="@+id/passwd_input"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:background="@drawable/login_text_border"
         android:gravity="center"
         android:inputType="textPassword"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/sid_input" />
+        app:layout_constraintTop_toTopOf="@id/vpn_first_login_vpn_pwd_tip"
+        app:layout_constraintBottom_toBottomOf="@id/vpn_first_login_vpn_pwd_tip"/>
 
     <Button
         android:id="@+id/show_pwd"

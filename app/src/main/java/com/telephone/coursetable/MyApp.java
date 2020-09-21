@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
 import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
+import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
+import static androidx.core.app.NotificationCompat.VISIBILITY_SECRET;
 
 public class MyApp extends Application {
     final public static String PACKAGE_NAME = "com.telephone.coursetable";
@@ -176,6 +178,13 @@ public class MyApp extends Application {
             {R.id.textView22,R.id.textView23,R.id.textView24,R.id.textView25,R.id.textView26,R.id.textView27,R.id.textView28},//times[3]
             {R.id.textView29,R.id.textView30,R.id.textView31,R.id.textView32,R.id.textView33,R.id.textView34,R.id.textView35}//times[4]
     };
+    final public static int[] restLineIds = {
+            R.id.main_rest_01,
+            R.id.main_rest_12,
+            R.id.main_rest_23,
+            R.id.main_rest_34,
+            R.id.main_rest_45
+    };
 
     @Override
     public void onCreate() {
@@ -191,6 +200,7 @@ public class MyApp extends Application {
         NotificationChannel channel;
         channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
         channel.setDescription(notification_channel_des_running);
+        channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
         channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(notification_channel_des_update);

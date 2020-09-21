@@ -99,11 +99,12 @@ public class FetchService extends IntentService {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
-                new Notification.Builder(this, MyApp.notification_channel_id_running)
+                new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
                         .setContentTitle("加油~今天也要打起精神来")
                         .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
                         .setTicker("加油~今天也要打起精神来")
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
         startForeground(MyApp.notification_id_fetch_service_foreground, notification);
         started = true;
@@ -122,6 +123,7 @@ public class FetchService extends IntentService {
                         .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
                         .setTicker("加油~今天也要打起精神来")
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
         NotificationManagerCompat.from(this).notify(MyApp.notification_id_fetch_service_foreground, notification);
     }
