@@ -44,6 +44,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -329,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                             ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                             current_week.setValue(0);
                         }
-                        showTable(locate);
+                        showTable(locate, getTime_enhanced());
                         setContentView(view);
                     });
                 }
@@ -381,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                     locate.term = null;
                     locate.week = Clock.NO_TERM;
                 }
-                runOnUiThread(()-> showTable(locate));
+                runOnUiThread(()-> showTable(locate, getTime_enhanced()));
             }).start();
         }else {
             long nts = Clock.nowTimeStamp();
@@ -481,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
      * 5. hide {@link #pickerPanel}
      * @clear
      */
-    private void showTable(@NonNull Locate locate){
+    private void showTable(@NonNull Locate locate, @Nullable Map.Entry<Integer, Integer> breakTime){
         new Thread(()->{
             List<ShowTableNode> nodes = null;
             if (locate.term != null){
@@ -559,6 +560,9 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(((TextView) MainActivity.this.view.findViewById(R.id.term_picker_text)).getCurrentTextColor());
                     }
                 }
+                for (int id : MyApp.restLineIds){
+                    MainActivity.this.view.findViewById(id).setVisibility(View.INVISIBLE);
+                }
                 for (int row_index = 0; row_index < MyApp.nodeIds.length; row_index++) {
                     for (int column_index = 0; column_index < MyApp.weekdaytvIds.length; column_index++) {
                         String node_text = texts.get(row_index * MyApp.weekdaytvIds.length + column_index);
@@ -584,6 +588,13 @@ public class MainActivity extends AppCompatActivity {
                     TextView node_tv = (TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[time_tv_ids_index][weekday_tv_ids_index]);
                     if (!node_tv.getText().toString().isEmpty()){
                         node_tv.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                    }
+                }
+                if (breakTime != null) {
+                    Map.Entry<Integer, Integer> mbreakTime = Map.entry(breakTime.getKey() + 1, breakTime.getValue() + 1);
+                    if (!mbreakTime.getKey().equals(mbreakTime.getValue())){
+                        int rest_line_id = MyApp.restLineIds[mbreakTime.getKey()];
+                        MainActivity.this.view.findViewById(rest_line_id).setVisibility(View.VISIBLE);
                     }
                 }
                 pickerPanel.hide(MainActivity.this);
@@ -614,10 +625,18 @@ public class MainActivity extends AppCompatActivity {
                     locate.term = null;
                     locate.week = Clock.NO_TERM;
                 }
-                runOnUiThread(()-> showTable(locate));
+                runOnUiThread(()-> showTable(locate, getTime_enhanced()));
             }).start();
         }else{
             pickerPanel.show(MainActivity.this);
         }
+    }
+
+    /**
+     * @ui/non-ui
+     * @clear
+     */
+    private Map.Entry<Integer, Integer> getTime_enhanced(){
+        return Map.entry(1, 2);
     }
 }
