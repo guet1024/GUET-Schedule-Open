@@ -593,8 +593,11 @@ public class MainActivity extends AppCompatActivity {
                 if (breakTime != null) {
                     Map.Entry<Integer, Integer> mbreakTime = Map.entry(breakTime.getKey() + 1, breakTime.getValue() + 1);
                     if (!mbreakTime.getKey().equals(mbreakTime.getValue())){
-                        int rest_line_id = MyApp.restLineIds[mbreakTime.getKey()];
-                        MainActivity.this.view.findViewById(rest_line_id).setVisibility(View.VISIBLE);
+                        int index = mbreakTime.getKey();
+                        if (index < MyApp.restLineIds.length) {
+                            int rest_line_id = MyApp.restLineIds[mbreakTime.getKey()];
+                            MainActivity.this.view.findViewById(rest_line_id).setVisibility(View.VISIBLE);
+                        }
                     }
                 }
                 pickerPanel.hide(MainActivity.this);
