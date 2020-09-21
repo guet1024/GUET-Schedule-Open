@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
 import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
+import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
+import static androidx.core.app.NotificationCompat.VISIBILITY_SECRET;
 
 public class MyApp extends Application {
     final public static String PACKAGE_NAME = "com.telephone.coursetable";
@@ -198,6 +200,7 @@ public class MyApp extends Application {
         NotificationChannel channel;
         channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
         channel.setDescription(notification_channel_des_running);
+        channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
         channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(notification_channel_des_update);
