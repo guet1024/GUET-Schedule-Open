@@ -218,7 +218,7 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
         ){
-            Log.e(NAME,"data is being change, list app-widgets NOT updated");
+            Log.e(NAME,"data is being change, NOT update shown lessons");
             return;
         }
         AppDatabase appDatabase = MyApp.getCurrentAppDB();
@@ -250,7 +250,7 @@ public class FetchService extends IntentService {
                     } else {
                         if (nt.croomno != null) {
                             text = text + nt.croomno + " " + nt.cname;
-                        } else text = text + nt.cname;
+                        } else text = text + " *　" + nt.cname;
                     }
                 }
                 update_foreground_notification(text);
@@ -261,6 +261,7 @@ public class FetchService extends IntentService {
                 }
                 else {
                     String text = "下一节课：";
+                    if ( currentOrNextTime.des!=null ) text = "下一节课(" + currentOrNextTime.des + ")：";
                     for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                         ShowTableNode nt = currentOrNextTime.list.get(i);
                         if (i > 0) {
@@ -270,7 +271,7 @@ public class FetchService extends IntentService {
                         } else {
                             if (nt.croomno != null) {
                                 text = text + nt.croomno + " " + nt.cname;
-                            } else text = text + nt.cname;
+                            } else text = text + " *　" + nt.cname;
                         }
                     }
                     update_foreground_notification(text);

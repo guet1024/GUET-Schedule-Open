@@ -41,7 +41,7 @@ public interface GoToClassDao {
     List<ShowTableNode> getSpecifiedWeekTable(String term, long week);
 
     /**
-     * this method will return a {@link ShowTableNode} list according to specified period
+     * this method will return a {@link ShowTableNode} list according to specified day
      */
     @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time from " +
             "(select courseno, croomno, weekday, time from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday ) g, " +

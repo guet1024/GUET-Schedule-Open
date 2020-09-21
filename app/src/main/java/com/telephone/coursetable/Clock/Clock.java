@@ -208,17 +208,21 @@ public class Clock {
         long week = locateNow.week;
         long weekday = locateNow.weekday;
         if ( nowTime == null ) return null;
+        if ( term == null ) return null;
         if ( MyApp.getCurrentAppDB().goToClassDao().getTodayLessons(term.term, week, weekday).isEmpty() ) return null;
         int time = nowTime.getValue();
         if ( time == -1 ) return new FindClassOfCurrentOrNextTimeRes(surplus);
-        if ( term == null ) return null;
         do {
             surplus = MyApp.getCurrentAppDB().goToClassDao().getNode(term.term, week, weekday, MyApp.times[time] );
         }while ( surplus.isEmpty() && (++time) < MyApp.times.length );
         if (nowTime.getKey().equals(time)){
             return new FindClassOfCurrentOrNextTimeRes(surplus, true);
         }else {
-            return new FindClassOfCurrentOrNextTimeRes(surplus, false);
+            String des = null;
+            if (time < MyApp.times.length) {
+                des = pref.getString(MyApp.times[time] + d_suffix, null);
+            }
+            return new FindClassOfCurrentOrNextTimeRes(surplus, false, des);
         }
     }
 }
