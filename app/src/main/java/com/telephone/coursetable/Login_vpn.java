@@ -301,6 +301,7 @@ public class Login_vpn extends AppCompatActivity {
         ((AutoCompleteTextView)findViewById(R.id.aaw_pwd_input)).setEnabled(true);
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+        findViewById(R.id.login_vpn_second_patient).setVisibility(View.INVISIBLE);
     }
 
     //clear
@@ -827,6 +828,17 @@ public class Login_vpn extends AppCompatActivity {
         }
 
         new Thread(()->{
+
+            new Thread(()->{
+                try {
+                    sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                runOnUiThread(()->{
+                    findViewById(R.id.login_vpn_second_patient).setVisibility(findViewById(R.id.progressBar).getVisibility());
+                });
+            }).start();
 
             login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, cookie_builder);
             outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd, cookie);
