@@ -113,6 +113,7 @@ public class FunctionMenu extends AppCompatActivity {
         tdao = MyApp.getCurrentAppDB().termInfoDao();
         cetDao = MyApp.getCurrentAppDB().cetDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
+        menu_list.setGroupIndicator(null);
         menu_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
