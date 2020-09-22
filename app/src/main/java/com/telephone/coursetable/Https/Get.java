@@ -88,12 +88,8 @@ public class Get {
         try {
             resp_code = cnt.getResponseCode();
             List<String> encodings = cnt.getHeaderFields().get("content-encoding");
-            if (encodings != null){
-                if (encodings.get(0).equals("gzip")){
-                    in = new InputStreamReader(new GZIPInputStream(cnt.getInputStream()));
-                }else {
-                    in = new InputStreamReader(cnt.getInputStream());
-                }
+            if (encodings != null && encodings.get(0).equals("gzip")){
+                in = new InputStreamReader(new GZIPInputStream(cnt.getInputStream()));
             }else {
                 in = new InputStreamReader(cnt.getInputStream());
             }
