@@ -218,11 +218,11 @@ public class Clock {
         if (nowTime.getKey().equals(time)){
             return new FindClassOfCurrentOrNextTimeRes(surplus, true);
         }else {
-            String des = null;
+            String start = null;
             if (time < MyApp.times.length) {
-                des = pref.getString(MyApp.times[time] + d_suffix, null);
+                start = pref.getString(MyApp.times[time] + s_suffix, null);
             }
-            return new FindClassOfCurrentOrNextTimeRes(surplus, false, des);
+            return new FindClassOfCurrentOrNextTimeRes(surplus, false, start);
         }
     }
 }
