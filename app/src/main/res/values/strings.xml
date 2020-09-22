@@ -132,7 +132,7 @@
     <string name="pref_hour_end_backup_suffix">EB</string>
     <string name="pref_hour_des_backup_suffix">DB</string>
 
-    <string name="no_user_title_suffix">" | 未登录"</string>
+    <string name="no_user_title_suffix">" | 点击登录"</string>
     <string name="updating_user_title_suffix">" | 同步中..."</string>
     <string name="ok_user_title_suffix">同步</string>
     <string name="ok_user_title_prefix">"  "</string>

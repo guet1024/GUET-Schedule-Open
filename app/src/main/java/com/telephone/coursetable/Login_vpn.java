@@ -14,6 +14,9 @@ import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -100,6 +103,35 @@ public class Login_vpn extends AppCompatActivity {
     private HttpConnectionAndCode login_res;
     private HttpConnectionAndCode outside_login_res;
 
+    private boolean isMenuEnabled = true;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.login_vpn, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(Login_vpn.this, MainActivity.class));
+                return true;
+            case R.id.login_vpn_menu_switch_login_mode:
+                startActivity(new Intent(Login_vpn.this, Login.class));
+                return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.login_vpn_menu_switch_login_mode);
+        item.setEnabled(isMenuEnabled);
+        return true;
+    }
+
     //clear
     private void first_login() {
         setContentView(R.layout.activity_login_vpn_no_checkcode);
@@ -178,6 +210,9 @@ public class Login_vpn extends AppCompatActivity {
                 }
 
                 runOnUiThread(() -> {
+
+                    isMenuEnabled = true;
+                    invalidateOptionsMenu();
 
                     ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
 
@@ -283,6 +318,8 @@ public class Login_vpn extends AppCompatActivity {
         ((Button)findViewById(R.id.button)).setEnabled(false);
         ((Button)findViewById(R.id.button2)).setEnabled(false);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+        isMenuEnabled = false;
+        invalidateOptionsMenu();
     }
 
     private void lock2(){
@@ -290,6 +327,8 @@ public class Login_vpn extends AppCompatActivity {
         ((AutoCompleteTextView)findViewById(R.id.aaw_pwd_input)).setEnabled(false);
         ((Button)findViewById(R.id.button)).setEnabled(false);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+        isMenuEnabled = false;
+        invalidateOptionsMenu();
     }
 
     //clear
@@ -299,6 +338,8 @@ public class Login_vpn extends AppCompatActivity {
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((Button)findViewById(R.id.button2)).setEnabled(clickable);
         findViewById(R.id.login_vpn_first_patient).setVisibility(View.INVISIBLE);
+        isMenuEnabled = true;
+        invalidateOptionsMenu();
     }
 
     private void unlock2(boolean clickable){
@@ -307,6 +348,8 @@ public class Login_vpn extends AppCompatActivity {
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
         findViewById(R.id.login_vpn_second_patient).setVisibility(View.INVISIBLE);
+        isMenuEnabled = true;
+        invalidateOptionsMenu();
     }
 
     //clear
