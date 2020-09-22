@@ -261,7 +261,7 @@ public class FetchService extends IntentService {
                 }
                 else {
                     String text = "下一节课：";
-                    if ( currentOrNextTime.des!=null ) text = "下一节课(" + currentOrNextTime.des + ")：";
+                    if ( currentOrNextTime.start!=null ) text = "下一节课(" + currentOrNextTime.start + ")：";
                     for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                         ShowTableNode nt = currentOrNextTime.list.get(i);
                         if (i > 0) {
