@@ -13,7 +13,9 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline16"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toTopOf="@+id/guideline17" />
+        app:layout_constraintTop_toTopOf="@+id/guideline17"
+        android:divider="@drawable/function_menu_group_divider"
+        android:childDivider="@drawable/function_menu_item_divider"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline16"

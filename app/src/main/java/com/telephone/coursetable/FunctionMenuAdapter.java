@@ -8,15 +8,14 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
-import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -101,6 +100,38 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
         }
         ((TextView)view.findViewById(R.id.textView_group_text)).setText(groups.get(i).getKey());
+        switch (i){
+            case 0:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.personal_info);
+                break;
+            case 1:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.plan_courses);
+                break;
+            case 2:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.grades);
+                break;
+            case 3:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.library);
+                break;
+            case 4:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.change_term);
+                break;
+            case 5:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.exam);
+                break;
+            case 6:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.teachers_evaluation);
+                break;
+            case 7:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.cet);
+                break;
+            case 8:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.update);
+                break;
+            case 9:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.about);
+                break;
+        }
         return view;
     }
 

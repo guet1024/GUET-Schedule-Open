@@ -9,7 +9,7 @@
         android:id="@+id/textView_group_text"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:background="@drawable/function_menu_group_border"
+        android:background="@drawable/function_menu_group_background"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"
@@ -19,4 +19,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/group_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@id/image_bottom"
+        app:layout_constraintDimensionRatio="w, 1:1"
+        app:layout_constraintStart_toStartOf="@id/image_left"
+        app:layout_constraintTop_toTopOf="@id/image_top" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/image_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/image_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/image_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.10" />
 </androidx.constraintlayout.widget.ConstraintLayout>
