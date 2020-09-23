@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.MyApp;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 public class Get {
     /**
@@ -78,13 +80,19 @@ public class Get {
             }else {
                 cnt.setInstanceFollowRedirects(redirect);
             }
+            cnt.setRequestProperty("Connection", "keep-alive");
             cnt.setReadTimeout(4000);
             cnt.setConnectTimeout(2000);
+            SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
+            if (exist_ssl != null){
+                cnt.setSSLSocketFactory(exist_ssl);
+            }
             cnt.connect();
         } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
+        MyApp.getCurrentApp().ssl = cnt.getSSLSocketFactory();
         try {
             resp_code = cnt.getResponseCode();
             List<String> encodings = cnt.getHeaderFields().get("content-encoding");
@@ -112,12 +120,12 @@ public class Get {
             e.printStackTrace();
             return new HttpConnectionAndCode(-5);
         }
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HttpConnectionAndCode(-2);
-        }
+//        try {
+//            in.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return new HttpConnectionAndCode(-2);
+//        }
 
         //get cookie from server
         String set_cookie = null;

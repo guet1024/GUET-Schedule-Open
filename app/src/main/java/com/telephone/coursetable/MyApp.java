@@ -27,6 +27,8 @@ import com.telephone.coursetable.Http.Get;
 
 import java.util.ArrayList;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
 import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
@@ -186,6 +188,8 @@ public class MyApp extends Application {
             R.id.main_rest_34,
             R.id.main_rest_45
     };
+
+    public SSLSocketFactory ssl = null;
 
     @Override
     public void onCreate() {

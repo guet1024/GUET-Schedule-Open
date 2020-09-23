@@ -565,6 +565,9 @@ public class Login_vpn extends AppCompatActivity {
             Log.e(NAME, "fail | can not get init vpn ticket");
             return null;
         }
+        cookie = cookie.substring(cookie.indexOf("wengine_vpn_ticket"));
+        cookie = cookie.substring(0, cookie.indexOf(r.getString(R.string.cookie_delimiter)));
+        cookie += r.getString(R.string.cookie_delimiter) + "show_vpn=1" + r.getString(R.string.cookie_delimiter) + "refresh=1";
         Log.e(NAME + " " + "ticket cookie", cookie);
         HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
                 r.getString(R.string.wan_vpn_login_url),
