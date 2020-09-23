@@ -81,8 +81,8 @@ public class Get {
                 cnt.setInstanceFollowRedirects(redirect);
             }
             cnt.setRequestProperty("Connection", "keep-alive");
-            cnt.setReadTimeout(4000);
-            cnt.setConnectTimeout(2000);
+            cnt.setReadTimeout(10000);
+            cnt.setConnectTimeout(10000);
             SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
             if (exist_ssl != null){
                 cnt.setSSLSocketFactory(exist_ssl);
