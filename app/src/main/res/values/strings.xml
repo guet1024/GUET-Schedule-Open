@@ -82,16 +82,16 @@
     <string name="lan_get_grades_success_contain_response_text">\"success\":true</string>
 
 
-    <string name="wan_get_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
-    <string name="wan_get_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
-    <string name="wan_vpn_get_ticket_url">https://v.guet.edu.cn/</string>
-    <string name="wan_vpn_get_ticket_referer">https://v.guet.edu.cn/</string>
-    <string name="wan_vpn_login_url">https://v.guet.edu.cn/do-login</string>
-    <string name="wan_vpn_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_get_check_code_url">https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
+    <string name="wan_get_check_code_referer">https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
+    <string name="wan_vpn_get_ticket_url">https://202.193.64.75/</string>
+    <string name="wan_vpn_get_ticket_referer">https://202.193.64.75/</string>
+    <string name="wan_vpn_login_url">https://202.193.64.75/do-login</string>
+    <string name="wan_vpn_login_referer">https://202.193.64.75/login</string>
     <string name="wan_vpn_login_success_contain_response_text">\"success\": true</string>
     <string name="wan_vpn_login_need_confirm_contain_response_text">\"error\": \"NEED_CONFIRM\"</string>
-    <string name="wan_vpn_confirm_login_url">https://v.guet.edu.cn/do-confirm-login</string>
-    <string name="wan_vpn_confirm_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_vpn_confirm_login_url">https://202.193.64.75/do-confirm-login</string>
+    <string name="wan_vpn_confirm_login_referer">https://202.193.64.75/login</string>
     <string name="wan_vpn_login_ip_forbidden_contain_response_text">\"error\": \"IP_FORBIDDEN\"</string>
 
     <string name="wan_vpn_ip_forbidden">ip</string>

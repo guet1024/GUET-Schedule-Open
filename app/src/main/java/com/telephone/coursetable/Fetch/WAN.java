@@ -32,10 +32,10 @@ public class WAN {
     public static HttpConnectionAndCode personInfo(Context c,String cookie){
         Resources r = c.getResources();
         return Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Student/GetPerson",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Student/GetPerson",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 null,
                 cookie,
                 "]}",
@@ -50,10 +50,10 @@ public class WAN {
     public static HttpConnectionAndCode termInfo(Context c,String cookie){
         Resources r = c.getResources();
         HttpConnectionAndCode rss =  Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Comm/GetTerm",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Comm/GetTerm",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "]}",
                 null,
@@ -69,10 +69,10 @@ public class WAN {
     public static HttpConnectionAndCode goToClass_ClassInfo(Context c,String cookie){
         Resources r = c.getResources();
         return Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getstutable",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getstutable",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "]}",
                 null,
@@ -86,10 +86,10 @@ public class WAN {
     public static HttpConnectionAndCode hour(Context c,String cookie){
         Resources r = c.getResources();
         return Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Comm/gethours",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Comm/gethours",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "]}",
                 null,
@@ -105,10 +105,10 @@ public class WAN {
     public static HttpConnectionAndCode studentInfo(Context c,String cookie){
         Resources r = c.getResources();
         return Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/StuInfo",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/StuInfo",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 null,
                 cookie,
                 "]}",
@@ -125,10 +125,10 @@ public class WAN {
     public static HttpConnectionAndCode graduationScore(Context c,String cookie){
         Resources r = c.getResources();
         HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 "stid=1",
                 cookie,
                 "}",
@@ -138,10 +138,10 @@ public class WAN {
                 null
         );
         return Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "]}",
                 null,
@@ -155,10 +155,10 @@ public class WAN {
     public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
         Resources r = c.getResources();
         HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/Getyxxf",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 "stid=1",
                 cookie,
                 "}",
@@ -168,10 +168,10 @@ public class WAN {
                 null
         );
         return com.telephone.coursetable.Https.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getplancj",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getplancj",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,
@@ -187,10 +187,10 @@ public class WAN {
     public static HttpConnectionAndCode grades(Context c, String cookie){
         Resources r = c.getResources();
         return com.telephone.coursetable.Https.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Student/GetStuScore",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Student/GetStuScore",
                 new String[]{"term="},
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,
@@ -204,10 +204,10 @@ public class WAN {
     public static HttpConnectionAndCode examInfo(Context c, String cookie){
         Resources r = c.getResources();
         return com.telephone.coursetable.Https.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getexamap?&term=",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/getexamap?&term=",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,
@@ -222,10 +222,10 @@ public class WAN {
 
         Resources r = c.getResources();
         return com.telephone.coursetable.Https.Get.get(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/GetLvlScore?term=",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/student/GetLvlScore?term=",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
+                "https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,

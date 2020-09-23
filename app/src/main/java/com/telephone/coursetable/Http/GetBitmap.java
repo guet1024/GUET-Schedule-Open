@@ -43,7 +43,6 @@ public class GetBitmap {
         Bitmap bmp = null;
         String tail = null;
         String success_resp_text = null;
-        Boolean redirect = false;
         int resp_code = 0;
         try {
             StringBuilder u_bulider = new StringBuilder();
@@ -61,11 +60,7 @@ public class GetBitmap {
                 cnt.setRequestProperty("Cookie", cookie);
             }
             cnt.setRequestMethod("GET");
-            if (redirect == null) {
-                cnt.setInstanceFollowRedirects(true);
-            }else {
-                cnt.setInstanceFollowRedirects(redirect);
-            }
+            cnt.setInstanceFollowRedirects(false);
             cnt.setReadTimeout(4000);
             cnt.setConnectTimeout(2000);
             cnt.connect();

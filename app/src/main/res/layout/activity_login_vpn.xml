@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/login_btn_border"
         android:onClick="login_thread_2"
-        android:text="@string/login_btn"
+        android:text="登录学分制系统"
         android:textColor="@color/colorLoginButtonText"
         android:textSize="14sp"
         app:layout_constrainedHeight="true"

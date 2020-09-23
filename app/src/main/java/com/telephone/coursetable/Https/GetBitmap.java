@@ -66,13 +66,17 @@ public class GetBitmap {
                 cnt.setRequestProperty("Cookie", cookie);
             }
             cnt.setRequestMethod("GET");
-            cnt.setInstanceFollowRedirects(true);
+            cnt.setInstanceFollowRedirects(false);
             cnt.setRequestProperty("Connection", "keep-alive");
-            cnt.setReadTimeout(10000);
-            cnt.setConnectTimeout(10000);
+            cnt.setReadTimeout(1000);
+            cnt.setConnectTimeout(1000);
             SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
             if (exist_ssl != null){
                 cnt.setSSLSocketFactory(exist_ssl);
+            }
+            if (MyApp.ip_override && cnt.getURL().toString().contains("202.193.64.75")) {
+                cnt.setRequestProperty("Host", "v.guet.edu.cn");
+                cnt.setHostnameVerifier((hostname, session) -> HttpsURLConnection.getDefaultHostnameVerifier().verify("v.guet.edu.cn", session));
             }
             cnt.connect();
         } catch (Exception e) {
