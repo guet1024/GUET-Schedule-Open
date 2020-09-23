@@ -303,7 +303,7 @@ public class LibraryActivity extends AppCompatActivity {
                 Elements maxpage = doc_xml.select("html > body > form#form1 > div.body > div.mainbody2_out > div.mainbody2_in > div.mainbody > div.turnpage > div.ctrl > span#labConutPage");
                 if (maxbooknum.isEmpty() || maxpage.isEmpty()) {
                     checkActivity_progressBarISTrue(false);
-                    checkActivity_tvToastISTrue("WebVPN维护中...", true);
+                    checkActivity_tvToastISTrue("请重试", true);
                     return;
                 }
                 maxBookNum = Integer.parseInt(maxbooknum.get(0).ownText());

@@ -105,6 +105,8 @@ public class Login_vpn extends AppCompatActivity {
 
     private boolean isMenuEnabled = true;
 
+    private String title;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -338,7 +340,7 @@ public class Login_vpn extends AppCompatActivity {
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((Button)findViewById(R.id.button2)).setEnabled(clickable);
         findViewById(R.id.login_vpn_first_patient).setVisibility(View.INVISIBLE);
-        isMenuEnabled = true;
+        isMenuEnabled = clickable;
         invalidateOptionsMenu();
     }
 
@@ -348,7 +350,7 @@ public class Login_vpn extends AppCompatActivity {
         ((Button)findViewById(R.id.button)).setEnabled(clickable);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
         findViewById(R.id.login_vpn_second_patient).setVisibility(View.INVISIBLE);
-        isMenuEnabled = true;
+        isMenuEnabled = clickable;
         invalidateOptionsMenu();
     }
 
@@ -641,6 +643,9 @@ public class Login_vpn extends AppCompatActivity {
         cetDao = db.cetDao();
 
         cookie_builder = new StringBuilder();
+
+        title = getSupportActionBar().getTitle().toString();
+
         first_login();
     }
 
@@ -874,6 +879,10 @@ public class Login_vpn extends AppCompatActivity {
         lock2();
         clearIMAndFocus();
 
+        if (getSupportActionBar().getTitle().toString().equals(getResources().getString(R.string.lan_title_login_updated_fail))){
+            getSupportActionBar().setTitle(title);
+        }
+
         aaw_pwd = ((TextView) findViewById(R.id.aaw_pwd_input)).getText().toString();
         sys_pwd = ((TextView) findViewById(R.id.sys_pwd_input)).getText().toString();
 
@@ -914,12 +923,18 @@ public class Login_vpn extends AppCompatActivity {
                 runOnUiThread(()->{ unlock2(true); });
                 return;
             }else if( ( login_res.comment.isEmpty() ) || outside_login_res.code == -7 ) {
-                Snackbar.make(view, "未知错误", BaseTransientBottomBar.LENGTH_SHORT).show();
-                runOnUiThread(()->{ unlock2(true); });
+                Toast.makeText(Login_vpn.this, "请重新登录", Toast.LENGTH_SHORT).show();
+                runOnUiThread(()->{
+                    unlock2(false);
+                    startActivity(new Intent(Login_vpn.this, Login_vpn.class));
+                });
                 return;
             }else if( login_res.code == -7 ){
-                Snackbar.make(view, "WebVPN维护中..." , BaseTransientBottomBar.LENGTH_SHORT).show();
-                runOnUiThread(()->{ unlock2(true); });
+                Toast.makeText(Login_vpn.this, "请重新登录", Toast.LENGTH_SHORT).show();
+                runOnUiThread(()->{
+                    unlock2(false);
+                    startActivity(new Intent(Login_vpn.this, Login_vpn.class));
+                });
                 return;
             }
 
@@ -939,12 +954,18 @@ public class Login_vpn extends AppCompatActivity {
                         runOnUiThread(()->{ unlock2(true); });
                         return;
                     }else if( login_res.comment.isEmpty() ) {
-                        Snackbar.make(view, "未知错误", BaseTransientBottomBar.LENGTH_SHORT).show();
-                        runOnUiThread(()->{ unlock2(true); });
+                        Toast.makeText(Login_vpn.this, "请重新登录", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(()->{
+                            unlock2(false);
+                            startActivity(new Intent(Login_vpn.this, Login_vpn.class));
+                        });
                         return;
                     }else if( login_res.code == -7 ){
-                        Snackbar.make(view, "WebVPN维护中..." , BaseTransientBottomBar.LENGTH_SHORT).show();
-                        runOnUiThread(()->{ unlock2(true); });
+                        Toast.makeText(Login_vpn.this, "请重新登录", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(()->{
+                            unlock2(false);
+                            startActivity(new Intent(Login_vpn.this, Login_vpn.class));
+                        });
                         return;
                     }
 
@@ -982,8 +1003,9 @@ public class Login_vpn extends AppCompatActivity {
                         setFocusToEditText((EditText)findViewById(R.id.aaw_pwd_input));
                         return;
                     }else if ( outside_login_res.code == -8 ) {
-                        Snackbar.make(view, "WebVPN维护中...", BaseTransientBottomBar.LENGTH_SHORT).show();
-                        unlock2(true);
+                        Toast.makeText(Login_vpn.this, "请重新登录", Toast.LENGTH_SHORT).show();
+                        unlock2(false);
+                        startActivity(new Intent(Login_vpn.this, Login_vpn.class));
                         return;
                     }else if ( login_res.code != 0 || outside_login_res.code != 0 ){
                         Snackbar.make(view, "验证失败，请重试。", BaseTransientBottomBar.LENGTH_SHORT).show();
