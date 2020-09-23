@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.MyApp;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 
 public class GetBitmap {
@@ -47,9 +49,6 @@ public class GetBitmap {
         InputStreamReader in = null;
         String response = null;
         Bitmap bmp = null;
-        String tail = null;
-        String success_resp_text = null;
-        Boolean redirect = false;
         int resp_code = 0;
         try {
             StringBuilder u_bulider = new StringBuilder();
@@ -67,18 +66,24 @@ public class GetBitmap {
                 cnt.setRequestProperty("Cookie", cookie);
             }
             cnt.setRequestMethod("GET");
-            if (redirect == null) {
-                cnt.setInstanceFollowRedirects(true);
-            }else {
-                cnt.setInstanceFollowRedirects(redirect);
+            cnt.setInstanceFollowRedirects(false);
+            cnt.setRequestProperty("Connection", "keep-alive");
+            cnt.setReadTimeout(1000);
+            cnt.setConnectTimeout(1000);
+            SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
+            if (exist_ssl != null){
+                cnt.setSSLSocketFactory(exist_ssl);
             }
-            cnt.setReadTimeout(4000);
-            cnt.setConnectTimeout(2000);
+            if (MyApp.ip_override && cnt.getURL().toString().contains("202.193.64.75")) {
+                cnt.setRequestProperty("Host", "v.guet.edu.cn");
+                cnt.setHostnameVerifier((hostname, session) -> HttpsURLConnection.getDefaultHostnameVerifier().verify("v.guet.edu.cn", session));
+            }
             cnt.connect();
         } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
+        MyApp.getCurrentApp().ssl = cnt.getSSLSocketFactory();
         try {
             resp_code = cnt.getResponseCode();
             response = "";
@@ -111,15 +116,6 @@ public class GetBitmap {
         }
 
         //do not disconnect, keep alive
-        if (success_resp_text != null){
-            if (!response.contains(success_resp_text)){
-                //if cookie_delimiter != null but no server cookie, set_cookie = ""
-                //if no response, response = ""
-                HttpConnectionAndCode res = new HttpConnectionAndCode(cnt, -6, response, set_cookie, resp_code);
-                res.obj = bmp;
-                return res;
-            }
-        }
 
         //do not disconnect, keep alive
         //if cookie_delimiter != null but no server cookie, set_cookie = ""

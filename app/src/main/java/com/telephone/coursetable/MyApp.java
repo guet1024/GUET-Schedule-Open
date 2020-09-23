@@ -27,6 +27,8 @@ import com.telephone.coursetable.Http.Get;
 
 import java.util.ArrayList;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
 import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
@@ -141,6 +143,8 @@ public class MyApp extends Application {
     final public static int notification_id_click_to_login = 1800301130;
     final public static long service_fetch_interval = 15000;   // 15s
     final public static long patient_time = 4000;   //4s
+    final public static boolean ip_override = true;
+    final public static int check_code_regain_times = 4;
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
             "今天: 第二大节 (上午)",
@@ -186,6 +190,8 @@ public class MyApp extends Application {
             R.id.main_rest_34,
             R.id.main_rest_45
     };
+
+    public SSLSocketFactory ssl = null;
 
     @Override
     public void onCreate() {

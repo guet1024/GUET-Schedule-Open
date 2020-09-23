@@ -82,16 +82,16 @@
     <string name="lan_get_grades_success_contain_response_text">\"success\":true</string>
 
 
-    <string name="wan_get_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
-    <string name="wan_get_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
-    <string name="wan_vpn_get_ticket_url">https://v.guet.edu.cn/</string>
-    <string name="wan_vpn_get_ticket_referer">https://v.guet.edu.cn/</string>
-    <string name="wan_vpn_login_url">https://v.guet.edu.cn/do-login</string>
-    <string name="wan_vpn_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_get_check_code_url">https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/login/GetValidateCode?id=0.5018148359674977</string>
+    <string name="wan_get_check_code_referer">https://202.193.64.75/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/</string>
+    <string name="wan_vpn_get_ticket_url">https://202.193.64.75/</string>
+    <string name="wan_vpn_get_ticket_referer">https://202.193.64.75/</string>
+    <string name="wan_vpn_login_url">https://202.193.64.75/do-login</string>
+    <string name="wan_vpn_login_referer">https://202.193.64.75/login</string>
     <string name="wan_vpn_login_success_contain_response_text">\"success\": true</string>
     <string name="wan_vpn_login_need_confirm_contain_response_text">\"error\": \"NEED_CONFIRM\"</string>
-    <string name="wan_vpn_confirm_login_url">https://v.guet.edu.cn/do-confirm-login</string>
-    <string name="wan_vpn_confirm_login_referer">https://v.guet.edu.cn/login</string>
+    <string name="wan_vpn_confirm_login_url">https://202.193.64.75/do-confirm-login</string>
+    <string name="wan_vpn_confirm_login_referer">https://202.193.64.75/login</string>
     <string name="wan_vpn_login_ip_forbidden_contain_response_text">\"error\": \"IP_FORBIDDEN\"</string>
 
     <string name="wan_vpn_ip_forbidden">ip</string>
@@ -132,7 +132,7 @@
     <string name="pref_hour_end_backup_suffix">EB</string>
     <string name="pref_hour_des_backup_suffix">DB</string>
 
-    <string name="no_user_title_suffix">" | 未登录"</string>
+    <string name="no_user_title_suffix">" | 点击登录"</string>
     <string name="updating_user_title_suffix">" | 同步中..."</string>
     <string name="ok_user_title_suffix">同步</string>
     <string name="ok_user_title_prefix">"  "</string>
@@ -150,6 +150,6 @@
     <string name="member">Telephone　</string>
     <string name="member1">　MC土块</string>
     <string name="member2">树獭　</string>
-    <string name="member3">　SmartPig</string>
-    <string name="more">\n　　本APP由开发人员独立研发完成，与学校官方无关。\n　　如果您对我们的作品有任何宝贵意见(建议)，请联系我们。\n　　Q群号：336405176\n　　GitHub：Telephone2019/CourseTable\n</string>
+    <string name="member3">　Amaranth</string>
+    <string name="more">\n　　本APP由开发人员独立研发完成，与学校官方无关。\n　　如果您对我们的作品有任何宝贵意见(建议)，请联系我们。\n　　Q群号：336405176\n　　GitHub：Telephone2019/CourseTable\n\n　　👉点击右上角一键加入交流群\n</string>
 </resources>
