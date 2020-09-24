@@ -58,7 +58,11 @@ public class Post {
             if (parms != null && parms.length > 0) {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
-            url = new URL(u_bulider.toString());
+            String url_s = u_bulider.toString();
+            if (MyApp.ip_override){
+                url_s = url_s.replace(MyApp.guet_v_domain, MyApp.guet_v_ip);
+            }
+            url = new URL(url_s);
             cnt = (HttpsURLConnection) url.openConnection();
             cnt.setDoOutput(true);
             cnt.setDoInput(true);
@@ -92,9 +96,9 @@ public class Post {
             if (exist_ssl != null){
                 cnt.setSSLSocketFactory(exist_ssl);
             }
-            if (MyApp.ip_override && cnt.getURL().toString().contains("202.193.64.75")) {
-                cnt.setRequestProperty("Host", "v.guet.edu.cn");
-                cnt.setHostnameVerifier((hostname, session) -> HttpsURLConnection.getDefaultHostnameVerifier().verify("v.guet.edu.cn", session));
+            if (MyApp.ip_override && cnt.getURL().toString().contains(MyApp.guet_v_ip)) {
+                cnt.setRequestProperty("Host", MyApp.guet_v_domain);
+                cnt.setHostnameVerifier((hostname, session) -> HttpsURLConnection.getDefaultHostnameVerifier().verify(MyApp.guet_v_domain, session));
             }
             cnt.connect();
         } catch (Exception e) {
