@@ -241,7 +241,7 @@
         tools:visibility="invisible" />
 
     <TextView
-        android:id="@+id/login_vpn_second_patient"
+        android:id="@+id/login_vpn_patient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="WebVPN网络状态较差，请耐心等待"
