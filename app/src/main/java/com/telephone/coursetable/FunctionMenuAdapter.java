@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 import com.telephone.coursetable.Update.Update;
@@ -96,9 +98,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean isExpanded, View view, ViewGroup viewGroup) {
-        if(view == null){
-            view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
-        }
+        view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
         ((TextView)view.findViewById(R.id.textView_group_text)).setText(groups.get(i).getKey());
         switch (i){
             case 0:
@@ -109,6 +109,9 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 2:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.grades);
+                if (groups.get(i).getValue().isEmpty()){
+                    view.setOnClickListener(v -> Snackbar.make(v, "成绩单为空", BaseTransientBottomBar.LENGTH_SHORT).show());
+                }
                 break;
             case 3:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.library);
@@ -118,12 +121,18 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 5:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.exam);
+                if (groups.get(i).getValue().isEmpty()){
+                    view.setOnClickListener(v -> Snackbar.make(v, "暂无考试安排", BaseTransientBottomBar.LENGTH_SHORT).show());
+                }
                 break;
             case 6:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.teachers_evaluation);
                 break;
             case 7:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.cet);
+                if (groups.get(i).getValue().isEmpty()){
+                    view.setOnClickListener(v -> Snackbar.make(v, "未查询到等级考试成绩", BaseTransientBottomBar.LENGTH_SHORT).show());
+                }
                 break;
             case 8:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.update);
