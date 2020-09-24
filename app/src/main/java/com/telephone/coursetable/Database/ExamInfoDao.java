@@ -20,4 +20,7 @@ public interface ExamInfoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ExamInfo tuple);
+
+    @Query("select * from ExamInfo where examdate>=:today order by sts DESC")
+    List<ExamInfo> selectFromToday(String today);
 }
