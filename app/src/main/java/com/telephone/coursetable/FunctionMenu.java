@@ -24,6 +24,7 @@ import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -335,7 +336,7 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(change_term_group, children));
 
             String exams_group = "考试安排";
-            List<ExamInfo> exam_list = edao.selectAll();
+            List<ExamInfo> exam_list = edao.selectFromToday(LocalDate.now().toString());
             children = new LinkedList<>();
             String cno = "";
             String edate = "";
@@ -352,7 +353,6 @@ public class FunctionMenu extends AppCompatActivity {
                 etime = e.kssj;
             }
             exam_list = filter_elist;
-            int dog = 0;
             for (ExamInfo e : exam_list){
                 child = new LinkedList<>();
                 child.add("学期: " + tdao.select(e.term).get(0).termname);
@@ -366,10 +366,7 @@ public class FunctionMenu extends AppCompatActivity {
                     children.add(child);
                 }else {
                     child.add(null);
-                    if (dog < 2){
-                        children.add(child);
-                        dog++;
-                    }
+                    children.add(child);
                 }
             }
             menus.add(Map.entry(exams_group, children));
