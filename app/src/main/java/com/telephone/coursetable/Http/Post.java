@@ -28,6 +28,7 @@ public class Post {
      * - -4 POST send body fail
      * - -5 cannot get response
      * - -6 response check fail
+     * - -7 302
      * @clear
      */
     public static HttpConnectionAndCode post(@NonNull final String u,
@@ -107,6 +108,9 @@ public class Post {
         }
         try {
             resp_code = cnt.getResponseCode();
+            if (redirect != null && !redirect && resp_code == 302){
+                return new HttpConnectionAndCode(cnt, -7, "");
+            }
             List<String> encodings = cnt.getHeaderFields().get("content-encoding");
             if (encodings != null){
                 if (encodings.get(0).equals("gzip")){

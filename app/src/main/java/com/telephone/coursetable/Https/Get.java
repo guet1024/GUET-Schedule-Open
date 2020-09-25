@@ -34,6 +34,7 @@ public class Get {
      * - -2 cannot close input stream
      * - -5 cannot get response
      * - -6 response check fail
+     * - -7 302
      * @clear
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
@@ -105,6 +106,9 @@ public class Get {
         MyApp.getCurrentApp().ssl = cnt.getSSLSocketFactory();
         try {
             resp_code = cnt.getResponseCode();
+            if (redirect != null && !redirect && resp_code == 302){
+                return new HttpConnectionAndCode(cnt, -7, "");
+            }
             List<String> encodings = cnt.getHeaderFields().get("content-encoding");
             if (encodings != null && encodings.get(0).equals("gzip")){
                 in = new InputStreamReader(new GZIPInputStream(cnt.getInputStream()));
