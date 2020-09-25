@@ -374,7 +374,8 @@ public class Login extends AppCompatActivity {
                 null,
                 false
         );
-        if (login_res.code == 0 && login_res.resp_code == 302){
+        if (login_res.code == -7){
+            login_res.code = 0;
             Log.e(NAME + " " + "login status", "success");
         }else {
             if (login_res.code == 0){

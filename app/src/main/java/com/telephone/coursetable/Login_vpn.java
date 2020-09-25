@@ -52,6 +52,12 @@ import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Https.Post;
 import com.telephone.coursetable.Merge.Merge;
+import com.telephone.coursetable.MyException.Exception302;
+import com.telephone.coursetable.MyException.ExceptionIpForbidden;
+import com.telephone.coursetable.MyException.ExceptionNetworkError;
+import com.telephone.coursetable.MyException.ExceptionUnknown;
+import com.telephone.coursetable.MyException.ExceptionWrongCheckCode;
+import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
 import com.telephone.coursetable.OCR.OCR;
 
 
@@ -437,59 +443,67 @@ public class Login_vpn extends AppCompatActivity {
 
     /**
      * @non-ui
-     * the sid and pwd must be correct
-     * @return
-     * - see {@link Login_vpn#vpn_login(Context, String, String)}
-     * ▲ note that: if return null, it means network error, because the sid and pwd must be correct
+     * @throws com.telephone.coursetable.MyException.MyException
+     * @return return web vpn ticket if success, otherwise throw exceptions
+     * @trustme
      * @clear
      */
-    private String regainVPNTicket(@NonNull String sid, @NonNull String pwd){
+    public static String regainVPNTicket(@NonNull Context c, @NonNull String sid, @NonNull String pwd) throws ExceptionWrongUserOrPassword, ExceptionNetworkError, ExceptionIpForbidden, ExceptionUnknown {
         int times = 0;
         String ticket = null;
-        while (times <= MyApp.web_vpn_ticket_regain_times){
-            ticket = vpn_login(Login_vpn.this, sid, pwd);
-            times++;
-            if (ticket != null){
+        while (times < MyApp.web_vpn_ticket_regain_times){
+            try {
+                ticket = vpn_login(c, sid, pwd);
                 break;
+            } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                throw new ExceptionWrongUserOrPassword();
+            } catch (ExceptionNetworkError exceptionNetworkError) {
+                if (times == MyApp.web_vpn_ticket_regain_times - 1){
+                    throw new ExceptionNetworkError();
+                }
+            } catch (ExceptionIpForbidden exceptionIpForbidden) {
+                if (times == MyApp.web_vpn_ticket_regain_times - 1){
+                    throw new ExceptionIpForbidden();
+                }
+            } catch (ExceptionUnknown exceptionUnknown) {
+                if (times == MyApp.web_vpn_ticket_regain_times - 1){
+                    throw new ExceptionUnknown();
+                }
             }
+            times++;
         }
         return ticket;
     }
 
     /**
      * @non-ui
-     * the sid and vpn_pwd must be correct
-     * @throws NoSuchFieldException -> means 302 when get check-code
-     * @throws IllegalAccessException -> means vpn login ip forbidden
-     * @return
-     * - null: network error
-     * - not null: success
+     * @throws com.telephone.coursetable.MyException.MyException
+     * @return return check-code bitmap if success, otherwise throw exceptions
+     * @trustme
      * @clear
      */
-    private Bitmap try_to_get_check_code(@NonNull String cookie, @NonNull String sid, @NonNull String vpn_pwd) throws NoSuchFieldException, IllegalAccessException{
+    public static Bitmap try_to_get_check_code(@NonNull Context c, @NonNull String cookie, @NonNull String sid, @NonNull String vpn_pwd) throws Exception302, ExceptionWrongUserOrPassword, ExceptionUnknown, ExceptionIpForbidden, ExceptionNetworkError {
         Bitmap ck_bitmap = null;
         int times = 0;
-        while (times <= MyApp.check_code_regain_times){
-            HttpConnectionAndCode res = WAN.checkcode(Login_vpn.this, cookie);
+        while (times < MyApp.check_code_regain_times){
+            HttpConnectionAndCode res = WAN.checkcode(c, cookie);
             ck_bitmap = (Bitmap) res.obj;
             times++;
             if (ck_bitmap != null){//success
                 break;
-            }else if (res.resp_code == 302){//jump to other page
-                throw new NoSuchFieldException();
-            }else {//network error
+            }else if (res.code == -7){//jump to other page
+                throw new Exception302();
+            }else {//else, network error
                 if (times >= MyApp.check_code_regain_times/3) {
                     if (res.c != null) {
                         res.c.disconnect();
                     }
                 }
-                cookie = regainVPNTicket(sid, vpn_pwd);
-                if (cookie == null){//network error
-                    break;
-                }else if (cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){//vpn login forbidden
-                    throw new IllegalAccessException();
-                }
+                cookie = regainVPNTicket(c, sid, vpn_pwd);
             }
+        }
+        if (ck_bitmap == null){
+            throw new ExceptionNetworkError();
         }
         return ck_bitmap;
     }
@@ -549,8 +563,14 @@ public class Login_vpn extends AppCompatActivity {
         cetDao.deleteAll();
     }
 
-    //clear
-    public static HttpConnectionAndCode login(Context c, String sid, String pwd, String ckcode, String cookie, @Nullable StringBuilder builder) {
+    /**
+     * @non-ui
+     * @throws com.telephone.coursetable.MyException.MyException
+     * @return return the res if success, otherwise throw exceptions
+     * @trustme
+     * @clear
+     */
+    public static HttpConnectionAndCode login(@NonNull Context c, @NonNull String sid, @NonNull String pwd, @NonNull String ckcode, @NonNull String cookie) throws Exception302, ExceptionWrongCheckCode, ExceptionWrongUserOrPassword, ExceptionNetworkError, ExceptionUnknown {
         final String NAME = "login()";
         Resources r = c.getResources();
         String body = "us=" + sid + "&pwd=" + pwd + "&ck=" + ckcode;
@@ -558,37 +578,47 @@ public class Login_vpn extends AppCompatActivity {
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/SubmitLogin",
                 null,
                 r.getString(R.string.user_agent),
-                r.getString(R.string.wan_vpn_login_referer),
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/",
                 body,
                 cookie,
                 "}",
-                r.getString(R.string.cookie_delimiter),
+                null,
                 r.getString(R.string.lan_login_success_contain_response_text),
                 null,
-                null
+                false
         );
-        if ( login_res.code == 0 ) {
+        if (login_res.code == 0){
             LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
-        }else if ( login_res.code == -6 ) {
-            if ( login_res.comment.contains("<html") ) {
-                login_res.code = -7;
-            }
+            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            return login_res;
+        }else if (login_res.code == -7){
+            Log.e(NAME, "meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
+            throw new Exception302();
+        }else if (login_res.comment != null && login_res.comment.contains("验证码")){
+            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            throw new ExceptionWrongCheckCode();
+        }else if (login_res.comment != null && login_res.comment.contains("密码")){
+            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            throw new ExceptionWrongUserOrPassword();
+        }else if (login_res.comment == null){
+            Log.e(NAME, "network error");
+            throw new ExceptionNetworkError();
+        }else {
+            Log.e(NAME, "unknown error");
+            throw new ExceptionUnknown();
         }
-        if (login_res.code == 0 && builder != null) {
-            if (!builder.toString().isEmpty()) {
-                builder.append(r.getString(R.string.cookie_delimiter));
-            }
-            builder.append(login_res.cookie);
-        }
-        Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
-
-        return login_res;
     }
 
-    //教务处登录
-    public static HttpConnectionAndCode outside_login_test(Context c, final String sid, final String pwd, String cookie){
-        final String NAME = "outside_login_test()";
+    /**
+     * @non-ui
+     * @throws com.telephone.coursetable.MyException.MyException
+     * @return return true if success, otherwise throw exceptions
+     * @trustme
+     * @clear
+     */
+    public static boolean aaw_login(@NonNull Context c, @NonNull final String sid, @NonNull final String pwd, @NonNull String cookie) throws ExceptionNetworkError, ExceptionWrongUserOrPassword, Exception302, ExceptionUnknown {
+        final String NAME = "aaw_login()";
         Resources r = c.getResources();
         String body = "username=" + sid + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
         Log.e(NAME + " " + "body", body);
@@ -596,39 +626,31 @@ public class Login_vpn extends AppCompatActivity {
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626013051d0/student/public/login.asp",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421e5e3529f69377d556a468ca88d1b203b/",
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626013051d0/",
                 body,
                 cookie,
                 null,
-                r.getString(R.string.cookie_delimiter),
+                null,
                 null,
                 null,
                 false
         );
-        if ( login_res.code == 0 && login_res.resp_code == 302 && login_res.c.getHeaderFields().get("location").get(0).equals("menu.asp?menu=mnall.asp") ){
-            Log.e(NAME + " " + "login status", "success");
+        if (login_res.code == -7 && login_res.c.getHeaderFields().get("location").get(0).contains("menu.asp?menu=mnall.asp")){
+            Log.e(NAME, "success -> " + login_res.c.getHeaderFields().get("location").get(0));
+            return true;
+        }else if (login_res.comment == null){
+            Log.e(NAME, "fail | network error");
+            throw new ExceptionNetworkError();
+        }else if (login_res.comment.contains("77726476706e69737468656265737421a1a013d2766626013051d0")){
+            Log.e(NAME, "fail | wrong user or password | " + login_res.comment);
+            throw new ExceptionWrongUserOrPassword();
+        }else if (login_res.code == -7){
+            Log.e(NAME, "fail | meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
+            throw new Exception302();
         }else {
-            if (login_res.code == 0 ){
-                //200 + 2333333333
-                if ( login_res.resp_code == 200 && login_res.comment != null && login_res.comment.contains("77726476706e69737468656265737421a1a013d2766626013051d0") ) {
-                    //密码错误
-                    login_res.code = -6;
-                }
-                //200 + empty
-                else if ( login_res.resp_code == 200 && login_res.comment != null && login_res.comment.isEmpty() ) {
-                    //未知错误
-                    login_res.code = -7;
-                }
-                //302
-                //200 + else
-                else if ( login_res.resp_code == 302 || ( login_res.resp_code == 200 && login_res.comment != null ) ) {
-                    //外网被禁
-                    login_res.code = -8;
-                }
-            }
-            Log.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
+            Log.e(NAME, "fail | unknown error");
+            throw new ExceptionUnknown();
         }
-        return login_res;
     }
 
 
@@ -671,21 +693,20 @@ public class Login_vpn extends AppCompatActivity {
     }
 
     /**
-     * @return - cookie containing ticket : success
-     * - {@link R.string#wan_vpn_ip_forbidden} : fail, ip forbidden
-     * - null : fail
-     * @non-ui try to login GUET web vpn, if success:
-     * 1. return cookie containing web vpn ticket
+     * @non-ui
+     * @throws com.telephone.coursetable.MyException.MyException
+     * @return return web vpn ticket if success, otherwise throw exceptions
+     * @trustme
      * @clear
      */
-    public static String vpn_login(Context c, String id, String pwd) {
+    public static String vpn_login(@NonNull Context c, @NonNull String id, @NonNull String pwd) throws ExceptionWrongUserOrPassword, ExceptionNetworkError, ExceptionIpForbidden, ExceptionUnknown {
         final String NAME = "vpn_login()";
         Resources r = c.getResources();
         String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
         Log.e(NAME + " " + "body", body);
         if (pwd.length() <= 0) {
-            Log.e(NAME, "fail");
-            return null;
+            Log.e(NAME, "empty password");
+            throw new ExceptionWrongUserOrPassword();
         }
         pwd = encrypt(pwd);
         body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
@@ -703,9 +724,9 @@ public class Login_vpn extends AppCompatActivity {
                 null
         );
         String cookie = get_ticket_res.cookie;
-        if (cookie == null || cookie.isEmpty()){
+        if (cookie == null || cookie.isEmpty()) {
             Log.e(NAME, "fail | can not get init vpn ticket");
-            return null;
+            throw new ExceptionNetworkError();
         }
         cookie = cookie.substring(cookie.indexOf("wengine_vpn_ticket"));
         cookie = cookie.substring(0, cookie.indexOf(r.getString(R.string.cookie_delimiter)));
@@ -719,43 +740,48 @@ public class Login_vpn extends AppCompatActivity {
                 body,
                 cookie,
                 "}",
-                r.getString(R.string.cookie_delimiter),
+                null,
                 r.getString(R.string.wan_vpn_login_success_contain_response_text),
                 null,
                 null
         );
-        if (try_to_login_res.comment != null) {
-            Log.e(NAME + " " + "try to login response", try_to_login_res.comment);
-        }
         if (try_to_login_res.code == 0) {
-            Log.e(NAME, "success");
+            Log.e(NAME, "success | " + try_to_login_res.comment);
             return cookie;
-        } else {
-            if (try_to_login_res.comment != null && try_to_login_res.comment.contains(r.getString(R.string.wan_vpn_login_need_confirm_contain_response_text))) {
-                Log.e(NAME + " " + "need confirm", "confirm...");
-                HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
-                        r.getString(R.string.wan_vpn_confirm_login_url),
-                        null,
-                        r.getString(R.string.user_agent),
-                        r.getString(R.string.wan_vpn_confirm_login_referer),
-                        null,
-                        cookie,
-                        null,
-                        r.getString(R.string.cookie_delimiter),
-                        null,
-                        null,
-                        null
-                );
-                if (confirm_login_res.code == 0) {
-                    Log.e(NAME, "success");
-                    return cookie;
-                }
-            } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains(r.getString(R.string.wan_vpn_login_ip_forbidden_contain_response_text))) {
-                Log.e(NAME, "fail | ip forbidden");
-                return r.getString(R.string.wan_vpn_ip_forbidden);
+        } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"INVALID_ACCOUNT\"")) {
+            Log.e(NAME, "fail | " + try_to_login_res.comment);
+            throw new ExceptionWrongUserOrPassword();
+        } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"NEED_CONFIRM\"")) {
+            Log.e(NAME + " " + "need confirm", "confirm...");
+            HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
+                    r.getString(R.string.wan_vpn_confirm_login_url),
+                    null,
+                    r.getString(R.string.user_agent),
+                    r.getString(R.string.wan_vpn_confirm_login_referer),
+                    null,
+                    cookie,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            if (confirm_login_res.code == 0) {
+                Log.e(NAME, "success | confirm success");
+                return cookie;
+            }else {
+                Log.e(NAME, "fail | confirm fail");
+                throw new ExceptionNetworkError();
             }
-            Log.e(NAME, "fail");
-            return null;
+        } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"IP_FORBIDDEN\"")) {
+            Log.e(NAME, "fail | " + try_to_login_res.comment);
+            throw new ExceptionIpForbidden();
+        } else if (try_to_login_res.comment == null){
+            Log.e(NAME, "fail | network error");
+            throw new ExceptionNetworkError();
+        } else {
+            Log.e(NAME, "fail | unknown error");
+            throw new ExceptionUnknown();
         }
     }
 
@@ -962,7 +988,7 @@ public class Login_vpn extends AppCompatActivity {
                 //fail : password or web
                 if (cookie == null) {
                     //reason
-                    tip = "WebVPN验证失败";
+                    tip = getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail);
                 }
                 else if(cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
                     tip = getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip);
@@ -991,7 +1017,7 @@ public class Login_vpn extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (tip != null) {
                         Snackbar.make(view, tip, BaseTransientBottomBar.LENGTH_LONG).show();
-                        if (tip.equals("WebVPN验证失败")) {
+                        if (tip.equals(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail))) {
 
                             ((ProgressBar) findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                             unlock(true);
@@ -1059,27 +1085,25 @@ public class Login_vpn extends AppCompatActivity {
             }).start();
 
             /** -------------------------------------------------------------------------*/
-            Bitmap ck_pic;
             try {
-                ck_pic = try_to_get_check_code(cookie, sid, vpn_pwd);
-            } catch (NoSuchFieldException e) {
+                ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+            } catch (Exception302 | ExceptionUnknown exception302) {
                 runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                 return;
-            } catch (IllegalAccessException e) {
+            } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                runOnUiThread(()->jump(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail), Login_vpn.class, getSidPasswordExtraMap()));
+                return;
+            } catch (ExceptionIpForbidden exceptionIpForbidden) {
                 runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip)));
                 return;
-            }
-
-            if (ck_pic == null){
+            } catch (ExceptionNetworkError exceptionNetworkError) {
                 runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
                 return;
-            }else {
-                ck = OCR.getTextFromBitmap(Login_vpn.this, ck_pic, MyApp.ocr_lang_code);
             }
             /** -------------------------------------------------------------------------*/
 
-            login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, null);
-            outside_login_res = outside_login_test(Login_vpn.this, sid, aaw_pwd, cookie);
+            login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
+            outside_login_res = aaw_login(Login_vpn.this, sid, aaw_pwd, cookie);
 
             if ( login_res.comment == null || outside_login_res.comment == null ) {
                 runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
@@ -1095,26 +1119,24 @@ public class Login_vpn extends AppCompatActivity {
                 while ( login_res.comment.contains("验证码") ) {
 
                     /** -------------------------------------------------------------------------*/
-                    ck_pic = null;
                     try {
-                        ck_pic = try_to_get_check_code(cookie, sid, vpn_pwd);
-                    } catch (NoSuchFieldException e) {
+                        ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+                    } catch (Exception302 | ExceptionUnknown exception302) {
                         runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                         return;
-                    } catch (IllegalAccessException e) {
+                    } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                        runOnUiThread(()->jump(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail), Login_vpn.class, getSidPasswordExtraMap()));
+                        return;
+                    } catch (ExceptionIpForbidden exceptionIpForbidden) {
                         runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip)));
                         return;
-                    }
-
-                    if (ck_pic == null){
+                    } catch (ExceptionNetworkError exceptionNetworkError) {
                         runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
                         return;
-                    }else {
-                        ck = OCR.getTextFromBitmap(Login_vpn.this, ck_pic, MyApp.ocr_lang_code);
                     }
                     /** -------------------------------------------------------------------------*/
 
-                    login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie, null);
+                    login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
 
                     if ( login_res.comment == null ) {
                         runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
@@ -1189,7 +1211,7 @@ public class Login_vpn extends AppCompatActivity {
 
                 int times = 0;
                 boolean fetch_merge_res = false;
-                while (times <= MyApp.web_vpn_refetch_times && !fetch_merge_res) {
+                while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
                     if (times >= MyApp.web_vpn_refetch_times/3){
                         if (login_res.c != null) {
                             login_res.c.disconnect();

@@ -27,6 +27,7 @@ public class GetBitmap {
      * - -1 cannot open url
      * - -5 cannot get response
      * - -6 response check fail
+     * - -7 302
      * @clear
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
@@ -66,6 +67,9 @@ public class GetBitmap {
         }
         try {
             resp_code = cnt.getResponseCode();
+            if (resp_code == 302){
+                return new HttpConnectionAndCode(cnt, -7, "");
+            }
             response = "";
             bmp = BitmapFactory.decodeStream(cnt.getInputStream());
         } catch (Exception e) {

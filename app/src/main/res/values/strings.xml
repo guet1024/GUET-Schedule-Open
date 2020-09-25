@@ -97,6 +97,7 @@
     <string name="wan_login_vpn_network_error_tip">登录失败, 检查网络连接后重试</string>
     <string name="wan_snackbar_outside_test_login_fail">登录失败 - 教务网站密码不正确</string>
     <string name="wan_snackbar_sys_pwd_login_fail">登录失败 - 学分制系统密码不正确</string>
+    <string name="wan_snackbar_vpn_pwd_login_fail">WebVPN验证失败</string>
     <string name="wan_snackbar_unknown_fail">验证失败, 请重试</string>
     <string name="wan_login_vpn_cancel_tip">登录取消</string>
 
