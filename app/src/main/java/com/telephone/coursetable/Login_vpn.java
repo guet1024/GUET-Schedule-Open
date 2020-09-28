@@ -1102,6 +1102,7 @@ public class Login_vpn extends AppCompatActivity {
                 /** -------------------------------------------------------------------------*/
 
                 int loop_getres_times = 0;
+                boolean wck = false;
                 do {
                     try {
                         login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
@@ -1110,6 +1111,7 @@ public class Login_vpn extends AppCompatActivity {
                         runOnUiThread(() -> jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                         return;
                     } catch (ExceptionWrongCheckCode exceptionWrongCheckCode) {
+                        wck = true;
                         break;
                     } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
                         runOnUiThread(() -> {
@@ -1125,9 +1127,9 @@ public class Login_vpn extends AppCompatActivity {
                     }
                 } while (true);
 
-                if (login_res != null && login_res.comment.contains("操作成功")) {
+                if (!wck) {
                     break;
-                } else if (loop_syslogin_times++ >= MyApp.web_vpn_relogin_times) {
+                } else if (loop_syslogin_times++ >= MyApp.web_vpn_wck_times) {
                     runOnUiThread(() -> {
                         retry(view, getResources().getString(R.string.wan_snackbar_unknown_fail));
                     });
