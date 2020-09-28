@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -267,10 +268,11 @@ public class Login_vpn extends AppCompatActivity {
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login_vpn.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
-            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnDismissListener(() -> {
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
                 clearIMAndFocus();
+                String selected_sid = (String) parent.getAdapter().getItem(position);
                 new Thread(() -> {
-                    final List<User> userSelected = udao.selectUser(((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString());
+                    final List<User> userSelected = udao.selectUser(selected_sid);
                     if (!userSelected.isEmpty()) {
                         runOnUiThread(() -> {
                             aaw_pwd = userSelected.get(0).aaw_password;
@@ -455,19 +457,11 @@ public class Login_vpn extends AppCompatActivity {
             try {
                 ticket = vpn_login(c, sid, pwd);
                 break;
-            } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
-                throw new ExceptionWrongUserOrPassword();
-            } catch (ExceptionNetworkError exceptionNetworkError) {
+            } catch (ExceptionWrongUserOrPassword e) {
+                throw e;
+            } catch (ExceptionNetworkError | ExceptionIpForbidden | ExceptionUnknown e) {
                 if (times == MyApp.web_vpn_ticket_regain_times - 1){
-                    throw new ExceptionNetworkError();
-                }
-            } catch (ExceptionIpForbidden exceptionIpForbidden) {
-                if (times == MyApp.web_vpn_ticket_regain_times - 1){
-                    throw new ExceptionIpForbidden();
-                }
-            } catch (ExceptionUnknown exceptionUnknown) {
-                if (times == MyApp.web_vpn_ticket_regain_times - 1){
-                    throw new ExceptionUnknown();
+                    throw e;
                 }
             }
             times++;
