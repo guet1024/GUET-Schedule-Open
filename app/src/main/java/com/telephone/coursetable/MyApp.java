@@ -147,6 +147,8 @@ public class MyApp extends Application {
     final public static String guet_v_ip = "202.193.64.75";
     final public static String guet_v_domain = "v.guet.edu.cn";
     final public static int check_code_regain_times = 6;
+    final public static int web_vpn_relogin_times = 2;
+    final public static int web_vpn_wck_times = 6;
     final public static int web_vpn_ticket_regain_times = 6;
     final public static int web_vpn_refetch_times = 6;
     final public static String[] appwidget_list_today_time_descriptions = {

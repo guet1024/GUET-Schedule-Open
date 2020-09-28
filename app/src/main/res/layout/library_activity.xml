@@ -7,6 +7,8 @@
     android:orientation="vertical">
 
         <LinearLayout
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -17,12 +19,12 @@
             <EditText
                 android:id="@+id/message"
                 android:layout_width="0dp"
+                android:inputType="text"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:hint="输入关键字"
                 android:imeOptions="actionSearch"
-                android:inputType="text"
                 android:singleLine="true" />
 
             <Button

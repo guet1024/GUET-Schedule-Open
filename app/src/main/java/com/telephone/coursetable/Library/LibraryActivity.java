@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.Login_vpn;
 import com.telephone.coursetable.MainActivity;
@@ -50,7 +49,6 @@ public class LibraryActivity extends AppCompatActivity {
     private List<Map.Entry<List<Map.Entry<String, String>>, List<List<Map.Entry<String, String>>>>> books;
     private String cookie;
     private String html;
-//    private long check_time;
     private boolean interrupt;
 
     EditText etMessage;
@@ -64,6 +62,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
+
 
     synchronized public boolean setOutdated(){
         if (visible) return false;
@@ -123,10 +122,9 @@ public class LibraryActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.INVISIBLE);
         tvToast.setVisibility(View.INVISIBLE);
-//        check_time = 0;
         maxBookNum = 0;
         books = new LinkedList<>();
-        inputMethodManager =(InputMethodManager) LibraryActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 
         Intent intent = getIntent();
         username = intent.getStringExtra(EXTRA_USERNAME);
@@ -189,18 +187,11 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void doSearch() {
-        inputMethodManager.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
+        etMessage.clearFocus();
         btReduce.setEnabled(false);
         btPlus.setEnabled(false);
         message = etMessage.getText().toString();
         interrupt = false;
-
-//        long now_time = Clock.nowTimeStamp();
-//        if (now_time - check_time < 1500) {
-//            check_time = now_time;
-//            runOnUiThread(() -> controlToastTime(Toast.makeText(LibraryActivity.this, "点击过快，请稍后", Toast.LENGTH_SHORT), 500));
-//            return;
-//        } else check_time = now_time;
 
         if ( MyApp.getRunning_activity_pointer() != null && LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString()) ) {
             progressBar.setVisibility(View.VISIBLE);
@@ -208,20 +199,10 @@ public class LibraryActivity extends AppCompatActivity {
         }
 
         if (message.isEmpty()) {
-            checkActivity_progressBarISTrue(false);
-            checkActivity_tvToastISTrue("输入为空", true);
-            if ( !books.isEmpty() ) {
-                btPlus.setEnabled(true);
-                btReduce.setEnabled(true);
-            }
+            ExceptionError( getResources().getString(R.string.wan_library_input_null) );
             return;
         }else if (message.split("").length > 60) {
-            checkActivity_progressBarISTrue(false);
-            checkActivity_tvToastISTrue("输入字数限制为60字", true);
-            if ( !books.isEmpty() ) {
-                btPlus.setEnabled(true);
-                btReduce.setEnabled(true);
-            }
+            ExceptionError( getResources().getString(R.string.wan_library_input_long) );
             return;
         }
 
@@ -245,22 +226,9 @@ public class LibraryActivity extends AppCompatActivity {
                     }
                 }).start();
 
-                cookie = Login_vpn.vpn_login(LibraryActivity.this, username, password);
-                if (cookie == null) {
-                    checkActivity_progressBarISTrue(false);
-                    checkActivity_tvToastISTrue("WebVPN账号密码/网络异常", true);
-                    if ( !books.isEmpty() ) {
-                        btPlus.setEnabled(true);
-                        btReduce.setEnabled(true);
-                    }
-                    return;
-                } else if (cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))) {
-                    checkActivity_progressBarISTrue(false);
-                    checkActivity_tvToastISTrue("WebVPN验证失败次数过多，请稍后重试", true);
-                    if ( !books.isEmpty() ) {
-                        btPlus.setEnabled(true);
-                        btReduce.setEnabled(true);
-                    }
+                cookie = Login_vpn.wan_vpn_login_text(LibraryActivity.this, username, password);
+                if ( cookie.contains("fail:") ) {
+                    ExceptionError( cookie.substring(5) );
                     return;
                 }
 
@@ -292,8 +260,7 @@ public class LibraryActivity extends AppCompatActivity {
 
                 html = getHtml_(1);
                 if (html == null) {
-                    checkActivity_progressBarISTrue(false);
-                    checkActivity_tvToastISTrue("搜索时间过长，请检查网络是否中断", true);
+                    ExceptionError( getResources().getString(R.string.wan_library_getResource_fail) );
                     interrupt = true;
                     return;
                 }
@@ -302,8 +269,7 @@ public class LibraryActivity extends AppCompatActivity {
                 Elements maxbooknum = doc_xml.select("html > body > form#form1 > div.body > div.mainbody2_out > div.mainbody2_in > div.mainbody > div.turnpage > div.total > span#labAllCount");
                 Elements maxpage = doc_xml.select("html > body > form#form1 > div.body > div.mainbody2_out > div.mainbody2_in > div.mainbody > div.turnpage > div.ctrl > span#labConutPage");
                 if (maxbooknum.isEmpty() || maxpage.isEmpty()) {
-                    checkActivity_progressBarISTrue(false);
-                    checkActivity_tvToastISTrue("请重试", true);
+                    ExceptionError( getResources().getString(R.string.wan_library_getResource_fail) );
                     return;
                 }
                 maxBookNum = Integer.parseInt(maxbooknum.get(0).ownText());
@@ -312,9 +278,8 @@ public class LibraryActivity extends AppCompatActivity {
                 if (maxPage > 50) maxPage = 50;
                 if (maxBookNum > 500) maxBookNum = 500;
                 else if (maxBookNum == 0) {
-                    checkActivity_progressBarISTrue(false);
                     tvPage.setText("第0本，共0本");
-                    checkActivity_tvToastISTrue("没有查询到结果", true);
+                    ExceptionError( getResources().getString(R.string.wan_library_search_null) );
                     return;
                 }
                 tvPage.setText("第" + bookNum + "本/共" + maxBookNum + "本");
@@ -355,11 +320,8 @@ public class LibraryActivity extends AppCompatActivity {
                                         etMessage.setEnabled(!etMessage.isEnabled());
                                         etMessage.setEnabled(!etMessage.isEnabled());
                                         etMessage.clearFocus();
-                                        btPlus.setEnabled(true);
-                                        btReduce.setEnabled(true);
-                                        checkActivity_tvToastISTrue("", true);
+                                        ExceptionError("");
                                         checkActivity_tvToastISTrue("", false);
-                                        checkActivity_progressBarISTrue(false);
                                         menu_listf.setGroupIndicator(null);
                                         menu_listf.setAdapter(new BookAdapter(LibraryActivity.this, books.get(0), true, menu_listf));
                                         menu_listf.expandGroup(0);
@@ -408,6 +370,15 @@ public class LibraryActivity extends AppCompatActivity {
                 else tvToast.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    private void ExceptionError(String message) {
+        checkActivity_progressBarISTrue(false);
+        checkActivity_tvToastISTrue(message, true);
+        if ( books!=null && !books.isEmpty() ) {
+            btPlus.setEnabled(true);
+            btReduce.setEnabled(true);
+        }
     }
 
     private void checkActivity_progressBarISTrue(boolean display) {
