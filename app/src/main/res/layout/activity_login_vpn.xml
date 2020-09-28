@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login_vpn">
+    tools:context=".Login_vpn"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <TextView
         android:id="@+id/login_vpn_sid_tip"
@@ -138,13 +140,13 @@
         app:layout_constraintGuide_percent="0.73" />
 
     <AutoCompleteTextView
-        android:id="@+id/sid_input"
+        android:id="@+id/sid_input2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:background="@drawable/login_text_border"
-        android:completionThreshold="0"
+        android:completionThreshold="1"
         android:gravity="center"
         android:inputType="number"
         android:textAlignment="center"

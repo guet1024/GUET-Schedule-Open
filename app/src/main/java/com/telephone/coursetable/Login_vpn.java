@@ -59,6 +59,7 @@ import com.telephone.coursetable.MyException.ExceptionNetworkError;
 import com.telephone.coursetable.MyException.ExceptionUnknown;
 import com.telephone.coursetable.MyException.ExceptionWrongCheckCode;
 import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
+import com.telephone.coursetable.MyException.MyException;
 import com.telephone.coursetable.OCR.OCR;
 
 
@@ -99,9 +100,8 @@ public class Login_vpn extends AppCompatActivity {
     private String cookie = "";
     private String ck = "";
 
-    private StringBuilder cookie_builder;
     private HttpConnectionAndCode login_res;
-    private HttpConnectionAndCode outside_login_res;
+    private boolean outside_login_res;
 
     private boolean isMenuEnabled = true;
 
@@ -204,8 +204,8 @@ public class Login_vpn extends AppCompatActivity {
         setHintForEditText("默认为身份证后6位", 10, (EditText)findViewById(R.id.aaw_pwd_input));
         ((EditText)findViewById(R.id.aaw_pwd_input)).setInputType(((EditText)findViewById(R.id.aaw_pwd_input)).getInputType());
         ((EditText)findViewById(R.id.sys_pwd_input)).setInputType(((EditText)findViewById(R.id.sys_pwd_input)).getInputType());
-        ((TextView) findViewById(R.id.sid_input)).setText(sid);
-        ((TextView) findViewById(R.id.sid_input)).setEnabled(false);
+        ((TextView) findViewById(R.id.sid_input2)).setText(sid);
+        ((TextView) findViewById(R.id.sid_input2)).setEnabled(false);
 
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
 
@@ -441,6 +441,35 @@ public class Login_vpn extends AppCompatActivity {
                 put(EXTRA_VPN_PASSWORD, vpn_pwd);
             }
         };
+    }
+
+    public static String wan_vpn_login_text(Context context, final String sid, final String pwd){
+        final String NAME = "wan_vpn_login_test()";
+        int times = 0;
+        Resources resources = context.getResources();
+        do {
+            try {
+                return Login_vpn.vpn_login(context, sid, pwd);
+
+            } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                Log.e(NAME, "ExceptionWrongUserOrPassword");
+                return resources.getString(R.string.login_fail_pwd_text_exception);
+
+            } catch (ExceptionNetworkError exceptionNetworkError) {
+                if ( times++<MyApp.check_code_regain_times ) continue;;
+                Log.e(NAME, "ExceptionNetworkError");
+                return resources.getString(R.string.wan_login_vpn_network_error_exception);
+
+            } catch (ExceptionIpForbidden exceptionIpForbidden) {
+                Log.e(NAME, "ExceptionIpForbidden");
+                return resources.getString(R.string.wan_login_vpn_ip_forbidden_exception);
+
+            } catch (ExceptionUnknown exceptionUnknown) {
+                Log.e(NAME, "ExceptionUnknown");
+                return resources.getString(R.string.wan_snackbar_unknown_fail_exception);
+
+            }
+        }while ( true );
     }
 
     /**
@@ -802,8 +831,6 @@ public class Login_vpn extends AppCompatActivity {
         edao = db.examInfoDao();
         cetDao = db.cetDao();
 
-        cookie_builder = new StringBuilder();
-
         title = getSupportActionBar().getTitle().toString();
 
         first_login();
@@ -976,21 +1003,7 @@ public class Login_vpn extends AppCompatActivity {
                 }).start();
 
                 //get cookie
-                cookie = Login_vpn.vpn_login(Login_vpn.this, sid, vpn_pwd);
-
-                String tip;
-                //fail : password or web
-                if (cookie == null) {
-                    //reason
-                    tip = getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail);
-                }
-                else if(cookie.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
-                    tip = getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip);
-                }
-                //success
-                else {
-                    tip = null;
-                }
+                cookie = wan_vpn_login_text(Login_vpn.this, sid, vpn_pwd);
 
                 final String NAME = "login_thread_1()";
 
@@ -1009,30 +1022,17 @@ public class Login_vpn extends AppCompatActivity {
                 }
 
                 runOnUiThread(() -> {
-                    if (tip != null) {
-                        Snackbar.make(view, tip, BaseTransientBottomBar.LENGTH_LONG).show();
-                        if (tip.equals(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail))) {
+                    if ( cookie.contains("fail:") ) {
+                        Snackbar.make(view, cookie.substring(5), BaseTransientBottomBar.LENGTH_LONG).show();
+                        unlock(true);
+                        if ( cookie.equals(getResources().getString(R.string.login_fail_pwd_text_exception)) ) {
+                            ((EditText) findViewById(R.id.passwd_input)).setText("");
+                            setFocusToEditText((EditText) findViewById(R.id.passwd_input));
+                        }
 
-                            ((ProgressBar) findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                            unlock(true);
-
-                            vpn_login_fail_times++;
-                            if (vpn_login_fail_times >= 3){
-                                jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap());
-                            }
-                            return;
-
-                        }else if(tip.equals(getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip))){
-
-                            ((ProgressBar) findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                            unlock(true);
-
-                            vpn_login_fail_times++;
-                            if (vpn_login_fail_times >= 3){
-                                jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap());
-                            }
-                            return;
-
+                        vpn_login_fail_times++;
+                        if (vpn_login_fail_times >= 3){
+                            jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap());
                         }
                     }else {
                         system_login(sid);
@@ -1068,216 +1068,199 @@ public class Login_vpn extends AppCompatActivity {
         }
 
         new Thread(()->{
-
-            new Thread(()->{
-                try {
-                    sleep(MyApp.patient_time);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                runOnUiThread(Login_vpn.this::try_to_show_patient);
-            }).start();
-
-            /** -------------------------------------------------------------------------*/
             try {
-                ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
-            } catch (Exception302 | ExceptionUnknown exception302) {
-                runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
-                return;
-            } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
-                runOnUiThread(()->jump(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail), Login_vpn.class, getSidPasswordExtraMap()));
-                return;
-            } catch (ExceptionIpForbidden exceptionIpForbidden) {
-                runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip)));
-                return;
-            } catch (ExceptionNetworkError exceptionNetworkError) {
-                runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
-                return;
+                sleep(MyApp.patient_time);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            /** -------------------------------------------------------------------------*/
+            runOnUiThread(Login_vpn.this::try_to_show_patient);
+        }).start();
 
-            login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
-            outside_login_res = aaw_login(Login_vpn.this, sid, aaw_pwd, cookie);
+        new Thread(()-> {
 
-            if ( login_res.comment == null || outside_login_res.comment == null ) {
-                runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
-                return;
-            }else if( ( login_res.comment.isEmpty() ) || outside_login_res.code == -7 || login_res.code == -7) {
-                runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
-                return;
-            }
+            int loop_syslogin_times = 0;
+            do {
+                /** -------------------------------------------------------------------------*/
+                try {
+                    ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+                } catch (Exception302 | ExceptionUnknown exception302) {
+                    runOnUiThread(() -> jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
+                    return;
+                } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                    runOnUiThread(() -> jump(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail), Login_vpn.class, getSidPasswordExtraMap()));
+                    return;
+                } catch (ExceptionIpForbidden exceptionIpForbidden) {
+                    runOnUiThread(() -> retry(view, getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip)));
+                    return;
+                } catch (ExceptionNetworkError exceptionNetworkError) {
+                    runOnUiThread(() -> retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
+                    return;
+                }
+                /** -------------------------------------------------------------------------*/
 
-            if( login_res.code != 0 || outside_login_res.code != 0 ){
-
-                int count_ck_loop = 0;
-                while ( login_res.comment.contains("验证码") ) {
-
-                    /** -------------------------------------------------------------------------*/
+                int loop_getres_times = 0;
+                do {
                     try {
-                        ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+                        login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
+                        break;
                     } catch (Exception302 | ExceptionUnknown exception302) {
-                        runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
-                        return;
-                    } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
-                        runOnUiThread(()->jump(getResources().getString(R.string.wan_snackbar_vpn_pwd_login_fail), Login_vpn.class, getSidPasswordExtraMap()));
-                        return;
-                    } catch (ExceptionIpForbidden exceptionIpForbidden) {
-                        runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_ip_forbidden_tip)));
-                        return;
-                    } catch (ExceptionNetworkError exceptionNetworkError) {
-                        runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
-                        return;
-                    }
-                    /** -------------------------------------------------------------------------*/
-
-                    login_res = login(Login_vpn.this, sid, sys_pwd, ck, cookie);
-
-                    if ( login_res.comment == null ) {
-                        runOnUiThread(()->retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
-                        return;
-                    }else if( login_res.comment.isEmpty() || login_res.code == -7) {
                         runOnUiThread(() -> jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                         return;
-                    }
-                    count_ck_loop++;
-                    if (count_ck_loop > 6) {
-                        runOnUiThread(()-> jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
+                    } catch (ExceptionWrongCheckCode exceptionWrongCheckCode) {
+                        break;
+                    } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                        runOnUiThread(() -> {
+                            retry(view, getResources().getString(R.string.wan_snackbar_sys_pwd_login_fail));
+                            ((EditText) findViewById(R.id.sys_pwd_input)).setText("");
+                            setFocusToEditText((EditText) findViewById(R.id.sys_pwd_input));
+                        });
+                        return;
+                    } catch (ExceptionNetworkError exceptionNetworkError) {
+                        if (loop_getres_times++ < MyApp.web_vpn_relogin_times) continue;
+                        runOnUiThread(() -> retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
                         return;
                     }
+                } while (true);
+
+                if (login_res != null && login_res.comment.contains("操作成功")) {
+                    break;
+                } else if (loop_syslogin_times++ >= MyApp.web_vpn_relogin_times) {
+                    runOnUiThread(() -> {
+                        retry(view, getResources().getString(R.string.wan_snackbar_unknown_fail));
+                    });
+                    return;
                 }
 
-                runOnUiThread((Runnable)()->{
+            } while (true);
 
-                    if(  login_res.comment.contains("密码")  ) {
-                        retry(view, getResources().getString(R.string.wan_snackbar_sys_pwd_login_fail));
-                        ((EditText)findViewById(R.id.sys_pwd_input)).setText("");
-                        setFocusToEditText((EditText)findViewById(R.id.sys_pwd_input));
-                        return;
-                    }else if ( outside_login_res.code == -6 ) {
+            int loop_aawlogin_times = 0;
+            do {
+                try {
+                    outside_login_res = aaw_login(Login_vpn.this, sid, aaw_pwd, cookie);
+                    break;
+                } catch (ExceptionNetworkError exceptionNetworkError) {
+                    if (loop_aawlogin_times++ < MyApp.web_vpn_relogin_times) continue;
+                    runOnUiThread(() -> retry(view, getResources().getString(R.string.wan_login_vpn_network_error_tip)));
+                    return;
+                } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                    runOnUiThread(() -> {
                         retry(view, getResources().getString(R.string.wan_snackbar_outside_test_login_fail));
-                        ((EditText)findViewById(R.id.aaw_pwd_input)).setText("");
-                        setFocusToEditText((EditText)findViewById(R.id.aaw_pwd_input));
-                        return;
-                    }else if ( outside_login_res.code == -8 ) {
-                        jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap());
-                        return;
-                    }else if ( login_res.code != 0 || outside_login_res.code != 0 ){
-                        retry(view, getResources().getString(R.string.wan_snackbar_unknown_fail));
-                        return;
-                    }
+                        ((EditText) findViewById(R.id.aaw_pwd_input)).setText("");
+                        setFocusToEditText((EditText) findViewById(R.id.aaw_pwd_input));
+                    });
+                    return;
+                } catch (Exception302 | ExceptionUnknown exception302) {
+                    runOnUiThread(() -> jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
+                    return;
+                }
+            } while (true);
 
-                });
+            /** get shared preference and its editor */
+            final SharedPreferences shared_pref = MyApp.getCurrentSharedPreference();
+            final SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
 
+            final String NAME = "login_thread_2()";
+
+            /** detect new activity || skip no activity */
+            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
+                Log.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
+                runOnUiThread(() -> Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
+                return;
+            }
+            Log.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
+            Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
+            if (!Login_vpn.this.toString().equals(MyApp.getRunning_activity_pointer().toString())) {
+                Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
+                runOnUiThread(() -> Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
+                return;
             }
 
-            if( login_res.code == 0 && outside_login_res.code == 0 ) {
-                /** get shared preference and its editor */
-                final SharedPreferences shared_pref = MyApp.getCurrentSharedPreference();
-                final SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
+            /** insert/replace new user into database */
+            udao.insert(new User(sid, aaw_pwd, sys_pwd, vpn_pwd));
+            /** deactivate all user in database */
+            udao.disableAllUser();
+            /** set {@link MyApp#running_login_thread} to true */
+            MyApp.setRunning_login_thread(true);
+            /** show tip snack-bar, change title */
+            runOnUiThread(() -> {
+                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
+                getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
+            });
 
-                final String NAME = "login_thread_2()";
-
-                /** detect new activity || skip no activity */
-                if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                    Log.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
-                    runOnUiThread(()->Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
-                    return;
-                }
-                Log.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
-                Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
-                if (!Login_vpn.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
-                    Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
-                    runOnUiThread(()->Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
-                    return;
-                }
-
-                /** insert/replace new user into database */
-                udao.insert(new User(sid, aaw_pwd, sys_pwd, vpn_pwd));
-                /** deactivate all user in database */
-                udao.disableAllUser();
-                /** set {@link MyApp#running_login_thread} to true */
-                MyApp.setRunning_login_thread(true);
-                /** show tip snack-bar, change title */
-                runOnUiThread(() -> {
-                    Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
-                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
-                });
-
-                int times = 0;
-                boolean fetch_merge_res = false;
-                while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
-                    if (times >= MyApp.web_vpn_refetch_times/3){
-                        if (login_res.c != null) {
-                            login_res.c.disconnect();
-                        }
+            int times = 0;
+            boolean fetch_merge_res = false;
+            while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
+                if (times >= MyApp.web_vpn_refetch_times / 3) {
+                    if (login_res.c != null) {
+                        login_res.c.disconnect();
                     }
-                    /** clear shared preference */
-                    editor.clear();
-                    /** commit shared preference */
-                    editor.commit();
-                    /** call {@link #deleteOldDataFromDatabase()} */
-                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
-                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
-                    times++;
                 }
-
+                /** clear shared preference */
+                editor.clear();
                 /** commit shared preference */
                 editor.commit();
+                /** call {@link #deleteOldDataFromDatabase()} */
+                deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
+                fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
+                times++;
+            }
 
-                if (fetch_merge_res) {
+            /** commit shared preference */
+            editor.commit();
 
-                    /** locate now, print the locate-result to log */
-                    Log.e(
-                            NAME + " " + "locate now",
-                            Clock.locateNow(
-                                    Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                    getResources().getString(R.string.pref_hour_start_suffix),
-                                    getResources().getString(R.string.pref_hour_end_suffix),
-                                    getResources().getString(R.string.pref_hour_des_suffix)
-                            ) + ""
-                    );
+            if (fetch_merge_res) {
 
-                    udao.activateUser(sid);
+                /** locate now, print the locate-result to log */
+                Log.e(
+                        NAME + " " + "locate now",
+                        Clock.locateNow(
+                                Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
+                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                getResources().getString(R.string.pref_hour_start_suffix),
+                                getResources().getString(R.string.pref_hour_end_suffix),
+                                getResources().getString(R.string.pref_hour_des_suffix)
+                        ) + ""
+                );
 
-                    MyApp.setRunning_login_thread(false);
+                udao.activateUser(sid);
 
+                MyApp.setRunning_login_thread(false);
+
+                runOnUiThread(() -> {
+                    unlock(false);
+                    Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
+                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
+                    if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
+                        Log.e(NAME, "start a new Main Activity...");
+                        /** start a new {@link MainActivity} */
+                        startActivity(new Intent(Login_vpn.this, MainActivity.class));
+                    } else {
+                        Log.e(NAME, "update success but no activity is running, NOT start new Main Activity");
+                    }
+                });
+
+            } else {
+                /** set {@link MyApp#running_login_thread} to false */
+                MyApp.setRunning_login_thread(false);
+                /** if login activity is current running activity */
+                if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)) {
                     runOnUiThread(() -> {
-                        unlock(false);
-                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
-                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
-                        if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                            Log.e(NAME, "start a new Main Activity...");
-                            /** start a new {@link MainActivity} */
-                            startActivity(new Intent(Login_vpn.this, MainActivity.class));
-                        }else {
-                            Log.e(NAME, "update success but no activity is running, NOT start new Main Activity");
+                        unlock(true);
+                        /** show tip snack-bar, change title */
+                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
+                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        /** show tip toast */
+                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
+                        /** if main activity is current running activity */
+                        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null) {
+                            Log.e(NAME, "refresh the Main Activity...");
+                            /** call {@link MainActivity#refresh()} */
+                            MyApp.getRunning_main().refresh();
                         }
                     });
-
-                } else {
-                    /** set {@link MyApp#running_login_thread} to false */
-                    MyApp.setRunning_login_thread(false);
-                    /** if login activity is current running activity */
-                    if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)){
-                        runOnUiThread(() -> {
-                            unlock(true);
-                            /** show tip snack-bar, change title */
-                            Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
-                            getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
-                        });
-                    }else {
-                        runOnUiThread(() -> {
-                            /** show tip toast */
-                            Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
-                            /** if main activity is current running activity */
-                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null){
-                                Log.e(NAME, "refresh the Main Activity...");
-                                /** call {@link MainActivity#refresh()} */
-                                MyApp.getRunning_main().refresh();
-                            }
-                        });
-                    }
                 }
             }
         }).start();
