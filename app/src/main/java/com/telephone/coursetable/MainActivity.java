@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
@@ -278,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                             MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
                             view.startDragAndDrop(null, shadowBuilder, null, 0);
-                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                            ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
                             return true;
                         });
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
