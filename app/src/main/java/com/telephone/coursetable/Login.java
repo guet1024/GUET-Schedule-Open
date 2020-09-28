@@ -13,6 +13,7 @@ import android.text.SpannedString;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -124,10 +125,11 @@ public class Login extends AppCompatActivity {
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
-            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnDismissListener(() -> {
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
                 clearAllIMAndFocus();
+                String selected_sid = (String) parent.getAdapter().getItem(position);
                 new Thread(() -> {
-                    final List<User> userSelected = udao.selectUser(((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString());
+                    final List<User> userSelected = udao.selectUser(selected_sid);
                     if (!userSelected.isEmpty()) {
                         runOnUiThread(() -> {
                             ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).password);
