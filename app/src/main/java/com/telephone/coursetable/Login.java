@@ -48,6 +48,10 @@ import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.Merge.Merge;
+import com.telephone.coursetable.MyException.ExceptionIpForbidden;
+import com.telephone.coursetable.MyException.ExceptionNetworkError;
+import com.telephone.coursetable.MyException.ExceptionUnknown;
+import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
 import com.telephone.coursetable.OCR.OCR;
 
 import java.time.format.DateTimeFormatter;
@@ -339,7 +343,7 @@ public class Login extends AppCompatActivity {
      * @return {@link Login_vpn#vpn_login(Context, String, String)}
      * @clear
      */
-    public static String vpn_login_test(Context c, final String sid, final String pwd){
+    public static String vpn_login_test(Context c, final String sid, final String pwd) throws ExceptionWrongUserOrPassword, ExceptionUnknown, ExceptionIpForbidden, ExceptionNetworkError {
         return Login_vpn.vpn_login(c, sid, pwd);
     }
 
@@ -702,20 +706,32 @@ public class Login extends AppCompatActivity {
                             return;
                         }
                         /** call {@link #vpn_login_test(Context, String, String)} */
-                        String vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
-                        /** if vpn login test fail */
-                        if (vpn_login_res == null || vpn_login_res.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
-                            runOnUiThread((Runnable) () -> {
-                                /** show tip snack-bar */
-                                if (vpn_login_res != null && vpn_login_res.equals(getResources().getString(R.string.wan_vpn_ip_forbidden))){
-                                    Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                }else {
-                                    Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
-                                }
-                                /** call {@link #unlock(boolean)} with true */
+                        String vpn_login_res = null;
+                        try {
+                            vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
+                        } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
+                            runOnUiThread(()->{
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_wrong_pwd), BaseTransientBottomBar.LENGTH_SHORT).show();
                                 unlock(true);
                             });
-                            /** end this thread */
+                            return;
+                        } catch (ExceptionUnknown exceptionUnknown) {
+                            runOnUiThread(()->{
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                unlock(true);
+                            });
+                            return;
+                        } catch (ExceptionIpForbidden exceptionIpForbidden) {
+                            runOnUiThread(()->{
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                unlock(true);
+                            });
+                            return;
+                        } catch (ExceptionNetworkError exceptionNetworkError) {
+                            runOnUiThread(()->{
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_net_error), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                unlock(true);
+                            });
                             return;
                         }
                         /** call {@link #outside_login_test(Context, String, String)} */
