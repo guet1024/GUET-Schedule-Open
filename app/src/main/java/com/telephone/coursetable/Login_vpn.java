@@ -476,11 +476,11 @@ public class Login_vpn extends AppCompatActivity {
      * @trustme
      * @clear
      */
-    public static Bitmap try_to_get_check_code(@NonNull Context c, @NonNull String cookie, @NonNull String sid, @NonNull String vpn_pwd) throws Exception302, ExceptionWrongUserOrPassword, ExceptionUnknown, ExceptionIpForbidden, ExceptionNetworkError {
+    public static Bitmap try_to_get_check_code(@NonNull Context c, @NonNull StringBuilder cookie, @NonNull String sid, @NonNull String vpn_pwd) throws Exception302, ExceptionWrongUserOrPassword, ExceptionUnknown, ExceptionIpForbidden, ExceptionNetworkError {
         Bitmap ck_bitmap = null;
         int times = 0;
         while (times < MyApp.check_code_regain_times){
-            HttpConnectionAndCode res = WAN.checkcode(c, cookie);
+            HttpConnectionAndCode res = WAN.checkcode(c, cookie.toString());
             ck_bitmap = (Bitmap) res.obj;
             times++;
             if (ck_bitmap != null){//success
@@ -493,7 +493,8 @@ public class Login_vpn extends AppCompatActivity {
                         res.c.disconnect();
                     }
                 }
-                cookie = regainVPNTicket(c, sid, vpn_pwd);
+                cookie.setLength(0);
+                cookie.append(regainVPNTicket(c, sid, vpn_pwd));
             }
         }
         if (ck_bitmap == null){
@@ -1080,7 +1081,9 @@ public class Login_vpn extends AppCompatActivity {
 
             /** -------------------------------------------------------------------------*/
             try {
-                ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+                StringBuilder cookie_temp = new StringBuilder().append(cookie);
+                ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie_temp, sid, vpn_pwd), MyApp.ocr_lang_code);
+                cookie = cookie_temp.toString();
             } catch (Exception302 | ExceptionUnknown exception302) {
                 runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                 return;
@@ -1114,7 +1117,9 @@ public class Login_vpn extends AppCompatActivity {
 
                     /** -------------------------------------------------------------------------*/
                     try {
-                        ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie, sid, vpn_pwd), MyApp.ocr_lang_code);
+                        StringBuilder cookie_temp = new StringBuilder().append(cookie);
+                        ck = OCR.getTextFromBitmap(Login_vpn.this, try_to_get_check_code(Login_vpn.this, cookie_temp, sid, vpn_pwd), MyApp.ocr_lang_code);
+                        cookie = cookie_temp.toString();
                     } catch (Exception302 | ExceptionUnknown exception302) {
                         runOnUiThread(()->jump(getResources().getString(R.string.wan_login_vpn_relogin_tip), Login_vpn.class, getSidPasswordExtraMap()));
                         return;
