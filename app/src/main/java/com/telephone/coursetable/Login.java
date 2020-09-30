@@ -12,6 +12,9 @@ import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -72,6 +75,35 @@ public class Login extends AppCompatActivity {
     private GradesDao grdao = null;
     private ExamInfoDao edao = null;
     private CETDao cetDao = null;
+
+    private boolean isMenuEnabled = true;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(Login.this, MainActivity.class));
+                return true;
+            case R.id.login_menu_switch_login_mode:
+                startActivity(new Intent(Login.this, Login_vpn.class));
+                return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.login_menu_switch_login_mode);
+        item.setEnabled(isMenuEnabled);
+        return true;
+    }
 
     /**
      * @ui
@@ -179,6 +211,8 @@ public class Login extends AppCompatActivity {
         ((Button)findViewById(R.id.button2)).setEnabled(false);
         ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(false);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+        isMenuEnabled = false;
+        invalidateOptionsMenu();
     }
 
     /**
@@ -193,6 +227,8 @@ public class Login extends AppCompatActivity {
         ((Button)findViewById(R.id.button2)).setEnabled(clickable);
         ((ImageView)findViewById(R.id.imageView_checkcode)).setEnabled(clickable);
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+        isMenuEnabled = clickable;
+        invalidateOptionsMenu();
     }
 
     /**
