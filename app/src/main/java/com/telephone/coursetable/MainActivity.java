@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private String[] termValues = null;
     private String[] weekValues = null;
 
+    private long resume_time = 0;
+
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
 
@@ -106,12 +109,47 @@ public class MainActivity extends AppCompatActivity {
         visible = true;
         if (outdated != null){
             startActivity(outdated);
+        }else {
+            if (resume_time > 1) {
+                returnToday(null);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    runOnUiThread(()->{
+                        String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+                        long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
+                        new Thread(()->{
+                            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                    getResources().getString(R.string.pref_hour_start_suffix),
+                                    getResources().getString(R.string.pref_hour_end_suffix),
+                                    getResources().getString(R.string.pref_hour_des_suffix));
+                            List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
+                            if (!term_list.isEmpty()) {
+                                locate.term = term_list.get(0);
+                                locate.week = selected_week;
+                            } else {
+                                locate.term = null;
+                                locate.week = Clock.NO_TERM;
+                            }
+                            Map.Entry<Integer, Integer> g = getTime_enhanced();
+                            runOnUiThread(() -> showTable(locate, g));
+                        }).start();
+                    });
+                }).start();
+            }
         }
     }
 
     @Override
     protected void onResume() {
+        final String NAME = "onResume()";
         super.onResume();
+        resume_time++;
+        Log.e(NAME, "resume time = " + resume_time);
         show();
     }
 
