@@ -13,7 +13,8 @@
         android:background="#DDFFFFFF"
         android:gravity="center"
         android:text="    课程"
-        android:textAlignment="viewStart" />
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorDefaultTextColor" />
 
     <!--  today time  -->
     <TextView
@@ -25,7 +26,8 @@
         android:gravity="center"
         android:text="时间"
         android:textAlignment="center"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="@color/colorDefaultTextColor" />
 
     <!--  tomorrow time  -->
     <TextView
@@ -37,5 +39,6 @@
         android:gravity="center"
         android:text="时间"
         android:textAlignment="center"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="@color/colorDefaultTextColor" />
 </RelativeLayout>
