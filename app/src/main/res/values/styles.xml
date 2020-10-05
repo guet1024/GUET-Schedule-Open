@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">@string/title</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_login" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -13,6 +14,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">@string/title_login</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_ChangeHours" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -21,9 +23,13 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"时间表"</item>
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="TextAppearance">
         <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="MyTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">#505050</item>
     </style>
     <style name="AppTheme_FunctionMenu" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -31,6 +37,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"更多"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_LibrarySearch" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -38,6 +45,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"图书馆藏查询"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_AboutUS" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -46,6 +54,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">关于</item>
         <item name="overlapAnchor">false</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_ChangeTerms" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -54,6 +63,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"学期调整"</item>
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     <style name="AppTheme_Usage" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -61,10 +71,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="title">"使用说明"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     
     <style name="Launcher" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/start_page_2</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
 </resources>

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -192,7 +193,7 @@ public class ChangeHours extends AppCompatActivity {
             case R.id.change_hour_menu1:
                 save(default_time_list);
                 showTime(default_time_list);
-                Snackbar.make(snack_view, "已恢复默认值", BaseTransientBottomBar.LENGTH_SHORT).show();
+                Snackbar.make(snack_view, "已恢复默认值", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 break;
             case R.id.change_hour_menu2:
                 for (int etid : etids) {
@@ -214,7 +215,7 @@ public class ChangeHours extends AppCompatActivity {
                 List<String> formatted_inputted_time_list = getInputtedTimeStringList();
                 save(formatted_inputted_time_list);
                 showTime(formatted_inputted_time_list);
-                Snackbar.make(snack_view, "保存成功", BaseTransientBottomBar.LENGTH_SHORT).show();
+                Snackbar.make(snack_view, "保存成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 break;
         }
         return true;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -729,7 +730,7 @@ public class Login extends AppCompatActivity {
                             final String tip_f = tip;
                             runOnUiThread((Runnable) () -> {
                                 /** show tip snack-bar */
-                                Snackbar.make(view, tip_f, BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, tip_f, BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 /** clear corresponding input box(except check-code input box), set focus to it(including check-code input box) */
                                 if (tip_f.equals(getResources().getString(R.string.lan_snackbar_login_fail_pwd))) {
                                     ((EditText)findViewById(R.id.passwd_input)).setText("");
@@ -749,25 +750,25 @@ public class Login extends AppCompatActivity {
                             vpn_login_res = vpn_login_test(Login.this, sid, vpn_pwd);
                         } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
                             runOnUiThread(()->{
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_wrong_pwd), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_wrong_pwd), BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 unlock(true);
                             });
                             return;
                         } catch (ExceptionUnknown exceptionUnknown) {
                             runOnUiThread(()->{
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 unlock(true);
                             });
                             return;
                         } catch (ExceptionIpForbidden exceptionIpForbidden) {
                             runOnUiThread(()->{
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_ip), BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 unlock(true);
                             });
                             return;
                         } catch (ExceptionNetworkError exceptionNetworkError) {
                             runOnUiThread(()->{
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_net_error), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_vpn_test_login_fail_net_error), BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 unlock(true);
                             });
                             return;
@@ -778,7 +779,7 @@ public class Login extends AppCompatActivity {
                         if (outside_login_res.code != 0){
                             runOnUiThread((Runnable) () -> {
                                 /** show tip snack-bar */
-                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).show();
+                                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_outside_test_login_fail), BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                 /** call {@link #unlock(boolean)} with true */
                                 unlock(true);
                             });
@@ -818,7 +819,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
                         /** show tip snack-bar, change title */
                         runOnUiThread(() -> {
-                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
+                            Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
                         /** call {@link #deleteOldDataFromDatabase()} */
@@ -869,7 +870,7 @@ public class Login extends AppCompatActivity {
                                     /** call {@link #unlock(boolean)} with true */
                                     unlock(true);
                                     /** show tip snack-bar, change title */
-                                    Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
+                                    Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                                     getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
                                 });
                             }else {

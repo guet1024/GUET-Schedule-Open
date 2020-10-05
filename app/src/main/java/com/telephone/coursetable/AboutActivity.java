@@ -1,6 +1,7 @@
 package com.telephone.coursetable;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -82,13 +83,13 @@ public class AboutActivity extends AppCompatActivity {
             case R.id.itqq:
                 boolean blQQ = joinQQGroup("Jm2emUYqOfaVWX3WL17GY0nN2wOBN1wG");
                 if ( !blQQ ) {
-                    Snackbar.make(findViewById(R.id.aboutus), "未安装手Q或安装的版本不支持", BaseTransientBottomBar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.aboutus), "未安装手Q或安装的版本不支持", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 }
                 break;
             case R.id.itgh:
                 boolean blgh = joinGitHub();
                 if ( !blgh ) {
-                    Snackbar.make(findViewById(R.id.aboutus), "页面跳转失败", BaseTransientBottomBar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.aboutus), "页面跳转失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 }
                 break;
             default:
