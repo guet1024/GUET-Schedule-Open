@@ -599,10 +599,10 @@ public class Login_vpn extends AppCompatActivity {
         Resources r = c.getResources();
         String body = "us=" + sid + "&pwd=" + pwd + "&ck=" + ckcode;
         HttpConnectionAndCode login_res = Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/Login/SubmitLogin",
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/SubmitLogin",
                 null,
                 r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421f2fc4b8b69377d556a468ca88d1b203b/",
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/",
                 body,
                 cookie,
                 "}",
