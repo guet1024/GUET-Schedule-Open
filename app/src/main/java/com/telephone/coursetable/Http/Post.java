@@ -13,6 +13,7 @@ import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -156,10 +157,13 @@ public class Post {
                 }
             }
             if (cookieman.getCookieStore().getCookies().size() > 0) {
-                String cookie_join = TextUtils.join(cookie_delimiter, cookieman.getCookieStore().getCookies());
-                if (cookie_join.contains(";$")){
-                    cookie_join = cookie_join.substring(0, cookie_join.indexOf(";$"));
+                List<HttpCookie> cookieList = cookieman.getCookieStore().getCookies();
+                List<String> cookieStringList = new LinkedList<>();
+                for (HttpCookie httpCookie : cookieList){
+                    String str = httpCookie.getName() + "=" + httpCookie.getValue();
+                    cookieStringList.add(str);
                 }
+                String cookie_join = TextUtils.join(cookie_delimiter, cookieStringList);
                 cookie_builder.append(cookie_join);
             }
             set_cookie = cookie_builder.toString();
