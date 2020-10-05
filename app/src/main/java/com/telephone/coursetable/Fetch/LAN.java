@@ -157,10 +157,10 @@ public class LAN {
     public static HttpConnectionAndCode graduationScore(Context c, String cookie){
         Resources r = c.getResources();
         HttpConnectionAndCode gen = Post.post(
-                "http://bkjw.guet.edu.cn/student/genyxxf",
+                "http://172.16.13.22/student/genyxxf",
                 null,
                 r.getString(R.string.user_agent),
-                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "http://172.16.13.22/Login/MainDesktop",
                 "stid=1",
                 cookie,
                 "}",
@@ -194,10 +194,10 @@ public class LAN {
     public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
         Resources r = c.getResources();
         HttpConnectionAndCode gen = Post.post(
-                "http://bkjw.guet.edu.cn/student/genyxxf",
+                "http://172.16.13.22/student/genyxxf",
                 null,
                 r.getString(R.string.user_agent),
-                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "http://172.16.13.22/Login/MainDesktop",
                 "stid=1",
                 cookie,
                 "}",
@@ -207,10 +207,10 @@ public class LAN {
                 null
         );
         return Get.get(
-                "http://bkjw.guet.edu.cn/student/getplancj",
+                "http://172.16.13.22/student/getplancj",
                 null,
                 r.getString(R.string.user_agent),
-                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "http://172.16.13.22/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,
@@ -255,10 +255,10 @@ public class LAN {
     public static HttpConnectionAndCode examInfo(Context c, String cookie){
         Resources r = c.getResources();
         return Get.get(
-                "http://bkjw.guet.edu.cn/student/getexamap?&term=",
+                "http://172.16.13.22/student/getexamap?&term=",
                 null,
                 r.getString(R.string.user_agent),
-                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "http://172.16.13.22/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,
@@ -279,10 +279,10 @@ public class LAN {
     public static HttpConnectionAndCode cet(Context c, String cookie){
         Resources r = c.getResources();
         return Get.get(
-                "http://bkjw.guet.edu.cn/student/GetLvlScore?term=",
+                "http://172.16.13.22/student/GetLvlScore?term=",
                 null,
                 r.getString(R.string.user_agent),
-                "http://bkjw.guet.edu.cn/Login/MainDesktop",
+                "http://172.16.13.22/Login/MainDesktop",
                 cookie,
                 "}]}",
                 null,

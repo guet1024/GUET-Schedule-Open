@@ -258,7 +258,7 @@ public class MyApp extends Application {
 
     public static boolean isLAN(){
         return Get.get(
-                "http://bkjw.guet.edu.cn/",
+                "http://172.16.13.22/",
                 null,
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36",
                 "",

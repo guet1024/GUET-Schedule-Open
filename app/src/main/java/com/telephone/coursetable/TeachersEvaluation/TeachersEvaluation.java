@@ -180,7 +180,7 @@ public class TeachersEvaluation {//评教
         }
         addtoast("登录成功,开始评教",Toast.LENGTH_SHORT,false);
         cookie = stringBuilder.toString();
-        String referer = "http://bkjw.guet.edu.cn/Login/MainDesktop";
+        String referer = "http://172.16.13.22/Login/MainDesktop";
         String user_agent = c.getResources().getString(R.string.user_agent);
         int flag = 0;
         int flag1 = 0;
@@ -194,7 +194,7 @@ public class TeachersEvaluation {//评教
             ){
                 return;
             }
-            HttpConnectionAndCode httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
+            HttpConnectionAndCode httpURLConnection = Get.get("http://172.16.13.22/student/getpjcno",
                     new String[]{"term=" + t.term},
                     user_agent,
                     referer,
@@ -214,7 +214,7 @@ public class TeachersEvaluation {//评教
                 ){
                     return;
                 }
-                httpURLConnection = Get.get("http://bkjw.guet.edu.cn/student/getpjcno",
+                httpURLConnection = Get.get("http://172.16.13.22/student/getpjcno",
                         new String[]{"term=" + t.term},
                         user_agent,
                         referer,
@@ -259,7 +259,7 @@ public class TeachersEvaluation {//评教
                     ){
                         return;
                     }
-                    HttpConnectionAndCode post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
+                    HttpConnectionAndCode post_res = Post.post("http://172.16.13.22/student/SaveJxpgJg/1",
                             new String[]{t.term},
                             user_agent,
                             referer,
@@ -278,7 +278,7 @@ public class TeachersEvaluation {//评教
                         ){
                             return;
                         }
-                        post_res = Post.post("http://bkjw.guet.edu.cn/student/SaveJxpgJg/1",
+                        post_res = Post.post("http://172.16.13.22/student/SaveJxpgJg/1",
                                 new String[]{t.term},
                                 user_agent,
                                 referer,
