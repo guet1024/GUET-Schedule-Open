@@ -52,14 +52,6 @@
         app:srcCompat="@color/colorCurrentWeekday" />
 
     <TextView
-        android:id="@+id/main_drag_background"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_wd7"/>
-
-    <TextView
         android:id="@+id/textView_time5"
         android:layout_width="22dp"
         android:layout_height="0dp"
@@ -864,6 +856,19 @@
         app:layout_constraintStart_toEndOf="@id/textView_title"
         app:layout_constraintTop_toTopOf="@id/imageView_child_image" />
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/main_pull_refresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textView_time3"
+        app:layout_constraintTop_toBottomOf="@id/textView_wd3">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
@@ -972,5 +977,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.19" />
+
+    <TextView
+        android:id="@+id/main_drag_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_wd7"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

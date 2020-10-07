@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -110,7 +111,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 2:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.grades);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "成绩单为空", BaseTransientBottomBar.LENGTH_SHORT).show());
+                    view.setOnClickListener(v -> Snackbar.make(v, "成绩单为空", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
                 }
                 break;
             case 3:
@@ -122,7 +123,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 5:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.exam);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "暂无考试安排", BaseTransientBottomBar.LENGTH_SHORT).show());
+                    view.setOnClickListener(v -> Snackbar.make(v, "暂无考试安排", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
                 }
                 break;
             case 6:
@@ -131,7 +132,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 7:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.cet);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "未查询到等级考试成绩", BaseTransientBottomBar.LENGTH_SHORT).show());
+                    view.setOnClickListener(v -> Snackbar.make(v, "未查询到等级考试成绩", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
                 }
                 break;
             case 8:

@@ -15,6 +15,12 @@
     <color name="colorCurrentWeekday">#A0CFD5</color>
     <color name="colorFunctionMenuColor_0">#A0CFD5</color>
 
+    <color name="colorRefresh1">#82C2D1</color>
+    <color name="colorRefresh2">#7BBBFF</color>
+    <color name="colorRefresh3">#FFB2CD</color>
+    <color name="colorRefresh4">#FFC999</color>
+    <color name="colorRefresh5">#B8D8BB</color>
+
     <color name="colorLoginButton">#5D6161</color>
     <color name="colorLoginTextFill">#ECECEC</color>
     <color name="colorLoginTextBorder">#000000</color>
@@ -24,4 +30,6 @@
 
     <color name="colorLibraryLocalBackground">#D1E9E9</color>
     <color name="colorLibraryInfoBackground">#E0E0E0</color>
+
+    <color name="colorDefaultTextColor">#505050</color>
 </resources>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -104,7 +105,7 @@ public class ChangeTerms extends AppCompatActivity {
             runOnUiThread(()->{
                 ((EditText)findViewById(R.id.delay_week)).setEnabled(true);
                 ((NumberPicker)findViewById(R.id.term)).setEnabled(true);
-                Snackbar.make(findViewById(R.id.term), "已重置所有学期", BaseTransientBottomBar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.term), "已重置所有学期", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
             });
         }).start();
     }
@@ -137,7 +138,7 @@ public class ChangeTerms extends AppCompatActivity {
             runOnUiThread(()->{
                 ((EditText)findViewById(R.id.delay_week)).setEnabled(true);
                 ((NumberPicker)findViewById(R.id.term)).setEnabled(true);
-                Snackbar.make(findViewById(R.id.term), "学期调整成功", BaseTransientBottomBar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.term), "学期调整成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
             });
         }).start();
     }

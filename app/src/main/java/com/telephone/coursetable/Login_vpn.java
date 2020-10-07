@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.SpannableString;
@@ -370,7 +371,7 @@ public class Login_vpn extends AppCompatActivity {
      * @clear
      */
     private void retry(@NonNull View snack_bar_bind_to_view, @NonNull String tip){
-        Snackbar.make(snack_bar_bind_to_view, tip, BaseTransientBottomBar.LENGTH_SHORT).show();
+        Snackbar.make(snack_bar_bind_to_view, tip, BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
         unlock(true);
     }
 
@@ -1024,7 +1025,7 @@ public class Login_vpn extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     if ( cookie.contains("fail:") ) {
-                        Snackbar.make(view, cookie.substring(5), BaseTransientBottomBar.LENGTH_LONG).show();
+                        Snackbar.make(view, cookie.substring(5), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                         unlock(true);
                         if ( cookie.equals(getResources().getString(R.string.login_fail_pwd_text_exception)) ) {
                             ((EditText) findViewById(R.id.passwd_input)).setText("");
@@ -1188,7 +1189,7 @@ public class Login_vpn extends AppCompatActivity {
             MyApp.setRunning_login_thread(true);
             /** show tip snack-bar, change title */
             runOnUiThread(() -> {
-                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).show();
+                Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
             });
 
@@ -1252,7 +1253,7 @@ public class Login_vpn extends AppCompatActivity {
                     runOnUiThread(() -> {
                         unlock(true);
                         /** show tip snack-bar, change title */
-                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).show();
+                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                         getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
                     });
                 } else {

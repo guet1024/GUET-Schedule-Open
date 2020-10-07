@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
@@ -19,14 +21,16 @@ public class PickerPanel {
     public TextView t1;
     public TextView t2;
     public FloatingActionButton btn;
+    public SwipeRefreshLayout refresh;
 
-    public PickerPanel(ImageView im, NumberPicker p1, NumberPicker p2, TextView t1, TextView t2, FloatingActionButton btn) {
+    public PickerPanel(ImageView im, NumberPicker p1, NumberPicker p2, TextView t1, TextView t2, FloatingActionButton btn, SwipeRefreshLayout refresh) {
         this.im = im;
         this.p1 = p1;
         this.p2 = p2;
         this.t1 = t1;
         this.t2 = t2;
         this.btn = btn;
+        this.refresh = refresh;
     }
 
     public void hide(Activity c){
@@ -37,6 +41,7 @@ public class PickerPanel {
             t1.setVisibility(View.INVISIBLE);
             t2.setVisibility(View.INVISIBLE);
             btn.setVisibility(View.INVISIBLE);
+            refresh.setEnabled(true);
         });
     }
 
@@ -48,6 +53,7 @@ public class PickerPanel {
             t1.setVisibility(View.VISIBLE);
             t2.setVisibility(View.VISIBLE);
             btn.setVisibility(View.VISIBLE);
+            refresh.setEnabled(false);
         });
     }
 
