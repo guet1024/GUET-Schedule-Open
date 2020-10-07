@@ -17,7 +17,7 @@
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="0dp"
         android:layout_height="15dp"
-        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintDimensionRatio="W,1:1"
         android:progress="50"
         app:layout_constraintEnd_toEndOf="@id/update_update"
         app:layout_constraintTop_toTopOf="@id/update_update"
