@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Clock.Clock;
@@ -202,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
                 (NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker),
                 (TextView) MainActivity.this.view.findViewById(R.id.term_picker_text),
                 (TextView) MainActivity.this.view.findViewById(R.id.week_picker_text),
-                (FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton2)
+                (FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton2),
+                (SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)
         );
         pref = MyApp.getCurrentSharedPreference();
         editor = MyApp.getCurrentSharedPreferenceEditor();
@@ -212,6 +215,49 @@ public class MainActivity extends AppCompatActivity {
         pdao = MyApp.getCurrentAppDB().personInfoDao();
 
         pickerPanel.hide(this);
+        ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setColorSchemeResources(
+                R.color.colorRefresh1,
+                R.color.colorRefresh2,
+                R.color.colorRefresh3,
+                R.color.colorRefresh4,
+                R.color.colorRefresh5
+                );
+        ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setOnRefreshListener(() -> {
+            returnToday(null);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                runOnUiThread(()->{
+                    String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+                    long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
+                    new Thread(()->{
+                        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                getResources().getString(R.string.pref_hour_start_suffix),
+                                getResources().getString(R.string.pref_hour_end_suffix),
+                                getResources().getString(R.string.pref_hour_des_suffix));
+                        List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
+                        if (!term_list.isEmpty()) {
+                            locate.term = term_list.get(0);
+                            locate.week = selected_week;
+                        } else {
+                            locate.term = null;
+                            locate.week = Clock.NO_TERM;
+                        }
+                        Map.Entry<Integer, Integer> g = getTime_enhanced();
+                        runOnUiThread(() -> {
+                            showTable(locate, g);
+                            Log.e("main-pull-refresh", "success!");
+                            ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setRefreshing(false);
+                        });
+                    }).start();
+                });
+            }).start();
+        });
+        ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(false);
 
         final boolean lockdown = MyApp.isRunning_login_thread() || MyApp.isRunning_fetch_service();
         if (lockdown) {
@@ -281,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                         for (int id : MyApp.timetvIds) {
                             ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(MainActivity.this::setTime);
                         }
+                        ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(true);
                         ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
                         MainActivity.this.view.findViewById(R.id.main_drag_background).setOnDragListener(new View.OnDragListener() {
                             @Override
