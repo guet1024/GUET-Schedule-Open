@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 R.color.colorRefresh5
                 );
         ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setOnRefreshListener(() -> {
+            ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setEnabled(false);
             returnToday(null);
             new Thread(() -> {
                 try {
@@ -252,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                             showTable(locate, g);
                             Log.e("main-pull-refresh", "success!");
                             ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setRefreshing(false);
+                            ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setEnabled(true);
                         });
                     }).start();
                 });
@@ -336,8 +338,10 @@ public class MainActivity extends AppCompatActivity {
                                 switch (action) {
                                     case DragEvent.ACTION_DRAG_STARTED:
                                     case DragEvent.ACTION_DRAG_ENTERED:
-                                    case DragEvent.ACTION_DRAG_EXITED:
                                     case DragEvent.ACTION_DROP:
+                                        break;
+                                    case DragEvent.ACTION_DRAG_EXITED:
+                                        view.updateDragShadow(new View.DragShadowBuilder());
                                         break;
                                     case DragEvent.ACTION_DRAG_ENDED:
                                         MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.VISIBLE);
