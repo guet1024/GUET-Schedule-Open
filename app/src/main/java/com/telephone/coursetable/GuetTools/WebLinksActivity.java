@@ -2,19 +2,67 @@ package com.telephone.coursetable.GuetTools;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.telephone.coursetable.MainActivity;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.util.LinkedList;
 import java.util.Map;
 
-public class WebLinks extends AppCompatActivity {
+public class WebLinksActivity extends AppCompatActivity {
+
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.WEB_LINKS);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_web_links);
         ListView listView = findViewById(R.id.web_links_list);
         listView.setAdapter(new WebLinksAdapter(
