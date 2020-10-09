@@ -186,6 +186,7 @@
         </activity>
         <activity
             android:name=".GradePoint.GradePointActivity"
+            android:parentActivityName=".FunctionMenu"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
 <!--            <intent-filter>-->
