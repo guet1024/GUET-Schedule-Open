@@ -188,7 +188,7 @@
             android:name=".GradePoint.GradePointActivity"
             android:parentActivityName=".FunctionMenu"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme_grade_points">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 

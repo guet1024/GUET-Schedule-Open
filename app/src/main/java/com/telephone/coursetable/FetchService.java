@@ -44,6 +44,7 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.GradePoint.GradePointActivity;
 import com.telephone.coursetable.GuetTools.ImageActivity;
 import com.telephone.coursetable.GuetTools.WebLinksActivity;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
@@ -435,6 +436,8 @@ public class FetchService extends IntentService {
                 return ((Webinfo)activity).setOutdated();
             case IMAGE_MAP:
                 return ((ImageActivity)activity).setOutdated();
+            case GRADE_POINTS:
+                return ((GradePointActivity)activity).setOutdated();
             case LIBRARY:
                 return ((LibraryActivity)activity).setOutdated();
             default: return false;

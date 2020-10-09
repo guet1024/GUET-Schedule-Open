@@ -1,5 +1,6 @@
 package com.telephone.coursetable.GradePoint;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.Login_vpn;
+import com.telephone.coursetable.MainActivity;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
@@ -34,9 +37,54 @@ public class GradePointActivity extends AppCompatActivity {
     private List<User> list_user;
     private User user;
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, FunctionMenu.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.GRADE_POINTS);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_gradepoint);
 
         menu_listf = findViewById(R.id.grade_points_list);
