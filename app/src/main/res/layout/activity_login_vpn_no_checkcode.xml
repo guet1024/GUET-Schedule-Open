@@ -178,8 +178,8 @@
         android:background="@drawable/eye_close"
         app:layout_constraintBottom_toBottomOf="@+id/passwd_input"
         app:layout_constraintDimensionRatio="W,1:1"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/passwd_input"
         app:layout_constraintTop_toTopOf="@+id/passwd_input" />
