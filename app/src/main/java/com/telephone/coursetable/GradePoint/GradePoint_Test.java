@@ -57,7 +57,7 @@ public class GradePoint_Test {
                 new String[]{
                         "xn=" + syear,
                         "lwPageSize=1000",
-                        "lwBtnquery=(无法对值进行解码)"
+                        "lwBtnquery=%B2%E9%D1%AF"
                 },
                 r.getString(R.string.user_agent),
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626013051d0/student/public/menu.asp?menu=mnall.asp",
