@@ -1,5 +1,6 @@
 package com.telephone.coursetable;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -137,6 +138,28 @@ public class Login_vpn extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void setOnTouchListener(Button bt, TextView textView) {
+        bt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        textView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        bt.setBackground(getDrawable(R.drawable.eye_open));
+                        clearIMAndFocus();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        textView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        bt.setBackground(getDrawable(R.drawable.eye_close));
+                        clearIMAndFocus();
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
     //clear
     private void first_login() {
         setContentView(R.layout.activity_login_vpn_no_checkcode);
@@ -145,26 +168,8 @@ public class Login_vpn extends AppCompatActivity {
 
         ((EditText)findViewById(R.id.passwd_input)).setInputType(((EditText)findViewById(R.id.passwd_input)).getInputType());
 
-        Button btn_pwd = ((Button)findViewById(R.id.show_pwd));
-
-        btn_pwd.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        btn_pwd.setBackground(getDrawable(R.drawable.eye_open));
-                        clearIMAndFocus();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        btn_pwd.setBackground(getDrawable(R.drawable.eye_close));
-                        clearIMAndFocus();
-                        break;
-                }
-                return false;
-            }
-        });
+        Button btn_pwd = (Button)findViewById(R.id.show_pwd);
+        setOnTouchListener(btn_pwd, (AutoCompleteTextView)findViewById(R.id.passwd_input));
 
         new Thread((Runnable) () -> {
             updateUserNameAutoFill();
@@ -220,48 +225,12 @@ public class Login_vpn extends AppCompatActivity {
             setFocusToEditText( (EditText) findViewById(R.id.aaw_pwd_input) );
         }
 
-        Button btn_pwd_21 = ((Button)findViewById(R.id.show_pwd_21));
-
-        btn_pwd_21.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        ((AutoCompleteTextView)findViewById(R.id.aaw_pwd_input)).setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        btn_pwd_21.setBackground(getDrawable(R.drawable.eye_open));
-                        clearIMAndFocus();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        ((AutoCompleteTextView)findViewById(R.id.aaw_pwd_input)).setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        btn_pwd_21.setBackground(getDrawable(R.drawable.eye_close));
-                        clearIMAndFocus();
-                        break;
-                }
-                return false;
-            }
-        });
+        Button btn_pwd_21 = (Button)findViewById(R.id.show_pwd_21);
+        setOnTouchListener(btn_pwd_21, (AutoCompleteTextView)findViewById(R.id.aaw_pwd_input));
 
 
-        Button btn_pwd_22 = ((Button)findViewById(R.id.show_pwd_22));
-
-        btn_pwd_22.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        ((AutoCompleteTextView)findViewById(R.id.sys_pwd_input)).setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        btn_pwd_22.setBackground(getDrawable(R.drawable.eye_open));
-                        clearIMAndFocus();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        ((AutoCompleteTextView)findViewById(R.id.sys_pwd_input)).setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        btn_pwd_22.setBackground(getDrawable(R.drawable.eye_close));
-                        clearIMAndFocus();
-                        break;
-                }
-                return false;
-            }
-        });
+        Button btn_pwd_22 = (Button)findViewById(R.id.show_pwd_22);
+        setOnTouchListener(btn_pwd_22, (AutoCompleteTextView)findViewById(R.id.sys_pwd_input));
     }
 
 
@@ -832,7 +801,6 @@ public class Login_vpn extends AppCompatActivity {
         grdao = db.gradesDao();
         edao = db.examInfoDao();
         cetDao = db.cetDao();
-
         title = getSupportActionBar().getTitle().toString();
 
         first_login();
@@ -1282,6 +1250,8 @@ public class Login_vpn extends AppCompatActivity {
         h.setSpan(s, 0, h.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         et.setHint(new SpannedString(h));
     }
+
+
 }
 
 
