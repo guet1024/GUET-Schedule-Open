@@ -44,6 +44,7 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.GuetTools.WebLinksActivity;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.OCR.OCR;
@@ -420,6 +421,8 @@ public class FetchService extends IntentService {
                 return ((FunctionMenu)activity).setOutdated();
             case ABOUT:
                 return ((AboutActivity)activity).setOutdated();
+            case WEB_LINKS:
+                return ((WebLinksActivity)activity).setOutdated();
             case LIBRARY:
                 return ((LibraryActivity)activity).setOutdated();
             default: return false;
