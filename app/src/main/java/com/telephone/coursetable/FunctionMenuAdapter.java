@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 import com.telephone.coursetable.Update.Update;
+import com.telephone.coursetable.Webinfo.Webinfo;
 
 import java.util.List;
 
@@ -136,9 +137,12 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 }
                 break;
             case 8:
-                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.update);
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.guet_tool);
                 break;
             case 9:
+                ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.update);
+                break;
+            case 10:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.about);
                 break;
         }
@@ -182,6 +186,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_cet, viewGroup, false);
                 break;
             case 8:
+                if (view != null &&  ((TextView)view.findViewById(R.id.item_guet_tools)) != null)break;
+                view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_guet_tools, viewGroup, false);
+                break;
+            case 9:
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_update, viewGroup, false);
                 final View view_f = view;
                 final TextView update_textview = (TextView)view_f.findViewById(R.id.update_update);
@@ -234,7 +242,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 Check check = new Check(update_textview, update_progressbar, view_f, c);
                 view.setOnClickListener(view13 -> check.run());
                 break;
-            case 9:
+            case 10:
                 view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_item_about, viewGroup, false);
                 break;
         }
@@ -342,9 +350,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 view.setOnClickListener(collapse);
                 break;
             case 8:
-                ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
+                ((TextView)view.findViewById(R.id.item_guet_tools)).setText(groups.get(i).getValue().get(i1).get(0));
+                view.setOnClickListener(view_item_guet_tools -> context.startActivity(new Intent(context, Webinfo.class)));
                 break;
             case 9:
+                ((TextView)view.findViewById(R.id.update_update)).setText(groups.get(i).getValue().get(i1).get(0));
+                break;
+            case 10:
                 ((TextView)view.findViewById(R.id.about_about)).setText(groups.get(i).getValue().get(i1).get(0));
                 if (i1 == 0){
                     view.setOnClickListener(view19 -> context.startActivity(new Intent(context, UsageActivity.class)));
