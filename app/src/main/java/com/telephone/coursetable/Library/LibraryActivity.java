@@ -148,11 +148,7 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ( i == EditorInfo.IME_ACTION_SEARCH ) {
-                    Intent intent_send = new Intent(LibraryActivity.this, LibraryActivity.class);
-                    intent_send.putExtra( EXTRA_USERNAME, username );
-                    intent_send.putExtra( EXTRA_VPN_PASSWORD, password );
-                    intent_send.putExtra( MESSAGE_STRING, etMessage.getText().toString() );
-                    startActivity(intent_send);
+                    startIntent();
                     return true;
                 }
                 return false;
@@ -162,11 +158,7 @@ public class LibraryActivity extends AppCompatActivity {
         btSend.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent_send = new Intent(LibraryActivity.this, LibraryActivity.class);
-                intent_send.putExtra( EXTRA_USERNAME, username );
-                intent_send.putExtra( EXTRA_VPN_PASSWORD, password );
-                intent_send.putExtra( MESSAGE_STRING, etMessage.getText().toString() );
-                startActivity(intent_send);
+                startIntent();
             }
         });
 
@@ -438,5 +430,12 @@ public class LibraryActivity extends AppCompatActivity {
         return groups;
     }
 
+    private void startIntent() {
+        Intent intent_send = new Intent(LibraryActivity.this, LibraryActivity.class);
+        intent_send.putExtra( EXTRA_USERNAME, username );
+        intent_send.putExtra( EXTRA_VPN_PASSWORD, password );
+        intent_send.putExtra( MESSAGE_STRING, etMessage.getText().toString() );
+        startActivity(intent_send);
+    }
 
 }

@@ -28,7 +28,6 @@
     <string name="picker_ok_btn">确定</string>
     <string name="picker_cancel_btn">取消</string>
 
-
     <string name="lan_login_url">http://172.16.13.22/Login/SubmitLogin</string>
     <string name="lan_login_referer">http://172.16.13.22/</string>
     <string name="lan_login_success_contain_response_text">\"success\":true</string>
@@ -81,7 +80,6 @@
     <string name="lan_get_grades_referer">http://172.16.13.22/Login/MainDesktop</string>
     <string name="lan_get_grades_success_contain_response_text">\"success\":true</string>
 
-
     <string name="wan_get_check_code_url">https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/login/GetValidateCode?id=0.5018148359674977</string>
     <string name="wan_get_check_code_referer">https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/</string>
     <string name="wan_vpn_get_ticket_url">https://v.guet.edu.cn/</string>
@@ -113,10 +111,7 @@
 
     <string name="wan_vpn_ip_forbidden">ip</string>
 
-
     <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36</string>
-
-
 
     <string name="cookie_delimiter">"; "</string>
     <string name="ok_btn_text_zhcn">确定</string>
@@ -127,7 +122,7 @@
     <string name="login_success_title">登录成功</string>
     <string name="login_fail_ck_text">验证码不正确</string>
     <string name="login_fail_pwd_text">用户或密码错误!</string>
-    <string name="login_fail_pwd_text_exception">fail:用户或密码错误!</string>
+    <string name="login_fail_pwd_text_exception">fail:用户名或密码错误!</string>
 
     <string name="title">课程表</string>
     <string name="title_login">同步</string>
