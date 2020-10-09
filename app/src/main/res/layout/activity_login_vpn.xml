@@ -191,8 +191,8 @@
         android:background="@drawable/eye_close"
         app:layout_constraintBottom_toBottomOf="@+id/aaw_pwd_input"
         app:layout_constraintDimensionRatio="W,1:1"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/aaw_pwd_input"
         app:layout_constraintTop_toTopOf="@+id/aaw_pwd_input" />
@@ -222,8 +222,8 @@
         android:background="@drawable/eye_close"
         app:layout_constraintBottom_toBottomOf="@+id/sys_pwd_input"
         app:layout_constraintDimensionRatio="W,1:1"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/sys_pwd_input"
         app:layout_constraintTop_toTopOf="@+id/sys_pwd_input" />

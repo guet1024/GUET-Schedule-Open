@@ -392,6 +392,13 @@ public class FunctionMenu extends AppCompatActivity {
             }
             menus.add(Map.entry(cet_group, children));
 
+            String guet_tools_group = "GUET常用工具";
+            children = new LinkedList<>();
+            child = new LinkedList<>();
+            child.add("常用工具页");
+            children.add(child);
+            menus.add(Map.entry(guet_tools_group, children));
+
             String update_group = "应用更新";
             children = new LinkedList<>();
             child = new LinkedList<>();

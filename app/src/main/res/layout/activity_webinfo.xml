@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Webinfo.Webinfo">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline47"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.08" />
+
+    <ImageView
+        android:id="@+id/guet_music_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guet_phone_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:srcCompat="@drawable/guet_music_icon" />
+
+    <TextView
+        android:id="@+id/guet_music"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="桂电校歌"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/guet_music_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/guet_music_icon" />
+
+
+    <ImageView
+        android:id="@+id/guet_phone_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guet_map_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/guet_music_icon"
+        app:srcCompat="@drawable/phone_icon" />
+
+    <ImageView
+        android:id="@+id/guet_map_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/jjl_map"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/guet_phone_icon"
+        app:srcCompat="@drawable/map_icon" />
+
+    <TextView
+        android:id="@+id/guet_map"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="桂电地图（花江校区）"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/guet_map_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/guet_map_icon" />
+
+    <TextView
+        android:id="@+id/guet_phone"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="桂电电话簿"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/guet_phone_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/guet_phone_icon" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.28" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="6dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline49"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <ImageView
+        android:id="@+id/chat_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/link"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/jjl_map"
+        app:srcCompat="@drawable/chat_group" />
+
+    <TextView
+        android:id="@+id/chat_grouptext"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="公共平台"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/chat_group"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/chat_group" />
+
+    <ImageView
+        android:id="@+id/link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guet_calendar"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/chat_group"
+        app:srcCompat="@drawable/link" />
+
+    <TextView
+        android:id="@+id/linktext"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="常用链接"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/link"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/link" />
+
+    <ImageView
+        android:id="@+id/jjl_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/chat_group"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/guet_map_icon"
+        app:srcCompat="@drawable/map_icon" />
+
+    <TextView
+        android:id="@+id/jjl_maptext"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="桂电地图（金鸡岭校区）"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/jjl_map"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/jjl_map" />
+
+    <TextView
+        android:id="@+id/guet_calendartext"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/guet_tools_background"
+        android:gravity="center"
+        android:text="教学日历"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/guet_calendar"
+        app:layout_constraintEnd_toStartOf="@+id/guideline49"
+        app:layout_constraintStart_toStartOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/guet_calendar" />
+
+    <ImageView
+        android:id="@+id/guet_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guideline50"
+        app:layout_constraintEnd_toStartOf="@+id/guideline48"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/link"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/guet_calendar" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
