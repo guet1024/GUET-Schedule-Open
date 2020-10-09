@@ -84,9 +84,15 @@ public class WebLinksAdapter implements ListAdapter {
             if (list.get(position).getKey().contains("公众号")){
                 convertView.setOnClickListener(view -> ImageActivity.initmap(c, Integer.parseInt(list.get(position).getValue()), list.get(position).getKey()));
             }else {
+                String value = list.get(position).getValue();
+                String delimiter = " | ";
+                int deli_index = value.indexOf(delimiter);
+                String qq_key = value.substring(0, deli_index);
+                int id = Integer.parseInt(value.substring(deli_index + delimiter.length()));
                 convertView.setOnClickListener(view -> {
-                    if (!joinQQGroup(list.get(position).getValue())) {
-                        Snackbar.make(view, "未安装手Q或安装的版本不支持", BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                    if (!joinQQGroup(qq_key)) {
+//                        Snackbar.make(view, "未安装手Q或安装的版本不支持", BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                        ImageActivity.initmap(c, id, list.get(position).getKey());
                     }
                 });
             }

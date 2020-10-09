@@ -44,11 +44,15 @@ import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
+import com.telephone.coursetable.GuetTools.ImageActivity;
 import com.telephone.coursetable.GuetTools.WebLinksActivity;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.OCR.OCR;
 import com.telephone.coursetable.Update.Update;
+import com.telephone.coursetable.Webinfo.GUET_Music;
+import com.telephone.coursetable.Webinfo.Guetphonenums;
+import com.telephone.coursetable.Webinfo.Webinfo;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -423,6 +427,14 @@ public class FetchService extends IntentService {
                 return ((AboutActivity)activity).setOutdated();
             case WEB_LINKS:
                 return ((WebLinksActivity)activity).setOutdated();
+            case GUET_MUSIC:
+                return ((GUET_Music)activity).setOutdated();
+            case GUET_PHONE:
+                return ((Guetphonenums)activity).setOutdated();
+            case WEB_INFO:
+                return ((Webinfo)activity).setOutdated();
+            case IMAGE_MAP:
+                return ((ImageActivity)activity).setOutdated();
             case LIBRARY:
                 return ((LibraryActivity)activity).setOutdated();
             default: return false;

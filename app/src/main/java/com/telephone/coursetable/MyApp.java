@@ -54,7 +54,7 @@ public class MyApp extends Application {
     private volatile static boolean running_fetch_service = false;
 
     public enum RunningActivity{
-            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, ABOUT, USAGE, WEB_LINKS, NULL
+            MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, ABOUT, USAGE, WEB_LINKS, GUET_MUSIC, GUET_PHONE, WEB_INFO, IMAGE_MAP, NULL
     }
     private volatile static RunningActivity running_activity = RunningActivity.NULL;
     private volatile static AppCompatActivity running_activity_pointer = null;
