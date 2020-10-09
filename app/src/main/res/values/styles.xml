@@ -81,6 +81,38 @@
         <item name="title">"常用链接/公共平台"</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
+    <style name="AppTheme_webinfo" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"常用工具"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+    <style name="AppTheme_guet_music" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"桂电校歌"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+    <style name="AppTheme_image" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"图片查看"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+    <style name="AppTheme_guet_phone" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"桂电电话簿"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
     
     <style name="Launcher" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/start_page_2</item>
