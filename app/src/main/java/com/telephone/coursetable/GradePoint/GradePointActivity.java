@@ -3,6 +3,7 @@ package com.telephone.coursetable.GradePoint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
@@ -98,6 +99,7 @@ public class GradePointActivity extends AppCompatActivity {
         menu_listf.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                Log.e("grade point list", "clicked");
                 dosearch();
                 return false;
             }
@@ -106,8 +108,7 @@ public class GradePointActivity extends AppCompatActivity {
     }
 
     private void dosearch() {
-        menu_listf.setEnabled(false);
-        Processing_error();
+        Processing_error(false);
         new Thread(()->{
 
             appDatabase = MyApp.getCurrentAppDB();
@@ -123,7 +124,7 @@ public class GradePointActivity extends AppCompatActivity {
             cookie = Login_vpn.wan_vpn_login_text(GradePointActivity.this, sid, vpn_pwd);
             if ( cookie.contains("fail:") ) {
                 runOnUiThread(()->{
-                    Processing_error();
+                    Processing_error(true);
                     if (cookie.contains("密码错误")) cookie = cookie + " 请重新登录以更新密码！";
                     Snackbar.make(menu_listf, cookie.substring(5), Snackbar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                 });
@@ -132,28 +133,28 @@ public class GradePointActivity extends AppCompatActivity {
             Get_grade_points_array grade_point_array = GradePoint_Test.wan_get_grade_point_array(GradePointActivity.this, cookie, sid, aaw_pwd);
             if (grade_point_array.message != null) {
                 runOnUiThread(()->{
-                    Processing_error();
+                    Processing_error(true);
                     if (grade_point_array.message.contains("密码错误")) grade_point_array.message = grade_point_array.message + " 请重新登录以更新密码！";
                     Snackbar.make(menu_listf, grade_point_array.message.substring(5), Snackbar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                 });
                 return;
             }
-            points_list.add(Map.entry("学分绩", grade_point_array.grade_points_array));
-            runOnUiThread(this::Processing_correct);
+            runOnUiThread(()->Processing_correct(grade_point_array.grade_points_array));
         }).start();
     }
 
-    private void Processing_error() {
+    private void Processing_error(boolean clickable) {
         List<Map.Entry<String, String>> Grade_point_array = new LinkedList<>();
         points_list.add(Map.entry("学分绩", Grade_point_array));
         progressBar.setVisibility(View.INVISIBLE);
         menu_listf.setAdapter(new GradePointAdapter(GradePointActivity.this, points_list, true, menu_listf));
         menu_listf.setGroupIndicator(null);
-        menu_listf.setEnabled(true);
+        menu_listf.setEnabled(clickable);
     }
 
-    private void Processing_correct() {
+    private void Processing_correct(List<Map.Entry<String, String>> sublist) {
         progressBar.setVisibility(View.INVISIBLE);
+        points_list.add(Map.entry("学分绩", sublist));
         menu_listf.setAdapter(new GradePointAdapter(GradePointActivity.this, points_list, true, menu_listf));
         menu_listf.setGroupIndicator(null);
         menu_listf.expandGroup(0);
