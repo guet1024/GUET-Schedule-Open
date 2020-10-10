@@ -107,6 +107,7 @@ public class GradePointActivity extends AppCompatActivity {
 
     private void dosearch() {
         menu_listf.setEnabled(false);
+        Processing_error();
         new Thread(()->{
 
             appDatabase = MyApp.getCurrentAppDB();
