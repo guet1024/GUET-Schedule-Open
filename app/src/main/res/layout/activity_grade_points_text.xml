@@ -24,7 +24,7 @@
             android:textStyle="bold"
             android:textAlignment="center"
             android:layout_width="0dp"
-            android:textColor="#DD5C33"
+            android:textColor="#BDAE81"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
@@ -36,7 +36,7 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:textColor="#5E4E4E"
+            android:textColor="#5A4F4F"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
