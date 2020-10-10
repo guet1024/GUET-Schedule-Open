@@ -157,7 +157,6 @@ public class Guetphonenums extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                xx.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -166,7 +165,13 @@ public class Guetphonenums extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                xx.setVisibility(View.VISIBLE);
+                if (s.toString().isEmpty()) {
+                    xx.setVisibility(View.INVISIBLE);
+                    guetphonenumsAdapter arrayAdapter = new guetphonenumsAdapter(Guetphonenums.this, R.layout.webinfo_item, webinfoviewslist);
+                    listView.setAdapter(arrayAdapter);
+                }else {
+                    xx.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -174,9 +179,6 @@ public class Guetphonenums extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 editText.setText(null);
-                guetphonenumsAdapter arrayAdapter = new guetphonenumsAdapter(Guetphonenums.this, R.layout.webinfo_item, webinfoviewslist);
-                listView.setAdapter(arrayAdapter);
-                xx.setVisibility(View.INVISIBLE);
             }
         });
 

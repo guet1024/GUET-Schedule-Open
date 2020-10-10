@@ -15,18 +15,15 @@ import java.util.List;
 
 public class MediaService extends Service {
     private MediaPlayer mPlayer;
-    private int index = 0;
-    private boolean isstop=false;
-    private boolean runing=false;
 
     public class MusicController extends Binder {
         public void play() {
-            mPlayer.start();runing=true;//开启音乐
+            mPlayer.start();
         }
         public void pause() {
             mPlayer.pause();
-             runing=false;//暂停音乐
         }
+
         public long getMusicDuration() {
             return mPlayer.getDuration();//获取文件的总长度
         }
@@ -36,21 +33,17 @@ public class MediaService extends Service {
         public void setPosition (int position) {
             mPlayer.seekTo(position);//重新设定播放进度
         }
-        public boolean isstop(){
-            return isstop;//判断是否停止广播
-        }
         public boolean isruning(){
-            return runing;//判断音乐是否在播放
+            return mPlayer.isPlaying();
         }
 
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy() {//停止音乐，断开连接
         if (mPlayer.isPlaying()) {
             mPlayer.stop();
         }
-        isstop=true;
         mPlayer.release();
         mPlayer = null;
         super.onDestroy();
@@ -65,12 +58,13 @@ public class MediaService extends Service {
     public void onCreate() {
         super.onCreate();
         mPlayer = MediaPlayer.create(this, R.raw.the_faintest_sign);
-    }
+        mPlayer.setLooping(true);
+    }//创建音乐
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return new MusicController();
-    }
+    }//绑定时返回音乐实列
 
 }
