@@ -94,7 +94,7 @@ public class GradePointAdapter implements ExpandableListAdapter {
         }
 
         assetManager = context.getAssets();
-        typeface = Typeface.createFromAsset(assetManager, "fonts/Traveler's_notebook.ttf");
+        typeface = Typeface.createFromAsset(assetManager, "fonts/xzbjj.ttf");
 
         ((TextView) view.findViewById(R.id.textView_group_text)).setText( groups.get(0).getKey() );
         setText( (TextView)view.findViewById(R.id.textView_group_text) );

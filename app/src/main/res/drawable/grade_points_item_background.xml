@@ -8,5 +8,5 @@
         android:centerY="0.5"
         android:endColor="#FFFFFF"
         android:type="radial"
-        android:gradientRadius="300dp"/>
+        android:gradientRadius="200dp"/>
 </shape>

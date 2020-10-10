@@ -115,8 +115,8 @@ public class GradePoint_Test {
                 if (html==null) return null;
                 doc = Jsoup.parse(html);
                 sscore_html = doc.select("html > body > table > tbody > tr > td > table > tbody > tr > td > B > font ");
-            } while ( sscore_html.isEmpty() && (++time) < MyApp.check_code_regain_times);
-            if ( sscore_html.size()==0 ) {
+            } while ( (sscore_html.isEmpty() || sscore_html.get(0).ownText().isEmpty()) && (++time) < MyApp.check_code_regain_times);
+            if ( sscore_html.isEmpty() ) {
                 if (!gp_arr.isEmpty()) return gp_arr;
                 return null;
             }
