@@ -1,12 +1,8 @@
 package com.telephone.coursetable.GradePoint;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -107,6 +103,7 @@ public class GradePointActivity extends AppCompatActivity {
         menu_listf.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                Log.e("grade point list", "clicked");
                 dosearch();
                 return false;
             }
