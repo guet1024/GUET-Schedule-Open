@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,26 +23,25 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.MainActivity;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 public class Guetphonenums extends AppCompatActivity {
 
-    List<Map.Entry<String, Integer>> phonenums = new LinkedList<>();
-    List<Map.Entry<String, Integer>> searchphonenums = new LinkedList<>();
-    ;
+    List<String> phonenums = new LinkedList<>();
+    List<String> searchphonenums = new LinkedList<>();
+
     private List<Webinfoview> webinfoviewslist = new ArrayList<>();
     private List<Webinfoview> searchlist = new ArrayList<>();
     private ListView listView;
-    private boolean change = false;
     private View view;
 
     private volatile boolean visible = true;
@@ -75,28 +76,14 @@ public class Guetphonenums extends AppCompatActivity {
         super.onPause();
     }
 
-    private void addinfo(String num, int id) {
-        phonenums.add(Map.entry(num, id));
+    private void addinfo(String num) {
+        phonenums.add(num);
     }
 
-    private Map.Entry<String, Integer> getinfo(int id) {
-        if(change){
-            for (int i = 0; i < searchphonenums.size(); i++) {
-                if (searchphonenums.get(i).getValue() == id) {
-                    return searchphonenums.get(i);
-                }
-            }
-        }
-        else {
-            for (int i = 0; i < phonenums.size(); i++) {
-                if (phonenums.get(i).getValue() == id) {
-                    return phonenums.get(i);
-                }
-            }
-        }
-        return null;
+    private String getinfo(int id) {
+        return searchphonenums.get(id);
     }
-    private void alllistener(AutoCompleteTextView editText){
+    private void do_search(AutoCompleteTextView editText){
         editText.setEnabled(!editText.isEnabled());
         editText.setEnabled(!editText.isEnabled());
         editText.clearFocus();
@@ -108,7 +95,6 @@ public class Guetphonenums extends AppCompatActivity {
             listView.setAdapter(arrayAdapter);
         }
         else if( !search(editText.getText().toString())){
-
             Snackbar.make(view, "未查询到电话", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
         }
     }
@@ -148,7 +134,7 @@ public class Guetphonenums extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH){
-                    alllistener(editText);
+                    do_search(editText);
                 }
                 return false;
             }
@@ -169,6 +155,8 @@ public class Guetphonenums extends AppCompatActivity {
                     xx.setVisibility(View.INVISIBLE);
                     guetphonenumsAdapter arrayAdapter = new guetphonenumsAdapter(Guetphonenums.this, R.layout.webinfo_item, webinfoviewslist);
                     listView.setAdapter(arrayAdapter);
+                    searchlist = new LinkedList<>(webinfoviewslist);
+                    searchphonenums = new LinkedList<>(phonenums);
                 }else {
                     xx.setVisibility(View.VISIBLE);
                 }
@@ -185,23 +173,22 @@ public class Guetphonenums extends AppCompatActivity {
         editText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                alllistener(editText);
+                do_search(editText);
             }
         });
         Button button = (Button) findViewById(R.id.searchbutton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alllistener(editText);
+                do_search(editText);
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Webinfoview web = webinfoviewslist.get(i);
-                Map.Entry<String, Integer> needcall = getinfo(i);
-                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + needcall.getKey()));//跳转到拨号界面，同时传递电话号码
+                String needcall = getinfo(i);
+                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + needcall));//跳转到拨号界面，同时传递电话号码
                 startActivity(dialIntent);
             }
         });
@@ -215,19 +202,45 @@ public class Guetphonenums extends AppCompatActivity {
         for(int i=0;i<arrName.size();i++){
             security=new Webinfoview(arrName.get(i), R.drawable.webinfo_phone);
             webinfoviewslist.add(security);
-            addinfo(arrNum.get(i), i);
+            addinfo(arrNum.get(i));
         }
+        searchlist = new LinkedList<>(webinfoviewslist);
+        searchphonenums = new LinkedList<>(phonenums);
+    }
+
+    private List<String> getKeywords(String key){
+        List<String> res = new LinkedList<>();
+        for (int sub_len = key.length(); sub_len > 0; sub_len--){
+            for (int start_index = 0; start_index <= key.length() - sub_len; start_index++){
+                int end_index = start_index + sub_len;
+                res.add(key.substring(start_index, end_index));
+            }
+        }
+        return res;
     }
 
     private boolean search(String key) {
-        int k=0;
-        change = true;
-        for (int i = 0; i < webinfoviewslist.size(); i++) {
-            Webinfoview webinfoview = webinfoviewslist.get(i);
-            if(webinfoview.getTitle().contains(key)){
-                searchlist.add(webinfoview);
-                searchphonenums.add(Map.entry(phonenums.get(i).getKey(),k ));
-                k++;
+        searchlist.clear();
+        searchphonenums.clear();
+        List<String> keywords = getKeywords(key);
+        Log.e("keyword list", ""+keywords);
+        List<Webinfoview> copy_name = new LinkedList<>(webinfoviewslist);
+        List<String> copy_num = new LinkedList<>(phonenums);
+        for (String kw : keywords) {
+            kw = kw.toLowerCase(Locale.SIMPLIFIED_CHINESE);
+            List<Integer> delete_indexes = new LinkedList<>();
+            for (int i = 0; i < copy_name.size(); i++) {
+                Webinfoview webinfoview = copy_name.get(i);
+                if (webinfoview.getTitle().toLowerCase(Locale.SIMPLIFIED_CHINESE).contains(kw)) {
+                    searchlist.add(webinfoview);
+                    searchphonenums.add(copy_num.get(i));
+                    delete_indexes.add(i);
+                }
+            }
+            Collections.reverse(delete_indexes);
+            for (int d : delete_indexes){
+                copy_name.remove(d);
+                copy_num.remove(d);
             }
         }
         if(searchlist.size()==0){
