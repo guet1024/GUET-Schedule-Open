@@ -70,6 +70,7 @@
         android:textAlignment="center"
         android:singleLine="true"
         android:imeOptions="actionSearch"
+        android:maxLength="40"
         app:layout_constraintBottom_toTopOf="@+id/guideline42"
         app:layout_constraintEnd_toStartOf="@+id/guideline44"
         app:layout_constraintStart_toStartOf="@+id/guideline43"

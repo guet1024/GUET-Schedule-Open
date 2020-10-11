@@ -43,6 +43,15 @@
             android:layout_height="wrap_content"
             android:progress="50" />
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/grade_points_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:text="用校园网更快哦~" />
+
+    </LinearLayout>
 
 </RelativeLayout>
