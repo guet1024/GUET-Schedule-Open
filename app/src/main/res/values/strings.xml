@@ -23,8 +23,8 @@
     <string name="checkcode_fill">1234</string>
     <string name="login_head_text">学分制教学管理系统</string>
 
-    <string name="login_btn">登录</string>
-    <string name="forget_btn">删除</string>
+    <string name="login_btn">登录/同步</string>
+    <string name="forget_btn">删除/退出登录</string>
     <string name="picker_ok_btn">确定</string>
     <string name="picker_cancel_btn">取消</string>
 

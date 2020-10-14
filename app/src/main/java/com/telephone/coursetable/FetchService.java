@@ -77,17 +77,20 @@ public class FetchService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_START_FETCH_DATA = "com.telephone.coursetable.action.START_FETCH_DATA";
-    private static final String ACTION_BAZ = "com.telephone.coursetable.action.BAZ";
+    private static final String ACTION_STOP_SERVICE = "com.telephone.coursetable.action.STOP_SERVICE";
+
+    public static final String SIGN = "telephone";
 
     // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "com.telephone.coursetable.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "com.telephone.coursetable.extra.PARAM2";
     private static final String EXTRA_interval_milliseconds = "com.telephone.coursetable.extra.interval_milliseconds";
     private static final String EXTRA_start_toast = "com.telephone.coursetable.extra.start_toast";
+    public static final String EXTRA_sign = "com.telephone.coursetable.extra.sign";
 
-    private PowerManager.WakeLock wakeLock;
+    private PowerManager.WakeLock wakeLock = null;
 
     private boolean started = false;
+    private boolean notify = false;
+    private boolean stop = false;
     private int dog = 20;
 
     public FetchService() {
@@ -97,28 +100,47 @@ public class FetchService extends IntentService {
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         final String NAME = "onStartCommand()";
+        if (stop || (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_STOP_SERVICE))){
+            Log.e(NAME, "the fetch service has stopped!!");
+            stop = true;
+            stopForeground(true);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         if (started){
             Log.e(NAME, "the fetch service has started");
             return START_STICKY;
         }
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        Notification notification =
-                new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
-                        .setContentTitle("加油~今天也要打起精神来")
-                        .setSmallIcon(R.drawable.feather_pen_trans)
-                        .setContentIntent(pendingIntent)
-                        .setTicker("加油~今天也要打起精神来")
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .build();
-        startForeground(MyApp.notification_id_fetch_service_foreground, notification);
         started = true;
+        if (!notify) {
+            Intent stopIntent = new Intent(this, FetchService.class);
+            stopIntent.setAction(ACTION_STOP_SERVICE);
+            PendingIntent stopPendingIntent =
+                    PendingIntent.getService(this, 0, stopIntent, 0);
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            Notification notification =
+                    new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
+                            .setContentTitle("加油~今天也要打起精神来")
+                            .setSmallIcon(R.drawable.feather_pen_trans)
+                            .setContentIntent(pendingIntent)
+                            .setTicker("加油~今天也要打起精神来")
+                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                            .addAction(0, "强行停止", stopPendingIntent)
+                            .build();
+            startForeground(MyApp.notification_id_fetch_service_foreground, notification);
+            notify = true;
+        }
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
 
     private void update_foreground_notification(@NonNull String text){
+        Intent stopIntent = new Intent(this, FetchService.class);
+        stopIntent.setAction(ACTION_STOP_SERVICE);
+        PendingIntent stopPendingIntent =
+                PendingIntent.getService(this, 0, stopIntent, 0);
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -130,6 +152,7 @@ public class FetchService extends IntentService {
                         .setContentIntent(pendingIntent)
                         .setTicker("加油~今天也要打起精神来")
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .addAction(0, "强行停止", stopPendingIntent)
                         .build();
         NotificationManagerCompat.from(this).notify(MyApp.notification_id_fetch_service_foreground, notification);
     }
@@ -145,6 +168,7 @@ public class FetchService extends IntentService {
         Intent intent = new Intent(context, FetchService.class);
         intent.setAction(ACTION_START_FETCH_DATA);
         intent.putExtra(EXTRA_interval_milliseconds, milliseconds);
+        intent.putExtra(EXTRA_sign, SIGN);
         if (tip != null){
             intent.putExtra(EXTRA_start_toast, tip);
         }
@@ -158,11 +182,9 @@ public class FetchService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
+    public static void startAction_STOP_SERVICE(Context context) {
         Intent intent = new Intent(context, FetchService.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
+        intent.setAction(ACTION_STOP_SERVICE);
         context.startService(intent);
     }
 
@@ -172,34 +194,36 @@ public class FetchService extends IntentService {
      */
     private void handleAction_START_FETCH_DATA(long milliseconds) {
         final String NAME = "handleAction_START_FETCH_DATA()";
-        if (BRAND.toLowerCase().equals("huawei") || BRAND.toLowerCase().equals("honor")){
+        if (wakeLock == null && (BRAND.toLowerCase().equals("huawei") || BRAND.toLowerCase().equals("honor"))){
             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
             wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
             wakeLock.acquire();
         }
-        while (true){
-            running_showLessons();
-            updateListAppWidgets();
-            Log.e(NAME, "dog = " + dog);
-            if (dog == 20){
-                if (MyApp.isLAN()){
-                    Log.e(NAME, "LAN");
-                    service_fetch_lan();
-                }else {
-                    Log.e(NAME, "WAN");
-                    service_fetch_wan();
-                }
-                Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null, MyApp.getCurrentApp().new_version);
-            }else if (dog == 0){
-                dog = 21;
+        running_showLessons();
+        updateListAppWidgets();
+        Log.e(NAME, "dog = " + dog);
+        if (dog == 20){
+            if (MyApp.isLAN()){
+                Log.e(NAME, "LAN");
+                service_fetch_lan();
+            }else {
+                Log.e(NAME, "WAN");
+                service_fetch_wan();
             }
-            dog--;
-            try {
-                Thread.sleep(milliseconds + 1);
-            } catch (InterruptedException e) {
-                // Restore interrupt status.
-                Thread.currentThread().interrupt();
-            }
+            Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null, MyApp.getCurrentApp().new_version);
+        }else if (dog == 0){
+            dog = 21;
+        }
+        dog--;
+        try {
+            Thread.sleep(milliseconds + 1);
+        } catch (InterruptedException e) {
+            // Restore interrupt status.
+            Thread.currentThread().interrupt();
+        }
+        started = false;
+        if (!stop) {
+            startAction_START_FETCH_DATA(this, milliseconds, null);
         }
     }
 
@@ -666,32 +690,40 @@ public class FetchService extends IntentService {
     }
 
     /**
-     * Handle action Baz in the provided background thread with the provided
+     * Handle action STOP_SERVICE in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    private void handleAction_STOP_SERVICE() {
+        final String NAME = "handleAction_STOP_SERVICE()";
+        Log.e(NAME, "stop signal received");
+        stop = true;
+        stopForeground(true);
+        stopSelf();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         final String NAME = "onHandleIntent()";
-        if (intent != null) {
+        if (intent != null && !stop) {
             final String action = intent.getAction();
             if (ACTION_START_FETCH_DATA.equals(action)) {
                 final long ms = intent.getLongExtra(EXTRA_interval_milliseconds, MyApp.service_fetch_interval);
                 final String tip = intent.getStringExtra(EXTRA_start_toast);
+                String sign = intent.getStringExtra(EXTRA_sign);
+                if (sign == null || !sign.equals(SIGN)){
+                    Log.e(NAME, "invalidated start");
+                    return;
+                }else {
+                    Log.e(NAME, "validated start");
+                }
                 if (tip != null && !tip.isEmpty()){
                     Log.e(NAME, "i have received a tip..........................");
                     Log.e(NAME, tip);
 //                    Toast.makeText(this, tip, Toast.LENGTH_SHORT).show();
                 }
                 handleAction_START_FETCH_DATA(ms);
-            } else if (ACTION_BAZ.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionBaz(param1, param2);
+            } else if (ACTION_STOP_SERVICE.equals(action)) {
+                handleAction_STOP_SERVICE();
             }
         }
     }

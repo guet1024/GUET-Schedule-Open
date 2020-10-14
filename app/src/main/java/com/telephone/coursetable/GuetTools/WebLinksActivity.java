@@ -81,14 +81,12 @@ public class WebLinksActivity extends AppCompatActivity {
                     new LinkedList<Map.Entry<String, String>>() {
                         {
                             add(Map.entry("1.  GUET课程表交流群", "Jm2emUYqOfaVWX3WL17GY0nN2wOBN1wG" + " | " + R.drawable.qqcode_guet_coursetable));
-                            add(Map.entry("2.  桂电帮帮群", "eBAy0jxXa5QicQWlX2-PwkLl7CSqffhF" + " | " + R.drawable.qqcode_help_group));
-                            add(Map.entry("3.  桂电二手交易群", "9eKaKJbPZKs7u3VO7zHb5vsEc0ApK6U_" + " | " + R.drawable.qqcode_second_hand_trading_group));
-                            add(Map.entry("4.  桂电表白墙", "2091507780" + " | " + R.drawable.qqcode_bbq));
-                            add(Map.entry("5.  桂电校园万能墙", "2950087836" + " | " + R.drawable.qqcode_wnq));
-                            add(Map.entry("6.  桂林电子科技大学公众号", ""+R.drawable.qrcode_guet));
-                            add(Map.entry("7.  桂林电子科技大学智慧校园公众号", ""+R.drawable.qrcode_guet_campus));
-                            add(Map.entry("8.  桂林电子科技大学图书馆公众号", ""+R.drawable.qrcode_guet_lib));
-                            add(Map.entry("9.  桂林电子科技大学财务处公众号", ""+R.drawable.qrcode_guet_cwc));
+                            add(Map.entry("2.  桂电二手交易群", "9eKaKJbPZKs7u3VO7zHb5vsEc0ApK6U_" + " | " + R.drawable.qqcode_second_hand_trading_group));
+                            add(Map.entry("3.  桂电表白墙", "2091507780" + " | " + R.drawable.qqcode_bbq));
+                            add(Map.entry("4.  桂林电子科技大学公众号", ""+R.drawable.qrcode_guet));
+                            add(Map.entry("5.  桂林电子科技大学智慧校园公众号", ""+R.drawable.qrcode_guet_campus));
+                            add(Map.entry("6.  桂林电子科技大学图书馆公众号", ""+R.drawable.qrcode_guet_lib));
+                            add(Map.entry("7.  桂林电子科技大学财务处公众号", ""+R.drawable.qrcode_guet_cwc));
                         }
                     },
                     this,

@@ -1,11 +1,15 @@
 package com.telephone.coursetable;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
@@ -425,5 +429,37 @@ public class FunctionMenu extends AppCompatActivity {
 
             runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
         }).start();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.function_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                startActivity(new Intent(this, MainActivity.class));
+                break;
+            case R.id.function_menu_go_to_login:
+                new Thread(() -> {
+                    if (MyApp.isLAN()){
+                        runOnUiThread(() -> {
+                            Intent intent = new Intent(FunctionMenu.this, Login.class);
+                            startActivity(intent);
+                        });
+                    }else {
+                        runOnUiThread(() -> {
+                            Intent intent = new Intent(FunctionMenu.this, Login_vpn.class);
+                            startActivity(intent);
+                        });
+                    }
+                }).start();
+                break;
+        }
+        return true;
     }
 }
