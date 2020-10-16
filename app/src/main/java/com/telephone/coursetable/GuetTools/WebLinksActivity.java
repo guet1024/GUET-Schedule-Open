@@ -1,12 +1,21 @@
 package com.telephone.coursetable.GuetTools;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import com.telephone.coursetable.Login;
+import com.telephone.coursetable.Login_vpn;
 import com.telephone.coursetable.MainActivity;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
@@ -125,5 +134,37 @@ public class WebLinksActivity extends AppCompatActivity {
                     this,
                     false));
         }
+    }
+
+    public static void openWeChatScan(Context context, View view) {
+        try {
+            Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.tencent.mm");
+            intent.putExtra("LauncherUI.From.Scaner.Shortcut", true);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Snackbar.make(view, "未安装微信或安装的版本不支持", BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (getIntent().getBooleanExtra(isQQ, true)){
+            getMenuInflater().inflate(R.menu.web_links, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(this, Webinfo.class));
+                break;
+            case R.id.web_links_scan:
+                WebLinksActivity.openWeChatScan(this, findViewById(R.id.web_links_list));
+                break;
+        }
+        return true;
     }
 }

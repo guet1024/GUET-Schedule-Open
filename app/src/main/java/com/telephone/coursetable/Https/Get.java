@@ -97,6 +97,7 @@ public class Get {
             }
             if (MyApp.ip_override && cnt.getURL().toString().contains(MyApp.guet_v_ip)) {
                 cnt.setRequestProperty("Host", MyApp.guet_v_domain);
+                cnt.setSSLSocketFactory(new TelTlsSniSocketFactory(cnt));
                 cnt.setHostnameVerifier((hostname, session) -> HttpsURLConnection.getDefaultHostnameVerifier().verify(MyApp.guet_v_domain, session));
             }
             cnt.connect();
