@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.MainActivity;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
@@ -124,6 +128,16 @@ public class WebLinksActivity extends AppCompatActivity {
                     },
                     this,
                     false));
+        }
+    }
+
+    public static void openWeChatScan(Context context, View view) {
+        try {
+            Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.tencent.mm");
+            intent.putExtra("LauncherUI.From.Scaner.Shortcut", true);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Snackbar.make(view, "未安装微信或安装的版本不支持", BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
         }
     }
 }
