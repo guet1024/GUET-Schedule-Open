@@ -162,7 +162,7 @@ public class WebLinksActivity extends AppCompatActivity {
                 startActivity(new Intent(this, Webinfo.class));
                 break;
             case R.id.web_links_scan:
-                WebLinksActivity.openWeChatScan(this, item.getActionView());
+                WebLinksActivity.openWeChatScan(this, findViewById(R.id.web_links_list));
                 break;
         }
         return true;

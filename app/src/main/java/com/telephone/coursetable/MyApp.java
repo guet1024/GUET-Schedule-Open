@@ -143,7 +143,7 @@ public class MyApp extends Application {
     final public static int notification_id_click_to_login = 1800301130;
     final public static long service_fetch_interval = 15000;   // 15s
     final public static long patient_time = 4000;   //4s
-    final public static boolean ip_override = false;
+    final public static boolean ip_override = true;
     final public static String guet_v_ip = "202.193.64.75";
     final public static String guet_v_domain = "v.guet.edu.cn";
     final public static int check_code_regain_times = 6;
