@@ -822,69 +822,75 @@ public class Login extends AppCompatActivity {
                             Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
-                        /** call {@link #deleteOldDataFromDatabase()} */
-                        deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
-                        /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                        boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao);
-                        /** commit shared preference */
-                        editor.commit();
-                        if (fetch_merge_res){
-                            /** locate now, print the locate-result to log */
-                            com.telephone.coursetable.LogMe.LogMe.e(
-                                    NAME + " " + "locate now",
-                                    Clock.locateNow(
-                                            Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                            DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                            getResources().getString(R.string.pref_hour_start_suffix),
-                                            getResources().getString(R.string.pref_hour_end_suffix),
-                                            getResources().getString(R.string.pref_hour_des_suffix)
-                                    )+""
-                            );
-                            /** activate the user */
-                            udao.activateUser(sid);
-                            /** print the user's student id and name to log */
-                            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
-                            /** set {@link MyApp#running_login_thread} to false */
-                            MyApp.setRunning_login_thread(false);
-                            runOnUiThread(() -> {
-                                /** call {@link #unlock(boolean)} with false */
-                                unlock(false);
-                                /** show tip toast, change title */
-                                Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
-                                getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
-                                /** if some activity is running */
-                                if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
-                                    /** start a new {@link MainActivity} */
-                                    startActivity(new Intent(Login.this, MainActivity.class));
-                                }else {
-                                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
-                                }
-                            });
-                        }else {
-                            /** set {@link MyApp#running_login_thread} to false */
-                            MyApp.setRunning_login_thread(false);
-                            /** if login activity is current running activity */
-                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN)){
+                        try { // this is an Accident Prone Area
+                            /** call {@link #deleteOldDataFromDatabase()} */
+                            deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
+                            /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
+                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao);
+                            /** commit shared preference */
+                            editor.commit();
+                            if (fetch_merge_res) {
+                                /** locate now, print the locate-result to log */
+                                com.telephone.coursetable.LogMe.LogMe.e(
+                                        NAME + " " + "locate now",
+                                        Clock.locateNow(
+                                                Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
+                                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                                getResources().getString(R.string.pref_hour_start_suffix),
+                                                getResources().getString(R.string.pref_hour_end_suffix),
+                                                getResources().getString(R.string.pref_hour_des_suffix)
+                                        ) + ""
+                                );
+                                /** activate the user */
+                                udao.activateUser(sid);
+                                /** print the user's student id and name to log */
+                                com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
+                                /** set {@link MyApp#running_login_thread} to false */
+                                MyApp.setRunning_login_thread(false);
                                 runOnUiThread(() -> {
-                                    /** call {@link #unlock(boolean)} with true */
-                                    unlock(true);
-                                    /** show tip snack-bar, change title */
-                                    Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
-                                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
-                                });
-                            }else {
-                                runOnUiThread(() -> {
-                                    /** show tip toast */
-                                    Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
-                                    /** if main activity is current running activity */
-                                    if (MyApp.getRunning_main() != null){
-                                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
-                                        /** call {@link MainActivity#refresh()} */
-                                        MyApp.getRunning_main().refresh();
+                                    /** call {@link #unlock(boolean)} with false */
+                                    unlock(false);
+                                    /** show tip toast, change title */
+                                    Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
+                                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
+                                    /** if some activity is running */
+                                    if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
+                                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
+                                        /** start a new {@link MainActivity} */
+                                        startActivity(new Intent(Login.this, MainActivity.class));
+                                    } else {
+                                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
                                     }
                                 });
+                            } else {
+                                /** set {@link MyApp#running_login_thread} to false */
+                                MyApp.setRunning_login_thread(false);
+                                /** if login activity is current running activity */
+                                if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN)) {
+                                    runOnUiThread(() -> {
+                                        /** call {@link #unlock(boolean)} with true */
+                                        unlock(true);
+                                        /** show tip snack-bar, change title */
+                                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                                    });
+                                } else {
+                                    runOnUiThread(() -> {
+                                        /** show tip toast */
+                                        Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
+                                        /** if main activity is current running activity */
+                                        if (MyApp.getRunning_main() != null) {
+                                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
+                                            /** call {@link MainActivity#refresh()} */
+                                            MyApp.getRunning_main().refresh();
+                                        }
+                                    });
+                                }
                             }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            runOnUiThread(()->Toast.makeText(Login.this, Log.getStackTraceString(e), Toast.LENGTH_LONG).show());
+                            startActivity(new Intent(Login.this, MainActivity.class));
                         }
                         /**
                          * ******************************** UPDATE DATA END ********************************
