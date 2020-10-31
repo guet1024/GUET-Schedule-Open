@@ -153,7 +153,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         mMusicController = ((MediaService.MusicController) iBinder);
         musicDuration = mMusicController.getMusicDuration();//文件总长度
-        Log.e("file length",""+musicDuration);
+        com.telephone.coursetable.LogMe.LogMe.e("file length",""+musicDuration);
         mSeekBar.setMax((int) musicDuration);
         totaltime.setText("/" + millisToTimeString(musicDuration));
     }
@@ -235,13 +235,13 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
         for(int i=index;i<lyric.size()-1;i++){
             String text = lyric.get(i + 1).getValue();
             long read_time = timeStringToLong(text);
-            Log.i("time","read time = "+read_time+" time = "+time+" text = "+text);
+            com.telephone.coursetable.LogMe.LogMe.i("time","read time = "+read_time+" time = "+time+" text = "+text);
             if( read_time > time ){
                 index = i;
                 break;
             }
         }
-        Log.i("index","index = "+index);
+        com.telephone.coursetable.LogMe.LogMe.i("index","index = "+index);
         String[] s = new String[3];
         s[0] = getnowlyric(index - 1);
         s[1] = getnowlyric(index);
@@ -252,7 +252,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onProgressChanged(SeekBar seekBar, int j, boolean b) {
         final int position = seekBar.getProgress();
-        Log.i("progress","change = "+position);
+        com.telephone.coursetable.LogMe.LogMe.i("progress","change = "+position);
 
         String r = millisToTimeString(position);
         if(!r.equals(runtime.getText().toString())) runtime.setText(r);
@@ -263,7 +263,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        Log.e("seekbar", "touch");
+        com.telephone.coursetable.LogMe.LogMe.e("seekbar", "touch");
         pause_start.setEnabled(false);
         if(mMusicController.isruning())
             mMusicController.pause();
@@ -271,7 +271,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        Log.e("seekbar", "not touch");
+        com.telephone.coursetable.LogMe.LogMe.e("seekbar", "not touch");
         mMusicController.setPosition(seekBar.getProgress());
         if(!mMusicController.isruning()) {
             mMusicController.play();
@@ -296,7 +296,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void run() {
-        Log.e("guet music","refresh ui thread start");
+        com.telephone.coursetable.LogMe.LogMe.e("guet music","refresh ui thread start");
         try {
             while (visible) {
                 if (mMusicController != null) {
@@ -315,18 +315,18 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
                             if (old != position) {
                                 long position_set = position;
 //                                if (position_set == musicDuration) position_set = 0;
-                                Log.i("mSeekBar", "set position = " + position_set + " max = " + musicDuration);
+                                com.telephone.coursetable.LogMe.LogMe.i("mSeekBar", "set position = " + position_set + " max = " + musicDuration);
                                 mSeekBar.setProgress((int) position_set);
                             }
                         }
                     });
                 }else {
-                    Log.e("guet music", "controller is null");
+                    com.telephone.coursetable.LogMe.LogMe.e("guet music", "controller is null");
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        Log.e("guet music","refresh ui thread end");
+        com.telephone.coursetable.LogMe.LogMe.e("guet music","refresh ui thread end");
     }
 }

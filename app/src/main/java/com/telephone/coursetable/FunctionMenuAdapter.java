@@ -222,7 +222,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                         a.runOnUiThread(()->{
                             t.setText(groups.get(i).getValue().get(i1).get(0));
                             p.setVisibility(View.VISIBLE);
-                            v.setOnClickListener(view18 -> Log.e("Update Check", "duplicated check"));
+                            v.setOnClickListener(view18 -> com.telephone.coursetable.LogMe.LogMe.e("Update Check", "duplicated check"));
                             Update.whatIsNew(
                                     a,
                                     a,

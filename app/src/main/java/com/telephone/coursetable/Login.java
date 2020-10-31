@@ -129,7 +129,7 @@ public class Login extends AppCompatActivity {
         new Thread(() -> {
             //get
             HttpConnectionAndCode res = LAN.checkcode(Login.this);
-            Log.e(NAME + " " + "the code of get check code res", res.code+"");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "the code of get check code res", res.code+"");
             //if success, set
             if (res.obj != null){
                 String ocr = OCR.getTextFromBitmap(Login.this, (Bitmap)res.obj, MyApp.ocr_lang_code);
@@ -372,7 +372,7 @@ public class Login extends AppCompatActivity {
             }
             builder.append(login_res.cookie);
         }
-        Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
         return login_res;
     }
 
@@ -403,7 +403,7 @@ public class Login extends AppCompatActivity {
         final String NAME = "outside_login_test()";
         Resources r = c.getResources();
         String body = "username=" + sid + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
-        Log.e(NAME + " " + "body", body);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "body", body);
         HttpConnectionAndCode login_res = Post.post(
                 r.getString(R.string.lan_outside_login_url),
                 null,
@@ -419,12 +419,12 @@ public class Login extends AppCompatActivity {
         );
         if (login_res.code == -7){
             login_res.code = 0;
-            Log.e(NAME + " " + "login status", "success");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "success");
         }else {
             if (login_res.code == 0){
                 login_res.code = -6;
             }
-            Log.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
         }
         return login_res;
     }
@@ -533,7 +533,7 @@ public class Login extends AppCompatActivity {
         getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
                     udao.deleteUser(sid);
-                    Log.e(NAME + " " + "user deleted", sid);
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user deleted", sid);
                     updateUserNameAutoFill();
                     runOnUiThread((Runnable) () -> {
                         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
@@ -561,13 +561,13 @@ public class Login extends AppCompatActivity {
         res = LAN.personInfo(c, cookie);
         HttpConnectionAndCode res_add = LAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.personInfo(res.comment, res_add.comment, pdao);
         res = LAN.termInfo(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.termInfo(c, res.comment, tdao);
@@ -581,42 +581,42 @@ public class Login extends AppCompatActivity {
         }
         res = LAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
         res = LAN.graduationScore(c, cookie);
         res_add = LAN.graduationScore2(c, cookie);
         if (res.code != 0 || res_add.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.graduationScore(res.comment, res_add.comment, gsdao);
         res = LAN.hour(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.hour(c, res.comment, editor);
         res = LAN.grades(c, cookie);
         if (res.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.grades(res.comment, grdao);
         res = LAN.examInfo(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.examInfo(res.comment, edao);
         res = LAN.cet(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.cet(res.comment, cetDao);
-        Log.e(NAME, "success");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
     }
 
@@ -793,14 +793,14 @@ public class Login extends AppCompatActivity {
                         final SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
                         /** detect new activity || skip no activity */
                         if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                            Log.e(NAME, "no activity is running, login = " + Login.this.toString() + " canceled");
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "no activity is running, login = " + Login.this.toString() + " canceled");
                             runOnUiThread(()->Toast.makeText(Login.this, "登录取消", Toast.LENGTH_SHORT).show());
                             return;
                         }
-                        Log.e(NAME, "login activity pointer = " + Login.this.toString());
-                        Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "login activity pointer = " + Login.this.toString());
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
                         if (!Login.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
-                            Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login.this.toString() + " canceled");
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login.this.toString() + " canceled");
                             runOnUiThread(()->Toast.makeText(Login.this, "登录取消", Toast.LENGTH_SHORT).show());
                             return;
                         }
@@ -830,7 +830,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
                         if (fetch_merge_res){
                             /** locate now, print the locate-result to log */
-                            Log.e(
+                            com.telephone.coursetable.LogMe.LogMe.e(
                                     NAME + " " + "locate now",
                                     Clock.locateNow(
                                             Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
@@ -843,7 +843,7 @@ public class Login extends AppCompatActivity {
                             /** activate the user */
                             udao.activateUser(sid);
                             /** print the user's student id and name to log */
-                            Log.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user activated", pdao.selectAll().get(0).stid + " " + pdao.selectAll().get(0).name);
                             /** set {@link MyApp#running_login_thread} to false */
                             MyApp.setRunning_login_thread(false);
                             runOnUiThread(() -> {
@@ -854,11 +854,11 @@ public class Login extends AppCompatActivity {
                                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
                                 /** if some activity is running */
                                 if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                                    Log.e(NAME, "start a new Main Activity...");
+                                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
                                     /** start a new {@link MainActivity} */
                                     startActivity(new Intent(Login.this, MainActivity.class));
                                 }else {
-                                    Log.e(NAME, "update success but no activity is running, NOT start new Main Activity");
+                                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
                                 }
                             });
                         }else {
@@ -879,7 +879,7 @@ public class Login extends AppCompatActivity {
                                     Toast.makeText(Login.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
                                     /** if main activity is current running activity */
                                     if (MyApp.getRunning_main() != null){
-                                        Log.e(NAME, "refresh the Main Activity...");
+                                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
                                         /** call {@link MainActivity#refresh()} */
                                         MyApp.getRunning_main().refresh();
                                     }

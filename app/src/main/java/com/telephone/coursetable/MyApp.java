@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Http.Get;
+import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.ArrayList;
 
@@ -44,6 +46,7 @@ public class MyApp extends Application {
     private static SharedPreferences sp_test;
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
+    private static ApplicationInfo app_info;
 
     public volatile String new_version = "";
 
@@ -62,15 +65,15 @@ public class MyApp extends Application {
     public static synchronized void clearRunningActivity(AppCompatActivity ac){
         final String NAME = "clearRunningActivity()";
         if (ac != null){
-            Log.e(NAME, "on destroy activity pointer = " + ac.toString());
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "on destroy activity pointer = " + ac.toString());
         }
         if (running_activity_pointer != null){
-            Log.e(NAME, "cached running activity: " + running_activity + " pointer = " + running_activity_pointer.toString());
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "cached running activity: " + running_activity + " pointer = " + running_activity_pointer.toString());
         }
         if (ac != null && running_activity_pointer != null){
             if (ac.toString().equals(running_activity_pointer.toString())){
                 running_activity = RunningActivity.NULL;
-                Log.e(NAME, "remove cached running activity pointer = " + running_activity_pointer.toString());
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "remove cached running activity pointer = " + running_activity_pointer.toString());
                 running_activity_pointer = null;
             }
         }
@@ -209,6 +212,8 @@ public class MyApp extends Application {
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
         editor_test = sp_test.edit();
+        app_info = getApplicationInfo();
+        LogMe.init();
 
         NotificationChannel channel;
         channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
@@ -254,6 +259,10 @@ public class MyApp extends Application {
 
     public static SharedPreferences.Editor getCurrentSharedPreferenceEditor_Test(){
         return editor_test;
+    }
+
+    public static ApplicationInfo getApplicationInfo_me(){
+        return app_info;
     }
 
     public static boolean isLAN(){

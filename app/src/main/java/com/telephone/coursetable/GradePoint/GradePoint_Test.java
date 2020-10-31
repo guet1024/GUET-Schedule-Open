@@ -72,7 +72,7 @@ public class GradePoint_Test {
             }else if (score_nodes.get(0).ownText().isEmpty()){
                 String id = Jsoup.parse(html).select("html > body > table > tbody > tr > td > table > tbody > tr > th").get(4).ownText();
                 if (id.isEmpty()){
-                    Log.e("grade point", "regain point");
+                    com.telephone.coursetable.LogMe.LogMe.e("grade point", "regain point");
                     return grade_point_html_wan(c, cookie, syear);
                 }else {
                     return "";
@@ -117,7 +117,7 @@ public class GradePoint_Test {
         syears = syear.split(",");
         for ( String year : syears ) {
             sscore = grade_point_html_wan(c, cookie, year);
-            Log.e("grade point", "year = " + year + " point = " + sscore);
+            com.telephone.coursetable.LogMe.LogMe.e("grade point", "year = " + year + " point = " + sscore);
             if (sscore == null) return null;
             if (year.isEmpty()) year = "入学至今";
             gp_arr.add(Map.entry(sscore, year));
@@ -135,14 +135,14 @@ public class GradePoint_Test {
         do {
             try {
                 boolean login_res = Login_vpn.aaw_login(context, sid, aaw_pwd, cookie);
-                Log.e(NAME, "success");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
                 break;
             } catch (ExceptionNetworkError exceptionNetworkError) {
                 if ( loop_aawlogin_times++<MyApp.check_code_regain_times ) continue;
-                Log.e(NAME, "ExceptionNetworkError");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionNetworkError");
                 return resources.getString(R.string.wan_login_vpn_network_error_exception);
             } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
-                Log.e(NAME, "ExceptionWrongUserOrPassword | Exception302 | ExceptionUnknown");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionWrongUserOrPassword | Exception302 | ExceptionUnknown");
                 return resources.getString(R.string.login_fail_pwd_text_exception);
             } catch (ExceptionUnknown | Exception302 exceptionUnknown) {
                 return resources.getString(R.string.wan_snackbar_unknown_fail_exception);

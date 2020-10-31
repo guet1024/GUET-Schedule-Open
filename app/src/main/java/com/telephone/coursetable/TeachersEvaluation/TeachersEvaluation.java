@@ -63,7 +63,7 @@ public class TeachersEvaluation {//评教
     public static void evaluation(FunctionMenu c, String id, String pwd, TermInfoDao tdao) {
         final String NAME = "evaluation()";
         if (getThread() != null){
-            Log.e(NAME, "duplicated evaluation!");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "duplicated evaluation!");
             return;
         }
         clearall();
@@ -294,28 +294,28 @@ public class TeachersEvaluation {//评教
                         addtoast(  "评教失败，检查校园网连接后重试",Toast.LENGTH_LONG,true);
                         return;
                     }
-                    Log.e("term", t.term);
-                    Log.e("body", post_body);
-                    Log.e("resp_code", post_res.resp_code + "");
-                    Log.e("response", post_res.comment);
-                    Log.e("--------------", "------------------------------------");
+                    com.telephone.coursetable.LogMe.LogMe.e("term", t.term);
+                    com.telephone.coursetable.LogMe.LogMe.e("body", post_body);
+                    com.telephone.coursetable.LogMe.LogMe.e("resp_code", post_res.resp_code + "");
+                    com.telephone.coursetable.LogMe.LogMe.e("response", post_res.comment);
+                    com.telephone.coursetable.LogMe.LogMe.e("--------------", "------------------------------------");
                     addtoast(  "正在评价 "+t.termname+" "+g.getName()+" 老师",Toast.LENGTH_SHORT,false);
                 }
                 flag1++;
             }
             if(flag1 == 2){
                 addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
-                Log.e("PJterm", flag1 +"");
+                com.telephone.coursetable.LogMe.LogMe.e("PJterm", flag1 +"");
                 return;
             }
         }
         if (flag == list.size()) {
             addtoast(  "评教未开放",Toast.LENGTH_LONG,true);
-            Log.e("PJterm","All terms are closed");
+            com.telephone.coursetable.LogMe.LogMe.e("PJterm","All terms are closed");
             return;
         } else {
             addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
-            Log.e("PJterm", flag1 +"");
+            com.telephone.coursetable.LogMe.LogMe.e("PJterm", flag1 +"");
         }
     }
 }

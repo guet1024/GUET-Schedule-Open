@@ -101,14 +101,14 @@ public class FetchService extends IntentService {
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         final String NAME = "onStartCommand()";
         if (stop || (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_STOP_SERVICE))){
-            Log.e(NAME, "the fetch service has stopped!!");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "the fetch service has stopped!!");
             stop = true;
             stopForeground(true);
             stopSelf();
             return START_NOT_STICKY;
         }
         if (started){
-            Log.e(NAME, "the fetch service has started");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "the fetch service has started");
             return START_STICKY;
         }
         started = true;
@@ -201,13 +201,13 @@ public class FetchService extends IntentService {
         }
         running_showLessons();
         updateListAppWidgets();
-        Log.e(NAME, "dog = " + dog);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "dog = " + dog);
         if (dog == 20){
             if (MyApp.isLAN()){
-                Log.e(NAME, "LAN");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "LAN");
                 service_fetch_lan();
             }else {
-                Log.e(NAME, "WAN");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "WAN");
                 service_fetch_wan();
             }
             Update.whatIsNew(FetchService.this, null, null, null, null, null, null, null, MyApp.getCurrentApp().new_version);
@@ -235,7 +235,7 @@ public class FetchService extends IntentService {
             intent.setComponent(new ComponentName(MyApp.PACKAGE_NAME, com.telephone.coursetable.AppWidgetProvider.List.CLASS_NAME));
             intent.putStringArrayListExtra(ListRemoteViewsService.EXTRA_ARRAY_LIST_OF_STRING_TO_GET_A_NEW_REMOTE_ADAPTER, data_list);
             sendBroadcast(intent);
-            Log.e(NAME, "the intent to remind the app-widget-provider to update all list app-widgets has been sent");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "the intent to remind the app-widget-provider to update all list app-widgets has been sent");
         }
     }
 
@@ -248,7 +248,7 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
         ){
-            Log.e(NAME,"data is being change, NOT update shown lessons");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, NOT update shown lessons");
             return;
         }
         AppDatabase appDatabase = MyApp.getCurrentAppDB();
@@ -322,7 +322,7 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
         ){
-            Log.e(NAME,"data is being change, list app-widgets NOT updated");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, list app-widgets NOT updated");
             return null;
         }
         AppDatabase appDatabase = MyApp.getCurrentAppDB();
@@ -340,7 +340,7 @@ public class FetchService extends IntentService {
                 data.add(ListAdapter.TOMORROW);
                 data.add(des);
             }
-            Log.e(NAME,"no user, set all list app-widgets to default");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME,"no user, set all list app-widgets to default");
             return data;
         }
         long today = Clock.nowTimeStamp();
@@ -432,7 +432,7 @@ public class FetchService extends IntentService {
                 }
             }
         }
-        Log.e(NAME,"the new data-list for all list app-widgets has been made");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME,"the new data-list for all list app-widgets has been made");
         return res;
     }
 
@@ -481,13 +481,13 @@ public class FetchService extends IntentService {
                         ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
                         (rap != null && !tryOutdated(ra, rap))
         ){
-            Log.e(NAME, "skip | some activity is active or data is being updated");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "skip | some activity is active or data is being updated");
             return;
         }
         lan_start();
         List<User> ac_users = MyApp.getCurrentAppDB().userDao().getActivatedUser();
         if (ac_users.isEmpty()){
-            Log.e(NAME, "skip | no activated user");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "skip | no activated user");
             lan_end();
             return;
         }
@@ -497,7 +497,7 @@ public class FetchService extends IntentService {
             cookie_builder = new StringBuilder();
             HttpConnectionAndCode get_checkcode_res = LAN.checkcode(FetchService.this);
             if (get_checkcode_res.obj == null){
-                Log.e(NAME, "fail | get check-code fail");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | get check-code fail");
                 lan_end();
                 return;
             }
@@ -515,7 +515,7 @@ public class FetchService extends IntentService {
             }else if(login_res.comment != null && login_res.comment.contains("验证码")){
                 continue;
             }else {
-                Log.e(NAME, "fail | login fail");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | login fail");
                 lan_fetch_service_loginFail(login_res);
                 lan_end();
                 return;
@@ -559,7 +559,7 @@ public class FetchService extends IntentService {
                 cetDao_test
         );
         if (!fetch_merge_res){
-            Log.e(NAME, "fail | fetch fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | fetch fail");
             lan_end();
             return;
         }
@@ -575,22 +575,22 @@ public class FetchService extends IntentService {
             }
         }
         /** deactivate all user */
-        Log.e(NAME, "deactivate all user...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "deactivate all user...");
         udao.disableAllUser();
         /** migrate the pulled data to the database */
-        Log.e(NAME, "migrate the pulled data to the database...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "migrate the pulled data to the database...");
         lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply, edao, edao_test, cetDao, cetDao_test);
         /** re-insert user */
-        Log.e(NAME, "re-insert user...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
         /** activate user */
-        Log.e(NAME, "activate user...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "activate user...");
         udao.activateUser(user.username);
         List<User> ac_list = udao.getActivatedUser();
         if (!ac_list.isEmpty()){
-            Log.e(NAME, "success | user activated: " + ac_list.get(0).username + " " + pdao.selectAll().get(0).name);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "success | user activated: " + ac_list.get(0).username + " " + pdao.selectAll().get(0).name);
         }else {
-            Log.e(NAME, "fail | no user activated");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | no user activated");
         }
         lan_end();
     }
@@ -647,20 +647,20 @@ public class FetchService extends IntentService {
 
     private void lan_start(){
         final String NAME = "lan_start()";
-        Log.e(NAME, "start...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "start...");
         MyApp.setRunning_fetch_service(true);
         if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null && MyApp.getRunning_main().isVisible()){
-            Log.e(NAME, "refresh main activity...");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh main activity...");
             MyApp.getRunning_main().refresh();
         }
     }
 
     private void lan_end(){
         final String NAME = "lan_end()";
-        Log.e(NAME, "end...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "end...");
         MyApp.setRunning_fetch_service(false);
         if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null && MyApp.getRunning_main().isVisible()){
-            Log.e(NAME, "refresh main activity...");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh main activity...");
             MyApp.getRunning_main().refresh();
         }
     }
@@ -683,7 +683,7 @@ public class FetchService extends IntentService {
 
     private void lan_fetch_service_loginFail(HttpConnectionAndCode res){
         final String NAME = "lan_fetch_service_loginFail()";
-        Log.e(NAME,"it fail...");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME,"it fail...");
         if (res.comment != null && res.comment.contains("密码")) {
             lan_notify_login_wrong_password();
         }
@@ -695,7 +695,7 @@ public class FetchService extends IntentService {
      */
     private void handleAction_STOP_SERVICE() {
         final String NAME = "handleAction_STOP_SERVICE()";
-        Log.e(NAME, "stop signal received");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "stop signal received");
         stop = true;
         stopForeground(true);
         stopSelf();
@@ -711,14 +711,14 @@ public class FetchService extends IntentService {
                 final String tip = intent.getStringExtra(EXTRA_start_toast);
                 String sign = intent.getStringExtra(EXTRA_sign);
                 if (sign == null || !sign.equals(SIGN)){
-                    Log.e(NAME, "invalidated start");
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "invalidated start");
                     return;
                 }else {
-                    Log.e(NAME, "validated start");
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "validated start");
                 }
                 if (tip != null && !tip.isEmpty()){
-                    Log.e(NAME, "i have received a tip..........................");
-                    Log.e(NAME, tip);
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "i have received a tip..........................");
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, tip);
 //                    Toast.makeText(this, tip, Toast.LENGTH_SHORT).show();
                 }
                 handleAction_START_FETCH_DATA(ms);

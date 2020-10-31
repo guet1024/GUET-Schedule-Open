@@ -49,9 +49,9 @@ public class Update {
                         if (error != null) {
                             error.run();
                         }
-                        Log.e(NAME, "response is null or empty");
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "response is null or empty");
                     } else {
-                        Log.e(NAME, "response: " + response);
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "response: " + response);
                         Release latest = new Gson().fromJson(response, Release.class);
                         String version = "v" + BuildConfig.VERSION_NAME;
                         String latest_tag = latest.getTag_name();
@@ -109,7 +109,7 @@ public class Update {
                     }
                 },
                 net_error -> {
-                    Log.e(NAME, "error: " + net_error);
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "error: " + net_error);
                     if (error != null) {
                         error.run();
                     }
