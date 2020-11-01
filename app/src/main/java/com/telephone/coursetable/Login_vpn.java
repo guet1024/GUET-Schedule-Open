@@ -1161,81 +1161,87 @@ public class Login_vpn extends AppCompatActivity {
                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
             });
 
-            int times = 0;
-            boolean fetch_merge_res = false;
-            while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
-                if (times >= MyApp.web_vpn_refetch_times / 3) {
-                    if (login_res.c != null) {
-                        login_res.c.disconnect();
+            try { // this is an Accident Prone Area
+                int times = 0;
+                boolean fetch_merge_res = false;
+                while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
+                    if (times >= MyApp.web_vpn_refetch_times / 3) {
+                        if (login_res.c != null) {
+                            login_res.c.disconnect();
+                        }
                     }
+                    /** clear shared preference */
+                    editor.clear();
+                    /** commit shared preference */
+                    editor.commit();
+                    /** call {@link #deleteOldDataFromDatabase()} */
+                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
+                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
+                    times++;
                 }
-                /** clear shared preference */
-                editor.clear();
+
                 /** commit shared preference */
                 editor.commit();
-                /** call {@link #deleteOldDataFromDatabase()} */
-                deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
-                fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
-                times++;
-            }
 
-            /** commit shared preference */
-            editor.commit();
+                if (fetch_merge_res) {
 
-            if (fetch_merge_res) {
+                    /** locate now, print the locate-result to log */
+                    com.telephone.coursetable.LogMe.LogMe.e(
+                            NAME + " " + "locate now",
+                            Clock.locateNow(
+                                    Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
+                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                    getResources().getString(R.string.pref_hour_start_suffix),
+                                    getResources().getString(R.string.pref_hour_end_suffix),
+                                    getResources().getString(R.string.pref_hour_des_suffix)
+                            ) + ""
+                    );
 
-                /** locate now, print the locate-result to log */
-                com.telephone.coursetable.LogMe.LogMe.e(
-                        NAME + " " + "locate now",
-                        Clock.locateNow(
-                                Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                getResources().getString(R.string.pref_hour_start_suffix),
-                                getResources().getString(R.string.pref_hour_end_suffix),
-                                getResources().getString(R.string.pref_hour_des_suffix)
-                        ) + ""
-                );
+                    udao.activateUser(sid);
 
-                udao.activateUser(sid);
+                    MyApp.setRunning_login_thread(false);
 
-                MyApp.setRunning_login_thread(false);
-
-                runOnUiThread(() -> {
-                    unlock(false);
-                    Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
-                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
-                    if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
-                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
-                        /** start a new {@link MainActivity} */
-                        startActivity(new Intent(Login_vpn.this, MainActivity.class));
-                    } else {
-                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
-                    }
-                });
-
-            } else {
-                /** set {@link MyApp#running_login_thread} to false */
-                MyApp.setRunning_login_thread(false);
-                /** if login activity is current running activity */
-                if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)) {
                     runOnUiThread(() -> {
-                        unlock(true);
-                        /** show tip snack-bar, change title */
-                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
-                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        /** show tip toast */
-                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
-                        /** if main activity is current running activity */
-                        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null) {
-                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
-                            /** call {@link MainActivity#refresh()} */
-                            MyApp.getRunning_main().refresh();
+                        unlock(false);
+                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
+                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
+                        if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
+                            /** start a new {@link MainActivity} */
+                            startActivity(new Intent(Login_vpn.this, MainActivity.class));
+                        } else {
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
                         }
                     });
+
+                } else {
+                    /** set {@link MyApp#running_login_thread} to false */
+                    MyApp.setRunning_login_thread(false);
+                    /** if login activity is current running activity */
+                    if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)) {
+                        runOnUiThread(() -> {
+                            unlock(true);
+                            /** show tip snack-bar, change title */
+                            Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                            getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            /** show tip toast */
+                            Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
+                            /** if main activity is current running activity */
+                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null) {
+                                com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
+                                /** call {@link MainActivity#refresh()} */
+                                MyApp.getRunning_main().refresh();
+                            }
+                        });
+                    }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
+                runOnUiThread(()->Toast.makeText(Login_vpn.this, Log.getStackTraceString(e), Toast.LENGTH_LONG).show());
+                startActivity(new Intent(Login_vpn.this, MainActivity.class));
             }
         }).start();
     }
