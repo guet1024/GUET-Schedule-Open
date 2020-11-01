@@ -223,7 +223,7 @@ public class Guetphonenums extends AppCompatActivity {
         searchlist.clear();
         searchphonenums.clear();
         List<String> keywords = getKeywords(key);
-        Log.e("keyword list", ""+keywords);
+        com.telephone.coursetable.LogMe.LogMe.e("keyword list", ""+keywords);
         List<Webinfoview> copy_name = new LinkedList<>(webinfoviewslist);
         List<String> copy_num = new LinkedList<>(phonenums);
         for (String kw : keywords) {

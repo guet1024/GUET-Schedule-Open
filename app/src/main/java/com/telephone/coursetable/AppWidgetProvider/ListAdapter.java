@@ -62,12 +62,12 @@ public class ListAdapter implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         final String NAME = "onDataSetChanged()";
         if (first){
-            Log.e(NAME, "first added, NOT fetch");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "first added, NOT fetch");
             first = false;
             return;
         }
         data = MyApp.getData_list();
-        Log.e(NAME, "fetch new data");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch new data");
     }
 
     @Override

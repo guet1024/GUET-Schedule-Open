@@ -122,7 +122,7 @@ public abstract class Example extends AppCompatActivity {
                             setEnd(true);
                             return;
                         }
-                        Log.i("drag info", " xl = " + xl + " xr = " + xr + " yu = " + yu + " yd = " + yd);
+                        com.telephone.coursetable.LogMe.LogMe.i("drag info", " xl = " + xl + " xr = " + xr + " yu = " + yu + " yd = " + yd);
                         x_left_scale = xl;
                         x_right_scale = xr;
                         y_up_scale = yu;

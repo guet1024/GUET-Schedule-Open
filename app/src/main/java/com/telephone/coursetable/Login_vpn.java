@@ -422,20 +422,20 @@ public class Login_vpn extends AppCompatActivity {
                 return Login_vpn.vpn_login(context, sid, pwd);
 
             } catch (ExceptionWrongUserOrPassword exceptionWrongUserOrPassword) {
-                Log.e(NAME, "ExceptionWrongUserOrPassword");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionWrongUserOrPassword");
                 return resources.getString(R.string.login_fail_pwd_text_exception);
 
             } catch (ExceptionNetworkError exceptionNetworkError) {
                 if ( times++<MyApp.check_code_regain_times ) continue;;
-                Log.e(NAME, "ExceptionNetworkError");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionNetworkError");
                 return resources.getString(R.string.wan_login_vpn_network_error_exception);
 
             } catch (ExceptionIpForbidden exceptionIpForbidden) {
-                Log.e(NAME, "ExceptionIpForbidden");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionIpForbidden");
                 return resources.getString(R.string.wan_login_vpn_ip_forbidden_exception);
 
             } catch (ExceptionUnknown exceptionUnknown) {
-                Log.e(NAME, "ExceptionUnknown");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "ExceptionUnknown");
                 return resources.getString(R.string.wan_snackbar_unknown_fail_exception);
 
             }
@@ -584,22 +584,22 @@ public class Login_vpn extends AppCompatActivity {
         if (login_res.code == 0){
             LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
-            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
             return login_res;
         }else if (login_res.code == -7){
-            Log.e(NAME, "meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
             throw new Exception302();
         }else if (login_res.comment != null && login_res.comment.contains("验证码")){
-            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
             throw new ExceptionWrongCheckCode();
         }else if (login_res.comment != null && login_res.comment.contains("密码")){
-            Log.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
             throw new ExceptionWrongUserOrPassword();
         }else if (login_res.comment == null){
-            Log.e(NAME, "network error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "network error");
             throw new ExceptionNetworkError();
         }else {
-            Log.e(NAME, "unknown error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "unknown error");
             throw new ExceptionUnknown();
         }
     }
@@ -615,7 +615,7 @@ public class Login_vpn extends AppCompatActivity {
         final String NAME = "aaw_login()";
         Resources r = c.getResources();
         String body = "username=" + sid + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
-        Log.e(NAME + " " + "body", body);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "body", body);
         HttpConnectionAndCode login_res = com.telephone.coursetable.Https.Post.post(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626013051d0/student/public/login.asp",
                 null,
@@ -630,19 +630,19 @@ public class Login_vpn extends AppCompatActivity {
                 false
         );
         if (login_res.code == -7 && login_res.c.getHeaderFields().get("location").get(0).contains("menu.asp?menu=mnall.asp")){
-            Log.e(NAME, "success -> " + login_res.c.getHeaderFields().get("location").get(0));
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "success -> " + login_res.c.getHeaderFields().get("location").get(0));
             return true;
         }else if (login_res.comment == null){
-            Log.e(NAME, "fail | network error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | network error");
             throw new ExceptionNetworkError();
         }else if (login_res.comment.contains("77726476706e69737468656265737421a1a013d2766626013051d0")){
-            Log.e(NAME, "fail | wrong user or password | " + login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | wrong user or password | " + login_res.comment);
             throw new ExceptionWrongUserOrPassword();
         }else if (login_res.code == -7){
-            Log.e(NAME, "fail | meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | meet 302 -> " + login_res.c.getHeaderFields().get("location").get(0));
             throw new Exception302();
         }else {
-            Log.e(NAME, "fail | unknown error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | unknown error");
             throw new ExceptionUnknown();
         }
     }
@@ -697,14 +697,14 @@ public class Login_vpn extends AppCompatActivity {
         final String NAME = "vpn_login()";
         Resources r = c.getResources();
         String body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
-        Log.e(NAME + " " + "body", body);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "body", body);
         if (pwd.length() <= 0) {
-            Log.e(NAME, "empty password");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "empty password");
             throw new ExceptionWrongUserOrPassword();
         }
         pwd = encrypt(pwd);
         body = "auth_type=local&username=" + id + "&sms_code=&password=" + pwd;
-        Log.e(NAME + " " + "encrypted body", body);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "encrypted body", body);
         HttpConnectionAndCode get_ticket_res = com.telephone.coursetable.Https.Get.get(
                 r.getString(R.string.wan_vpn_get_ticket_url),
                 null,
@@ -719,13 +719,13 @@ public class Login_vpn extends AppCompatActivity {
         );
         String cookie = get_ticket_res.cookie;
         if (cookie == null || cookie.isEmpty()) {
-            Log.e(NAME, "fail | can not get init vpn ticket");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | can not get init vpn ticket");
             throw new ExceptionNetworkError();
         }
         cookie = cookie.substring(cookie.indexOf("wengine_vpn_ticket"));
         cookie = cookie.substring(0, cookie.indexOf(r.getString(R.string.cookie_delimiter)));
         cookie += r.getString(R.string.cookie_delimiter) + "show_vpn=1" + r.getString(R.string.cookie_delimiter) + "refresh=1";
-        Log.e(NAME + " " + "ticket cookie", cookie);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "ticket cookie", cookie);
         HttpConnectionAndCode try_to_login_res = com.telephone.coursetable.Https.Post.post(
                 r.getString(R.string.wan_vpn_login_url),
                 null,
@@ -740,13 +740,13 @@ public class Login_vpn extends AppCompatActivity {
                 null
         );
         if (try_to_login_res.code == 0) {
-            Log.e(NAME, "success | " + try_to_login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "success | " + try_to_login_res.comment);
             return cookie;
         } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"INVALID_ACCOUNT\"")) {
-            Log.e(NAME, "fail | " + try_to_login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | " + try_to_login_res.comment);
             throw new ExceptionWrongUserOrPassword();
         } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"NEED_CONFIRM\"")) {
-            Log.e(NAME + " " + "need confirm", "confirm...");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "need confirm", "confirm...");
             HttpConnectionAndCode confirm_login_res = com.telephone.coursetable.Https.Post.post(
                     r.getString(R.string.wan_vpn_confirm_login_url),
                     null,
@@ -761,20 +761,20 @@ public class Login_vpn extends AppCompatActivity {
                     null
             );
             if (confirm_login_res.code == 0) {
-                Log.e(NAME, "success | confirm success");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "success | confirm success");
                 return cookie;
             }else {
-                Log.e(NAME, "fail | confirm fail");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | confirm fail");
                 throw new ExceptionNetworkError();
             }
         } else if (try_to_login_res.comment != null && try_to_login_res.comment.contains("\"error\": \"IP_FORBIDDEN\"")) {
-            Log.e(NAME, "fail | " + try_to_login_res.comment);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | " + try_to_login_res.comment);
             throw new ExceptionIpForbidden();
         } else if (try_to_login_res.comment == null){
-            Log.e(NAME, "fail | network error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | network error");
             throw new ExceptionNetworkError();
         } else {
-            Log.e(NAME, "fail | unknown error");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | unknown error");
             throw new ExceptionUnknown();
         }
     }
@@ -833,7 +833,7 @@ public class Login_vpn extends AppCompatActivity {
         getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
                     udao.deleteUser(sid);
-                    Log.e(NAME + " " + "user deleted", sid);
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user deleted", sid);
                     updateUserNameAutoFill();
                     runOnUiThread((Runnable) () -> {
                         aaw_pwd = "";
@@ -881,14 +881,14 @@ public class Login_vpn extends AppCompatActivity {
         res = WAN.personInfo(c, cookie);
         res_add = WAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.personInfo(res.comment, res_add.comment, pdao);
 
         res = WAN.termInfo(c, cookie);
         if (res.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.termInfo(c, res.comment, tdao);
@@ -903,7 +903,7 @@ public class Login_vpn extends AppCompatActivity {
         }
         res = WAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
@@ -911,40 +911,40 @@ public class Login_vpn extends AppCompatActivity {
         res = WAN.graduationScore(c, cookie);
         res_add = WAN.graduationScore2(c,cookie);
         if (res.code != 0 || res_add.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.graduationScore(res.comment,res_add.comment,gsdao);
 
         res = WAN.grades(c, cookie);
         if (res.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.grades(res.comment, grdao);
 
         res = WAN.examInfo(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.examInfo(res.comment, edao);
 
         res = WAN.cet(c, cookie);
         if (res.code != 0){
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.cet(res.comment, cetDao);
 
         res = WAN.hour(c, cookie);
         if (res.code != 0) {
-            Log.e(NAME, "fail");
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
         Merge.hour(c, res.comment, editor);
 
-        Log.e(NAME, "success");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
     }
 
@@ -979,14 +979,14 @@ public class Login_vpn extends AppCompatActivity {
 
                 /** detect new activity || skip no activity */
                 if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)){
-                    Log.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
                     runOnUiThread(()->Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
                     return;
                 }
-                Log.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
-                Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
                 if (!Login_vpn.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
-                    Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
                     runOnUiThread(()->Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
                     return;
                 }
@@ -1137,14 +1137,14 @@ public class Login_vpn extends AppCompatActivity {
 
             /** detect new activity || skip no activity */
             if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
-                Log.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "no activity is running, login = " + Login_vpn.this.toString() + " canceled");
                 runOnUiThread(() -> Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
                 return;
             }
-            Log.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
-            Log.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "login activity pointer = " + Login_vpn.this.toString());
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "running activity pointer = " + MyApp.getRunning_activity_pointer().toString());
             if (!Login_vpn.this.toString().equals(MyApp.getRunning_activity_pointer().toString())) {
-                Log.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "new running activity detected = " + MyApp.getRunning_activity_pointer().toString() + ", login = " + Login_vpn.this.toString() + " canceled");
                 runOnUiThread(() -> Toast.makeText(Login_vpn.this, getResources().getString(R.string.wan_login_vpn_cancel_tip), Toast.LENGTH_SHORT).show());
                 return;
             }
@@ -1161,81 +1161,87 @@ public class Login_vpn extends AppCompatActivity {
                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
             });
 
-            int times = 0;
-            boolean fetch_merge_res = false;
-            while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
-                if (times >= MyApp.web_vpn_refetch_times / 3) {
-                    if (login_res.c != null) {
-                        login_res.c.disconnect();
+            try { // this is an Accident Prone Area
+                int times = 0;
+                boolean fetch_merge_res = false;
+                while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
+                    if (times >= MyApp.web_vpn_refetch_times / 3) {
+                        if (login_res.c != null) {
+                            login_res.c.disconnect();
+                        }
                     }
+                    /** clear shared preference */
+                    editor.clear();
+                    /** commit shared preference */
+                    editor.commit();
+                    /** call {@link #deleteOldDataFromDatabase()} */
+                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
+                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
+                    times++;
                 }
-                /** clear shared preference */
-                editor.clear();
+
                 /** commit shared preference */
                 editor.commit();
-                /** call {@link #deleteOldDataFromDatabase()} */
-                deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
-                fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
-                times++;
-            }
 
-            /** commit shared preference */
-            editor.commit();
+                if (fetch_merge_res) {
 
-            if (fetch_merge_res) {
+                    /** locate now, print the locate-result to log */
+                    com.telephone.coursetable.LogMe.LogMe.e(
+                            NAME + " " + "locate now",
+                            Clock.locateNow(
+                                    Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
+                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                    getResources().getString(R.string.pref_hour_start_suffix),
+                                    getResources().getString(R.string.pref_hour_end_suffix),
+                                    getResources().getString(R.string.pref_hour_des_suffix)
+                            ) + ""
+                    );
 
-                /** locate now, print the locate-result to log */
-                Log.e(
-                        NAME + " " + "locate now",
-                        Clock.locateNow(
-                                Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                getResources().getString(R.string.pref_hour_start_suffix),
-                                getResources().getString(R.string.pref_hour_end_suffix),
-                                getResources().getString(R.string.pref_hour_des_suffix)
-                        ) + ""
-                );
+                    udao.activateUser(sid);
 
-                udao.activateUser(sid);
+                    MyApp.setRunning_login_thread(false);
 
-                MyApp.setRunning_login_thread(false);
-
-                runOnUiThread(() -> {
-                    unlock(false);
-                    Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
-                    getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
-                    if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
-                        Log.e(NAME, "start a new Main Activity...");
-                        /** start a new {@link MainActivity} */
-                        startActivity(new Intent(Login_vpn.this, MainActivity.class));
-                    } else {
-                        Log.e(NAME, "update success but no activity is running, NOT start new Main Activity");
-                    }
-                });
-
-            } else {
-                /** set {@link MyApp#running_login_thread} to false */
-                MyApp.setRunning_login_thread(false);
-                /** if login activity is current running activity */
-                if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)) {
                     runOnUiThread(() -> {
-                        unlock(true);
-                        /** show tip snack-bar, change title */
-                        Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
-                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        /** show tip toast */
-                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
-                        /** if main activity is current running activity */
-                        if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null) {
-                            Log.e(NAME, "refresh the Main Activity...");
-                            /** call {@link MainActivity#refresh()} */
-                            MyApp.getRunning_main().refresh();
+                        unlock(false);
+                        Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_success), Toast.LENGTH_SHORT).show();
+                        getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated));
+                        if (!MyApp.getRunning_activity().equals(MyApp.RunningActivity.NULL)) {
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "start a new Main Activity...");
+                            /** start a new {@link MainActivity} */
+                            startActivity(new Intent(Login_vpn.this, MainActivity.class));
+                        } else {
+                            com.telephone.coursetable.LogMe.LogMe.e(NAME, "update success but no activity is running, NOT start new Main Activity");
                         }
                     });
+
+                } else {
+                    /** set {@link MyApp#running_login_thread} to false */
+                    MyApp.setRunning_login_thread(false);
+                    /** if login activity is current running activity */
+                    if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN)) {
+                        runOnUiThread(() -> {
+                            unlock(true);
+                            /** show tip snack-bar, change title */
+                            Snackbar.make(view, getResources().getString(R.string.lan_toast_update_fail), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                            getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updated_fail));
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            /** show tip toast */
+                            Toast.makeText(Login_vpn.this, getResources().getString(R.string.lan_toast_update_fail), Toast.LENGTH_SHORT).show();
+                            /** if main activity is current running activity */
+                            if (MyApp.getRunning_activity().equals(MyApp.RunningActivity.MAIN) && MyApp.getRunning_main() != null) {
+                                com.telephone.coursetable.LogMe.LogMe.e(NAME, "refresh the Main Activity...");
+                                /** call {@link MainActivity#refresh()} */
+                                MyApp.getRunning_main().refresh();
+                            }
+                        });
+                    }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
+                runOnUiThread(()->Toast.makeText(Login_vpn.this, Log.getStackTraceString(e), Toast.LENGTH_LONG).show());
+                startActivity(new Intent(Login_vpn.this, MainActivity.class));
             }
         }).start();
     }

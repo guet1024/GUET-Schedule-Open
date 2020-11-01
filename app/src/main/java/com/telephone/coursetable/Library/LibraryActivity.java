@@ -277,13 +277,13 @@ public class LibraryActivity extends AppCompatActivity {
                 tvPage.setText("第" + bookNum + "本/共" + maxBookNum + "本");
 
                 for (int page = 1; page <= maxPage; page++) {
-                    Log.e("共" + maxPage + "页", "第" + page + "页");
-                    Log.e("message：", message);
+                    com.telephone.coursetable.LogMe.LogMe.e("共" + maxPage + "页", "第" + page + "页");
+                    com.telephone.coursetable.LogMe.LogMe.e("message：", message);
 
-                    Log.e("my", LibraryActivity.this.toString());
-                    Log.e("running", MyApp.getRunning_activity_pointer().toString());
+                    com.telephone.coursetable.LogMe.LogMe.e("my", LibraryActivity.this.toString());
+                    com.telephone.coursetable.LogMe.LogMe.e("running", MyApp.getRunning_activity_pointer().toString());
                     if ( MyApp.getRunning_activity_pointer() == null || !LibraryActivity.this.toString().equals(MyApp.getRunning_activity_pointer().toString())){
-                        Log.e("new search activity detected, exit", LibraryActivity.this.toString());
+                        com.telephone.coursetable.LogMe.LogMe.e("new search activity detected, exit", LibraryActivity.this.toString());
                         return;
                     }
 

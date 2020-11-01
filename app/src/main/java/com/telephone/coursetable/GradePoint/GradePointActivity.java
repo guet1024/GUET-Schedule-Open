@@ -103,7 +103,7 @@ public class GradePointActivity extends AppCompatActivity {
         menu_listf.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                Log.e("grade point list", "clicked");
+                com.telephone.coursetable.LogMe.LogMe.e("grade point list", "clicked");
                 dosearch();
                 return false;
             }

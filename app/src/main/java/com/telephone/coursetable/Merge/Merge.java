@@ -202,6 +202,12 @@ public class Merge {
         ExamInfo_s e_s = new Gson().fromJson(origin_e, ExamInfo_s.class);
         List<ExamInfo> e = e_s.getData();
         for (ExamInfo i : e){
+            if (i.getKssj() == null || i.getKssj().isEmpty()){
+                i.setKssj("10:20-12:20");
+            }
+            if (i.getExamdate() == null || i.getExamdate().isEmpty()){
+                i.setExamdate("2000-07-18");
+            }
             edao.insert(new com.telephone.coursetable.Database.ExamInfo(
                     i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
                     i.getJs1(), i.getJs2(), i.getRoomrs(), i.getTerm(), i.getGrade(), i.getDpt(),

@@ -246,4 +246,11 @@ public class ExamInfo {
         return operator;
     }
 
+    public void setExamdate(String examdate) {
+        this.examdate = examdate;
+    }
+
+    public void setKssj(String kssj) {
+        this.kssj = kssj;
+    }
 }

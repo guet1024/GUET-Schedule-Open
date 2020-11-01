@@ -30,12 +30,12 @@ public class Show {
             Elements bokkids = book.select("ul.resultlist > li > input#StrTmpRecno.inputISBN");
             String bokkid = bokkids.attr("value");
             bookinfoes.add(Map.entry("书籍编号：", bokkid));
-//            Log.e("书籍编号：", bokkid);
+//            com.telephone.coursetable.LogMe.LogMe.e("书籍编号：", bokkid);
 
             Elements titles = book.select("ul.resultlist > li > div.into > h3.title > a");
             String title = titles.get(0).ownText();
             bookinfoes.add(Map.entry("名称：", title));
-//            Log.e("名称：", title);
+//            com.telephone.coursetable.LogMe.LogMe.e("名称：", title);
 
             Element titlebar = book.select("ul.resultlist > li > div.into > div.titbar").get(0);
             Elements spans = titlebar.select("span");
@@ -44,11 +44,11 @@ public class Show {
                 String value = span.select("span > strong").get(0).ownText();
                 if( value.equals("v., :") ) value="";
                 bookinfoes.add(Map.entry(name, value));
-//                Log.e(name, value);
+//                com.telephone.coursetable.LogMe.LogMe.e(name, value);
             }
 
             books.add(bookinfoes);
-//            Log.e("#######", "###############################");
+//            com.telephone.coursetable.LogMe.LogMe.e("#######", "###############################");
         }
         return books;
     }
@@ -77,21 +77,21 @@ public class Show {
                 local_node.add(Map.entry("藏书编号：", b.select("book > hldcount ").get(0).ownText()));
                 local_node.add(Map.entry("所有藏书编号：", b.select("book > hldallnum ").get(0).ownText()));
 
-//                Log.e("图书编号", b.select("book > bookid ").get(0).ownText());
-//                Log.e("条码号",  b.select("book > barcode ").get(0).ownText());
-//                Log.e("索书号",  b.select("book > callno ").get(0).ownText());
-//                Log.e("馆藏状态", b.select("book > localstatu ").get(0).ownText());
-//                Log.e("馆藏地点", b.select("book > local ").get(0).ownText());
-//                Log.e("流通类型", b.select("book > cirType ").get(0).ownText());
-//                Log.e("预约处理", b.select("book > servicePoint ").get(0).ownText());
-//                Log.e("出借数据编号", b.select("book > loanDatanum ").get(0).ownText());
-//                Log.e("登录号", b.select("book > loannum ").get(0).ownText());
-//                Log.e("藏书编号", b.select("book > hldcount ").get(0).ownText());
-//                Log.e("所有藏书编号", b.select("book > hldallnum ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("图书编号", b.select("book > bookid ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("条码号",  b.select("book > barcode ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("索书号",  b.select("book > callno ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("馆藏状态", b.select("book > localstatu ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("馆藏地点", b.select("book > local ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("流通类型", b.select("book > cirType ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("预约处理", b.select("book > servicePoint ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("出借数据编号", b.select("book > loanDatanum ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("登录号", b.select("book > loannum ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("藏书编号", b.select("book > hldcount ").get(0).ownText());
+//                com.telephone.coursetable.LogMe.LogMe.e("所有藏书编号", b.select("book > hldallnum ").get(0).ownText());
 
                 locals.add(local_node);
 
-                Log.e("...................", ".............................");
+                com.telephone.coursetable.LogMe.LogMe.e("...................", ".............................");
             }
             books.add(locals);
         }

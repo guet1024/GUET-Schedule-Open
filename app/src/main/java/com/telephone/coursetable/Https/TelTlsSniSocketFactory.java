@@ -48,7 +48,7 @@ class TelTlsSniSocketFactory extends SSLSocketFactory {
         String customized_host = this.conn.getRequestProperty("Host");
         if (customized_host == null)
             customized_host = origin_host;
-        Log.i(TAG, "customized host name: " + customized_host);
+        com.telephone.coursetable.LogMe.LogMe.i(TAG, "customized host name: " + customized_host);
         InetAddress origin_address = origin_socket.getInetAddress();
         if (autoClose) {
             // we don't need the origin_socket
@@ -60,14 +60,14 @@ class TelTlsSniSocketFactory extends SSLSocketFactory {
         // enable TLSv1.1/1.2 if available
         ssl.setEnabledProtocols(ssl.getSupportedProtocols());
         // set up SNI before the handshake
-        Log.i(TAG, "Setting SNI hostname: " + customized_host);
+        com.telephone.coursetable.LogMe.LogMe.i(TAG, "Setting SNI hostname: " + customized_host);
         sslSocketFactory.setHostname(ssl, customized_host);
         // verify hostname and certificate
         SSLSession session = ssl.getSession();
         // verification uses the customized host name, not the origin one
         if (!hostnameVerifier.verify(customized_host, session))
             throw new SSLPeerUnverifiedException("Cannot verify hostname: " + customized_host);
-        Log.i(TAG, "Established " + session.getProtocol() + " connection with " + ssl.getInetAddress() + " using mask of " + session.getPeerHost() +
+        com.telephone.coursetable.LogMe.LogMe.i(TAG, "Established " + session.getProtocol() + " connection with " + ssl.getInetAddress() + " using mask of " + session.getPeerHost() +
                 " using " + session.getCipherSuite());
         return ssl;
     }

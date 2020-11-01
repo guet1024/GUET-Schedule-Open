@@ -49,7 +49,7 @@ public class List extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);// 1. no date 2. display default data-list(or the cached list-view)
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         Toast.makeText(context, "课程表小部件稍后将自动刷新", Toast.LENGTH_LONG).show();
-        Log.e(NAME, "new list app-widget(s) added");
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "new list app-widget(s) added");
     }
 
     @Override
@@ -93,9 +93,9 @@ public class List extends AppWidgetProvider {
                 // then notify all app-widgets's remote adapter to get new data-list and refresh view
                 m.notifyAppWidgetViewDataChanged(w_ids, R.id.appwidget_list_listview);
 
-                Log.e(NAME, "all list app-widgets updated: " + w_ids.length + " total");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "all list app-widgets updated: " + w_ids.length + " total");
             }else {
-                Log.e(NAME, "no existing list app-widgets to update");
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "no existing list app-widgets to update");
             }
         }else if (intent.getAction().equals("com.telephone.coursetable.action.START_FETCH_SERVIE")){
             String tip = "已唤醒";

@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         final String NAME = "onResume()";
         super.onResume();
         resume_time++;
-        Log.e(NAME, "resume time = " + resume_time);
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "resume time = " + resume_time);
         show();
     }
 
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         hide();
         super.onPause();
     }
-  
+
     private volatile View view;
 
     public View getView(){
@@ -174,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         final String NAME = "onDestroy()";
-        Log.e(NAME, "Main Activity on destroy = " + this.toString());
-        Log.e(NAME, "cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "Main Activity on destroy = " + this.toString());
+        com.telephone.coursetable.LogMe.LogMe.e(NAME, "cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
         if (MyApp.getRunning_main().toString().equals(this.toString())) {
-            Log.e(NAME, "remove cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
+            com.telephone.coursetable.LogMe.LogMe.e(NAME, "remove cached Main Activity Pointer = " + MyApp.getRunning_main().toString());
             MyApp.setRunning_main(null);
         }
         MyApp.clearRunningActivity(this);
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         Map.Entry<Integer, Integer> g = getTime_enhanced();
                         runOnUiThread(() -> {
                             showTable(locate, g);
-                            Log.e("main-pull-refresh", "success!");
+                            com.telephone.coursetable.LogMe.LogMe.e("main-pull-refresh", "success!");
                             ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setRefreshing(false);
                             ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setEnabled(true);
                         });
@@ -350,12 +350,12 @@ public class MainActivity extends AppCompatActivity {
                                         float y = dragEvent.getY();
                                         float h = MainActivity.this.view.findViewById(R.id.floatingActionButton).getHeight();
                                         float margin = 10;
-                                        Log.i("FAB", "drag y(relative) = " + y);
+                                        com.telephone.coursetable.LogMe.LogMe.i("FAB", "drag y(relative) = " + y);
                                         if (y + h + margin > view.getHeight()){
-                                            Log.i("FAB", "lower boundary");
+                                            com.telephone.coursetable.LogMe.LogMe.i("FAB", "lower boundary");
                                             setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(view.getHeight() - margin - h));
                                         }else if (y - h - margin < 0){
-                                            Log.i("FAB", "upper boundary");
+                                            com.telephone.coursetable.LogMe.LogMe.i("FAB", "upper boundary");
                                             setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(0 + margin + h));
                                         }else {
                                             setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(y));
@@ -483,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         }else {
             long nts = Clock.nowTimeStamp();
-            Log.e(NAME,"MainActivity press back" + ": " + nts);
+            com.telephone.coursetable.LogMe.LogMe.e(NAME,"MainActivity press back" + ": " + nts);
             if (nts - exit_ts < 2000) {
                 new Thread(()->{
                     finishAffinity();
