@@ -43,6 +43,9 @@ import java.util.List;
 
 public class Merge {
 
+    public static final String EXAM_NO_TIME = "无";
+    public static final String EXAM_NO_TIME_REPLACE = "23:58-23:59";
+
     /**
      * the origin must have corresponding content
      * @clear
@@ -203,10 +206,10 @@ public class Merge {
         List<ExamInfo> e = e_s.getData();
         for (ExamInfo i : e){
             if (i.getKssj() == null || i.getKssj().isEmpty()){
-                i.setKssj("10:20-12:20");
+                i.setKssj(EXAM_NO_TIME);
             }
             if (i.getExamdate() == null || i.getExamdate().isEmpty()){
-                i.setExamdate("2000-07-18");
+                continue;
             }
             edao.insert(new com.telephone.coursetable.Database.ExamInfo(
                     i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),

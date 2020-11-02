@@ -3,6 +3,8 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import com.telephone.coursetable.Merge.Merge;
+
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -122,6 +124,9 @@ public class ExamInfo {
     }
 
     private long getSTS(String date, String time){
+        if (time.equals(Merge.EXAM_NO_TIME)){
+            time = Merge.EXAM_NO_TIME_REPLACE;
+        }
         String year = date.substring(0, 4);
         String month = date.substring(5, 7);
         String day = date.substring(8);
@@ -135,6 +140,9 @@ public class ExamInfo {
     }
 
     private long getETS(String date, String time){
+        if (time.equals(Merge.EXAM_NO_TIME)){
+            time = Merge.EXAM_NO_TIME_REPLACE;
+        }
         String year = date.substring(0, 4);
         String month = date.substring(5, 7);
         String day = date.substring(8);
