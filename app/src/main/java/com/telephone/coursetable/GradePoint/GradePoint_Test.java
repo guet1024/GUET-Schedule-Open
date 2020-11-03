@@ -40,7 +40,9 @@ public class GradePoint_Test {
                 null,
                 null,
                 null,
-                false
+                false,
+                null,
+                null
         );
         if(gpc.code == 0) {
             return gpc.comment;

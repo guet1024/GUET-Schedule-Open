@@ -15,6 +15,7 @@ import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Gson.CET;
@@ -29,6 +30,8 @@ import com.telephone.coursetable.Gson.GraduationScore;
 import com.telephone.coursetable.Gson.GraduationScore_s;
 import com.telephone.coursetable.Gson.Hour;
 import com.telephone.coursetable.Gson.Hour_s;
+import com.telephone.coursetable.Gson.LAB;
+import com.telephone.coursetable.Gson.LAB_s;
 import com.telephone.coursetable.Gson.PersonInfo;
 import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.StudentInfo;
@@ -237,6 +240,38 @@ public class Merge {
                     i.getName(), i.getSex(), i.getPostdate(), i.getDptno(), i.getDptname(), i.getSpno(),
                     i.getSpname(), i.getGrade(), i.getBj(), i.getTerm(), i.getStid(), i.getCode(),
                     i.getScore(), i.getStage(), i.getCard(), i.getOperator()
+            ));
+        }
+    }
+
+    /**
+     * the origin must have corresponding content
+     * @clear
+     */
+    public static void lab(@NonNull String origin_lab, @NonNull LABDao labDao, @NonNull GoToClassDao goToClassDao, @NonNull ClassInfoDao classInfoDao){
+        LAB_s lab_s = new Gson().fromJson(origin_lab, LAB_s.class);
+        List<LAB> labList = lab_s.getData();
+        for (LAB lab : labList) {
+            labDao.insert(new com.telephone.coursetable.Database.LAB(
+                    lab.getTerm(), lab.getLabid(), lab.getItemname(), lab.getCourseid(), lab.getCname(),
+                    lab.getSpno(), lab.getSpname(), lab.getGrade(), lab.getTeacherno(), lab.getName(),
+                    lab.getSrname(), lab.getSrdd(), lab.getXh(), lab.getBno(), lab.getPersons(),
+                    lab.getZc(), lab.getXq(), lab.getJc(), lab.getJc1(), lab.getAssistantno(), lab.getTeachers(),
+                    lab.getComm(), lab.getCourseno(), lab.getStusct(), lab.getSrid()
+            ));
+            goToClassDao.insert(new GoToClass(
+                    lab.getTerm(), lab.getXq(), lab.getJc() + "",
+                    com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
+                    lab.getZc(), lab.getZc(), false, 0, lab.getSrdd(), 0
+            ));
+            classInfoDao.insert(new ClassInfo(
+                    com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
+                    "", "", "", "", "", lab.getSpname(), lab.getSpno(),
+                    lab.getGrade(),
+                    com.telephone.coursetable.Database.LAB.getLabName(lab.getCname()),
+                    lab.getTeacherno(), lab.getName(), lab.getCourseid(),
+                    com.telephone.coursetable.Database.LAB.getFullLabName(lab.getCname(), lab.getItemname()) + "（备注：" + lab.getComm() + "）",
+                    lab.getPersons(), 0, 0, 0, 0, 0, lab.getStusct()
             ));
         }
     }

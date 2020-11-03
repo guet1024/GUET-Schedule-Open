@@ -1,5 +1,6 @@
 package com.telephone.coursetable.Clock;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.LinearLayout;
 
@@ -114,6 +115,34 @@ public class Clock {
             res.time_description = which_time_res.des;
         }
         return res;
+    }
+
+    /**
+     * @clear
+     */
+    public static DateTimeFormatter getDateTimeFormatterFor_locateNow(Context c){
+        return DateTimeFormatter.ofPattern(c.getResources().getString(R.string.server_hours_time_format));
+    }
+
+    /**
+     * @clear
+     */
+    public static String getSSFor_locateNow(Context c){
+        return c.getResources().getString(R.string.pref_hour_start_suffix);
+    }
+
+    /**
+     * @clear
+     */
+    public static String getESFor_locateNow(Context c){
+        return c.getResources().getString(R.string.pref_hour_end_suffix);
+    }
+
+    /**
+     * @clear
+     */
+    public static String getDSFor_locateNow(Context c){
+        return c.getResources().getString(R.string.pref_hour_des_suffix);
     }
 
     /**

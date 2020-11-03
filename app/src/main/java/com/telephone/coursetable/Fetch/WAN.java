@@ -59,6 +59,8 @@ public class WAN {
                 null,
                 r.getString(R.string.lan_get_terms_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
         return rss;
@@ -78,6 +80,8 @@ public class WAN {
                 null,
                 r.getString(R.string.lan_get_table_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -94,6 +98,8 @@ public class WAN {
                 "]}",
                 null,
                 r.getString(R.string.lan_get_hours_success_contain_response_text),
+                null,
+                null,
                 null,
                 null
         );
@@ -147,6 +153,8 @@ public class WAN {
                 null,
                 r.getString(R.string.lan_get_graduation_score_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -177,6 +185,8 @@ public class WAN {
                 null,
                 "\"success\":true",
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -196,6 +206,8 @@ public class WAN {
                 null,
                 r.getString(R.string.lan_get_grades_success_contain_response_text),
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -212,6 +224,8 @@ public class WAN {
                 "}]}",
                 null,
                 "\"success\":true",
+                null,
+                null,
                 null,
                 null
         );
@@ -231,6 +245,8 @@ public class WAN {
                 null,
                 "\"success\":true",
                 null,
+                null,
+                null,
                 null
         );
 
@@ -238,4 +254,27 @@ public class WAN {
     }
 
 
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     * @clear
+     */
+    public static HttpConnectionAndCode lab(Context c, String cookie, String term){
+        Resources r = c.getResources();
+        return com.telephone.coursetable.Https.Get.get(
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/getlabtable",
+                new String[]{"term="+term},
+                r.getString(R.string.user_agent),
+                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/MainDesktop",
+                cookie,
+                "]}",
+                null,
+                "\"success\":true",
+                null,
+                null,
+                null,
+                10000
+        );
+    }
 }
