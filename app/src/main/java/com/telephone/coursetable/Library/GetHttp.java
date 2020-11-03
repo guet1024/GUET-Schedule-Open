@@ -37,6 +37,8 @@ public class GetHttp {
                 null,
                 null,
                 null,
+                null,
+                null,
                 null
         );
         if (html.code == 0) {
@@ -56,6 +58,8 @@ public class GetHttp {
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36 Edg/85.0.564.41",
                     "https://v.guet.edu.cn/http/77726476706e69737468656265737421a2a713d276693b1e2958c7fdcb0c/NTRdrBookRetr.aspx?page=" + page + "&strKeyValue="+ message +"&strType=text&tabletype=*&RepSearch=&strKeyValue2=&&strAllAuthor=&strAllPubyear=&strAllPublish=&strAllLanguage=&strCondition2=&strpageNum=10&strVip=&strStartYear=&strEndYear=&strPublisher=&strAuthorer=&strSortType=&strSort=asc" ,
                     cookie,
+                    null,
+                    null,
                     null,
                     null,
                     null,

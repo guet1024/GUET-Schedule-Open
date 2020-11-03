@@ -293,4 +293,28 @@ public class LAN {
                 null
         );
     }
+
+    /**
+     * @return
+     * - code == 0 : success
+     * - code == other : fail
+     * @clear
+     */
+    public static HttpConnectionAndCode lab(Context c, String cookie, String term){
+        Resources r = c.getResources();
+        return Get.get(
+                "http://172.16.13.22/student/getlabtable",
+                new String[]{"term="+term},
+                r.getString(R.string.user_agent),
+                "http://172.16.13.22/Login/MainDesktop",
+                cookie,
+                "]}",
+                null,
+                "\"success\":true",
+                null,
+                null,
+                null,
+                10000
+        );
+    }
 }

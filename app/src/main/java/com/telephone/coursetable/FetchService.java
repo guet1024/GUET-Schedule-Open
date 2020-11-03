@@ -36,6 +36,8 @@ import com.telephone.coursetable.Database.Grades;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.LAB;
+import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.ShowTableNode;
@@ -530,6 +532,7 @@ public class FetchService extends IntentService {
         GradesDao grdao_test = MyApp.getCurrentAppDB_Test().gradesDao();
         ExamInfoDao edao_test = MyApp.getCurrentAppDB_Test().examInfoDao();
         CETDao cetDao_test = MyApp.getCurrentAppDB_Test().cetDao();
+        LABDao labDao_test = MyApp.getCurrentAppDB_Test().labDao();
         SharedPreferences.Editor editor_test = MyApp.getCurrentSharedPreferenceEditor_Test();
         PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
         TermInfoDao tdao = MyApp.getCurrentAppDB().termInfoDao();
@@ -540,9 +543,10 @@ public class FetchService extends IntentService {
         GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
         ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
         CETDao cetDao = MyApp.getCurrentAppDB().cetDao();
+        LABDao labDao = MyApp.getCurrentAppDB().labDao();
         UserDao udao = MyApp.getCurrentAppDB().userDao();
         Login.deleteOldDataFromDatabase(
-            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test, cetDao_test
+            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test, cetDao_test, labDao_test
         );
         editor_test.clear().commit();
         boolean fetch_merge_res = Login.fetch_merge(
@@ -556,7 +560,8 @@ public class FetchService extends IntentService {
                 editor_test,
                 grdao_test,
                 edao_test,
-                cetDao_test
+                cetDao_test,
+                labDao_test
         );
         if (!fetch_merge_res){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | fetch fail");
@@ -579,7 +584,19 @@ public class FetchService extends IntentService {
         udao.disableAllUser();
         /** migrate the pulled data to the database */
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "migrate the pulled data to the database...");
-        lan_merge(pdao, pdao_test, tdao, tdao_test, gdao, gdao_test, cdao, cdao_test, gsdao, gsdao_test, editor, pref_test, grdao, grdao_test, delay_week_to_apply, edao, edao_test, cetDao, cetDao_test);
+        lan_merge(
+                pdao, pdao_test,
+                tdao, tdao_test,
+                gdao, gdao_test,
+                cdao, cdao_test,
+                gsdao, gsdao_test,
+                editor, pref_test,
+                grdao, grdao_test,
+                delay_week_to_apply,
+                edao, edao_test,
+                cetDao, cetDao_test,
+                labDao, labDao_test
+        );
         /** re-insert user */
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "re-insert user...");
         udao.insert(new User(user.username, user.password, user.aaw_password, user.vpn_password));
@@ -595,13 +612,16 @@ public class FetchService extends IntentService {
         lan_end();
     }
 
+    public void wan_merge(){}
+
     public void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
                           ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
                           SharedPreferences.Editor editor, SharedPreferences pref_t,
                           GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply,
                           ExamInfoDao e, ExamInfoDao e_t,
-                          CETDao cet, CETDao cet_t){
-        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e, cet);
+                          CETDao cet, CETDao cet_t,
+                          LABDao lab, LABDao lab_t){
+        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e, cet, lab);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
@@ -642,6 +662,10 @@ public class FetchService extends IntentService {
         List<CET> cet_t_all = cet_t.selectAll();
         for (CET cet_a : cet_t_all){
             cet.insert(cet_a);
+        }
+        List<LAB> lab_t_all = lab_t.selectAll();
+        for (LAB lab_a : lab_t_all){
+            lab.insert(lab_a);
         }
     }
 

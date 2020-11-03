@@ -47,7 +47,10 @@ public class Get {
                                             @Nullable final String cookie_delimiter,
                                             @Nullable final String success_resp_text,
                                             @Nullable final String[] accept_encodings,
-                                            @Nullable final Boolean redirect){
+                                            @Nullable final Boolean redirect,
+                                            @Nullable final Integer connect_timeout,
+                                            @Nullable final Integer read_timeout
+    ){
         URL url = null;
         HttpsURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -89,8 +92,16 @@ public class Get {
                 cnt.setInstanceFollowRedirects(redirect);
             }
             cnt.setRequestProperty("Connection", "keep-alive");
-            cnt.setReadTimeout(4000);
-            cnt.setConnectTimeout(2000);
+            if (read_timeout == null) {
+                cnt.setReadTimeout(4000);
+            }else {
+                cnt.setReadTimeout(read_timeout);
+            }
+            if (connect_timeout == null) {
+                cnt.setConnectTimeout(2000);
+            }else {
+                cnt.setConnectTimeout(connect_timeout);
+            }
             SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
             if (exist_ssl != null){
                 cnt.setSSLSocketFactory(exist_ssl);

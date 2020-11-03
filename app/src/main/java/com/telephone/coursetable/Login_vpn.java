@@ -38,6 +38,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfoDao;
@@ -45,15 +46,18 @@ import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Fetch.WAN;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Https.Post;
+import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
 import com.telephone.coursetable.MyException.Exception302;
 import com.telephone.coursetable.MyException.ExceptionIpForbidden;
@@ -93,6 +97,7 @@ public class Login_vpn extends AppCompatActivity {
     private GradesDao grdao = null;
     private ExamInfoDao edao = null;
     private CETDao cetDao = null;
+    private LABDao labDao = null;
     private SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
 
     private String sid = "";
@@ -546,7 +551,7 @@ public class Login_vpn extends AppCompatActivity {
 
 
     //clear
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao) {
+    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao) {
         gdao.deleteAll();
         cdao.deleteAll();
         tdao.deleteAll();
@@ -555,6 +560,7 @@ public class Login_vpn extends AppCompatActivity {
         grdao.deleteAll();
         edao.deleteAll();
         cetDao.deleteAll();
+        labDao.deleteAll();
     }
 
     /**
@@ -715,6 +721,8 @@ public class Login_vpn extends AppCompatActivity {
                 r.getString(R.string.cookie_delimiter),
                 null,
                 null,
+                null,
+                null,
                 null
         );
         String cookie = get_ticket_res.cookie;
@@ -801,6 +809,7 @@ public class Login_vpn extends AppCompatActivity {
         grdao = db.gradesDao();
         edao = db.examInfoDao();
         cetDao = db.cetDao();
+        labDao = db.labDao();
         title = getSupportActionBar().getTitle().toString();
 
         first_login();
@@ -873,7 +882,8 @@ public class Login_vpn extends AppCompatActivity {
      */
     public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao,
                                       GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao,
-                                      GradesDao grdao, ExamInfoDao edao , CETDao cetDao, SharedPreferences.Editor editor) {
+                                      GradesDao grdao, ExamInfoDao edao , CETDao cetDao, LABDao labDao,
+                                      SharedPreferences.Editor editor) {
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
         HttpConnectionAndCode res_add;
@@ -943,6 +953,31 @@ public class Login_vpn extends AppCompatActivity {
             return false;
         }
         Merge.hour(c, res.comment, editor);
+
+        term_list = tdao.selectAll();
+        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+                MyApp.times,
+                Clock.getDateTimeFormatterFor_locateNow(c),
+                Clock.getSSFor_locateNow(c),
+                Clock.getESFor_locateNow(c),
+                Clock.getDSFor_locateNow(c)
+        );
+        if (locate.term != null) {
+            for (TermInfo term : term_list) {
+                if (!term.term.equals(locate.term.term)){
+                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
+                    continue;
+                }
+                res = WAN.lab(c, cookie, term.term);
+                if (res.code != 0) {
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
+                    return false;
+                }
+                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                Merge.lab(res.comment, labDao, gdao, cdao);
+            }
+        }
 
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
@@ -1175,8 +1210,8 @@ public class Login_vpn extends AppCompatActivity {
                     /** commit shared preference */
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
-                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao);
-                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, editor);
+                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }
 
