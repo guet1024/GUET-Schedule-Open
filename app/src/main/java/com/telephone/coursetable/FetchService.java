@@ -377,27 +377,31 @@ public class FetchService extends IntentService {
                 List<ShowTableNode> courses_list = gdao.getNode(today_locate.term.term, today_locate.week, today_locate.weekday, corresponding_time);
                 for (ShowTableNode course : courses_list){
                     res.add(null);
+
                     StringBuilder stringBuilder = new StringBuilder();
+
                     if (now_time != null && now_time.equals(corresponding_time)){
                         stringBuilder.append("➤ ");
                     }
-                    if (course.croomno != null){
-                        stringBuilder.append(course.croomno).append("    ");
-                    }else {
-                        stringBuilder.append("--------").append("    ");
-                    }
+
+                    String cname = "";
                     if (course.cname != null){
-                        String cname = course.cname;
-                        if (cname.length() > 10){
-                            cname = cname.substring(0, 10) + "...";
-                        }
-                        stringBuilder.append(cname).append(" @");
-                    }else {
-                        stringBuilder.append(" ").append(" @");
+                        cname = course.cname;
                     }
+                    if (cname.length() > 8){
+                        cname = cname.substring(0, 7) + "...";
+                    }
+                    String t_name = "";
                     if (course.name != null){
-                        stringBuilder.append(course.name);
+                        t_name = course.name;
                     }
+                    String place = "";
+                    if (course.croomno != null){
+                        place = course.croomno;
+                    }
+
+                    stringBuilder.append(cname).append("@").append(t_name).append("#").append(place);
+
                     res.add(stringBuilder.toString());
                 }
             }
@@ -412,24 +416,27 @@ public class FetchService extends IntentService {
                 List<ShowTableNode> courses_list = gdao.getNode(tomorrow_locate.term.term, tomorrow_locate.week, tomorrow_locate.weekday, corresponding_time);
                 for (ShowTableNode course : courses_list){
                     res.add(null);
+
                     StringBuilder stringBuilder = new StringBuilder();
-                    if (course.croomno != null){
-                        stringBuilder.append(course.croomno).append("    ");
-                    }else {
-                        stringBuilder.append("--------").append("    ");
-                    }
+
+                    String cname = "";
                     if (course.cname != null){
-                        String cname = course.cname;
-                        if (cname.length() > 10){
-                            cname = cname.substring(0, 10) + "...";
-                        }
-                        stringBuilder.append(cname).append(" @");
-                    }else {
-                        stringBuilder.append(" ").append(" @");
+                        cname = course.cname;
                     }
+                    if (cname.length() > 8){
+                        cname = cname.substring(0, 7) + "...";
+                    }
+                    String t_name = "";
                     if (course.name != null){
-                        stringBuilder.append(course.name);
+                        t_name = course.name;
                     }
+                    String place = "";
+                    if (course.croomno != null){
+                        place = course.croomno;
+                    }
+
+                    stringBuilder.append(cname).append("@").append(t_name).append("#").append(place);
+
                     res.add(stringBuilder.toString());
                 }
             }

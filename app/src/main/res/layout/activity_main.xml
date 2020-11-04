@@ -840,6 +840,24 @@
         app:layout_constraintTop_toTopOf="@id/imageView_child_image" />
 
     <TextView
+        android:id="@+id/main_into_more_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/colorTitleText"
+        android:textSize="14sp"
+        android:text="更多"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/imageView_child_image"
+        app:layout_constraintTop_toTopOf="@id/imageView_child_image"
+        app:layout_constraintBottom_toBottomOf="@id/imageView_child_image"
+        android:layout_marginEnd="8dp"
+        android:onClick="More"/>
+
+
+    <TextView
         android:id="@+id/textView_update_time"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

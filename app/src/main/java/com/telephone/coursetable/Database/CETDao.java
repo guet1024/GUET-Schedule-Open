@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Dao
 public interface CETDao {
-    @Query("select * from CET order by term DESC, code ASC")
+    @Query("select * from CET order by term ASC, code ASC")
     List<CET> selectAll();
 
     @Query("delete from CET")

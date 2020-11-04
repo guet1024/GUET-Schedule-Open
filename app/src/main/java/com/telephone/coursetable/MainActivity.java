@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -265,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         if (lockdown) {
             ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
             ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+            ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
             ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(null);
             for (int id : MyApp.timetvIds) {
                 ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
@@ -278,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
                         ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
                         for (int id : MyApp.timetvIds) {
                             ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
@@ -323,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(()->{
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.VISIBLE);
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
                         ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
@@ -537,6 +542,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * jump to FunctionMenu Activity
+     * @clear
+     */
+    public void More(View view){
+        startActivity(new Intent(this, FunctionMenu.class));
+    }
+
+    /**
      * @ui
      * @clear
      */
@@ -580,15 +593,40 @@ public class MainActivity extends AppCompatActivity {
      * @clear
      */
     private void showTable(@NonNull Locate locate, @Nullable Map.Entry<Integer, Integer> breakTime){
+        final int black = 0xFF000000;
+        final int white = 0xFFFFFFFF;
+        final int gray = 0xFF505050;
+        final int red = 0xFFFF6161;
+        final int transparent = 0x00000000;
+        final int default_node_b_color = transparent;
+        final int default_node_f_color = black;
         new Thread(()->{
             List<ShowTableNode> nodes = null;
             if (locate.term != null){
                 nodes = gdao.getSpecifiedWeekTable(locate.term.term, locate.week);
             }
-            List<String> texts = new LinkedList<>();
+            List<Map.Entry<String, Map.Entry<Integer, Integer>>> texts = new LinkedList<>();
+            Map<String, Integer> colorMap = new HashMap<>();
+            int[][] colors = new int[][]{
+                    {0xffCDE8AF, black}, //green
+                    {0xffBEEAFD, black}, //blue
+                    {0xffFDBED2, black}, //pink
+                    {0xffFDE4BE, black}, //orange
+                    {0xffD3BEFD, black}, //purple
+                    {0xffBEFFFD, black}, //light blue
+                    {0xffF2FFBE, black}, //light yellow
+                    {0xffBEFFBF, black} //light green
+            };
+            int color_index = 0;
             for (int time_index = 0; time_index < MyApp.nodeIds.length; time_index++){
                 for (int weekday = 1; weekday <= MyApp.weekdaytvIds.length; weekday++){
                     StringBuilder text = new StringBuilder();
+                    int color = default_node_b_color;
+                    int text_color = default_node_f_color;
+                    final int conflict_color = red;
+                    final int conflict_text_color = black;
+                    final int null_color = default_node_b_color;
+                    final int null_text_color = default_node_f_color;
                     if (nodes != null){
                         String time = MyApp.times[time_index];
                         long weekday_f = weekday;
@@ -598,48 +636,78 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < my_node_list.size(); i++){
                             ShowTableNode my_node = my_node_list.get(i);
                             if (my_node_list.size() > 1){
+
                                 if (i > 0){
-                                    text.append("▬▬▬▬\n");
+                                    text.append("▶");
                                 }
-                                if (my_node.cname != null) {
-                                    String my_cname = my_node.cname;
-                                    if (my_cname.length() > 6){
-                                        my_cname = my_cname.substring(0, 6) + "...";
-                                    }
-                                    text.append(my_cname).append("\n");
-                                }else {
-                                    text.append(" ").append("\n");
+
+                                String place = "";
+                                if (my_node.croomno != null){
+                                    place = my_node.croomno;
                                 }
-                                if (my_node.croomno != null) {
-                                    text.append("(").append(my_node.croomno).append(")").append("\n");
-                                }else {
-                                    text.append("()").append("\n");
+                                String cname = "";
+                                if (my_node.cname != null){
+                                    cname = my_node.cname;
                                 }
+                                if (cname.length() > 6){
+                                    cname = cname.substring(0, 5) + "...";
+                                }
+                                String t_name = "";
+                                if (my_node.name != null){
+                                    t_name = my_node.name;
+                                }
+
+                                String words = place + "#" + cname + "@" + t_name;
+                                if (words.length() > 18){
+                                    words = words.substring(0, 17) + "...";
+                                }
+
+                                text.append(words);
+                                color = conflict_color;
+                                text_color = conflict_text_color;
+
                             }else {
-                                if (my_node.courseno != null) {
-                                    text.append("[").append(my_node.courseno).append("]").append("\n");
-                                }else {
-                                    text.append("[]").append("\n");
+
+                                String place = "";
+                                if (my_node.croomno != null){
+                                    place = my_node.croomno;
                                 }
-                                if (my_node.cname != null) {
-                                    text.append(my_node.cname).append("\n");
-                                }else {
-                                    text.append(" ").append("\n");
+                                String cname = "";
+                                if (my_node.cname != null){
+                                    cname = my_node.cname;
                                 }
-                                if (my_node.name != null) {
-                                    text.append("@").append(my_node.name).append("\n");
-                                }else {
-                                    text.append("@").append("\n");
+                                if (cname.length() > 8){
+                                    cname = cname.substring(0, 7) + "...";
                                 }
-                                if (my_node.croomno != null) {
-                                    text.append("(").append(my_node.croomno).append(")").append("\n");
-                                }else {
-                                    text.append("()").append("\n");
+                                String t_name = "";
+                                if (my_node.name != null){
+                                    t_name = my_node.name;
                                 }
+
+                                String words = place + "#" + cname + "@" + t_name;
+
+                                text.append(words);
+                                if (my_node.courseno == null){
+                                    color = null_color;
+                                    text_color = null_text_color;
+                                }else if (colorMap.containsKey(my_node.courseno)){
+                                    int p = colorMap.get(my_node.courseno);
+                                    color = colors[p][0];
+                                    text_color = colors[p][1];
+                                }else {
+                                    color = colors[color_index][0];
+                                    text_color = colors[color_index][1];
+                                    colorMap.put(my_node.courseno, color_index);
+                                    color_index++;
+                                    if (color_index >= colors.length){
+                                        color_index = 0;
+                                    }
+                                }
+
                             }
                         }
                     }
-                    texts.add(text.toString());
+                    texts.add(Map.entry(text.toString(), Map.entry(color, text_color)));
                 }
             }
             runOnUiThread(()-> {
@@ -653,8 +721,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (int[] id_list : MyApp.nodeIds) {
                     for (int id : id_list) {
-                        ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(getResources().getColor(R.color.colorTableNodeBackground, getTheme()));
-                        ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(((TextView) MainActivity.this.view.findViewById(R.id.term_picker_text)).getCurrentTextColor());
+                        ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(default_node_b_color);
+                        ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(default_node_f_color);
+                        ((TextView) MainActivity.this.view.findViewById(id)).setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                     }
                 }
                 for (int id : MyApp.restLineIds){
@@ -662,8 +731,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (int row_index = 0; row_index < MyApp.nodeIds.length; row_index++) {
                     for (int column_index = 0; column_index < MyApp.weekdaytvIds.length; column_index++) {
-                        String node_text = texts.get(row_index * MyApp.weekdaytvIds.length + column_index);
+                        Map.Entry<String, Map.Entry<Integer, Integer>> entry = texts.get(row_index * MyApp.weekdaytvIds.length + column_index);
+                        String node_text = entry.getKey();
+                        int node_b_color = entry.getValue().getKey();
+                        int node_f_color = entry.getValue().getValue();
                         ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setText(node_text);
+                        ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setBackgroundColor(node_b_color);
+                        ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setTextColor(node_f_color);
                     }
                 }
                 ((TextView)MainActivity.this.view.findViewById(R.id.textView_date)).setText(locate.month + "/" + locate.day);
@@ -684,7 +758,7 @@ public class MainActivity extends AppCompatActivity {
                 if (time_tv_ids_index != -1 && weekday_tv_ids_index != -1){
                     TextView node_tv = (TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[time_tv_ids_index][weekday_tv_ids_index]);
                     if (!node_tv.getText().toString().isEmpty()){
-                        node_tv.setBackgroundColor(getResources().getColor(R.color.colorCurrentWeekday, getTheme()));
+                        node_tv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
                     }
                 }
                 if (breakTime != null) {
