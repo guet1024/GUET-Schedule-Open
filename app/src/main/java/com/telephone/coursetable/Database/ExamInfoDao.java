@@ -15,12 +15,12 @@ public interface ExamInfoDao {
     @Query("delete from ExamInfo")
     void deleteAll();
 
-    @Query("select * from ExamInfo order by sts DESC")
+    @Query("select * from ExamInfo order by sts ASC")
     List<ExamInfo> selectAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ExamInfo tuple);
 
-    @Query("select * from ExamInfo where examdate>=:today order by sts DESC")
+    @Query("select * from ExamInfo where examdate>=:today order by sts ASC")
     List<ExamInfo> selectFromToday(String today);
 }
