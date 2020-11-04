@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         if (lockdown) {
             ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.updating_user_title_suffix));
             ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+            ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
             ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(null);
             for (int id : MyApp.timetvIds) {
                 ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
@@ -280,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
                         ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
                         for (int id : MyApp.timetvIds) {
                             ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
@@ -325,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(()->{
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
+                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.VISIBLE);
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
                         ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
                         ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
@@ -536,6 +539,14 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    /**
+     * jump to FunctionMenu Activity
+     * @clear
+     */
+    public void More(View view){
+        startActivity(new Intent(this, FunctionMenu.class));
     }
 
     /**
