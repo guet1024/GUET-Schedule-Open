@@ -598,44 +598,56 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < my_node_list.size(); i++){
                             ShowTableNode my_node = my_node_list.get(i);
                             if (my_node_list.size() > 1){
+
                                 if (i > 0){
-                                    text.append("▬▬▬▬\n");
+                                    text.append("▶");
                                 }
-                                if (my_node.cname != null) {
-                                    String my_cname = my_node.cname;
-                                    if (my_cname.length() > 6){
-                                        my_cname = my_cname.substring(0, 6) + "...";
-                                    }
-                                    text.append(my_cname).append("\n");
-                                }else {
-                                    text.append(" ").append("\n");
+
+                                String place = "";
+                                if (my_node.croomno != null){
+                                    place = my_node.croomno;
                                 }
-                                if (my_node.croomno != null) {
-                                    text.append("(").append(my_node.croomno).append(")").append("\n");
-                                }else {
-                                    text.append("()").append("\n");
+                                String cname = "";
+                                if (my_node.cname != null){
+                                    cname = my_node.cname;
                                 }
+                                if (cname.length() > 6){
+                                    cname = cname.substring(0, 5) + "...";
+                                }
+                                String t_name = "";
+                                if (my_node.name != null){
+                                    t_name = my_node.name;
+                                }
+
+                                String words = place + "#" + cname + "@" + t_name;
+                                if (words.length() > 18){
+                                    words = words.substring(0, 17) + "...";
+                                }
+
+                                text.append(words);
+
                             }else {
-                                if (my_node.courseno != null) {
-                                    text.append("[").append(my_node.courseno).append("]").append("\n");
-                                }else {
-                                    text.append("[]").append("\n");
+
+                                String place = "";
+                                if (my_node.croomno != null){
+                                    place = my_node.croomno;
                                 }
-                                if (my_node.cname != null) {
-                                    text.append(my_node.cname).append("\n");
-                                }else {
-                                    text.append(" ").append("\n");
+                                String cname = "";
+                                if (my_node.cname != null){
+                                    cname = my_node.cname;
                                 }
-                                if (my_node.name != null) {
-                                    text.append("@").append(my_node.name).append("\n");
-                                }else {
-                                    text.append("@").append("\n");
+                                if (cname.length() > 8){
+                                    cname = cname.substring(0, 7) + "...";
                                 }
-                                if (my_node.croomno != null) {
-                                    text.append("(").append(my_node.croomno).append(")").append("\n");
-                                }else {
-                                    text.append("()").append("\n");
+                                String t_name = "";
+                                if (my_node.name != null){
+                                    t_name = my_node.name;
                                 }
+
+                                String words = place + "#" + cname + "@" + t_name;
+
+                                text.append(words);
+
                             }
                         }
                     }
