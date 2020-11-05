@@ -573,20 +573,6 @@ public class Login_vpn extends AppCompatActivity {
 
     }
 
-
-    //clear
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao) {
-        gdao.deleteAll();
-        cdao.deleteAll();
-        tdao.deleteAll();
-        pdao.deleteAll();
-        gsdao.deleteAll();
-        grdao.deleteAll();
-        edao.deleteAll();
-        cetDao.deleteAll();
-        labDao.deleteAll();
-    }
-
     /**
      * @non-ui
      * @throws com.telephone.coursetable.MyException.MyException
@@ -1220,7 +1206,7 @@ public class Login_vpn extends AppCompatActivity {
                     /** commit shared preference */
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
-                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                    Login.deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                     fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }

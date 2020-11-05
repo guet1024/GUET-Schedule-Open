@@ -54,9 +54,7 @@
         <service
             android:name=".FetchService"
             android:exported="false" />
-
-        <service android:name=".Webinfo.MediaService"/>
-
+        <service android:name=".Webinfo.MediaService" />
 
         <activity
             android:name=".GuetTools.WebLinksActivity"
@@ -103,12 +101,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_LibrarySearch">
 
-<!--             <intent-filter>-->
-<!--             <action android:name="android.intent.action.MAIN" />-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
 
-<!--             <category android:name="android.intent.category.LAUNCHER" />-->
-<!--             </intent-filter>-->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".AboutActivity"
@@ -116,12 +114,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_AboutUS">
 
-<!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
 
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".FunctionMenu"
@@ -155,12 +153,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_login">
 
-<!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
 
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".Login_vpn"
@@ -170,7 +168,8 @@
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-          
+
+
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
@@ -178,6 +177,13 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Launcher">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -189,40 +195,41 @@
             android:parentActivityName=".FunctionMenu"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_grade_points">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".Webinfo.Webinfo"
             android:parentActivityName=".FunctionMenu"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_webinfo"
-            >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            android:theme="@style/AppTheme_webinfo">
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".Webinfo.Guetphonenums"
             android:parentActivityName=".Webinfo.Webinfo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_guet_phone"
-            />
-        <activity android:name=".GuetTools.ImageActivity"
+            android:theme="@style/AppTheme_guet_phone" />
+        <activity
+            android:name=".GuetTools.ImageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_image"
-            />
+            android:theme="@style/AppTheme_image" />
         <activity
             android:name=".Webinfo.GUET_Music"
             android:parentActivityName=".Webinfo.Webinfo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_guet_music"
-            />
+            android:theme="@style/AppTheme_guet_music" />
     </application>
 
 </manifest>
