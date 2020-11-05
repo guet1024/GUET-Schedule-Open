@@ -596,7 +596,24 @@ public class MainActivity extends AppCompatActivity {
         final int black = 0xFF000000;
         final int white = 0xFFFFFFFF;
         final int gray = 0xFF505050;
-        final int red = 0xFFFF6161;
+        final int red = 0xFFF99393;
+        final int red_black = 0xFF260101;
+        final int green = 0xffCDE8AF;
+        final int green_black = 0xFF435232;
+        final int blue = 0xffBEEAFD;
+        final int blue_black = 0xFF2A5263;
+        final int pink = 0xffFDBED2;
+        final int pink_black = 0xFF4B2E37;
+        final int orange = 0xffFDE4BE;
+        final int orange_black = 0xFF524532;
+        final int purple = 0xffD3BEFD;
+        final int purple_black = 0xFF372D4C;
+        final int light_blue = 0xffBEFFFD;
+        final int light_blue_black = 0xFF2D4C4B;
+        final int light_yellow = 0xffF2FFBE;
+        final int light_yellow_black = 0xFF4C5231;
+        final int light_green = 0xffBEFFBF;
+        final int light_green_black = 0xFF355935;
         final int transparent = 0x00000000;
         final int default_node_b_color = transparent;
         final int default_node_f_color = black;
@@ -608,14 +625,14 @@ public class MainActivity extends AppCompatActivity {
             List<Map.Entry<String, Map.Entry<Integer, Integer>>> texts = new LinkedList<>();
             Map<String, Integer> colorMap = new HashMap<>();
             int[][] colors = new int[][]{
-                    {0xffCDE8AF, black}, //green
-                    {0xffBEEAFD, black}, //blue
-                    {0xffFDBED2, black}, //pink
-                    {0xffFDE4BE, black}, //orange
-                    {0xffD3BEFD, black}, //purple
-                    {0xffBEFFFD, black}, //light blue
-                    {0xffF2FFBE, black}, //light yellow
-                    {0xffBEFFBF, black} //light green
+                    {green, green_black}, //green
+                    {blue, blue_black}, //blue
+                    {pink, pink_black}, //pink
+                    {orange, orange_black}, //orange
+                    {purple, purple_black}, //purple
+                    {light_blue, light_blue_black}, //light blue
+                    {light_yellow, light_yellow_black}, //light yellow
+                    {light_green, light_green_black} //light green
             };
             int color_index = 0;
             for (int time_index = 0; time_index < MyApp.nodeIds.length; time_index++){
@@ -624,7 +641,7 @@ public class MainActivity extends AppCompatActivity {
                     int color = default_node_b_color;
                     int text_color = default_node_f_color;
                     final int conflict_color = red;
-                    final int conflict_text_color = black;
+                    final int conflict_text_color = red_black;
                     final int null_color = default_node_b_color;
                     final int null_text_color = default_node_f_color;
                     if (nodes != null){
