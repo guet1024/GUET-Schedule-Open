@@ -131,6 +131,7 @@ public class TestActivity extends AppCompatActivity {
         };
 
         LogMe.setAll(logRunnable);
+        print(LogMe.log.toString());
 
         test_button2(null);
     }
