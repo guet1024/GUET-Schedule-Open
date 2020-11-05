@@ -882,19 +882,23 @@ public class Login_vpn extends AppCompatActivity {
         HttpConnectionAndCode res;
         HttpConnectionAndCode res_add;
 
+        LogMe.e(NAME, "fetching person info and student info");
         res = WAN.personInfo(c, cookie);
         res_add = WAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch person info and student info success, merging...");
         Merge.personInfo(res.comment, res_add.comment, pdao);
 
+        LogMe.e(NAME, "fetching term info");
         res = WAN.termInfo(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch term info success, merging...");
         Merge.termInfo(c, res.comment, tdao);
 
         List<String> terms = tdao.getTermsSince(
@@ -905,47 +909,59 @@ public class Login_vpn extends AppCompatActivity {
             if (terms.contains(term.term)) continue;
             tdao.deleteTerm(term.term);
         }
+        LogMe.e(NAME, "fetching go-to-class and class info");
         res = WAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
 
+        LogMe.e(NAME, "fetching graduation courses");
         res = WAN.graduationScore(c, cookie);
         res_add = WAN.graduationScore2(c,cookie);
         if (res.code != 0 || res_add.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch graduation courses success, merging...");
         Merge.graduationScore(res.comment,res_add.comment,gsdao);
 
+        LogMe.e(NAME, "fetching grades");
         res = WAN.grades(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch grades success, merging...");
         Merge.grades(res.comment, grdao);
 
+        LogMe.e(NAME, "fetching exam info");
         res = WAN.examInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch exam info success, merging...");
         Merge.examInfo(res.comment, edao);
 
+        LogMe.e(NAME, "fetching cet");
         res = WAN.cet(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
 
+        LogMe.e(NAME, "fetching hour info");
         res = WAN.hour(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch hour info success, merging...");
         Merge.hour(c, res.comment, editor);
 
         term_list = tdao.selectAll();
@@ -962,6 +978,7 @@ public class Login_vpn extends AppCompatActivity {
                     LogMe.e(NAME, "skip lab-fetch: " + term.term);
                     continue;
                 }
+                LogMe.e(NAME, "fetching lab");
                 res = WAN.lab(c, cookie, term.term);
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
@@ -969,6 +986,7 @@ public class Login_vpn extends AppCompatActivity {
                     return false;
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                LogMe.e(NAME, "fetch lab success, merging...");
                 Merge.lab(res.comment, labDao, gdao, cdao);
             }
         }

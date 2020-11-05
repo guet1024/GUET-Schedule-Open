@@ -178,6 +178,7 @@ public class TestActivity extends AppCompatActivity {
             button1.setText("拉取数据（外网）");
             button2.setText("外网（点击切换）");
         }
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
     }
 
     private boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){

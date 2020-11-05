@@ -616,19 +616,26 @@ public class Login extends AppCompatActivity {
     public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
+
+        LogMe.e(NAME, "fetching person info and student info");
         res = LAN.personInfo(c, cookie);
         HttpConnectionAndCode res_add = LAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch person info and student info success, merging...");
         Merge.personInfo(res.comment, res_add.comment, pdao);
+
+        LogMe.e(NAME, "fetching term info");
         res = LAN.termInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch term info success, merging...");
         Merge.termInfo(c, res.comment, tdao);
+
         List<String> terms = tdao.getTermsSince(
                 pdao.getGrade().get(0) + "-" + (pdao.getGrade().get(0) + 1) + "_1"
         );
@@ -637,43 +644,61 @@ public class Login extends AppCompatActivity {
             if (terms.contains(term.term))continue;
             tdao.deleteTerm(term.term);
         }
+        LogMe.e(NAME, "fetching go-to-class and class info");
         res = LAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
+
+        LogMe.e(NAME, "fetching graduation courses");
         res = LAN.graduationScore(c, cookie);
         res_add = LAN.graduationScore2(c, cookie);
         if (res.code != 0 || res_add.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch graduation courses success, merging...");
         Merge.graduationScore(res.comment, res_add.comment, gsdao);
+
+        LogMe.e(NAME, "fetching hour info");
         res = LAN.hour(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch hour info success, merging...");
         Merge.hour(c, res.comment, editor);
+
+        LogMe.e(NAME, "fetching grades");
         res = LAN.grades(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch grades success, merging...");
         Merge.grades(res.comment, grdao);
+
+        LogMe.e(NAME, "fetching exam info");
         res = LAN.examInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch exam info success, merging...");
         Merge.examInfo(res.comment, edao);
+
+        LogMe.e(NAME, "fetching cet");
         res = LAN.cet(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
+
         term_list = tdao.selectAll();
         Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
                 MyApp.times,
@@ -688,6 +713,7 @@ public class Login extends AppCompatActivity {
                     LogMe.e(NAME, "skip lab-fetch: " + term.term);
                     continue;
                 }
+                LogMe.e(NAME, "fetching lab");
                 res = LAN.lab(c, cookie, term.term);
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
@@ -695,6 +721,7 @@ public class Login extends AppCompatActivity {
                     return false;
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                LogMe.e(NAME, "fetch lab success, merging...");
                 Merge.lab(res.comment, labDao, gdao, cdao);
             }
         }
