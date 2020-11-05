@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/function_menu_go_to_login"
+        app:showAsAction="ifRoom"
+        android:title="立即同步" />
+    <item
+        android:id="@+id/function_menu_go_to_test"
+        app:showAsAction="ifRoom"
+        android:title="测试面板" />
+</menu>

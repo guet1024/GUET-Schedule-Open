@@ -3,6 +3,7 @@ package com.telephone.coursetable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -50,9 +51,49 @@ public class TestActivity extends AppCompatActivity {
 
     private boolean fetch_lan_if_true = true;
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.TEST);
+        MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_test);
 
         AppDatabase db = MyApp.getCurrentAppDB();
@@ -142,5 +183,10 @@ public class TestActivity extends AppCompatActivity {
             textView.setText(textView.getText() + text + "\n");
             scrollView.fullScroll(ScrollView.FOCUS_DOWN);
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

@@ -459,6 +459,8 @@ public class FetchService extends IntentService {
                 return ((FunctionMenu)activity).setOutdated();
             case ABOUT:
                 return ((AboutActivity)activity).setOutdated();
+            case TEST:
+                return ((TestActivity)activity).setOutdated();
             case WEB_LINKS:
                 return ((WebLinksActivity)activity).setOutdated();
             case GUET_MUSIC:

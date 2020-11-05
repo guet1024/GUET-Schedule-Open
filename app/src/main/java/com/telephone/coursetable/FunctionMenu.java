@@ -434,7 +434,11 @@ public class FunctionMenu extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.function_menu, menu);
+        if (MyApp.isDebug()){
+            inflater.inflate(R.menu.function_menu_debug, menu);
+        }else {
+            inflater.inflate(R.menu.function_menu, menu);
+        }
         return true;
     }
 
@@ -458,6 +462,9 @@ public class FunctionMenu extends AppCompatActivity {
                         });
                     }
                 }).start();
+                break;
+            case R.id.function_menu_go_to_test:
+                startActivity(new Intent(this, TestActivity.class));
                 break;
         }
         return true;

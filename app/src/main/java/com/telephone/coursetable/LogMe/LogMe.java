@@ -15,7 +15,7 @@ public class LogMe {
     private static LogRunnable no = (tag, msg) -> {};
 
     public static void init(){
-        if ((MyApp.getApplicationInfo_me().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+        if (MyApp.isDebug()) {
             e = Log::e;
             w = Log::w;
             i = Log::i;
