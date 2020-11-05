@@ -22,8 +22,11 @@ import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.LogMe.LogMe;
+
+import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -137,13 +140,27 @@ public class TestActivity extends AppCompatActivity {
         String input = editText.getText().toString();
         print("输入：\n" + input + "\n================================");
         new Thread(()->{
+            List<User> activatedUsers = udao.getActivatedUser();
+            User current_user = null;
+            String name = "";
+            if (!activatedUsers.isEmpty()) {
+                current_user = udao.getActivatedUser().get(0);
+                name = pdao.selectAll().get(0).name;
+                print("当前用户：" + current_user.username + " " + name);
+            }else {
+                print("当前用户：无");
+            }
+            udao.disableAllUser();
+            print("已取消激活所有用户");
             Login.deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
-            print("数据库已清空（除了用户数据库）");
-            udao.deleteAll();
-            print("用户数据库已清空");
+            print("数据库已清空（除用户数据库外）");
             print("拉取数据中...");
             if (fetch_merge(TestActivity.this, input, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao)){
                 print("拉取成功");
+                if (current_user != null) {
+                    udao.activateUser(current_user.username);
+                    print("激活用户：" + current_user.username + " " + name);
+                }
             }else {
                 print("拉取失败");
             }
@@ -155,8 +172,10 @@ public class TestActivity extends AppCompatActivity {
         fetch_lan_if_true = !fetch_lan_if_true;
         if (fetch_lan_if_true){
             button1.setText("拉取数据（内网）");
+            button2.setText("内网（点击切换）");
         }else {
             button1.setText("拉取数据（外网）");
+            button2.setText("外网（点击切换）");
         }
     }
 

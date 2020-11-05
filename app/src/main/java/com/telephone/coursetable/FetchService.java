@@ -246,6 +246,7 @@ public class FetchService extends IntentService {
         if (
                 MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
@@ -320,6 +321,7 @@ public class FetchService extends IntentService {
         if (
                 MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
@@ -459,8 +461,6 @@ public class FetchService extends IntentService {
                 return ((FunctionMenu)activity).setOutdated();
             case ABOUT:
                 return ((AboutActivity)activity).setOutdated();
-            case TEST:
-                return ((TestActivity)activity).setOutdated();
             case WEB_LINKS:
                 return ((WebLinksActivity)activity).setOutdated();
             case GUET_MUSIC:
@@ -488,6 +488,7 @@ public class FetchService extends IntentService {
                 MyApp.isRunning_login_thread() ||
                         ra.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         ra.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        ra.equals(MyApp.RunningActivity.TEST) ||
                         ra.equals(MyApp.RunningActivity.LOGIN) ||
                         ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
                         (rap != null && !tryOutdated(ra, rap))
