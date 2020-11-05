@@ -253,4 +253,18 @@
         android:layout_marginBottom="8dp"
         android:visibility="invisible"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="64dp"
+        android:ems="2"
+        android:text="协助测试"
+        android:textColor="#EEEEEE"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="help"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

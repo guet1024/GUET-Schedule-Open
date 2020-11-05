@@ -106,6 +106,7 @@ public class Login_vpn extends AppCompatActivity {
     private String vpn_pwd = "";
     private String cookie = "";
     private String ck = "";
+    private volatile String help_cookie = null; //the cookie used for help, volatile to maintain multi-thread synchronization
 
     private HttpConnectionAndCode login_res;
     private boolean outside_login_res;
@@ -364,6 +365,29 @@ public class Login_vpn extends AppCompatActivity {
             }
         }
         startActivity(intent);
+    }
+
+    /**
+     * help test
+     * @clear
+     */
+    public void help(View view){
+        if (help_cookie == null){
+            Toast.makeText(this, "请在登录成功后使用此功能", Toast.LENGTH_SHORT).show();
+        }else {
+            Login.getAlertDialog(this, "请将此一次性凭据提供给测试人员：\n" + help_cookie,
+                    (dialog, which) -> {
+                        Login.copyText(Login_vpn.this, help_cookie);
+                        Toast.makeText(Login_vpn.this, "复制成功", Toast.LENGTH_SHORT).show();
+                    },
+                    (dialog, which) -> {
+                        //nothing
+                    },
+                    null,
+                    "协助测试", "点击复制", "取消").show();
+            Login.copyText(Login_vpn.this, help_cookie);
+            Toast.makeText(Login_vpn.this, "一次性凭据复制成功", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -1179,6 +1203,8 @@ public class Login_vpn extends AppCompatActivity {
                 Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
             });
+
+            help_cookie = cookie; //set help-cookie after login success
 
             try { // this is an Accident Prone Area
                 int times = 0;
