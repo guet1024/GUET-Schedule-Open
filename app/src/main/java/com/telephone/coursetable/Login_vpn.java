@@ -839,7 +839,7 @@ public class Login_vpn extends AppCompatActivity {
         final String NAME = "deleteUser()";
         clearIMAndFocus();
         String sid = ((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString();
-        getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
+        Login.getAlertDialog(this, "确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
                     udao.deleteUser(sid);
                     com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user deleted", sid);
@@ -853,24 +853,8 @@ public class Login_vpn extends AppCompatActivity {
                     });
                 }).start(),
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> {},
-                null, null).show();
+                null, null, null, null).show();
 
-    }
-
-    private AlertDialog getAlertDialog(@Nullable final String m, @NonNull DialogInterface.OnClickListener yes, @NonNull DialogInterface.OnClickListener no, @Nullable View view, @Nullable String title){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (m != null) {
-            builder.setMessage(m);
-        }
-        builder.setPositiveButton(getResources().getString(R.string.ok_btn_text_zhcn), yes)
-                .setNegativeButton(getResources().getString(R.string.deny_btn_zhcn), no);
-        if (view != null){
-            builder.setView(view);
-        }
-        if (title != null){
-            builder.setTitle(title);
-        }
-        return builder.create();
     }
 
     /**
