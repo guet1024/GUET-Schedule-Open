@@ -7,7 +7,7 @@ import com.telephone.coursetable.MyApp;
 
 public class LogMe {
 
-    private interface LogRunnable{
+    public interface LogRunnable{
         void log(String tag, String msg);
     }
 
@@ -22,6 +22,19 @@ public class LogMe {
         }else {
             e = w = i = no;
         }
+    }
+
+    public static void setE(LogRunnable e){
+        LogMe.e = e;
+    }
+    public static void setW(LogRunnable w){
+        LogMe.w = w;
+    }
+    public static void setI(LogRunnable i){
+        LogMe.i = i;
+    }
+    public static void setAll(LogRunnable logRunnable){
+        LogMe.e = LogMe.w = LogMe.i = logRunnable;
     }
 
     public static void e(String tag, String msg){

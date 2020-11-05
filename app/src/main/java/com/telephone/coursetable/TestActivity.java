@@ -74,6 +74,15 @@ public class TestActivity extends AppCompatActivity {
         buttonClearInput = findViewById(R.id.test_activity_btn_clear_input);
         scrollView = findViewById(R.id.test_activity_sv);
 
+        LogMe.LogRunnable logRunnable = new LogMe.LogRunnable() {
+            @Override
+            public void log(String tag, String msg) {
+                print(tag + ": " + msg);
+            }
+        };
+
+        LogMe.setAll(logRunnable);
+
     }
 
     public void test_button1(View view){
@@ -104,7 +113,7 @@ public class TestActivity extends AppCompatActivity {
         editText.setText("");
     }
 
-    private void print(String text){
+    public void print(String text){
         runOnUiThread(()->{
             textView.setText(textView.getText() + text + "\n");
             scrollView.fullScroll(ScrollView.FOCUS_DOWN);
