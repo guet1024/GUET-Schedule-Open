@@ -38,6 +38,14 @@
         android:onClick="test_button1"/>
 
     <Button
+        android:id="@+id/test_activity_btn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="切换内/外网"
+        android:onClick="test_button2"/>
+
+    <Button
         android:id="@+id/test_activity_btn_clear_output"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

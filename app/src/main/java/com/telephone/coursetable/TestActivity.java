@@ -2,6 +2,7 @@ package com.telephone.coursetable;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -42,9 +43,12 @@ public class TestActivity extends AppCompatActivity {
     private EditText editText;
     private TextView textView;
     private Button button1;
+    private Button button2;
     private Button buttonClearOutput;
     private Button buttonClearInput;
     private ScrollView scrollView;
+
+    private boolean fetch_lan_if_true = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class TestActivity extends AppCompatActivity {
         editText = findViewById(R.id.test_activity_et);
         textView = findViewById(R.id.test_activity_tv);
         button1 = findViewById(R.id.test_activity_btn1);
+        button2 = findViewById(R.id.test_activity_btn2);
         buttonClearOutput = findViewById(R.id.test_activity_btn_clear_output);
         buttonClearInput = findViewById(R.id.test_activity_btn_clear_input);
         scrollView = findViewById(R.id.test_activity_sv);
@@ -83,6 +88,7 @@ public class TestActivity extends AppCompatActivity {
 
         LogMe.setAll(logRunnable);
 
+        test_button2(null);
     }
 
     public void test_button1(View view){
@@ -95,12 +101,30 @@ public class TestActivity extends AppCompatActivity {
             udao.deleteAll();
             print("用户数据库已清空");
             print("拉取数据中...");
-            if (Login_vpn.fetch_merge(TestActivity.this, input, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor)){
+            if (fetch_merge(TestActivity.this, input, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao)){
                 print("拉取成功");
             }else {
                 print("拉取失败");
             }
         }).start();
+    }
+
+    public void test_button2(View view){
+        final String NAME = "test_button2()";
+        fetch_lan_if_true = !fetch_lan_if_true;
+        if (fetch_lan_if_true){
+            button1.setText("拉取数据（内网）");
+        }else {
+            button1.setText("拉取数据（外网）");
+        }
+    }
+
+    private boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+        if (fetch_lan_if_true){
+            return Login.fetch_merge(c, cookie, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+        }else {
+            return Login_vpn.fetch_merge(c, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
+        }
     }
 
     public void clearOutput(View view){
