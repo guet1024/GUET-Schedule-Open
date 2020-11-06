@@ -340,7 +340,7 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(change_term_group, children));
 
             String exams_group = "考试安排";
-            List<ExamInfo> exam_list = edao.selectFromToday(LocalDate.now().toString());
+            List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
             children = new LinkedList<>();
             String cno = "";
             String edate = "";
