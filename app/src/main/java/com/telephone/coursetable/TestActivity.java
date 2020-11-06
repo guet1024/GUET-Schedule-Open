@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.CETDao;
@@ -140,6 +141,10 @@ public class TestActivity extends AppCompatActivity {
         final String NAME = "test_button1()";
         String input = editText.getText().toString();
         print("输入：\n" + input + "\n================================");
+        if (MyApp.isRunning_login_thread()){
+            print("检测到登录线程");
+            return;
+        }
         new Thread(()->{
             List<User> activatedUsers = udao.getActivatedUser();
             User current_user = null;
@@ -197,6 +202,11 @@ public class TestActivity extends AppCompatActivity {
     public void clearInput(View view){
         final String NAME = "clearInput()";
         editText.setText("");
+    }
+
+    public void copyOutput(View view){
+        Login.copyText(this, textView.getText().toString());
+        Toast.makeText(this, "已复制", Toast.LENGTH_SHORT).show();
     }
 
     public void print(String text){

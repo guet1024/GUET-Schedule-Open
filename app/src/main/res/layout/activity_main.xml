@@ -691,7 +691,8 @@
         android:textSize="10sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline9" />
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        android:onClick="Test"/>
 
     <TextView
         android:id="@+id/textView_wd1"

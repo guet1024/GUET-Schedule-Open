@@ -550,6 +550,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * open test activity
+     * @clear
+     */
+    public void Test(View view){
+        if (MyApp.isDebug())
+            startActivity(new Intent(this, TestActivity.class));
+    }
+
+    /**
      * @ui
      * @clear
      */

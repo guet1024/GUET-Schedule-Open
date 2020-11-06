@@ -61,4 +61,12 @@
         android:text="清空输入"
         android:onClick="clearInput"/>
 
+    <Button
+        android:id="@+id/test_activity_btn_copy_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="复制面板内容"
+        android:onClick="copyOutput"/>
+
 </LinearLayout>
