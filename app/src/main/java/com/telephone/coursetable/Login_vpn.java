@@ -106,6 +106,7 @@ public class Login_vpn extends AppCompatActivity {
     private String vpn_pwd = "";
     private String cookie = "";
     private String ck = "";
+    private volatile String help_cookie = null; //the cookie used for help, volatile to maintain multi-thread synchronization
 
     private HttpConnectionAndCode login_res;
     private boolean outside_login_res;
@@ -367,6 +368,29 @@ public class Login_vpn extends AppCompatActivity {
     }
 
     /**
+     * help test
+     * @clear
+     */
+    public void help(View view){
+        if (help_cookie == null){
+            Toast.makeText(this, "请在登录成功后使用此功能", Toast.LENGTH_SHORT).show();
+        }else {
+            Login.getAlertDialog(this, "请将此一次性凭据提供给测试人员：\n" + help_cookie,
+                    (dialog, which) -> {
+                        Login.copyText(Login_vpn.this, help_cookie);
+                        Toast.makeText(Login_vpn.this, "复制成功", Toast.LENGTH_SHORT).show();
+                    },
+                    (dialog, which) -> {
+                        //nothing
+                    },
+                    null,
+                    "协助测试", "点击复制", "取消").show();
+            Login.copyText(Login_vpn.this, help_cookie);
+            Toast.makeText(Login_vpn.this, "一次性凭据复制成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      * @ui
      * @clear
      */
@@ -547,20 +571,6 @@ public class Login_vpn extends AppCompatActivity {
             ety.clearFocus();
         }
 
-    }
-
-
-    //clear
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao) {
-        gdao.deleteAll();
-        cdao.deleteAll();
-        tdao.deleteAll();
-        pdao.deleteAll();
-        gsdao.deleteAll();
-        grdao.deleteAll();
-        edao.deleteAll();
-        cetDao.deleteAll();
-        labDao.deleteAll();
     }
 
     /**
@@ -839,7 +849,7 @@ public class Login_vpn extends AppCompatActivity {
         final String NAME = "deleteUser()";
         clearIMAndFocus();
         String sid = ((AutoCompleteTextView) findViewById(R.id.sid_input)).getText().toString();
-        getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
+        Login.getAlertDialog(this, "确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
                     udao.deleteUser(sid);
                     com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user deleted", sid);
@@ -853,24 +863,8 @@ public class Login_vpn extends AppCompatActivity {
                     });
                 }).start(),
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> {},
-                null, null).show();
+                null, null, null, null).show();
 
-    }
-
-    private AlertDialog getAlertDialog(@Nullable final String m, @NonNull DialogInterface.OnClickListener yes, @NonNull DialogInterface.OnClickListener no, @Nullable View view, @Nullable String title){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (m != null) {
-            builder.setMessage(m);
-        }
-        builder.setPositiveButton(getResources().getString(R.string.ok_btn_text_zhcn), yes)
-                .setNegativeButton(getResources().getString(R.string.deny_btn_zhcn), no);
-        if (view != null){
-            builder.setView(view);
-        }
-        if (title != null){
-            builder.setTitle(title);
-        }
-        return builder.create();
     }
 
     /**
@@ -888,19 +882,23 @@ public class Login_vpn extends AppCompatActivity {
         HttpConnectionAndCode res;
         HttpConnectionAndCode res_add;
 
+        LogMe.e(NAME, "fetching person info and student info");
         res = WAN.personInfo(c, cookie);
         res_add = WAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch person info and student info success, merging...");
         Merge.personInfo(res.comment, res_add.comment, pdao);
 
+        LogMe.e(NAME, "fetching term info");
         res = WAN.termInfo(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch term info success, merging...");
         Merge.termInfo(c, res.comment, tdao);
 
         List<String> terms = tdao.getTermsSince(
@@ -911,47 +909,59 @@ public class Login_vpn extends AppCompatActivity {
             if (terms.contains(term.term)) continue;
             tdao.deleteTerm(term.term);
         }
+        LogMe.e(NAME, "fetching go-to-class and class info");
         res = WAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
 
+        LogMe.e(NAME, "fetching graduation courses");
         res = WAN.graduationScore(c, cookie);
         res_add = WAN.graduationScore2(c,cookie);
         if (res.code != 0 || res_add.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch graduation courses success, merging...");
         Merge.graduationScore(res.comment,res_add.comment,gsdao);
 
+        LogMe.e(NAME, "fetching grades");
         res = WAN.grades(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch grades success, merging...");
         Merge.grades(res.comment, grdao);
 
+        LogMe.e(NAME, "fetching exam info");
         res = WAN.examInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
-        Merge.examInfo(res.comment, edao);
+        LogMe.e(NAME, "fetch exam info success, merging...");
+        Merge.examInfo(res.comment, edao, tdao, c);
 
+        LogMe.e(NAME, "fetching cet");
         res = WAN.cet(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
 
+        LogMe.e(NAME, "fetching hour info");
         res = WAN.hour(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch hour info success, merging...");
         Merge.hour(c, res.comment, editor);
 
         term_list = tdao.selectAll();
@@ -968,6 +978,7 @@ public class Login_vpn extends AppCompatActivity {
                     LogMe.e(NAME, "skip lab-fetch: " + term.term);
                     continue;
                 }
+                LogMe.e(NAME, "fetching lab");
                 res = WAN.lab(c, cookie, term.term);
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
@@ -975,6 +986,7 @@ public class Login_vpn extends AppCompatActivity {
                     return false;
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                LogMe.e(NAME, "fetch lab success, merging...");
                 Merge.lab(res.comment, labDao, gdao, cdao);
             }
         }
@@ -1196,6 +1208,8 @@ public class Login_vpn extends AppCompatActivity {
                 getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
             });
 
+            help_cookie = cookie; //set help-cookie after login success
+
             try { // this is an Accident Prone Area
                 int times = 0;
                 boolean fetch_merge_res = false;
@@ -1210,7 +1224,7 @@ public class Login_vpn extends AppCompatActivity {
                     /** commit shared preference */
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
-                    deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                    Login.deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                     fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }

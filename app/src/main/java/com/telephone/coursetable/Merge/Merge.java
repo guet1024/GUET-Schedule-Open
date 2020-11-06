@@ -46,9 +46,6 @@ import java.util.List;
 
 public class Merge {
 
-    public static final String EXAM_NO_TIME = "无";
-    public static final String EXAM_NO_TIME_REPLACE = "23:58-23:59";
-
     /**
      * the origin must have corresponding content
      * @clear
@@ -204,15 +201,15 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao){
+    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c){
         ExamInfo_s e_s = new Gson().fromJson(origin_e, ExamInfo_s.class);
         List<ExamInfo> e = e_s.getData();
         for (ExamInfo i : e){
-            if (i.getKssj() == null || i.getKssj().isEmpty()){
-                i.setKssj(EXAM_NO_TIME);
+            if (i.getKssj() == null){
+                i.setKssj("");
             }
-            if (i.getExamdate() == null || i.getExamdate().isEmpty()){
-                continue;
+            if (i.getExamdate() == null){
+                i.setExamdate("");
             }
             edao.insert(new com.telephone.coursetable.Database.ExamInfo(
                     i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
@@ -223,7 +220,7 @@ public class Merge {
                     i.getExamdate(), i.getExamtime(), i.getExamstate(), i.getExammode(), i.getXm(),
                     i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
                     i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
-                    i.getPostdate(), i.getOperator()
+                    i.getPostdate(), i.getOperator(), termInfoDao, c
             ));
         }
     }

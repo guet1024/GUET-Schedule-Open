@@ -24,6 +24,8 @@
     <color name="colorLoginButton">#5D6161</color>
     <color name="colorLoginTextFill">#ECECEC</color>
     <color name="colorLoginTextBorder">#000000</color>
+    <color name="colorLibraryBookText">#493E21</color>
+    <color name="colorLibraryLocalText">#18302D</color>
     <color name="colorLoginProgressBar">#ACB4BA</color>
     <color name="colorCurrentDateText">#00BCD4</color>
     <color name="colorTableNodeBackground">#EDEDED</color>

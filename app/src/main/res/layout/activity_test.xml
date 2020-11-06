@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestActivity"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:id="@+id/test_activity_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <ScrollView
+        android:id="@+id/test_activity_sv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/test_activity_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/test_activity_btn1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="拉取数据"
+        android:onClick="test_button1"/>
+
+    <Button
+        android:id="@+id/test_activity_btn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="切换内/外网"
+        android:onClick="test_button2"/>
+
+    <Button
+        android:id="@+id/test_activity_btn_clear_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="清空面板"
+        android:onClick="clearOutput"/>
+
+    <Button
+        android:id="@+id/test_activity_btn_clear_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="清空输入"
+        android:onClick="clearInput"/>
+
+    <Button
+        android:id="@+id/test_activity_btn_copy_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="复制面板内容"
+        android:onClick="copyOutput"/>
+
+</LinearLayout>

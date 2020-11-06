@@ -9,14 +9,14 @@
         android:text=" "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_info_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -30,7 +30,7 @@
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorLoginTextBorder"
+            android:textColor="@color/colorLibraryBookText"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_below="@+id/message_info_mingcheng"
             android:layout_toRightOf="@+id/message_info_mingcheng"
             android:gravity="center"
-            android:textColor="@color/colorLoginTextBorder"
+            android:textColor="@color/colorLibraryBookText"
             android:textStyle="bold" />
 
     </RelativeLayout>
@@ -55,7 +55,7 @@
             android:id="@+id/message_info_zuozhe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorLoginTextBorder"
+            android:textColor="@color/colorLibraryBookText"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -66,7 +66,7 @@
             android:layout_below="@+id/message_info_zuozhe"
             android:layout_toRightOf="@+id/message_info_zuozhe"
             android:gravity="center"
-            android:textColor="@color/colorLoginTextBorder" />
+            android:textColor="@color/colorLibraryBookText" />
 
     </RelativeLayout>
 
@@ -79,7 +79,7 @@
             android:id="@+id/message_info_chubanshe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorLoginTextBorder"
+            android:textColor="@color/colorLibraryBookText"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -90,7 +90,7 @@
             android:layout_below="@+id/message_info_chubanshe"
             android:layout_toRightOf="@+id/message_info_chubanshe"
             android:gravity="center"
-            android:textColor="@color/colorLoginTextBorder" />
+            android:textColor="@color/colorLibraryBookText" />
 
     </RelativeLayout>
 
@@ -103,7 +103,7 @@
         android:id="@+id/message_info_publishdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -111,7 +111,7 @@
         android:id="@+id/message_info_isbn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -119,14 +119,14 @@
         android:id="@+id/message_info_ssh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_info_flh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -134,7 +134,7 @@
         android:id="@+id/message_info_ys"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -142,7 +142,7 @@
         android:id="@+id/message_info_jg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -150,14 +150,14 @@
         android:id="@+id/message_info_fbs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_info_zgs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -165,7 +165,7 @@
         android:id="@+id/message_info_ljts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -173,7 +173,7 @@
         android:id="@+id/message_info_ljcs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 
@@ -181,7 +181,7 @@
         android:text=" "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryBookText"
         android:background="@color/colorLibraryInfoBackground"
         tools:ignore="MissingConstraints" />
 

@@ -1,5 +1,7 @@
 package com.telephone.coursetable;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -68,6 +70,8 @@ import java.util.List;
 public class Login extends AppCompatActivity {
 
     private StringBuilder cookie_builder = null;
+    private volatile String help_cookie = null; //the cookie used for help, volatile to maintain multi-thread synchronization
+    private String ck_cookie_backup = ""; //store the check code cookie, restore cookie string builder to the check code cookie before each login
 
     //DAOs of the whole app's database instance
     private GoToClassDao gdao = null;
@@ -129,6 +133,7 @@ public class Login extends AppCompatActivity {
         et.setText("");
         //clear old cookie
         cookie_builder = new StringBuilder();
+        ck_cookie_backup = "";
         //set the new one
         new Thread(() -> {
             //get
@@ -138,6 +143,7 @@ public class Login extends AppCompatActivity {
             if (res.obj != null){
                 String ocr = OCR.getTextFromBitmap(Login.this, (Bitmap)res.obj, MyApp.ocr_lang_code);
                 cookie_builder.append(res.cookie);
+                ck_cookie_backup = res.cookie;
                 runOnUiThread(() -> {
                     im.setImageBitmap((Bitmap) (res.obj));
                     et.setText(ocr);
@@ -184,18 +190,28 @@ public class Login extends AppCompatActivity {
      *      - Message : m(if not null)
      *      - PositiveButtonOnClickListener : yes
      *      - NegativeButtonOnClickListener : no
+     *      - PositiveButtonText : yes_text(if null, use default value)
+     *      - NegativeButtonText : no_text(if null, use default value)
      *      - View : view(if not null)
      *      - Title : title(if not null)
      * 2. return this AlertDialog
      * @clear
      */
-    private AlertDialog getAlertDialog(@Nullable final String m, @NonNull DialogInterface.OnClickListener yes, @NonNull DialogInterface.OnClickListener no, @Nullable View view, @Nullable String title){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public static AlertDialog getAlertDialog(@NonNull Context c, @Nullable final String m, @NonNull DialogInterface.OnClickListener yes, @NonNull DialogInterface.OnClickListener no, @Nullable View view, @Nullable String title, @Nullable String yes_text, @Nullable String no_text){
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
         if (m != null) {
             builder.setMessage(m);
         }
-        builder.setPositiveButton(getResources().getString(R.string.ok_btn_text_zhcn), yes)
-                .setNegativeButton(getResources().getString(R.string.deny_btn_zhcn), no);
+        if (yes_text != null){
+            builder.setPositiveButton(yes_text, yes);
+        }else {
+            builder.setPositiveButton(c.getResources().getString(R.string.ok_btn_text_zhcn), yes);
+        }
+        if (no_text != null){
+            builder.setNegativeButton(no_text, no);
+        }else {
+            builder.setNegativeButton(c.getResources().getString(R.string.deny_btn_zhcn), no);
+        }
         if (view != null){
             builder.setView(view);
         }
@@ -234,6 +250,42 @@ public class Login extends AppCompatActivity {
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
         isMenuEnabled = clickable;
         invalidateOptionsMenu();
+    }
+
+    /**
+     * copy a text to system clipboard
+     * @clear
+     */
+    public static void copyText(Context c, String text){
+        // Gets a handle to the clipboard service.
+        ClipboardManager clipboard = (ClipboardManager) c.getSystemService(Context.CLIPBOARD_SERVICE);
+        // Creates a new text clip to put on the clipboard
+        ClipData clip = ClipData.newPlainText("simple text", text);
+        // Set the clipboard's primary clip.
+        clipboard.setPrimaryClip(clip);
+    }
+
+    /**
+     * help test
+     * @clear
+     */
+    public void help(View view){
+        if (help_cookie == null){
+            Toast.makeText(this, "请在登录成功后使用此功能", Toast.LENGTH_SHORT).show();
+        }else {
+            Login.getAlertDialog(this, "请将此一次性凭据提供给测试人员：\n" + help_cookie,
+                    (dialog, which) -> {
+                        Login.copyText(Login.this, help_cookie);
+                        Toast.makeText(Login.this, "复制成功", Toast.LENGTH_SHORT).show();
+                    },
+                    (dialog, which) -> {
+                        //nothing
+                    },
+                    null,
+                    "协助测试", "点击复制", "取消").show();
+            Login.copyText(Login.this, help_cookie);
+            Toast.makeText(Login.this, "一次性凭据复制成功", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -536,7 +588,7 @@ public class Login extends AppCompatActivity {
         final String NAME = "deleteUser()";
         clearAllIMAndFocus();
         String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
-        getAlertDialog("确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
+        getAlertDialog(this, "确定要取消记住用户" + " " + sid + " " + "的登录信息吗？",
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> new Thread((Runnable) () -> {
                     udao.deleteUser(sid);
                     com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "user deleted", sid);
@@ -549,7 +601,7 @@ public class Login extends AppCompatActivity {
                     });
                 }).start(),
                 (DialogInterface.OnClickListener) (dialogInterface, i) -> {},
-                null, null).show();
+                null, null, null, null).show();
     }
 
     /**
@@ -564,19 +616,26 @@ public class Login extends AppCompatActivity {
     public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
+
+        LogMe.e(NAME, "fetching person info and student info");
         res = LAN.personInfo(c, cookie);
         HttpConnectionAndCode res_add = LAN.studentInfo(c, cookie);
         if (res.code != 0 || res_add.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch person info and student info success, merging...");
         Merge.personInfo(res.comment, res_add.comment, pdao);
+
+        LogMe.e(NAME, "fetching term info");
         res = LAN.termInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch term info success, merging...");
         Merge.termInfo(c, res.comment, tdao);
+
         List<String> terms = tdao.getTermsSince(
                 pdao.getGrade().get(0) + "-" + (pdao.getGrade().get(0) + 1) + "_1"
         );
@@ -585,43 +644,61 @@ public class Login extends AppCompatActivity {
             if (terms.contains(term.term))continue;
             tdao.deleteTerm(term.term);
         }
+        LogMe.e(NAME, "fetching go-to-class and class info");
         res = LAN.goToClass_ClassInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
         Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
+
+        LogMe.e(NAME, "fetching graduation courses");
         res = LAN.graduationScore(c, cookie);
         res_add = LAN.graduationScore2(c, cookie);
         if (res.code != 0 || res_add.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch graduation courses success, merging...");
         Merge.graduationScore(res.comment, res_add.comment, gsdao);
+
+        LogMe.e(NAME, "fetching hour info");
         res = LAN.hour(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch hour info success, merging...");
         Merge.hour(c, res.comment, editor);
+
+        LogMe.e(NAME, "fetching grades");
         res = LAN.grades(c, cookie);
         if (res.code != 0) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch grades success, merging...");
         Merge.grades(res.comment, grdao);
+
+        LogMe.e(NAME, "fetching exam info");
         res = LAN.examInfo(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
-        Merge.examInfo(res.comment, edao);
+        LogMe.e(NAME, "fetch exam info success, merging...");
+        Merge.examInfo(res.comment, edao, tdao, c);
+
+        LogMe.e(NAME, "fetching cet");
         res = LAN.cet(c, cookie);
         if (res.code != 0){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
             return false;
         }
+        LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
+
         term_list = tdao.selectAll();
         Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
                 MyApp.times,
@@ -636,6 +713,7 @@ public class Login extends AppCompatActivity {
                     LogMe.e(NAME, "skip lab-fetch: " + term.term);
                     continue;
                 }
+                LogMe.e(NAME, "fetching lab");
                 res = LAN.lab(c, cookie, term.term);
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
@@ -643,6 +721,7 @@ public class Login extends AppCompatActivity {
                     return false;
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                LogMe.e(NAME, "fetch lab success, merging...");
                 Merge.lab(res.comment, labDao, gdao, cdao);
             }
         }
@@ -730,12 +809,17 @@ public class Login extends AppCompatActivity {
         final String sid = ((AutoCompleteTextView)findViewById(R.id.sid_input)).getText().toString();
         final String pwd = ((AutoCompleteTextView)findViewById(R.id.passwd_input)).getText().toString();
         final String ck = ((AutoCompleteTextView)findViewById(R.id.checkcode_input)).getText().toString();
+
+        // restore the cookie builder to the check code cookie before a new login
+        cookie_builder = new StringBuilder();
+        cookie_builder.append(ck_cookie_backup);
+
         /** get cookie before logging in the credit system */
         final String cookie_before_login = cookie_builder.toString();
         /** get a dialog View */
         View extra_pwd_dialog_layout = getLayoutInflater().inflate(R.layout.extra_password, null);
         /** get an AlertDialog */
-        AlertDialog extra_pwd_dialog = getAlertDialog("",
+        AlertDialog extra_pwd_dialog = getAlertDialog(this, "",
                 (dialogInterface, i) -> {
                     /** call {@link #clearAllIMAndFocus()} */
                     clearAllIMAndFocus();
@@ -853,6 +937,9 @@ public class Login extends AppCompatActivity {
                             Snackbar.make(view, getResources().getString(R.string.lan_snackbar_data_updating), BaseTransientBottomBar.LENGTH_LONG).setTextColor(Color.WHITE).show();
                             getSupportActionBar().setTitle(getResources().getString(R.string.lan_title_login_updating));
                         });
+
+                        help_cookie = cookie_after_login; //set help-cookie after login success
+
                         try { // this is an Accident Prone Area
                             /** call {@link #deleteOldDataFromDatabase()} */
                             deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
@@ -930,7 +1017,7 @@ public class Login extends AppCompatActivity {
                 },
                 (dialogInterface, i) -> {},
                 extra_pwd_dialog_layout,
-                getResources().getString(R.string.lan_extra_password_title));
+                getResources().getString(R.string.lan_extra_password_title), null, null);
         new Thread(() -> {
             List<User> u = udao.selectUser(sid);
             String aaw_pwd = "";

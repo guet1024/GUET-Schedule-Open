@@ -16,6 +16,7 @@ import android.widget.NumberPicker;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Database.TermInfo;
+import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +86,7 @@ public class ChangeTerms extends AppCompatActivity {
      * @ui
      */
     private void onReset(){
+        final String NAME = "onReset()";
         if (isChangingTerm || isScrolling) return;
         //禁用输入框和滚轮
         //输入框变零
@@ -100,6 +102,7 @@ public class ChangeTerms extends AppCompatActivity {
         new Thread(()->{
             MyApp.getCurrentAppDB().termInfoDao().deleteAll();
             for (TermInfo term : terms_data){
+                LogMe.e(NAME, "save term: " + term.toString());
                 MyApp.getCurrentAppDB().termInfoDao().insert(term);
             }
             runOnUiThread(()->{
@@ -114,6 +117,7 @@ public class ChangeTerms extends AppCompatActivity {
      * @ui
      */
     private void onSave(){
+        final String NAME = "onSave()";
         if (isChangingTerm || isScrolling) return;
         //禁用输入框和滚轮
         //保存当前输入框到列表
@@ -133,6 +137,7 @@ public class ChangeTerms extends AppCompatActivity {
         new Thread(()->{
             MyApp.getCurrentAppDB().termInfoDao().deleteAll();
             for (TermInfo term : terms_data){
+                LogMe.e(NAME, "save term: " + term.toString());
                 MyApp.getCurrentAppDB().termInfoDao().insert(term);
             }
             runOnUiThread(()->{

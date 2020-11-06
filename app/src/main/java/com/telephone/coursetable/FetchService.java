@@ -246,6 +246,7 @@ public class FetchService extends IntentService {
         if (
                 MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
@@ -320,6 +321,7 @@ public class FetchService extends IntentService {
         if (
                 MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.LOGIN_VPN) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
                         MyApp.isRunning_login_thread()
@@ -486,6 +488,7 @@ public class FetchService extends IntentService {
                 MyApp.isRunning_login_thread() ||
                         ra.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         ra.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        ra.equals(MyApp.RunningActivity.TEST) ||
                         ra.equals(MyApp.RunningActivity.LOGIN) ||
                         ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
                         (rap != null && !tryOutdated(ra, rap))

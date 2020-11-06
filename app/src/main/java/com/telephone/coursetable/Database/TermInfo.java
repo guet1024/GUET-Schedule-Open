@@ -3,8 +3,14 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import com.telephone.coursetable.LogMe.LogMe;
+
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @clear
@@ -23,6 +29,7 @@ public class TermInfo {
     public long sts;
     public long ets;
     public long sts_backup;
+    public long ets_backup;
     public int delay_week;
 
     public TermInfo(@NonNull String term, String startdate, String enddate, String weeknum, String termname, String schoolyear, String comm, long sts, long ets) {
@@ -36,13 +43,56 @@ public class TermInfo {
         this.sts = sts;
         this.ets = ets;
         this.sts_backup = sts;
+        this.ets_backup = ets;
         this.delay_week = 0;
     }
 
     public void setDelay(int delay_week){
+        final String NAME = "setDelay()";
         this.delay_week = delay_week;
         this.sts = sts_backup;
-        this.sts += delay_week * 86400000 * 7;
-        if (this.sts >= this.ets) sts = sts_backup;
+        this.ets = ets_backup;
+        long delay_ts = delay_week * 86400000L * 7;
+        this.sts += delay_ts;
+        this.ets += delay_ts;
+
+        if (this.sts >= this.ets_backup) {  // delayed start time cannot be behind origin end time
+            sts = sts_backup;
+            ets = ets_backup;
+            LogMe.e(NAME, "invalidated delay, fallback");
+        }else {
+            LogMe.e(NAME, "success");
+        }
+    }
+
+    public LocalDate getDateOfWeekAndDay(int week, int weekday){
+        long week_ts = (week - 1) * 86400000L * 7;
+        long day_ts = (weekday - 1) * 86400000L;
+        long some_ts = 1000;
+        Date date = new Date(this.sts + week_ts + day_ts + some_ts);
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public LocalDate getDateOfTheLastDay(){
+        long some_ts = 1000;
+        Date date = new Date(this.ets - some_ts);
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    @Override
+    public String toString() {
+        return "TermInfo{" +
+                "term='" + term + '\'' +
+                ", startdate='" + startdate + '\'' +
+                ", enddate='" + enddate + '\'' +
+                ", weeknum='" + weeknum + '\'' +
+                ", termname='" + termname + '\'' +
+                ", schoolyear='" + schoolyear + '\'' +
+                ", comm='" + comm + '\'' +
+                ", sts=" + sts +
+                ", ets=" + ets +
+                ", sts_backup=" + sts_backup +
+                ", delay_week=" + delay_week +
+                '}';
     }
 }
