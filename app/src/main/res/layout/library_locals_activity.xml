@@ -10,49 +10,49 @@
         android:text=" "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_bookid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_barcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_callno"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_localstatu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_local"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/message_local_cirType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLoginTextBorder"
+        android:textColor="@color/colorLibraryLocalText"
         android:background="@color/colorLibraryLocalBackground"
         tools:ignore="MissingConstraints" />
     <TextView
