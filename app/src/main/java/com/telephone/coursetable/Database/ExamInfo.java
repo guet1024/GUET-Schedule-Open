@@ -1,8 +1,12 @@
 package com.telephone.coursetable.Database;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
 
 import java.sql.Timestamp;
@@ -70,7 +74,9 @@ public class ExamInfo {
     public long sts;
     public long ets;
 
-    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator) {
+    public ExamInfo(){}// this is for Room
+
+    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c) {
         this.croomno = croomno;
         this.croomname = croomname;
         this.tch = tch;
@@ -119,40 +125,118 @@ public class ExamInfo {
         this.checked1 = checked1;
         this.postdate = postdate;
         this.operator = operator;
-        this.sts = getSTS(examdate, kssj);
-        this.ets = getETS(examdate, kssj);
+        this.sts = getSTS(c, examdate, kssj, termInfoDao);
+        this.ets = getETS(c, examdate, kssj, termInfoDao);
     }
 
-    private long getSTS(String date, String time){
-        if (time.equals(Merge.EXAM_NO_TIME)){
-            time = Merge.EXAM_NO_TIME_REPLACE;
+    private long getSTS(Context c, String date, String time, TermInfoDao termInfoDao){
+        LocalDate localDate;
+        LocalTime localTime;
+        try {
+            localDate = getD(date).getLocalDate();
+        }catch (Exception e){
+            if (this.zc != 0 && this.xq != 0){
+                localDate = termInfoDao.select(this.term).get(0).getDateOfWeekAndDay((int)this.zc, (int)this.xq);
+            }else {
+                localDate = termInfoDao.select(this.term).get(0).getDateOfTheLastDay();
+            }
         }
-        String year = date.substring(0, 4);
-        String month = date.substring(5, 7);
-        String day = date.substring(8);
-        LocalDate localDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-        String start_time = time.substring(0, time.indexOf("-"));
-        String hour = start_time.substring(0, start_time.indexOf(":"));
-        String min = start_time.substring(start_time.indexOf(":") + 1);
-        LocalTime localTime = LocalTime.of(Integer.parseInt(hour), Integer.parseInt(min));
+        try {
+            localTime = getT(time).getStartLocalTime();
+        }catch (Exception e){
+            LocalTime temp = null;
+            if (this.ksjc != null && !this.ksjc.isEmpty()){
+                temp = Clock.getStartTimeUsingDefaultConfig(c, this.ksjc);
+            }
+            if (temp == null){
+                temp = LocalTime.of(23, 58);
+            }
+            localTime = temp;
+        }
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
         return Timestamp.valueOf(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
     }
 
-    private long getETS(String date, String time){
-        if (time.equals(Merge.EXAM_NO_TIME)){
-            time = Merge.EXAM_NO_TIME_REPLACE;
+    private long getETS(Context c, String date, String time, TermInfoDao termInfoDao){
+        LocalDate localDate;
+        LocalTime localTime;
+        try {
+            localDate = getD(date).getLocalDate();
+        }catch (Exception e){
+            if (this.zc != 0 && this.xq != 0){
+                localDate = termInfoDao.select(this.term).get(0).getDateOfWeekAndDay((int)this.zc, (int)this.xq);
+            }else {
+                localDate = termInfoDao.select(this.term).get(0).getDateOfTheLastDay();
+            }
         }
-        String year = date.substring(0, 4);
-        String month = date.substring(5, 7);
-        String day = date.substring(8);
-        LocalDate localDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-        String end_time = time.substring(time.indexOf("-") + 1);
-        String hour = end_time.substring(0, end_time.indexOf(":"));
-        String min = end_time.substring(end_time.indexOf(":") + 1);
-        LocalTime localTime = LocalTime.of(Integer.parseInt(hour), Integer.parseInt(min));
+        try {
+            localTime = getT(time).getEndLocalTime();
+        }catch (Exception e){
+            LocalTime temp = null;
+            if (this.ksjc != null && !this.ksjc.isEmpty()){
+                temp = Clock.getEndTimeUsingDefaultConfig(c, this.ksjc);
+            }
+            if (temp == null){
+                temp = LocalTime.of(23, 59);
+            }
+            localTime = temp;
+        }
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
         return Timestamp.valueOf(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
-//        return 1599461072000L;
+    }
+
+    private static class d{
+        public int year;
+        public int month;
+        public int day;
+
+        public d(int year, int month, int day) {
+            this.year = year;
+            this.month = month;
+            this.day = day;
+        }
+        public LocalDate getLocalDate(){
+            return LocalDate.of(year, month, day);
+        }
+    }
+
+    private static class t{
+        public int start_hour;
+        public int start_minute;
+        public int end_hour;
+        public int end_minute;
+
+        public t(int start_hour, int start_minute, int end_hour, int end_minute) {
+            this.start_hour = start_hour;
+            this.start_minute = start_minute;
+            this.end_hour = end_hour;
+            this.end_minute = end_minute;
+        }
+        public LocalTime getStartLocalTime(){
+            return LocalTime.of(start_hour, start_minute);
+        }
+        public LocalTime getEndLocalTime(){
+            return LocalTime.of(end_hour, end_minute);
+        }
+    }
+
+    private d getD(String text){
+        int index1 = text.indexOf("-", 0);
+        int index2 = text.indexOf("-", index1 + 1);
+        String s1 = text.substring(0, index1);
+        String s2 = text.substring(index1 + 1, index2);
+        String s3 = text.substring(index2 + 1);
+        return new d(Integer.parseInt(s1), Integer.parseInt(s2), Integer.parseInt(s3));
+    }
+
+    private t getT(String text){
+        int index1 = text.indexOf(":", 0);
+        int index2 = text.indexOf("-", index1 + 1);
+        int index3 = text.indexOf(":", index2 + 1);
+        String s1 = text.substring(0, index1);
+        String s2 = text.substring(index1 + 1, index2);
+        String s3 = text.substring(index2 + 1, index3);
+        String s4 = text.substring(index3 + 1);
+        return new t(Integer.parseInt(s1), Integer.parseInt(s2), Integer.parseInt(s3), Integer.parseInt(s4));
     }
 }

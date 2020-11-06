@@ -6,7 +6,11 @@ import androidx.room.Entity;
 import com.telephone.coursetable.LogMe.LogMe;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @clear
@@ -59,6 +63,20 @@ public class TermInfo {
         }else {
             LogMe.e(NAME, "success");
         }
+    }
+
+    public LocalDate getDateOfWeekAndDay(int week, int weekday){
+        long week_ts = (week - 1) * 86400000L * 7;
+        long day_ts = (weekday - 1) * 86400000L;
+        long some_ts = 1000;
+        Date date = new Date(this.sts + week_ts + day_ts + some_ts);
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public LocalDate getDateOfTheLastDay(){
+        long some_ts = 1000;
+        Date date = new Date(this.ets - some_ts);
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     @Override

@@ -688,7 +688,7 @@ public class Login extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch exam info success, merging...");
-        Merge.examInfo(res.comment, edao);
+        Merge.examInfo(res.comment, edao, tdao, c);
 
         LogMe.e(NAME, "fetching cet");
         res = LAN.cet(c, cookie);

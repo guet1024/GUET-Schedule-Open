@@ -80,6 +80,36 @@ public class Clock {
     }
 
     /**
+     * find a start time with specified time id using default config.
+     * if not found, return null.
+     * @clear
+     */
+    public static LocalTime getStartTimeUsingDefaultConfig(Context c, String time_id){
+        String key = time_id + getSSFor_locateNow(c);
+        String time_str = MyApp.getCurrentSharedPreference().getString(key, null);
+        if (time_str == null){
+            return null;
+        }else {
+            return LocalTime.parse(time_str, getDateTimeFormatterFor_locateNow(c));
+        }
+    }
+
+    /**
+     * find an end time with specified time id using default config.
+     * if not found, return null.
+     * @clear
+     */
+    public static LocalTime getEndTimeUsingDefaultConfig(Context c, String time_id){
+        String key = time_id + getESFor_locateNow(c);
+        String time_str = MyApp.getCurrentSharedPreference().getString(key, null);
+        if (time_str == null){
+            return null;
+        }else {
+            return LocalTime.parse(time_str, getDateTimeFormatterFor_locateNow(c));
+        }
+    }
+
+    /**
      * @param nts the timestamp of current
      * @param tdao the {@link com.telephone.coursetable.Database.TermInfoDao} used to query the database for term info
      * @param pref {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
