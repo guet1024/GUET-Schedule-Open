@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -27,10 +28,26 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.telephone.coursetable.BuildConfig;
 import com.telephone.coursetable.Gson.Update.Release;
+import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 public class Update {
 
@@ -142,6 +159,158 @@ public class Update {
         };
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    private static void clean(Socket s, FileOutputStream fos) {
+        try {
+            s.close();
+            fos.close();
+        }catch (Exception ignored){}
+    }
+
+    private static void install(Context c, File file){
+        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+        Uri shared_uri =  FileProvider.getUriForFile(c,
+                BuildConfig.APPLICATION_ID + ".fileprovider",
+                file);
+        intent.setDataAndType(shared_uri, "application/vnd.android.package-archive");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        c.startActivity(intent);
+    }
+
+    /**
+     *
+     * @param c
+     * @param file_name the filename to save the downloaded file as
+     * @param md5 the MD5 value used to verify the downloaded file
+     * @return
+     * - true : download success, start installing
+     * - false : something went wrong
+     */
+    public static boolean download_and_install(Context c, String file_name, String md5){
+        final String NAME = "download_and_install()";
+        String dirname = "downloaded_apks";
+        Socket isocket = null;
+        FileOutputStream fos = null;
+        int dlen = 0;
+        int wlen = 0;
+        try {
+            File dir = new File(c.getFilesDir().getAbsolutePath() + "/" + dirname);
+            File file = new File(dir, file_name);
+            File new_file = new File(dir, md5);
+            if (new_file.exists()){
+                LogMe.e(NAME, "installing " + file_name + "...");
+                install(c, new_file);
+                return true;
+            }
+            try {
+                dir.mkdir();
+                file.createNewFile();
+            }catch (Exception ignored){}
+            FileOutputStream os = new FileOutputStream(file);
+            fos = os;
+            Socket socket = new Socket();
+            isocket = socket;
+            socket.setSoTimeout(15000); // 15s
+            socket.connect(new InetSocketAddress("47.115.61.46", 65535));
+            if (!socket.isConnected()){
+                LogMe.e(NAME, "can not connect the socket, fail...");
+                clean(socket, os);
+                return false;
+            }
+            LogMe.e(NAME, "local address: " + socket.getLocalAddress().getHostAddress() + " local port: " + socket.getLocalPort());
+            InputStream is = socket.getInputStream();
+            OutputStream sos = socket.getOutputStream();
+            byte[] request = new String("GET / HTTP/1.1").getBytes(StandardCharsets.UTF_8);
+            sos.write(request);
+            StringBuilder text = new StringBuilder();
+            byte[] bytes = new byte[1];
+            while (true){
+                int r = is.read();
+                if (r == -1){ // reach the end before break
+                    LogMe.e(NAME, "read HTTP fail...");
+                    clean(socket, os);
+                    return false;
+                }
+                // UTF-8使用8位码元和变长编码，通过以下措施：
+                //     1. 将非标准ASCII码元的最高位置1
+                //     2. 标准ASCII字符的UTF-8编码为单字节，其余字符的UTF-8编码使用一个以上的字节
+                // UTF-8可以兼容标准ASCII
+                // 这也就意味着，对于标准ASCII字符，可以像使用标准ASCII编码一样使用UTF-8编码
+                bytes[0] = (byte)r;
+                text.append(new String(bytes, StandardCharsets.UTF_8));
+                int size = text.length();
+                String current = text.toString();
+                if (size > 4 && current.substring(size - 4).equals("\r\n\r\n")){
+                    break;
+                }
+            }
+            String http = text.toString();
+            LogMe.e(NAME, http);
+            String symbol1 = "Content-Length: ";
+            String symbol2 = "\r\n";
+            int index1 = http.indexOf(symbol1);
+            int index2 = http.indexOf(symbol2, index1);
+            String len_s = http.substring(index1 + symbol1.length(), index2);
+            int len = Integer.parseInt(len_s);
+            LogMe.e(NAME, "get Content-Length: " + len);
+            byte[] apk = new byte[len];
+            int total = 0;
+            while (total < len) {
+                int res = is.read(apk, total, len - total);
+                if (res == -1){
+                    LogMe.e(NAME, "when getting apk, expect something but reach the end, fail...");
+                    clean(socket, os);
+                    return false;
+                }
+                total += res;
+                dlen += res;
+                LogMe.e(NAME, "receive " + res + " data, total: " + total + " , need: " + len);
+            }
+            os.write(apk, 0, len);
+            wlen += len;
+            LogMe.e(NAME, "downloaded file has been written to " + file_name);
+            socket.close();
+            os.close();
+            String dmd5 = getFileMD5(file);
+            LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
+            if (!dmd5.equals(md5)){
+                LogMe.e(NAME, "MD5 verification fail");
+                return false;
+            }
+            LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
+            LogMe.e(NAME, "installing " + file_name + "...");
+            install(c, file);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            LogMe.e(NAME, "dlen = " + dlen + " wlen = " + wlen);
+            clean(isocket, fos);
+            return false;
+        }
+    }
+
+    /**
+     * thanks the author of: http://blog.csdn.net/l2show/article/details/48182367
+     * @param file
+     * @return
+     */
+    private static String getFileMD5(File file) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            FileInputStream in = new FileInputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+                digest.update(buf, 0, len);
+            }
+            in.close();
+            BigInteger bigInt = new BigInteger(1, digest.digest());
+            return bigInt.toString(16);
+        }catch (Exception e){
+            e.printStackTrace();
+            return "";
+        }
     }
 
 }
