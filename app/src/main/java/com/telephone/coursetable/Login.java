@@ -417,6 +417,7 @@ public class Login extends AppCompatActivity {
                 r.getString(R.string.cookie_delimiter),
                 r.getString(R.string.lan_login_success_contain_response_text),
                 null,
+                null,
                 null
         );
         if ( login_res.code == 0 ) {
@@ -472,7 +473,8 @@ public class Login extends AppCompatActivity {
                 r.getString(R.string.cookie_delimiter),
                 null,
                 null,
-                false
+                false,
+                null
         );
         if (login_res.code == -7){
             login_res.code = 0;
