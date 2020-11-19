@@ -1,11 +1,15 @@
 package com.telephone.coursetable.Update;
 
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -178,116 +182,44 @@ public class Update {
         c.startActivity(intent);
     }
 
-    /**
-     *
-     * @param c
-     * @param file_name the filename to save the downloaded file as
-     * @param md5 the MD5 value used to verify the downloaded file
-     * @return
-     * - true : download success, start installing
-     * - false : something went wrong
-     */
-    public static boolean download_and_install(Context c, String file_name, String md5){
-        final String NAME = "download_and_install()";
-        String dirname = "downloaded_apks";
-        Socket isocket = null;
-        FileOutputStream fos = null;
-        int dlen = 0;
-        int wlen = 0;
-        try {
-            File dir = new File(c.getFilesDir().getAbsolutePath() + "/" + dirname);
-            File file = new File(dir, file_name);
-            File new_file = new File(dir, md5);
-            if (new_file.exists()){
-                LogMe.e(NAME, "installing " + file_name + "...");
-                install(c, new_file);
-                return true;
-            }
-            try {
-                dir.mkdir();
-                file.createNewFile();
-            }catch (Exception ignored){}
-            FileOutputStream os = new FileOutputStream(file);
-            fos = os;
-            Socket socket = new Socket();
-            isocket = socket;
-            socket.setSoTimeout(15000); // 15s
-            socket.connect(new InetSocketAddress("47.115.61.46", 65535));
-            if (!socket.isConnected()){
-                LogMe.e(NAME, "can not connect the socket, fail...");
-                clean(socket, os);
-                return false;
-            }
-            LogMe.e(NAME, "local address: " + socket.getLocalAddress().getHostAddress() + " local port: " + socket.getLocalPort());
-            InputStream is = socket.getInputStream();
-            OutputStream sos = socket.getOutputStream();
-            byte[] request = new String("GET / HTTP/1.1").getBytes(StandardCharsets.UTF_8);
-            sos.write(request);
-            StringBuilder text = new StringBuilder();
-            byte[] bytes = new byte[1];
-            while (true){
-                int r = is.read();
-                if (r == -1){ // reach the end before break
-                    LogMe.e(NAME, "read HTTP fail...");
-                    clean(socket, os);
-                    return false;
-                }
-                // UTF-8使用8位码元和变长编码，通过以下措施：
-                //     1. 将非标准ASCII码元的最高位置1
-                //     2. 标准ASCII字符的UTF-8编码为单字节，其余字符的UTF-8编码使用一个以上的字节
-                // UTF-8可以兼容标准ASCII
-                // 这也就意味着，对于标准ASCII字符，可以像使用标准ASCII编码一样使用UTF-8编码
-                bytes[0] = (byte)r;
-                text.append(new String(bytes, StandardCharsets.UTF_8));
-                int size = text.length();
-                String current = text.toString();
-                if (size > 4 && current.substring(size - 4).equals("\r\n\r\n")){
-                    break;
-                }
-            }
-            String http = text.toString();
-            LogMe.e(NAME, http);
-            String symbol1 = "Content-Length: ";
-            String symbol2 = "\r\n";
-            int index1 = http.indexOf(symbol1);
-            int index2 = http.indexOf(symbol2, index1);
-            String len_s = http.substring(index1 + symbol1.length(), index2);
-            int len = Integer.parseInt(len_s);
-            LogMe.e(NAME, "get Content-Length: " + len);
-            byte[] apk = new byte[len];
-            int total = 0;
-            while (total < len) {
-                int res = is.read(apk, total, len - total);
-                if (res == -1){
-                    LogMe.e(NAME, "when getting apk, expect something but reach the end, fail...");
-                    clean(socket, os);
-                    return false;
-                }
-                total += res;
-                dlen += res;
-                LogMe.e(NAME, "receive " + res + " data, total: " + total + " , need: " + len);
-            }
-            os.write(apk, 0, len);
-            wlen += len;
-            LogMe.e(NAME, "downloaded file has been written to " + file_name);
-            socket.close();
-            os.close();
-            String dmd5 = getFileMD5(file);
-            LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
-            if (!dmd5.equals(md5)){
-                LogMe.e(NAME, "MD5 verification fail");
-                return false;
-            }
-            LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
-            LogMe.e(NAME, "installing " + file_name + "...");
-            install(c, file);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            LogMe.e(NAME, "dlen = " + dlen + " wlen = " + wlen);
-            clean(isocket, fos);
-            return false;
+    public static void use_download_manager_to_download_and_install(Context c, String file_name, String url, String md5) {
+        final String NAME = "use_download_manager_to_download()";
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setMimeType("application/vnd.android.package-archive");
+        request.setAllowedOverMetered(true);
+        request.setTitle("正在下载安装包");
+        request.setDescription(file_name);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        request.allowScanningByMediaScanner();
+        request.setDestinationInExternalFilesDir(c, Environment.DIRECTORY_DOWNLOADS, file_name);
+        File file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + file_name);
+        File new_file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + md5);
+        if (new_file.exists()){
+            LogMe.e(NAME, file_name + " already exists, installing " + file_name + "...");
+            install(c, new_file);
+            return;
         }
+        DownloadManager manager = (DownloadManager) c.getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        c.registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String dmd5 = getFileMD5(file);
+                        LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
+                        if (!dmd5.equals(md5)){
+                            LogMe.e(NAME, "MD5 verification fail, not install");
+                        }else {
+                            LogMe.e(NAME, "MD5 verification success, installing...");
+                            LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
+                            LogMe.e(NAME, "installing " + file_name + "...");
+                            install(c, new_file);
+                        }
+                    }
+                },
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        );
+        LogMe.e(NAME, "start to download: " + file_name);
     }
 
     /**
