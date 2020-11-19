@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -29,6 +30,8 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.BuildConfig;
 import com.telephone.coursetable.Gson.Update.Release;
@@ -60,7 +63,8 @@ public class Update {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(c);
 //        String url ="https://api.github.com/repos/Telephone2019/CourseTable/releases/latest";
-        String url ="https://gitee.com/api/v5/repos/telephone2019/guet-curriculum/releases/latest";
+//        String url ="https://gitee.com/api/v5/repos/telephone2019/guet-curriculum/releases/latest";
+        String url ="https://guetcob.com:44334/vmd5apk";
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(
                 Request.Method.GET,
@@ -73,51 +77,56 @@ public class Update {
                         com.telephone.coursetable.LogMe.LogMe.e(NAME, "response is null or empty");
                     } else {
                         com.telephone.coursetable.LogMe.LogMe.e(NAME, "response: " + response);
-                        Release latest = new Gson().fromJson(response, Release.class);
-                        String version = "v" + BuildConfig.VERSION_NAME;
-                        String latest_tag = latest.getTag_name();
+                        String version = BuildConfig.VERSION_NAME;
+                        String latest_tag = response.substring(0, response.indexOf(' '));
+                        String md5 = response.substring(response.indexOf(' ') + 1);
                         if (!latest_tag.equals(version)) {
                             if (new_version != null) {
                                 new_version.run();
                             }
                             if (tv != null && origin != null && app != null) {
-                                app.runOnUiThread(()->tv.setText(origin + "    new " + latest_tag + "⇧"));
+                                app.runOnUiThread(()->tv.setText(origin + "    new v" + latest_tag + "⇧"));
                             }
                             if (view != null && app != null) {
-                                app.runOnUiThread(()->view.setOnClickListener(view1 -> {
+                                app.runOnUiThread(() -> view.setOnClickListener(view1 -> {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(c);
                                     builder.setMessage("您想要查看最新版本更新详情吗?");
                                     builder.setPositiveButton("查看详情",
                                             (dialogInterface, i) -> {
                                                 Uri see_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-//                                            Uri see_uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
                                                 c.startActivity(new Intent(Intent.ACTION_VIEW, see_uri));
                                             })
                                             .setNegativeButton("直接下载",
                                                     (dialogInterface, i) -> {
-                                                        String body = latest.getBody();
-                                                        String apk_name = body.substring(0, body.indexOf(".apk") + 4);
-                                                        Uri download_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/download/" + latest_tag + "/" + apk_name);
-                                                        c.startActivity(new Intent(Intent.ACTION_VIEW, download_uri));
+                                                        Update.use_download_manager_to_download_and_install(
+                                                                c, "GUET课程表v" + latest_tag + ".apk",
+                                                                "http://guetcob.com:10801/release/newest.apk",
+                                                                md5
+                                                        );
+                                                        app.runOnUiThread(()->
+                                                                Snackbar.make(view,
+                                                                        "正在下载新版本，下载完成后将会自动安装，请不要关闭应用",
+                                                                        BaseTransientBottomBar.LENGTH_LONG
+                                                                ).setTextColor(Color.WHITE).show()
+                                                        );
                                                     });
                                     builder.create().show();
                                 }));
                             }
                             Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-//                            Uri uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
                             Intent notificationIntent = new Intent(Intent.ACTION_VIEW, uri);
                             PendingIntent pendingIntent =
                                     PendingIntent.getActivity(c, 0, notificationIntent, 0);
                             Notification notification =
                                     new NotificationCompat.Builder(c, MyApp.notification_channel_id_update)
                                             .setContentTitle("新版发布: " + latest_tag)
-                                            .setStyle(new NotificationCompat.BigTextStyle().bigText(latest_tag + "版本已发布! \n版本更新内容:\n    " + latest.getName() + "\n点击查看详情/下载安装"))
+                                            .setStyle(new NotificationCompat.BigTextStyle().bigText(latest_tag + "版本已发布! \n点击查看更新详情\n转到 “更多 -> 应用更新” 中即可下载安装"))
                                             .setSmallIcon(R.drawable.feather_pen_trans)
                                             .setContentIntent(pendingIntent)
                                             .setAutoCancel(true)
                                             .setTicker("新版发布: " + latest_tag)
                                             .build();
-                            if (already != null && already.equals(latest_tag)){
+                            if (already != null && already.equals(latest_tag)){ // if already notify, skip notify
                                 return;
                             }
                             NotificationManagerCompat.from(c).notify(MyApp.notification_id_new_version, notification);
@@ -150,8 +159,8 @@ public class Update {
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 String parsed;
                 try {
-                    parsed = new String(response.data, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
+                    parsed = new String(response.data, StandardCharsets.UTF_8);
+                } catch (Exception e) {
                     try {
                         parsed = new String(response.data, "GBK");
                     } catch (UnsupportedEncodingException ex) {
