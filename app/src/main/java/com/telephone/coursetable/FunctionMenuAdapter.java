@@ -227,9 +227,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                                     a,
                                     a,
                                     ()-> a.runOnUiThread(()->{
-//                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，请重试/✈");
+                                        // edit by Telephone, 2020/11/20 10:29. Now, no need to override the on-click-listener. Just let it re-query.
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，请重试/✈");
                                         p.setVisibility(View.INVISIBLE);
-//                                        v.setOnClickListener(view15 -> Check.this.run());
+                                        v.setOnClickListener(view15 -> Check.this.run());
                                     }),
                                     ()-> a.runOnUiThread(()->{
                                         p.setVisibility(View.INVISIBLE);

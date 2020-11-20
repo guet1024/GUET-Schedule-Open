@@ -143,15 +143,16 @@ public class Update {
                     if (error != null) {
                         error.run();
                     }
-                    if (tv != null && origin != null && app != null) {
-                        app.runOnUiThread(()->tv.setText(origin + "　网络错误，请重试/✈"));
-                    }
-                    if (view != null && app != null) {
-                        app.runOnUiThread(()->view.setOnClickListener(view1 -> {
-                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-                            c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        }));
-                    }
+                    // edit by Telephone, 2020/11/20 10:29. Now, no need to override the on-click-listener. Just let it re-query.
+//                    if (tv != null && origin != null && app != null) {
+//                        app.runOnUiThread(()->tv.setText(origin + "　网络错误，请重试/✈"));
+//                    }
+//                    if (view != null && app != null) {
+//                        app.runOnUiThread(()->view.setOnClickListener(view1 -> {
+//                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
+//                            c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+//                        }));
+//                    }
                 }
 //        );
         ){
