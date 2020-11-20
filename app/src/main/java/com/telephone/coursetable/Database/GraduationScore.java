@@ -18,14 +18,14 @@ public class GraduationScore {
     public String term;
     @NonNull
     @PrimaryKey
-    public String courseid;     //计划课程代号
+    public String courseid;     //计划课程代码，是计划中的课程代码，不是课程自带的
     public double planxf;
     public double credithour;   //计划学分
     public String coursetype;
     public double lvl;
     public String sterm;    //选修学期
     public String courseno; //选修课号
-    public String scid;
+    public String scid;         //课程自带的课程代码
     public String scname;
     public long score;
     public String zpxs;     //成绩

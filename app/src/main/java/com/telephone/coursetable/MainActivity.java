@@ -519,6 +519,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void Card(View view){
+
+    }
+
     /**
      * @ui
      * jump to Login Activity

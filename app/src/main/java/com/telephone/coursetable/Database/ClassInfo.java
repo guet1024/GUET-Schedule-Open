@@ -22,7 +22,7 @@ public class ClassInfo {
     public String cname;
     public String teacherno;
     public String name; //teacher name
-    public String courseid; //such as BG0000022X0
+    public String courseid; //such as BG0000022X0, the course code of each course
     public String comm;
     public long maxcnt;
     public double xf;

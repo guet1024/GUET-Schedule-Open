@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@android:color/white">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/card_date_left_top"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/card_date_line"
+                app:layout_constraintEnd_toStartOf="@id/card_date_right_top"
+                android:text="2020-2021_1 学期"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/card_date_left_bottom"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_date_line"
+                app:layout_constraintEnd_toStartOf="@id/card_date_right_bottom"
+                android:text="星期五: 第五大节"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/card_date_right_top"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/card_date_left_top"
+                app:layout_constraintBottom_toBottomOf="@id/card_date_left_top"
+                android:text="第 9 周"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/card_date_right_bottom"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/card_date_left_bottom"
+                app:layout_constraintTop_toTopOf="@id/card_date_left_bottom"
+                android:text="共 1 节课"
+                android:gravity="center"/>
+            <View
+                android:id="@+id/card_date_line"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                app:layout_constraintTop_toBottomOf="@id/card_date_left_top"
+                app:layout_constraintBottom_toTopOf="@id/card_date_left_bottom"
+                android:background="@color/colorPrimary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+    <fragment
+        android:id="@+id/card_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:name="com.telephone.coursetable.CourseCardPagerFragment">
+    </fragment>
+</LinearLayout>
