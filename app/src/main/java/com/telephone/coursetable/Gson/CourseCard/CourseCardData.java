@@ -12,12 +12,18 @@ public class CourseCardData {
     @NonNull
     private List<ACard> cards;
 
-    public CourseCardData(String termname, int week, int weekday, String time_des, @NonNull List<ACard> cards) {
+    // this is for add and remove course
+    private String term;
+    private String time_id;
+
+    public CourseCardData(String termname, int week, int weekday, String time_des, @NonNull List<ACard> cards, String term, String time_id) {
         this.termname = termname;
         this.week = week;
         this.weekday = weekday;
         this.time_des = time_des;
         this.cards = cards;
+        this.term = term;
+        this.time_id = time_id;
     }
 
     public String getTermname() {

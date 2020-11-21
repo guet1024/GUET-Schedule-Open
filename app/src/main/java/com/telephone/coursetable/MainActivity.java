@@ -666,7 +666,7 @@ public class MainActivity extends AppCompatActivity {
                         long weekday_f = weekday;
                         data = new CourseCardData(locate.term.termname, (int)locate.week, weekday,
                                 Clock.getTimeDesUsingDefaultConfig(MainActivity.this, time),
-                                new LinkedList<>());
+                                new LinkedList<>(), locate.term.term, time);
                         List<ShowTableNode> my_node_list = nodes.stream()
                                 .filter(showTableNode -> showTableNode.weekday == weekday_f && showTableNode.time.equals(time))
                                 .collect(Collectors.toList());
