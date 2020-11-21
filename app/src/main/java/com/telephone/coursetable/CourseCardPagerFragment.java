@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.gson.Gson;
+import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
+
 public class CourseCardPagerFragment extends Fragment {
     @Nullable
     @Override
@@ -19,6 +22,7 @@ public class CourseCardPagerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ((ViewPager2)view.findViewById(R.id.course_card_viewpager)).setAdapter(new CourseCardAdapter(this));
+        CourseCardData data = new Gson().fromJson(getActivity().getIntent().getStringExtra(CourseCard.EXTRA), CourseCardData.class);
+        ((ViewPager2)view.findViewById(R.id.course_card_viewpager)).setAdapter(new CourseCardAdapter(this, data.getCards()));
     }
 }

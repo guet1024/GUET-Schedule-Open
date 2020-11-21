@@ -75,7 +75,10 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:scrollbars="vertical"
+                        android:onClick="show_detail"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,7 +99,8 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -151,7 +155,8 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -172,7 +177,10 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:scrollbars="vertical"
+                        android:onClick="show_detail"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,7 +201,8 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,7 +223,8 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -235,49 +245,8 @@
                         android:layout_weight="6"
                         android:gravity="center"
                         android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0"
-                        android:gravity="center"
-                        android:textAlignment="viewStart"
                         android:layout_marginStart="16dp"
-                        android:text="考试方式："/>
-                    <TextView
-                        android:id="@+id/course_card_examt1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="6"
-                        android:gravity="center"
-                        android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0"
-                        android:gravity="center"
-                        android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"
-                        android:text="考试方式："/>
-                    <TextView
-                        android:id="@+id/course_card_examt2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="6"
-                        android:gravity="center"
-                        android:textAlignment="viewStart"
-                        android:layout_marginStart="16dp"/>
+                        android:layout_marginEnd="16dp"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
