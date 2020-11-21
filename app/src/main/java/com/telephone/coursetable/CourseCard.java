@@ -11,10 +11,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
+import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,11 +37,6 @@ public class CourseCard extends AppCompatActivity {
         String data_string = getIntent().getStringExtra(EXTRA);
         CourseCardData data;
         if (data_string == null){
-            List<ACard> cards = new LinkedList<>();
-            cards.add(new ACard("2012797", "毛泽东思想和中国特色社会主义理论体系概论中国中国中国中国中国中国中国中国中国中国中国中国中国中国中国", 1, 9, "秦兴国",
-                    "2255636", "16207Y", "QQ群1043366252；雨课堂3EELJC；课堂派HBWQAC；钉钉30171877；腾讯课堂3015855060；中国大学MOOC，大学物理核心知识（上）、（下）", 4.5, "专业基础必修", "考查"));
-            data = new CourseCardData("2018-2019小学期", 9, 6, "第一大节", cards);
-            startMe(this, data);
             return;
         }else {
             data = new Gson().fromJson(data_string, CourseCardData.class);
@@ -80,11 +77,18 @@ public class CourseCard extends AppCompatActivity {
     public static final int TITLE_TAG_KEY = 1800301129;
 
     public void show_detail(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(view.getTag().toString());
+        String msg = view.getTag().toString();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(msg);
         Object title = view.getTag(TITLE_TAG_KEY);
         if (title != null){
             builder.setTitle(title.toString());
         }
         builder.create().show();
+        Login.copyText(this, msg);
+        Toast.makeText(this, "已复制", Toast.LENGTH_SHORT).show();
+    }
+    public void add_course(View view){
+        final String NAME = "add_course()";
+        LogMe.e(NAME, "called");
     }
 }

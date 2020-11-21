@@ -28,7 +28,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/card_date_line"
                 app:layout_constraintEnd_toStartOf="@id/card_date_right_top"
-                android:text="2020-2021_1 学期"
                 android:gravity="center"/>
             <TextView
                 android:id="@+id/card_date_left_bottom"
@@ -40,7 +39,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_date_line"
                 app:layout_constraintEnd_toStartOf="@id/card_date_right_bottom"
-                android:text="星期五: 第五大节"
                 android:gravity="center"/>
             <TextView
                 android:id="@+id/card_date_right_top"
@@ -52,7 +50,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/card_date_left_top"
                 app:layout_constraintBottom_toBottomOf="@id/card_date_left_top"
-                android:text="第 9 周"
                 android:gravity="center"/>
             <TextView
                 android:id="@+id/card_date_right_bottom"
@@ -64,7 +61,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/card_date_left_bottom"
                 app:layout_constraintTop_toTopOf="@id/card_date_left_bottom"
-                android:text="共 1 节课"
                 android:gravity="center"/>
             <View
                 android:id="@+id/card_date_line"

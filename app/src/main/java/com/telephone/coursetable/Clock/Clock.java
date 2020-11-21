@@ -110,6 +110,16 @@ public class Clock {
     }
 
     /**
+     * find a time description with specified time id using default config.
+     * if not found, return null.
+     * @clear
+     */
+    public static String getTimeDesUsingDefaultConfig(Context c, String time_id){
+        String key = time_id + getDSFor_locateNow(c);
+        return MyApp.getCurrentSharedPreference().getString(key, null);
+    }
+
+    /**
      * @param nts the timestamp of current
      * @param tdao the {@link com.telephone.coursetable.Database.TermInfoDao} used to query the database for term info
      * @param pref {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}

@@ -43,6 +43,8 @@ import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
+import com.telephone.coursetable.Gson.CourseCard.ACard;
+import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -636,6 +638,7 @@ public class MainActivity extends AppCompatActivity {
                 nodes = gdao.getSpecifiedWeekTable(locate.term.term, locate.week);
             }
             List<Map.Entry<String, Map.Entry<Integer, Integer>>> texts = new LinkedList<>();
+            List<CourseCardData> courseCardDataList = new LinkedList<>();
             Map<String, Integer> colorMap = new HashMap<>();
             int[][] colors = new int[][]{
                     {green, green_black}, //green
@@ -657,34 +660,44 @@ public class MainActivity extends AppCompatActivity {
                     final int conflict_text_color = red_black;
                     final int null_color = default_node_b_color;
                     final int null_text_color = default_node_f_color;
-                    if (nodes != null){
+                    CourseCardData data = null;
+                    if (nodes != null){ // not vacation
                         String time = MyApp.times[time_index];
                         long weekday_f = weekday;
+                        data = new CourseCardData(locate.term.termname, (int)locate.week, weekday,
+                                Clock.getTimeDesUsingDefaultConfig(MainActivity.this, time),
+                                new LinkedList<>());
                         List<ShowTableNode> my_node_list = nodes.stream()
                                 .filter(showTableNode -> showTableNode.weekday == weekday_f && showTableNode.time.equals(time))
                                 .collect(Collectors.toList());
                         for (int i = 0; i < my_node_list.size(); i++){
                             ShowTableNode my_node = my_node_list.get(i);
+                            String place = "";
+                            String cname = "";
+                            String t_name = "";
+                            String cname_long = "";
+                            String cno = "";
                             if (my_node_list.size() > 1){
 
                                 if (i > 0){
                                     text.append("▶");
                                 }
 
-                                String place = "";
                                 if (my_node.croomno != null){
                                     place = my_node.croomno;
                                 }
-                                String cname = "";
                                 if (my_node.cname != null){
                                     cname = my_node.cname;
+                                    cname_long = my_node.cname;
                                 }
                                 if (cname.length() > 6){
                                     cname = cname.substring(0, 5) + "...";
                                 }
-                                String t_name = "";
                                 if (my_node.name != null){
                                     t_name = my_node.name;
+                                }
+                                if (my_node.courseno != null){
+                                    cno = my_node.courseno;
                                 }
 
                                 String words = place + "#" + cname + "@" + t_name;
@@ -698,36 +711,37 @@ public class MainActivity extends AppCompatActivity {
 
                             }else {
 
-                                String place = "";
                                 if (my_node.croomno != null){
                                     place = my_node.croomno;
                                 }
-                                String cname = "";
                                 if (my_node.cname != null){
                                     cname = my_node.cname;
+                                    cname_long = my_node.cname;
                                 }
                                 if (cname.length() > 8){
                                     cname = cname.substring(0, 7) + "...";
                                 }
-                                String t_name = "";
                                 if (my_node.name != null){
                                     t_name = my_node.name;
+                                }
+                                if (my_node.courseno != null){
+                                    cno = my_node.courseno;
                                 }
 
                                 String words = place + "#" + cname + "@" + t_name;
 
                                 text.append(words);
-                                if (my_node.courseno == null){
+                                if (cno.isEmpty()){
                                     color = null_color;
                                     text_color = null_text_color;
-                                }else if (colorMap.containsKey(my_node.courseno)){
-                                    int p = colorMap.get(my_node.courseno);
+                                }else if (colorMap.containsKey(cno)){
+                                    int p = colorMap.get(cno);
                                     color = colors[p][0];
                                     text_color = colors[p][1];
                                 }else {
                                     color = colors[color_index][0];
                                     text_color = colors[color_index][1];
-                                    colorMap.put(my_node.courseno, color_index);
+                                    colorMap.put(cno, color_index);
                                     color_index++;
                                     if (color_index >= colors.length){
                                         color_index = 0;
@@ -735,9 +749,30 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                             }
+                            String tno = "";
+                            if (my_node.tno != null){
+                                tno = my_node.tno;
+                            }
+                            String cmt = "";
+                            if (my_node.comment != null){
+                                cmt = my_node.comment;
+                            }
+                            String ctype = "";
+                            if (my_node.ctype != null){
+                                ctype = my_node.ctype;
+                            }
+                            String examt = "";
+                            if (my_node.examt != null){
+                                examt = my_node.examt;
+                            }
+                            data.getCards().add(new ACard(
+                                    cno, cname_long, (int)my_node.start_week, (int)my_node.end_week, t_name,
+                                    tno, place, cmt, my_node.grade_point, ctype, examt
+                            ));
                         }
                     }
                     texts.add(Map.entry(text.toString(), Map.entry(color, text_color)));
+                    courseCardDataList.add(data);
                 }
             }
             runOnUiThread(()-> {
@@ -754,6 +789,8 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView) MainActivity.this.view.findViewById(id)).setBackgroundColor(default_node_b_color);
                         ((TextView) MainActivity.this.view.findViewById(id)).setTextColor(default_node_f_color);
                         ((TextView) MainActivity.this.view.findViewById(id)).setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+                        ((TextView) MainActivity.this.view.findViewById(id)).setTag(null);
+                        ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
                     }
                 }
                 for (int id : MyApp.restLineIds){
@@ -762,12 +799,23 @@ public class MainActivity extends AppCompatActivity {
                 for (int row_index = 0; row_index < MyApp.nodeIds.length; row_index++) {
                     for (int column_index = 0; column_index < MyApp.weekdaytvIds.length; column_index++) {
                         Map.Entry<String, Map.Entry<Integer, Integer>> entry = texts.get(row_index * MyApp.weekdaytvIds.length + column_index);
+                        CourseCardData cdd = courseCardDataList.get(row_index * MyApp.weekdaytvIds.length + column_index);
                         String node_text = entry.getKey();
                         int node_b_color = entry.getValue().getKey();
                         int node_f_color = entry.getValue().getValue();
                         ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setText(node_text);
                         ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setBackgroundColor(node_b_color);
                         ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setTextColor(node_f_color);
+                        if (cdd != null){
+                            ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setTag(cdd);
+                            ((TextView)MainActivity.this.view.findViewById(MyApp.nodeIds[row_index][column_index])).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    CourseCardData courseCardData = (CourseCardData) v.getTag();
+                                    CourseCard.startMe(MainActivity.this, courseCardData);
+                                }
+                            });
+                        }
                     }
                 }
                 ((TextView)MainActivity.this.view.findViewById(R.id.textView_date)).setText(locate.month + "/" + locate.day);

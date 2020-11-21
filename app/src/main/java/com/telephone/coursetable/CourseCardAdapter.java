@@ -30,11 +30,15 @@ public class CourseCardAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return new CourseCardFragment(card_list.get(position));
+        if (position >= card_list.size()){
+            return new CourseCardFragment(null);
+        }else {
+            return new CourseCardFragment(card_list.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return card_list.size();
+        return card_list.size() + 1;
     }
 }
