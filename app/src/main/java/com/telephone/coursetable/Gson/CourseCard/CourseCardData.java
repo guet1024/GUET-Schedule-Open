@@ -46,4 +46,12 @@ public class CourseCardData {
     public List<ACard> getCards() {
         return cards;
     }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public String getTime_id() {
+        return time_id;
+    }
 }
