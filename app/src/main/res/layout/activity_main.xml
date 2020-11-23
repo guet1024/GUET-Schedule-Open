@@ -937,7 +937,8 @@
         app:layout_constraintStart_toEndOf="@id/textView_time3"
         app:layout_constraintTop_toBottomOf="@id/textView_wd3"
         app:srcCompat="@color/colorPickerBackground"
-        tools:srcCompat="@color/colorPickerBackground" />
+        tools:srcCompat="@color/colorPickerBackground"
+        android:clickable="true"/>
 
     <NumberPicker
         android:id="@+id/termPicker"

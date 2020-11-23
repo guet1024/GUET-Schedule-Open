@@ -16,6 +16,7 @@
         app:cardBackgroundColor="@android:color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/no_course_card_inner_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:onClick="add_course">

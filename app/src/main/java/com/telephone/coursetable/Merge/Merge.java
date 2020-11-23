@@ -15,6 +15,7 @@ import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -42,7 +43,9 @@ import com.telephone.coursetable.R;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Merge {
 
@@ -74,22 +77,30 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void goToClass_ClassInfo(@NonNull String origin_g, @NonNull GoToClassDao gdao, @NonNull ClassInfoDao cdao){
+    public static void goToClass_ClassInfo(@NonNull String origin_g, @NonNull GoToClassDao gdao, @NonNull ClassInfoDao cdao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username){
         GoToClass_ClassInfo_s g_s = new Gson().fromJson(origin_g, GoToClass_ClassInfo_s.class);
         List<GoToClass_ClassInfo> g = g_s.getData();
         for (GoToClass_ClassInfo i : g){
             gdao.insert(
                     new GoToClass(
+                            username,
                             i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
-                            i.getEndweek(), i.isOddweek(), i.getId(), i.getCroomno(), i.getHours()
+                            i.getEndweek(), i.isOddweek(), i.getId(), i.getCroomno(), i.getHours(),
+                            i.getComm(),
+                            my_comment_map.get(new GoToClassKey(
+                                    username,
+                                    i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
+                                    i.getEndweek(), i.isOddweek()
+                            )), false
                     )
             );
             cdao.insert(
                     new ClassInfo(
+                            username,
                             i.getCourseno(), i.getCtype(), i.getTname(), i.getExamt(), i.getDptname(),
                             i.getDptno(), i.getSpname(), i.getSpno(), i.getGrade(), i.getCname(),
-                            i.getTeacherno(), i.getName(), i.getCourseid(), i.getComm(), i.getMaxcnt(),
-                            i.getXf(), i.getLlxs(), i.getSyxs(), i.getSjxs(), i.getQtxs(), i.getSctcnt()
+                            i.getTeacherno(), i.getName(), i.getCourseid(), i.getMaxcnt(),
+                            i.getXf(), i.getLlxs(), i.getSyxs(), i.getSjxs(), i.getQtxs(), i.getSctcnt(), 0
                     )
             );
         }
@@ -245,7 +256,7 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void lab(@NonNull String origin_lab, @NonNull LABDao labDao, @NonNull GoToClassDao goToClassDao, @NonNull ClassInfoDao classInfoDao){
+    public static void lab(@NonNull String origin_lab, @NonNull LABDao labDao, @NonNull GoToClassDao goToClassDao, @NonNull ClassInfoDao classInfoDao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username){
         LAB_s lab_s = new Gson().fromJson(origin_lab, LAB_s.class);
         List<LAB> labList = lab_s.getData();
         for (LAB lab : labList) {
@@ -257,18 +268,26 @@ public class Merge {
                     lab.getComm(), lab.getCourseno(), lab.getStusct(), lab.getSrid()
             ));
             goToClassDao.insert(new GoToClass(
+                    username,
                     lab.getTerm(), lab.getXq(), lab.getJc() + "",
                     com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
-                    lab.getZc(), lab.getZc(), false, 0, lab.getSrdd(), 0
+                    lab.getZc(), lab.getZc(), false, 0, lab.getSrdd(), 0,
+                    com.telephone.coursetable.Database.LAB.getFullLabName(lab.getCname(), lab.getItemname()) + "（备注：" + lab.getComm() + "）",
+                    my_comment_map.get(new GoToClassKey(
+                            username,
+                            lab.getTerm(), lab.getXq(), lab.getJc() + "",
+                            com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
+                            lab.getZc(), lab.getZc(), false
+                    )), false
             ));
             classInfoDao.insert(new ClassInfo(
+                    username,
                     com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
                     "", "", "", "", "", lab.getSpname(), lab.getSpno(),
                     lab.getGrade(),
                     com.telephone.coursetable.Database.LAB.getLabName(lab.getCname()),
                     lab.getTeacherno(), lab.getName(), lab.getCourseid(),
-                    com.telephone.coursetable.Database.LAB.getFullLabName(lab.getCname(), lab.getItemname()) + "（备注：" + lab.getComm() + "）",
-                    lab.getPersons(), 0, 0, 0, 0, 0, lab.getStusct()
+                    lab.getPersons(), 0, 0, 0, 0, 0, lab.getStusct(), 0
             ));
         }
     }

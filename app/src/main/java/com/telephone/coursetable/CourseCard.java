@@ -90,5 +90,13 @@ public class CourseCard extends AppCompatActivity {
     public void add_course(View view){
         final String NAME = "add_course()";
         LogMe.e(NAME, "called");
+        CourseCardData no_card = (CourseCardData) view.getTag();
+        EditCourse.start(CourseCard.this, true, no_card);
+    }
+    public void edit_course(View view){
+        final String NAME = "edit_course()";
+        LogMe.e(NAME, "called");
+        CourseCardData with_a_card = (CourseCardData) view.getTag();
+        EditCourse.start(CourseCard.this, false, with_a_card);
     }
 }

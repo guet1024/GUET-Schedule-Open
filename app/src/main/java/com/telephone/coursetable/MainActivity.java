@@ -116,37 +116,47 @@ public class MainActivity extends AppCompatActivity {
         if (outdated != null){
             startActivity(outdated);
         }else {
-            if (resume_time > 1) {
-                returnToday(null);
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+            new Thread(()-> {
+                String username = null;
+                if (udao != null) {
+                    List<User> ac_users = udao.getActivatedUser();
+                    if (!ac_users.isEmpty()) {
+                        username = ac_users.get(0).username;
                     }
-                    runOnUiThread(()->{
-                        String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
-                        long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
-                        new Thread(()->{
-                            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                    getResources().getString(R.string.pref_hour_start_suffix),
-                                    getResources().getString(R.string.pref_hour_end_suffix),
-                                    getResources().getString(R.string.pref_hour_des_suffix));
-                            List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
-                            if (!term_list.isEmpty()) {
-                                locate.term = term_list.get(0);
-                                locate.week = selected_week;
-                            } else {
-                                locate.term = null;
-                                locate.week = Clock.NO_TERM;
-                            }
-                            Map.Entry<Integer, Integer> g = getTime_enhanced();
-                            runOnUiThread(() -> showTable(locate, g));
-                        }).start();
-                    });
-                }).start();
-            }
+                }
+                if (resume_time > 1 && username != null) {
+                    String username_f = username;
+                    returnToday(null);
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        runOnUiThread(() -> {
+                            String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+                            long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
+                            new Thread(() -> {
+                                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                        getResources().getString(R.string.pref_hour_start_suffix),
+                                        getResources().getString(R.string.pref_hour_end_suffix),
+                                        getResources().getString(R.string.pref_hour_des_suffix));
+                                List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
+                                if (!term_list.isEmpty()) {
+                                    locate.term = term_list.get(0);
+                                    locate.week = selected_week;
+                                } else {
+                                    locate.term = null;
+                                    locate.week = Clock.NO_TERM;
+                                }
+                                Map.Entry<Integer, Integer> g = getTime_enhanced();
+                                runOnUiThread(() -> showTable(username_f, locate, g));
+                            }).start();
+                        });
+                    }).start();
+                }
+            }).start();
         }
     }
 
@@ -235,32 +245,37 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                runOnUiThread(()->{
-                    String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
-                    long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
-                    new Thread(()->{
-                        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                getResources().getString(R.string.pref_hour_start_suffix),
-                                getResources().getString(R.string.pref_hour_end_suffix),
-                                getResources().getString(R.string.pref_hour_des_suffix));
-                        List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
-                        if (!term_list.isEmpty()) {
-                            locate.term = term_list.get(0);
-                            locate.week = selected_week;
-                        } else {
-                            locate.term = null;
-                            locate.week = Clock.NO_TERM;
-                        }
-                        Map.Entry<Integer, Integer> g = getTime_enhanced();
-                        runOnUiThread(() -> {
-                            showTable(locate, g);
-                            com.telephone.coursetable.LogMe.LogMe.e("main-pull-refresh", "success!");
-                            ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setRefreshing(false);
-                            ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setEnabled(true);
-                        });
-                    }).start();
-                });
+                String username = null;
+                if (!udao.getActivatedUser().isEmpty()) {
+                    username = udao.getActivatedUser().get(0).username;
+                    String username_f = username;
+                    runOnUiThread(() -> {
+                        String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
+                        long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
+                        new Thread(() -> {
+                            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                    getResources().getString(R.string.pref_hour_start_suffix),
+                                    getResources().getString(R.string.pref_hour_end_suffix),
+                                    getResources().getString(R.string.pref_hour_des_suffix));
+                            List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
+                            if (!term_list.isEmpty()) {
+                                locate.term = term_list.get(0);
+                                locate.week = selected_week;
+                            } else {
+                                locate.term = null;
+                                locate.week = Clock.NO_TERM;
+                            }
+                            Map.Entry<Integer, Integer> g = getTime_enhanced();
+                            runOnUiThread(() -> {
+                                showTable(username_f, locate, g);
+                                com.telephone.coursetable.LogMe.LogMe.e("main-pull-refresh", "success!");
+                                ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setRefreshing(false);
+                                ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setEnabled(true);
+                            });
+                        }).start();
+                    });
+                }
             }).start();
         });
         ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(false);
@@ -338,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(true);
                         ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
+                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setTag(u.username);
                         MainActivity.this.view.findViewById(R.id.main_drag_background).setOnDragListener(new View.OnDragListener() {
                             @Override
                             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -431,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
                         new Thread(()->{
                             Map.Entry<Integer, Integer> g = getTime_enhanced();
                             runOnUiThread(()->{
-                                showTable(locate, g);
+                                showTable(u.username, locate, g);
                                 setContentView(view);
                             });
                         }).start();
@@ -486,7 +502,8 @@ public class MainActivity extends AppCompatActivity {
                     locate.week = Clock.NO_TERM;
                 }
                 Map.Entry<Integer, Integer> g = getTime_enhanced();
-                runOnUiThread(()-> showTable(locate, g));
+                String username = udao.getActivatedUser().get(0).username;
+                runOnUiThread(()-> showTable(username, locate, g));
             }).start();
         }else {
             long nts = Clock.nowTimeStamp();
@@ -607,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
      * 5. hide {@link #pickerPanel}
      * @clear
      */
-    private void showTable(@NonNull Locate locate, @Nullable Map.Entry<Integer, Integer> breakTime){
+    private void showTable(@NonNull String username, @NonNull Locate locate, @Nullable Map.Entry<Integer, Integer> breakTime){
         final int black = 0xFF000000;
         final int white = 0xFFFFFFFF;
         final int gray = 0xFF505050;
@@ -635,7 +652,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(()->{
             List<ShowTableNode> nodes = null;
             if (locate.term != null){
-                nodes = gdao.getSpecifiedWeekTable(locate.term.term, locate.week);
+                nodes = gdao.getSpecifiedWeekTable(username, locate.term.term, locate.week);
             }
             List<Map.Entry<String, Map.Entry<Integer, Integer>>> texts = new LinkedList<>();
             List<CourseCardData> courseCardDataList = new LinkedList<>();
@@ -753,9 +770,13 @@ public class MainActivity extends AppCompatActivity {
                             if (my_node.tno != null){
                                 tno = my_node.tno;
                             }
-                            String cmt = "";
-                            if (my_node.comment != null){
-                                cmt = my_node.comment;
+                            String sys_comm = "";
+                            if (my_node.sys_comm != null){
+                                sys_comm = my_node.sys_comm;
+                            }
+                            String my_comm = "";
+                            if (my_node.my_comm != null){
+                                my_comm = my_node.my_comm;
                             }
                             String ctype = "";
                             if (my_node.ctype != null){
@@ -765,9 +786,10 @@ public class MainActivity extends AppCompatActivity {
                             if (my_node.examt != null){
                                 examt = my_node.examt;
                             }
+                            boolean customized = my_node.customized;
                             data.getCards().add(new ACard(
                                     cno, cname_long, (int)my_node.start_week, (int)my_node.end_week, t_name,
-                                    tno, place, cmt, my_node.grade_point, ctype, examt
+                                    tno, place, my_node.grade_point, ctype, examt, sys_comm, my_comm, customized
                             ));
                         }
                     }
@@ -859,6 +881,7 @@ public class MainActivity extends AppCompatActivity {
      * @clear
      */
     public void openOrHidePanel(View view){
+        String username = view.getTag().toString();
         if (pickerPanel.isShown()){
             if (term_week_is_changing) return;
             String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
@@ -878,7 +901,7 @@ public class MainActivity extends AppCompatActivity {
                     locate.week = Clock.NO_TERM;
                 }
                 Map.Entry<Integer, Integer> g = getTime_enhanced();
-                runOnUiThread(()-> showTable(locate, g));
+                runOnUiThread(()-> showTable(username, locate, g));
             }).start();
         }else{
             pickerPanel.show(MainActivity.this);

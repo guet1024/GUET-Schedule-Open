@@ -6,8 +6,10 @@ import androidx.room.Entity;
 /**
  * @clear
  */
-@Entity(primaryKeys = {"courseno"})
+@Entity(primaryKeys = {"username", "courseno"})
 public class ClassInfo {
+    @NonNull
+    public String username;
     @NonNull
     public String courseno;
 
@@ -23,7 +25,6 @@ public class ClassInfo {
     public String teacherno;
     public String name; //teacher name
     public String courseid; //such as BG0000022X0, the course code of each course
-    public String comm;
     public long maxcnt;
     public double xf;
     public double llxs;
@@ -32,7 +33,10 @@ public class ClassInfo {
     public double qtxs;
     public long sctcnt;
 
-    public ClassInfo(@NonNull String courseno, String ctype, String tname, String examt, String dptname, String dptno, String spname, String spno, String grade, String cname, String teacherno, String name, String courseid, String comm, long maxcnt, double xf, double llxs, double syxs, double sjxs, double qtxs, long sctcnt) {
+    public int custom_ref;
+
+    public ClassInfo(@NonNull String username, @NonNull String courseno, String ctype, String tname, String examt, String dptname, String dptno, String spname, String spno, String grade, String cname, String teacherno, String name, String courseid, long maxcnt, double xf, double llxs, double syxs, double sjxs, double qtxs, long sctcnt, int custom_ref) {
+        this.username = username;
         this.courseno = courseno;
         this.ctype = ctype;
         this.tname = tname;
@@ -46,7 +50,6 @@ public class ClassInfo {
         this.teacherno = teacherno;
         this.name = name;
         this.courseid = courseid;
-        this.comm = comm;
         this.maxcnt = maxcnt;
         this.xf = xf;
         this.llxs = llxs;
@@ -54,5 +57,6 @@ public class ClassInfo {
         this.sjxs = sjxs;
         this.qtxs = qtxs;
         this.sctcnt = sctcnt;
+        this.custom_ref = custom_ref;
     }
 }

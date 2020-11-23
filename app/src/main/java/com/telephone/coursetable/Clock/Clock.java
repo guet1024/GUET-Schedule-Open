@@ -269,7 +269,7 @@ public class Clock {
      * @return
      * null 找不到当前时间段 || 处于假期 || 当天没课
      */
-    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime(long nts, TermInfoDao tdao, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix) {
+    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime(String username, long nts, TermInfoDao tdao, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix) {
         Map.Entry<Integer, Integer> nowTime = findNowTime(nts, pref, formatter, s_suffix, e_suffix);
         List<ShowTableNode> surplus = new LinkedList<>();
         Locate locateNow = locateNow(nts, tdao, pref, MyApp.times, formatter, s_suffix, e_suffix, d_suffix);
@@ -278,11 +278,11 @@ public class Clock {
         long weekday = locateNow.weekday;
         if ( nowTime == null ) return null;
         if ( term == null ) return null;
-        if ( MyApp.getCurrentAppDB().goToClassDao().getTodayLessons(term.term, week, weekday).isEmpty() ) return null;
+        if ( MyApp.getCurrentAppDB().goToClassDao().getTodayLessons(username, term.term, week, weekday).isEmpty() ) return null;
         int time = nowTime.getValue();
         if ( time == -1 ) return new FindClassOfCurrentOrNextTimeRes(surplus);
         do {
-            surplus = MyApp.getCurrentAppDB().goToClassDao().getNode(term.term, week, weekday, MyApp.times[time] );
+            surplus = MyApp.getCurrentAppDB().goToClassDao().getNode(username, term.term, week, weekday, MyApp.times[time] );
         }while ( surplus.isEmpty() && (++time) < MyApp.times.length );
         if (nowTime.getKey().equals(time)){
             return new FindClassOfCurrentOrNextTimeRes(surplus, true);

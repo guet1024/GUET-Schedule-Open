@@ -45,7 +45,10 @@ import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.Key.GoToClassKey;
+import com.telephone.coursetable.Database.KeyAndValue.GoToClassKeyAndValue;
 import com.telephone.coursetable.Database.LABDao;
+import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -65,6 +68,7 @@ import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
 import com.telephone.coursetable.OCR.OCR;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 
 public class Login extends AppCompatActivity {
@@ -373,11 +377,21 @@ public class Login extends AppCompatActivity {
     /**
      * @non-ui
      * 1. delete all user-related data from database(not including user login information)
+     * @param username can be null if no currently activated user
      * @clear
      */
-    public static void deleteOldDataFromDatabase(GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
-        gdao.deleteAll();
-        cdao.deleteAll();
+    public static HashMap<GoToClassKey, String> deleteOldDataFromDatabase( @Nullable String username, GoToClassDao gdao, ClassInfoDao cdao, TermInfoDao tdao, PersonInfoDao pdao, GraduationScoreDao gsdao, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+        /** prepare */
+        HashMap<GoToClassKey, String> my_comm_map = Methods.getMyCommentMap(gdao, cdao);
+        cdao.resetAllCustomRef(username);
+        List<String> customCnoList = gdao.selectCustomCno(username);
+        for(String cno : customCnoList){
+            cdao.increaseCustomRef(username, cno);
+        }
+        gdao.clearAllSysComment(username);
+        /** delete */
+        gdao.deleteAllNotCustomized(username);
+        cdao.deleteAllNotReferredByCustom(username);
         tdao.deleteAll();
         pdao.deleteAll();
         gsdao.deleteAll();
@@ -385,6 +399,7 @@ public class Login extends AppCompatActivity {
         edao.deleteAll();
         cetDao.deleteAll();
         labDao.deleteAll();
+        return my_comm_map;
     }
 
     /**
@@ -615,7 +630,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+    public static boolean fetch_merge(Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
 
@@ -653,7 +668,7 @@ public class Login extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
-        Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
+        Merge.goToClass_ClassInfo(res.comment, gdao, cdao, my_comm_map, username);
 
         LogMe.e(NAME, "fetching graduation courses");
         res = LAN.graduationScore(c, cookie);
@@ -724,7 +739,7 @@ public class Login extends AppCompatActivity {
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
                 LogMe.e(NAME, "fetch lab success, merging...");
-                Merge.lab(res.comment, labDao, gdao, cdao);
+                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
             }
         }
 
@@ -773,10 +788,10 @@ public class Login extends AppCompatActivity {
      *              10. clear shared preference
      *              11. commit shared preference
      *              12. show tip snack-bar, change title
-     *              13. call {@link #deleteOldDataFromDatabase(GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao, LABDao)}
-     *              14. call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
+     *              13. call {@link #deleteOldDataFromDatabase(String, GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao, LABDao)}
+     *              14. call {@link #fetch_merge(Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
      *              15. commit shared preference
-     *              16. the result of {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
+     *              16. the result of {@link #fetch_merge(Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -921,6 +936,11 @@ public class Login extends AppCompatActivity {
                             runOnUiThread(()->Toast.makeText(Login.this, "登录取消", Toast.LENGTH_SHORT).show());
                             return;
                         }
+                        // edit by Telephone 2020/11/23 09:46, get currently activated username
+                        String username = null;
+                        if (!udao.getActivatedUser().isEmpty()){
+                            username = udao.getActivatedUser().get(0).username;
+                        }
                         /** insert/replace new user into database */
                         udao.insert(new User(sid, pwd, aaw_pwd, vpn_pwd));
                         /**
@@ -944,9 +964,9 @@ public class Login extends AppCompatActivity {
 
                         try { // this is an Accident Prone Area
                             /** call {@link #deleteOldDataFromDatabase()} */
-                            deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                            HashMap<GoToClassKey, String> my_comm_map = deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                             /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, sid, my_comm_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
                             /** commit shared preference */
                             editor.commit();
                             if (fetch_merge_res) {
