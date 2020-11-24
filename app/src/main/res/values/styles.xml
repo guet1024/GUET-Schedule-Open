@@ -139,6 +139,14 @@
         <item name="title">"详情"</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
+    <style name="AppTheme_teacher_evaluation_panel" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="title">"评教面板"</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
     
     <style name="Launcher" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/start_page_2</item>

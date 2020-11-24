@@ -66,21 +66,35 @@
         <service android:name=".Webinfo.MediaService" />
 
         <activity
-            android:name=".EditCourse"
-            android:theme="@style/AppTheme_edit_course"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
+            android:name=".TeacherEvaluationPanel"
+            android:parentActivityName=".FunctionMenu"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_teacher_evaluation_panel">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".EditCourse"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_edit_course">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".CourseCard"
-            android:theme="@style/AppTheme_course_card"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_course_card">
+
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
 

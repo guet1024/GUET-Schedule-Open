@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
@@ -27,6 +28,7 @@ import com.telephone.coursetable.Login;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.OCR.OCR;
 import com.telephone.coursetable.R;
+import com.telephone.coursetable.TeacherEvaluationPanel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -37,9 +39,13 @@ import java.util.List;
 import java.util.Map;
 
 public class TeachersEvaluation {//评教
+
+    private static final Class<TeacherEvaluationPanel> c_class = TeacherEvaluationPanel.class;
+
     private static volatile List<Map.Entry<String, Integer>> toastlist = new LinkedList<>();
     private static volatile boolean end = false;
     private static volatile Thread thread = null;
+    private static volatile boolean evaluation_running = false;
 
     synchronized private static void addtoast(String s, int len, boolean end){
         toastlist.add(Map.entry(s, len));
@@ -56,7 +62,6 @@ public class TeachersEvaluation {//评教
     synchronized private static void clearall(){
         toastlist.clear();
     }
-
     synchronized private static Thread getThread(){
         return thread;
     }
@@ -66,121 +71,113 @@ public class TeachersEvaluation {//评教
     synchronized private static boolean isEnd(){
         return end;
     }
+    synchronized private static void setEnd(boolean end){
+        TeachersEvaluation.end = end;
+    }
+    synchronized private static boolean isEvaluation_running() {
+        return evaluation_running;
+    }
+    synchronized private static void setEvaluation_running(boolean evaluation_running) {
+        TeachersEvaluation.evaluation_running = evaluation_running;
+    }
 
-    public static void evaluation(FunctionMenu c, String id, String pwd, TermInfoDao tdao) {
+    /**
+     *
+     * @return false if duplicated evaluation, else true
+     */
+    public static boolean evaluation(@NonNull AppCompatActivity c, String id, String pwd, TermInfoDao tdao) {
         final String NAME = "evaluation()";
-        if (getThread() != null){
+        if (getThread() != null || isEvaluation_running()){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "duplicated evaluation!");
-            return;
+            return false;
         }
         clearall();
+        setEnd(false);
         Thread toastThread =
         new Thread(new Runnable() {
             @Override
             public void run() {
+                c_class.cast(c).prepare_start();
                 while (true) {
                     Map.Entry<String, Integer> toast = gettoast();
                     if(toast!=null){
-                        if (MyApp.getRunning_activity_pointer() == null ||
-                                !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                                !c.isVisible()
-                        ){
+                        if (check_should_exit(c)){
                             setThread(null);
-                            return;
+                            LogMe.e(NAME, "toast thread stop");
+                            c_class.cast(c).cleanup_end(); return;
                         }
-                        c.runOnUiThread(()->Toast.makeText(c, toast.getKey(), toast.getValue()).show());
-                        switch (toast.getValue()){
-                            case Toast.LENGTH_SHORT: default:
-                                try {
-                                    Thread.sleep(2500);
-                                } catch (InterruptedException e) {
-                                    // Restore interrupt status.
-                                    Thread.currentThread().interrupt();
-                                    e.printStackTrace();
-                                }
-                                break;
-                            case Toast.LENGTH_LONG:
-                                try {
-                                    Thread.sleep(4000);
-                                } catch (InterruptedException e) {
-                                    // Restore interrupt status.
-                                    Thread.currentThread().interrupt();
-                                    e.printStackTrace();
-                                }
-                                break;
-                        }
+                        c.runOnUiThread(()->c_class.cast(c).print(toast.getKey()));
                     }else {
-                        if (isEnd()){
+                        if (isEnd() || check_should_exit(c)){
                             setThread(null);
-                            return;
+                            LogMe.e(NAME, "toast thread stop");
+                            c_class.cast(c).cleanup_end(); return;
                         }
                     }
                 }
             }
         });
         setThread(toastThread);
+        setEvaluation_running(true);
         toastThread.start();
 
         addtoast("评教登录中，请耐心等待",Toast.LENGTH_SHORT,false);
-        if ( MyApp.getRunning_activity_pointer() == null ||
-                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                !c.isVisible()
-        ){
-            return;
+        if (check_should_exit(c)){
+            LogMe.e(NAME, "evaluation thread stop");
+            setEvaluation_running(false); return true;
         }
         HttpConnectionAndCode httpConnectionAndCode = LAN.checkcode(c);
         if (httpConnectionAndCode.obj == null) {
             addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
-            return;
+            LogMe.e(NAME, "evaluation thread stop");
+            setEvaluation_running(false); return true;
         }
         Bitmap bitmap = (Bitmap) httpConnectionAndCode.obj;
         String cookie = httpConnectionAndCode.cookie;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(cookie);
         String ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
-        if ( MyApp.getRunning_activity_pointer() == null ||
-                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                !c.isVisible()
-        ){
-            return;
+        if (check_should_exit(c)){
+            LogMe.e(NAME, "evaluation thread stop");
+            setEvaluation_running(false); return true;
         }
         HttpConnectionAndCode H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
         if (H.code != 0 && H.code != -6) {
             addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
-            return;
+            LogMe.e(NAME, "evaluation thread stop");
+            setEvaluation_running(false); return true;
         } else {
             for (; H.code != 0; ) {
 
                 if (H.comment.contains("密码")) {
                     addtoast("评教登录密码错误, 再次登录以更新密码",Toast.LENGTH_LONG,true);
-                    return;
+                    LogMe.e(NAME, "evaluation thread stop");
+                    setEvaluation_running(false); return true;
                 } else if (H.comment.contains("验证码")) {
-                    if (MyApp.getRunning_activity_pointer() == null ||
-                            !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                            !c.isVisible()
-                    ){
-                        return;
+                    if (check_should_exit(c)){
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
                     httpConnectionAndCode = LAN.checkcode(c);
                     if (httpConnectionAndCode.obj == null) {
                         addtoast("检查校园网连接后重试",Toast.LENGTH_LONG,true);
-                        return;
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
                     cookie = httpConnectionAndCode.cookie;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append(cookie);
                     bitmap = (Bitmap) httpConnectionAndCode.obj;
                     ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
-                    if ( MyApp.getRunning_activity_pointer() == null ||
-                            !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                            !c.isVisible()
-                    ){
-                        return;
+                    if (check_should_exit(c)){
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
                     H = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
                     if (H.code != 0 && H.code!=-6) {
                         addtoast("评教登录失败,检查校园网连接后重试",Toast.LENGTH_LONG,true);
-                        return;
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
                 }
             }
@@ -195,11 +192,9 @@ public class TeachersEvaluation {//评教
 
         for (TermInfo t : list) {
             addtoast( "正在获取 "+t.termname+" 的评教信息",Toast.LENGTH_SHORT,false);
-            if ( MyApp.getRunning_activity_pointer() == null ||
-                    !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                    !c.isVisible()
-            ){
-                return;
+            if (check_should_exit(c)){
+                LogMe.e(NAME, "evaluation thread stop");
+                setEvaluation_running(false); return true;
             }
             HttpConnectionAndCode httpURLConnection = Get.get("http://172.16.13.22/student/getpjcno",
                     new String[]{"term=" + t.term},
@@ -215,11 +210,9 @@ public class TeachersEvaluation {//评教
                     10000
             );
             for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
-                if (MyApp.getRunning_activity_pointer() == null ||
-                        !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                        !c.isVisible()
-                ){
-                    return;
+                if (check_should_exit(c)){
+                    LogMe.e(NAME, "evaluation thread stop");
+                    setEvaluation_running(false); return true;
                 }
                 httpURLConnection = Get.get("http://172.16.13.22/student/getpjcno",
                         new String[]{"term=" + t.term},
@@ -236,8 +229,9 @@ public class TeachersEvaluation {//评教
                 );
             }
             if (httpURLConnection.code != 0) {
-                addtoast( "评教失败，检查校园网连接后重试",Toast.LENGTH_LONG,true);
-                return;
+                addtoast( "无法获取 " + t.termname + " 的评教信息，评教结束。检查校园网连接后重试。一共成功评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
+                LogMe.e(NAME, "evaluation thread stop");
+                setEvaluation_running(false); return true;
             }
             if (httpURLConnection.comment.contains("\"data\":[]}" ) || httpURLConnection.comment.contains("\"can\": false")) {
                 addtoast( t.termname+" 评教未开放",Toast.LENGTH_SHORT,false);
@@ -254,54 +248,62 @@ public class TeachersEvaluation {//评教
 
                     HttpConnectionAndCode prepare_res = prepare_evaluation(c, t, g, user_agent, referer, cookie);
                     if (prepare_res == null){
-                        return;
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }else if (prepare_res.code != 0){
                         if (prepare_res.comment != null && !prepare_res.comment.isEmpty()){
                             LogMe.e(NAME, "prepare res comment: " + prepare_res.comment);
                         }
-                        addtoast("评教失败(prepare)，检查校园网连接后重试", Toast.LENGTH_LONG, true);
-                        return;
+                        addtoast(t.termname + " " + g.getName() + " 老师评教失败(prepare)，评教结束。检查校园网连接后重试。一共成功评教了 " + flag1 + " 个学期", Toast.LENGTH_LONG, true);
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
 
                     HttpConnectionAndCode detail_res = detail_evaluation(c, t, g, user_agent, referer, cookie);
                     if (detail_res == null){
-                        return;
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }else if (detail_res.code != 0){
                         if (detail_res.comment != null && !detail_res.comment.isEmpty()){
                             LogMe.e(NAME, "detail res comment: " + detail_res.comment);
                         }
-                        addtoast("评教失败(detail)，检查校园网连接后重试", Toast.LENGTH_LONG, true);
-                        return;
+                        addtoast(t.termname + " " + g.getName() + " 老师评教失败(detail)，评教结束。检查校园网连接后重试。一共成功评教了 " + flag1 + " 个学期", Toast.LENGTH_LONG, true);
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
 
                     HttpConnectionAndCode total_res = total_evaluation(c, t, g, user_agent, referer, cookie);
                     if (total_res == null){
-                        return;
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }else if (total_res.code != 0){
                         if (total_res.comment != null && !total_res.comment.isEmpty()){
                             LogMe.e(NAME, "total res comment: " + total_res.comment);
                         }
-                        addtoast("评教失败(total)，检查校园网连接后重试", Toast.LENGTH_LONG, true);
-                        return;
+                        addtoast(t.termname + " " + g.getName() + " 老师评教失败(total)，评教结束。检查校园网连接后重试。一共成功评教了 " + flag1 + " 个学期", Toast.LENGTH_LONG, true);
+                        LogMe.e(NAME, "evaluation thread stop");
+                        setEvaluation_running(false); return true;
                     }
 
                 }
                 flag1++;
             }
             if(flag1 == 2){
-                addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
+                addtoast(  "评教结束，一共成功评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
                 com.telephone.coursetable.LogMe.LogMe.e("PJterm", flag1 +"");
-                return;
+                LogMe.e(NAME, "evaluation thread stop");
+                setEvaluation_running(false); return true;
             }
         }
         if (flag == list.size()) {
-            addtoast(  "评教未开放",Toast.LENGTH_LONG,true);
+            addtoast(  "所有学期的评教均未开放",Toast.LENGTH_LONG,true);
             com.telephone.coursetable.LogMe.LogMe.e("PJterm","All terms are closed");
-            return;
         } else {
-            addtoast(  "评教成功，一共评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
+            addtoast(  "评教结束，一共成功评教了 " + flag1 + " 个学期",Toast.LENGTH_LONG,true);
             com.telephone.coursetable.LogMe.LogMe.e("PJterm", flag1 +"");
         }
+        LogMe.e(NAME, "evaluation thread stop");
+        setEvaluation_running(false); return true;
     }
 
     /**
@@ -311,7 +313,7 @@ public class TeachersEvaluation {//评教
      * - res.code == 0 : success
      * - res.code != 0 : fail
      */
-    private static HttpConnectionAndCode total_evaluation(FunctionMenu c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie) {
+    private static HttpConnectionAndCode total_evaluation(@NonNull AppCompatActivity c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie) {
         String success_symbol = "\"success\":true";
         String tail = "}";
         String url = "http://172.16.13.22/student/SaveJxpgJg/1";
@@ -329,10 +331,7 @@ public class TeachersEvaluation {//评教
                     "&userid=" + "&bz=666" + "&score=100";
             post_body = post_body.replace("chk=0", "chk=");
         }catch (Exception ignored){}
-        if ( MyApp.getRunning_activity_pointer() == null ||
-                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                !c.isVisible()
-        ){
+        if (check_should_exit(c)){
             return null;
         }
         addtoast(  "正在对 "+t.termname+" "+teacher.getName()+" 老师进行总评",Toast.LENGTH_SHORT,false);
@@ -351,10 +350,7 @@ public class TeachersEvaluation {//评教
         );
         for (int i = 0; post_res.code != 0 && post_res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新对 "+t.termname+" "+teacher.getName()+" 老师进行总评",Toast.LENGTH_SHORT,false);
-            if (MyApp.getRunning_activity_pointer() == null ||
-                    !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                    !c.isVisible()
-            ){
+            if (check_should_exit(c)){
                 return null;
             }
             post_res = Post.post(url,
@@ -381,17 +377,14 @@ public class TeachersEvaluation {//评教
      * - res.code == 0 : success
      * - res.code != 0 : fail
      */
-    private static HttpConnectionAndCode prepare_evaluation(FunctionMenu c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie){
+    private static HttpConnectionAndCode prepare_evaluation(@NonNull AppCompatActivity c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie){
         String success_symbol = "\"success\":true";
         String tail = "}";
         String url = "http://172.16.13.22/student/JxpgJg";
         String[] params = null;
         String post_body = "term=" + teacher.getTerm() + "&courseno=" + teacher.getCourseno() +
                 "&teacherno=" + teacher.getTeacherno();
-        if ( MyApp.getRunning_activity_pointer() == null ||
-                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                !c.isVisible()
-        ){
+        if (check_should_exit(c)){
             return null;
         }
         addtoast(  "正在准备对 "+t.termname+" "+teacher.getName()+" 老师进行评估",Toast.LENGTH_SHORT,false);
@@ -410,10 +403,7 @@ public class TeachersEvaluation {//评教
         );
         for (int i = 0; post_res.code != 0 && post_res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新准备对 "+t.termname+" "+teacher.getName()+" 老师进行评估",Toast.LENGTH_SHORT,false);
-            if (MyApp.getRunning_activity_pointer() == null ||
-                    !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                    !c.isVisible()
-            ){
+            if (check_should_exit(c)){
                 return null;
             }
             post_res = Post.post(url,
@@ -440,7 +430,7 @@ public class TeachersEvaluation {//评教
      * - res.code == 0 : success
      * - res.code != 0 : fail
      */
-    private static HttpConnectionAndCode detail_evaluation(FunctionMenu c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie){
+    private static HttpConnectionAndCode detail_evaluation(@NonNull AppCompatActivity c, TermInfo t, PJGetValue_Data teacher, String user_agent, String referer, String cookie){
         String success_symbol = "\"success\":true";
         String tail = "}";
         String url = "http://172.16.13.22/student/SaveJxpg";
@@ -466,10 +456,7 @@ public class TeachersEvaluation {//评教
         }
         String post_body = new Gson().toJson(post_list);
         post_body = post_body.replace("\\\\u", "\\u");
-        if ( MyApp.getRunning_activity_pointer() == null ||
-                !(c.toString().equals(MyApp.getRunning_activity_pointer().toString())) ||
-                !c.isVisible()
-        ){
+        if (check_should_exit(c)){
             return null;
         }
         addtoast(  "正在对 "+t.termname+" "+teacher.getName()+" 老师进行细节评分",Toast.LENGTH_SHORT,false);
@@ -488,10 +475,7 @@ public class TeachersEvaluation {//评教
         );
         for (int i = 0; post_res.code != 0 && post_res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新对 "+t.termname+" "+teacher.getName()+" 老师进行细节评分",Toast.LENGTH_SHORT,false);
-            if (MyApp.getRunning_activity_pointer() == null ||
-                    !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
-                    !c.isVisible()
-            ){
+            if (check_should_exit(c)){
                 return null;
             }
             post_res = Post.post(url,
@@ -564,6 +548,16 @@ public class TeachersEvaluation {//评教
         }else {
             return null;
         }
+    }
+
+    private static boolean check_should_exit(@NonNull AppCompatActivity c) {
+        return
+                MyApp.getRunning_activity_pointer() == null ||
+                !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
+                !c_class.cast(c).isVisible() ||
+                getThread() == null ||
+                !isEvaluation_running()
+                ;
     }
 
 }
