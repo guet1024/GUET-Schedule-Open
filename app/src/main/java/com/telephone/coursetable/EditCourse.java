@@ -296,7 +296,39 @@ public class EditCourse extends AppCompatActivity {
                                         "重复的数据", "确定", "我再想想"
                                 ).show());
                     }else {
-
+                        // ----------------- read from database / customize if not found in database
+                        String fake_ctype = "";
+                        String dpt_name = "";
+                        String dpt_no = "";
+                        String sp_name = "";
+                        String sp_no = "";
+                        String grade = "";
+                        String teacherno = "";
+                        String courseid = "";
+                        long maxcnt = 0;
+                        double llxs = 0;
+                        double syxs = 0;
+                        double sjxs = 0;
+                        double qtxs = 0;
+                        long sctcnt = 0;
+                        int custom_ref = 1;
+                        // ----------------------------------------------
+                        MyApp.getCurrentAppDB().goToClassDao().insert(new GoToClass(
+                                ac_username, term, weekday, seq, cno, startweek,
+                                endweek, false, 0, croom, 0,
+                                sys_comment, my_comment, true
+                        ));
+                        MyApp.getCurrentAppDB().classInfoDao().insert(new ClassInfo(
+                                ac_username, cno, fake_ctype, ctype, examt,
+                                dpt_name, dpt_no, sp_name, sp_no, grade,
+                                cname, teacherno, teacher_name, courseid,
+                                maxcnt, grade_point, llxs, syxs, sjxs,
+                                qtxs, sctcnt, custom_ref
+                        ));
+                        runOnUiThread(() -> {
+                            Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(EditCourse.this, MainActivity.class));
+                        });
                     }
                 }else {
                     MyApp.getCurrentAppDB().goToClassDao().setMyComment(
