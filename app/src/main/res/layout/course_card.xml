@@ -285,7 +285,8 @@
                         android:gravity="center"
                         android:textAlignment="viewStart"
                         android:layout_marginStart="16dp"
-                        android:text="来　　源："/>
+                        android:text="来　　源："
+                        android:textColor="@color/colorPrimary"/>
                     <TextView
                         android:id="@+id/course_card_source"
                         android:layout_width="0dp"
@@ -294,7 +295,8 @@
                         android:gravity="center"
                         android:textAlignment="viewStart"
                         android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"/>
+                        android:layout_marginEnd="16dp"
+                        android:textColor="@color/colorPrimary"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

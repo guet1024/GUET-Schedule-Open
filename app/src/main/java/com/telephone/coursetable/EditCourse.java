@@ -1,6 +1,7 @@
 package com.telephone.coursetable;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.telephone.coursetable.Database.ClassInfo;
+import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 import com.telephone.coursetable.LogMe.LogMe;
@@ -24,8 +27,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.security.InvalidParameterException;
+import java.util.List;
 
 public class EditCourse extends AppCompatActivity {
 
@@ -202,11 +207,100 @@ public class EditCourse extends AppCompatActivity {
             boolean check_res = check(view);
             LogMe.e(NAME, "check res: " + check_res);
             if (check_res){
+                String ac_username = MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username;
                 if (add_start){
+                    // ----------------------- class info
+                    String cno = ((EditText)findViewById(R.id.edit_course_cno)).getText().toString();
+                    String cname = ((EditText)findViewById(R.id.edit_course_cname)).getText().toString();
+                    String teacher_name = ((EditText)findViewById(R.id.edit_course_tname)).getText().toString();
+                    double grade_point = Double.parseDouble(((EditText)findViewById(R.id.edit_course_grade_point)).getText().toString());
+                    String ctype = ((EditText)findViewById(R.id.edit_course_ctype)).getText().toString();
+                    String examt = ((EditText)findViewById(R.id.edit_course_examt)).getText().toString();
+                    // ----------------------- go to class
+                    String term = intent_extra_CourseCardData.getTerm();
+                    String sys_comment = "";
+                    int startweek = int_check(R.id.edit_course_startweek);
+                    int endweek = int_check(R.id.edit_course_endweek);
+                    int weekday = int_check(R.id.edit_course_weekday);
+                    String seq = int_check(R.id.edit_course_time)+"";
+                    String croom = ((EditText)findViewById(R.id.edit_course_croom)).getText().toString();
+                    String my_comment = ((EditText)findViewById(R.id.edit_course_my_comment)).getText().toString();
+                    // -----------------------------------------
+                    List<ClassInfo> from_data_base_list = MyApp.getCurrentAppDB().classInfoDao().selectOne(ac_username, cno);
+                    if (!from_data_base_list.isEmpty()) {
+                        ClassInfo ci = from_data_base_list.get(0);
+                        // ---------------- replace
+                        cname = ci.cname;
+                        teacher_name = ci.name;
+                        grade_point = ci.xf;
+                        ctype = ci.tname;
+                        examt = ci.examt;
+                        // ---------------- final
+                        String cname_f = cname;
+                        String teacher_name_f = teacher_name;
+                        double grade_point_f = grade_point;
+                        String ctype_f = ctype;
+                        String examt_f = examt;
+                        // -----------------------------
+                        runOnUiThread(() ->
+                                Login.getAlertDialog(
+                                        EditCourse.this,
+                                        "数据库中已经存在相同课号的课程信息，确定要使用数据库中的已有数据吗？",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                new Thread(() -> {
+                                                    // ----------------- read from database / customize if not found in database
+                                                    String fake_ctype = ci.ctype;
+                                                    String dpt_name = ci.dptname;
+                                                    String dpt_no = ci.dptno;
+                                                    String sp_name = ci.spname;
+                                                    String sp_no = ci.spno;
+                                                    String grade = ci.grade;
+                                                    String teacherno = ci.teacherno;
+                                                    String courseid = ci.courseid;
+                                                    long maxcnt = ci.maxcnt;
+                                                    double llxs = ci.llxs;
+                                                    double syxs = ci.syxs;
+                                                    double sjxs = ci.sjxs;
+                                                    double qtxs = ci.qtxs;
+                                                    long sctcnt = ci.sctcnt;
+                                                    int custom_ref = ci.custom_ref + 1;
+                                                    // ----------------------------------------------
+                                                    MyApp.getCurrentAppDB().goToClassDao().insert(new GoToClass(
+                                                            ac_username, term, weekday, seq, cno, startweek,
+                                                            endweek, false, 0, croom, 0,
+                                                            sys_comment, my_comment, true
+                                                    ));
+                                                    MyApp.getCurrentAppDB().classInfoDao().insert(new ClassInfo(
+                                                            ac_username, cno, fake_ctype, ctype_f, examt_f,
+                                                            dpt_name, dpt_no, sp_name, sp_no, grade,
+                                                            cname_f, teacherno, teacher_name_f, courseid,
+                                                            maxcnt, grade_point_f, llxs, syxs, sjxs,
+                                                            qtxs, sctcnt, custom_ref
+                                                    ));
+                                                    runOnUiThread(() -> {
+                                                        Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(EditCourse.this, MainActivity.class));
+                                                    });
+                                                }).start();
+                                            }
+                                        },
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        },
+                                        null,
+                                        "重复的数据", "确定", "我再想想"
+                                ).show());
+                    }else {
 
+                    }
                 }else {
                     MyApp.getCurrentAppDB().goToClassDao().setMyComment(
-                            MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                            ac_username,
                             intent_extra_CourseCardData.getTerm(),
                             intent_extra_CourseCardData.getWeekday(),
                             intent_extra_CourseCardData.getTime_id(),

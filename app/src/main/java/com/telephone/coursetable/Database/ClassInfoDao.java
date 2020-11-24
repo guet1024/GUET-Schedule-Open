@@ -35,4 +35,7 @@ public interface ClassInfoDao {
 
     @Query("delete from ClassInfo where courseno=:cno and username=:u")
     void deleteCno(String u, String cno);
+
+    @Query("select * from ClassInfo where username=:u and courseno=:cno")
+    List<ClassInfo> selectOne(String u, String cno);
 }
