@@ -51,4 +51,34 @@ public class GoToClassKey {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        int username_hash_code = 1;
+        for(int i = 0; i < this.username.length(); i++){
+            username_hash_code *= (this.username.charAt(i) + 1 + i);
+        }
+        hash *= username_hash_code;
+        int term_hash_code = 1;
+        for(int i = 0; i < this.term.length(); i++){
+            term_hash_code *= (this.term.charAt(i) + 1 + i);
+        }
+        hash *= term_hash_code;
+        hash *= (this.weekday + 1);
+        int time_hash_code = 1;
+        for(int i = 0; i < this.time.length(); i++){
+            time_hash_code *= (this.time.charAt(i) + 1 + i);
+        }
+        hash *= time_hash_code;
+        int cno_hash_code = 1;
+        for(int i = 0; i < this.courseno.length(); i++){
+            cno_hash_code *= (this.courseno.charAt(i) + 1 + i);
+        }
+        hash *= cno_hash_code;
+        hash *= (this.startweek + 1);
+        hash *= (this.endweek + 1);
+        hash *= ((this.oddweek ? 1 : 0) + 1);
+        return hash;
+    }
 }

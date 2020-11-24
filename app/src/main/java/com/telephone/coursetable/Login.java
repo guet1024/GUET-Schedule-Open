@@ -88,6 +88,7 @@ public class Login extends AppCompatActivity {
     private ExamInfoDao edao = null;
     private CETDao cetDao = null;
     private LABDao labDao = null;
+    private HashMap<GoToClassKey, String> my_comment_map = null;
 
     private boolean isMenuEnabled = true;
 
@@ -560,6 +561,7 @@ public class Login extends AppCompatActivity {
         edao = db.examInfoDao();
         cetDao = db.cetDao();
         labDao = db.labDao();
+        new Thread(()->my_comment_map = Methods.getMyCommentMap(gdao, cdao)).start();
         initContentView();
     }
 
@@ -964,9 +966,9 @@ public class Login extends AppCompatActivity {
 
                         try { // this is an Accident Prone Area
                             /** call {@link #deleteOldDataFromDatabase()} */
-                            HashMap<GoToClassKey, String> my_comm_map = deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                            deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                             /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, sid, my_comm_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
                             /** commit shared preference */
                             editor.commit();
                             if (fetch_merge_res) {

@@ -48,6 +48,7 @@ import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.LABDao;
+import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -100,6 +101,7 @@ public class Login_vpn extends AppCompatActivity {
     private CETDao cetDao = null;
     private LABDao labDao = null;
     private SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
+    private HashMap<GoToClassKey, String> my_comment_map = null;
 
     private String sid = "";
     private String aaw_pwd = "";//教务处密码
@@ -823,6 +825,8 @@ public class Login_vpn extends AppCompatActivity {
         labDao = db.labDao();
         title = getSupportActionBar().getTitle().toString();
 
+        new Thread(()->my_comment_map = Methods.getMyCommentMap(gdao, cdao)).start();
+
         first_login();
     }
 
@@ -1232,8 +1236,8 @@ public class Login_vpn extends AppCompatActivity {
                     /** commit shared preference */
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
-                    HashMap<GoToClassKey, String> my_comm_map = Login.deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
-                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, my_comm_map, sid, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
+                    Login.deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, my_comment_map, sid, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }
 
