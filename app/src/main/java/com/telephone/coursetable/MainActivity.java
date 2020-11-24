@@ -789,7 +789,7 @@ public class MainActivity extends AppCompatActivity {
                             boolean customized = my_node.customized;
                             data.getCards().add(new ACard(
                                     cno, cname_long, (int)my_node.start_week, (int)my_node.end_week, t_name,
-                                    tno, place, my_node.grade_point, ctype, examt, sys_comm, my_comm, customized
+                                    tno, place, my_node.grade_point, ctype, examt, sys_comm, my_comm, my_node.oddweek, customized
                             ));
                         }
                     }

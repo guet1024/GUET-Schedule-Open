@@ -25,4 +25,6 @@ public class ShowTableNode {
 
     // edit by Telephone 2020/11/23 08:44, for course card
     public boolean customized;
+    // edit by Telephone 2020/11/24 00:56, for updating my_comment in edit course activity
+    public boolean oddweek;
 }

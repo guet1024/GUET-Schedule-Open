@@ -29,8 +29,8 @@ public interface GoToClassDao {
     /**
      * this method will return a {@link ShowTableNode} list according to specified period
      */
-    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, c.xf grade_point, c.tname ctype, c.examt examt from " +
-                "(select courseno, croomno, weekday, time, startweek, endweek, sys_comm, my_comm, customized from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and time=:time and username=:u) g, " +
+    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, g.oddweek oddweek, c.xf grade_point, c.tname ctype, c.examt examt from " +
+                "(select courseno, croomno, weekday, time, startweek, endweek, sys_comm, my_comm, customized, oddweek from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and time=:time and username=:u) g, " +
                 "(select courseno, cname, name, teacherno, xf, tname, examt from ClassInfo where username=:u) c " +
             "where g.courseno=c.courseno ")
     List<ShowTableNode> getNode(String u, String term, long week, long weekday, String time);
@@ -38,8 +38,8 @@ public interface GoToClassDao {
     /**
      * this method will return a {@link ShowTableNode} list according to specified week
      */
-    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, c.xf grade_point, c.tname ctype, c.examt examt from " +
-                "(select courseno, croomno, time, weekday, startweek, endweek, sys_comm, my_comm, customized from GoToClass where term=:term and startweek<=:week and endweek>=:week and username=:u) g, " +
+    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, g.oddweek oddweek, c.xf grade_point, c.tname ctype, c.examt examt from " +
+                "(select courseno, croomno, time, weekday, startweek, endweek, sys_comm, my_comm, customized, oddweek from GoToClass where term=:term and startweek<=:week and endweek>=:week and username=:u) g, " +
                 "(select courseno, cname, name, teacherno, xf, tname, examt from ClassInfo where username=:u) c " +
             "where g.courseno=c.courseno " +
             "order by g.time ASC, g.weekday ASC ")
@@ -48,8 +48,8 @@ public interface GoToClassDao {
     /**
      * this method will return a {@link ShowTableNode} list according to specified day
      */
-    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, c.xf grade_point, c.tname ctype, c.examt examt from " +
-            "(select courseno, croomno, weekday, time, startweek, endweek, sys_comm, my_comm, customized from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and username=:u) g, " +
+    @Query("select g.courseno courseno, c.cname cname, c.name name, g.croomno croomno, g.weekday weekday, g.time time, g.startweek start_week, g.endweek end_week, c.teacherno tno, g.sys_comm sys_comm, g.my_comm my_comm, g.customized customized, g.oddweek oddweek, c.xf grade_point, c.tname ctype, c.examt examt from " +
+            "(select courseno, croomno, weekday, time, startweek, endweek, sys_comm, my_comm, customized, oddweek from GoToClass where term=:term and startweek<=:week and endweek>=:week and weekday=:weekday and username=:u) g, " +
             "(select courseno, cname, name, teacherno, xf, tname, examt from ClassInfo where username=:u) c " +
             "where g.courseno=c.courseno ")
     List<ShowTableNode> getTodayLessons(String u, String term, long week, long weekday);

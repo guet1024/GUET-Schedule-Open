@@ -193,7 +193,8 @@
                         android:gravity="center"
                         android:textAlignment="viewStart"
                         android:layout_marginStart="16dp"
-                        android:text="自定备注："/>
+                        android:text="自定备注："
+                        android:textColor="@color/colorPrimary"/>
                     <TextView
                         android:id="@+id/course_card_myccommet"
                         android:layout_width="0dp"
@@ -204,6 +205,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:scrollbars="vertical"
+                        android:textColor="@color/colorPrimary"
                         android:onClick="show_detail"/>
                 </LinearLayout>
                 <LinearLayout

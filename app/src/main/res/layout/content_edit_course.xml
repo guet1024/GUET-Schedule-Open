@@ -9,6 +9,7 @@
     tools:showIn="@layout/activity_edit_course">
 
     <LinearLayout
+        android:id="@+id/edit_course_background_of_all_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -47,7 +48,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:enabled="false"/> <!-- enabled only when add new class info -->
+                    android:enabled="false"
+                    android:maxLength="2"/> <!-- enabled only when add new class info -->
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout
@@ -64,7 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:enabled="false"/> <!-- enabled only when add new class info -->
+                    android:enabled="false"
+                    android:maxLength="2"/> <!-- enabled only when add new class info -->
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout
@@ -81,7 +84,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:enabled="false"/> <!-- enabled only when add new class info -->
+                    android:enabled="false"
+                    android:maxLength="1"/> <!-- enabled only when add new class info -->
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout
@@ -98,7 +102,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:enabled="false"/> <!-- enabled only when add new class info -->
+                    android:enabled="false"
+                    android:maxLength="1"/> <!-- enabled only when add new class info -->
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout
@@ -216,7 +221,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:enabled="false"/> <!-- enabled only when add new class info -->
+                    android:enabled="false"
+                    android:maxLength="5"/> <!-- enabled only when add new class info -->
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout

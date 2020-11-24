@@ -15,9 +15,10 @@ public class ACard implements Serializable {
     private String examt;
     private String sys_comm;
     private String my_comm;
+    private boolean odd_week;
     private boolean customized;
 
-    public ACard(String cno, String cname, int start_week, int end_week, String tname, String tno, String croom, double grade_point, String ctype, String examt, String sys_comm, String my_comm, boolean customized) {
+    public ACard(String cno, String cname, int start_week, int end_week, String tname, String tno, String croom, double grade_point, String ctype, String examt, String sys_comm, String my_comm, boolean odd_week, boolean customized) {
         this.cno = cno;
         this.cname = cname;
         this.start_week = start_week;
@@ -30,6 +31,7 @@ public class ACard implements Serializable {
         this.examt = examt;
         this.sys_comm = sys_comm;
         this.my_comm = my_comm;
+        this.odd_week = odd_week;
         this.customized = customized;
     }
 
@@ -79,6 +81,10 @@ public class ACard implements Serializable {
 
     public String getMy_comm() {
         return my_comm;
+    }
+
+    public boolean isOdd_week() {
+        return odd_week;
     }
 
     public boolean isCustomized() {
