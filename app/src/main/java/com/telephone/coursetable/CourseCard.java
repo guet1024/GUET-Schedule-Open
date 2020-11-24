@@ -32,9 +32,55 @@ public class CourseCard extends AppCompatActivity {
         c.startActivity(intent);
     }
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(CourseCard.this, MainActivity.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.COURSE_CARD);
+        MyApp.setRunning_activity_pointer(this);
         String data_string = getIntent().getStringExtra(EXTRA);
         CourseCardData data;
         if (data_string == null){

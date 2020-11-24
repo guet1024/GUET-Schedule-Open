@@ -56,9 +56,54 @@ public class EditCourse extends AppCompatActivity {
             R.id.edit_course_cno
     };
 
+    private volatile boolean visible = true;
+    private volatile Intent outdated = null;
+
+    synchronized public boolean setOutdated(){
+        if (visible) return false;
+        outdated = new Intent(this, MainActivity.class);
+        return true;
+    }
+
+    synchronized public void hide(){
+        visible = false;
+    }
+
+    synchronized public void show(){
+        visible = true;
+        if (outdated != null){
+            startActivity(outdated);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        show();
+    }
+
+    @Override
+    protected void onPause() {
+        hide();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(EditCourse.this, MainActivity.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        MyApp.clearRunningActivity(this);
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApp.setRunning_activity(MyApp.RunningActivity.EDIT_COURSE);
+        MyApp.setRunning_activity_pointer(this);
         initContentView();
         snack_bar_root_view = findViewById(R.id.edit_course_termname);
         new Thread(()-> Methods.refreshAndDeleteNotReferredClassInfo(

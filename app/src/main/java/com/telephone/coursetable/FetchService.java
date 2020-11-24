@@ -250,6 +250,8 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         MyApp.isRunning_login_thread()
         ){
             com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, NOT update shown lessons");
@@ -327,6 +329,8 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         MyApp.isRunning_login_thread()
         ){
             com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, list app-widgets NOT updated");
@@ -491,6 +495,8 @@ public class FetchService extends IntentService {
                 MyApp.isRunning_login_thread() ||
                         ra.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         ra.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        ra.equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        ra.equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         ra.equals(MyApp.RunningActivity.TEST) ||
                         ra.equals(MyApp.RunningActivity.LOGIN) ||
                         ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
