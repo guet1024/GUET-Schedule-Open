@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -98,5 +99,40 @@ public class CourseCard extends AppCompatActivity {
         LogMe.e(NAME, "called");
         CourseCardData with_a_card = (CourseCardData) view.getTag();
         EditCourse.start(CourseCard.this, false, with_a_card);
+    }
+    public void delete_course(View view){
+        Login.getAlertDialog(
+                CourseCard.this,
+                "确定要删除这条记录吗？",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Thread(() -> {
+                            CourseCardData with_a_card = (CourseCardData) view.getTag();
+                            MyApp.getCurrentAppDB().goToClassDao().deleteRecord(
+                                    MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                                    with_a_card.getTerm(),
+                                    with_a_card.getWeekday(),
+                                    with_a_card.getTime_id(),
+                                    with_a_card.getCards().get(0).getCno(),
+                                    with_a_card.getCards().get(0).getStart_week(),
+                                    with_a_card.getCards().get(0).getEnd_week(),
+                                    with_a_card.getCards().get(0).isOdd_week()
+                            );
+                            runOnUiThread(() -> {
+                                Toast.makeText(CourseCard.this, "删除成功", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(CourseCard.this, MainActivity.class));
+                            });
+                        }).start();
+                    }
+                },
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                },
+                null, "确认删除", "确定", "我再想想"
+        ).show();
     }
 }

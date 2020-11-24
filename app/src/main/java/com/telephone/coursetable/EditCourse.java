@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.GoToClass;
+import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 import com.telephone.coursetable.LogMe.LogMe;
@@ -60,6 +61,11 @@ public class EditCourse extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initContentView();
         snack_bar_root_view = findViewById(R.id.edit_course_termname);
+        new Thread(()-> Methods.refreshAndDeleteNotReferredClassInfo(
+                MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                MyApp.getCurrentAppDB().goToClassDao(),
+                MyApp.getCurrentAppDB().classInfoDao()
+        )).start();
     }
 
     @Override

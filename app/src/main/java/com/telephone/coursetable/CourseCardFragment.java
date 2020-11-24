@@ -94,6 +94,7 @@ public class CourseCardFragment extends Fragment {
             data_card.add(card);
             with_a_card.setCards(data_card);
             view.findViewById(R.id.course_card_edit).setTag(with_a_card);
+            view.findViewById(R.id.course_card_delete).setTag(with_a_card);
 
             ((TextView) view.findViewById(R.id.course_card_sysccommet)).setMovementMethod(new ScrollingMovementMethod());
             ((TextView) view.findViewById(R.id.course_card_myccommet)).setMovementMethod(new ScrollingMovementMethod());

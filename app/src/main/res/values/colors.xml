@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#0CABF3</color>
     <color name="colorAccent">#46494A</color>
 
+    <color name="colorLoginButton">#0CABF3</color>
+    <color name="colorCurrentWeekday">#0CABF3</color>
+
     <color name="colorDefaultTextColor">#505050</color>
     <color name="colorTitleText">#FFFFFF</color>
     <color name="colorLoginButtonText">#FFFFFF</color>
@@ -14,7 +17,6 @@
     <color name="colorWeekdayAndTimeBackground">#FFFFFF</color>
 
     <color name="colorForgetButton">#FFECB4</color>
-    <color name="colorCurrentWeekday">#0CABF3</color>
     <color name="colorFunctionMenuColor_0">#A0CFD5</color>
 
     <color name="colorRefresh1">#82C2D1</color>
@@ -23,7 +25,6 @@
     <color name="colorRefresh4">#FFC999</color>
     <color name="colorRefresh5">#B8D8BB</color>
 
-    <color name="colorLoginButton">#0CABF3</color>
     <color name="colorLoginTextFill">#ECECEC</color>
     <color name="colorLoginTextBorder">#000000</color>
     <color name="colorLibraryBookText">#493E21</color>
@@ -34,4 +35,6 @@
 
     <color name="colorLibraryLocalBackground">#78D4FF</color>
     <color name="colorLibraryInfoBackground">#F4E5B2</color>
+
+    <color name="colorDeleteCourse">#F44336</color>
 </resources>

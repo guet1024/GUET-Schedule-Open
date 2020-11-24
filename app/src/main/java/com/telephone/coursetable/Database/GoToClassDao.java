@@ -17,6 +17,9 @@ public interface GoToClassDao {
     @Query("delete from GoToClass where username=:u")
     void deleteAll(String u);
 
+    @Query("delete from GoToClass where username=:u and term=:term and weekday=:weekday and time=:time and courseno=:courseno and startweek=:startweek and endweek=:endweek and oddweek=:oddweek")
+    void deleteRecord(String u, String term, long weekday, String time, String courseno, long startweek, long endweek, boolean oddweek);
+
     @Query("delete from GoToClass where customized=0 and username=:u")
     void deleteAllNotCustomized(String u);
 
