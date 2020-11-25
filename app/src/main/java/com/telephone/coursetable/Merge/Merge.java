@@ -17,6 +17,7 @@ import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.LABDao;
+import com.telephone.coursetable.Database.MyComment;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Gson.CET;
@@ -78,21 +79,29 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void goToClass_ClassInfo(@NonNull String origin_g, @NonNull GoToClassDao gdao, @NonNull ClassInfoDao cdao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username){
+    public static void goToClass_ClassInfo(@NonNull String origin_g, @NonNull GoToClassDao gdao, @NonNull ClassInfoDao cdao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username) {
         GoToClass_ClassInfo_s g_s = new Gson().fromJson(origin_g, GoToClass_ClassInfo_s.class);
         List<GoToClass_ClassInfo> g = g_s.getData();
-        for (GoToClass_ClassInfo i : g){
+        for (GoToClass_ClassInfo i : g) {
             gdao.insert(
                     new GoToClass(
                             username,
                             i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
                             i.getEndweek(), i.isOddweek(), i.getId(), i.getCroomno(), i.getHours(),
                             i.getComm(),
-                            my_comment_map.get(new GoToClassKey(
-                                    username,
-                                    i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
-                                    i.getEndweek(), i.isOddweek()
-                            )), false
+//                            my_comment_map.get(new GoToClassKey(
+//                                    username,
+//                                    i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
+//                                    i.getEndweek(), i.isOddweek()
+//                            )),
+                            MyApp.getCurrentAppDB().myCommentDao().getComment(new Gson().toJson(
+                                    new GoToClassKey(
+                                            username,
+                                            i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
+                                            i.getEndweek(), i.isOddweek()
+                                    )
+                            )),
+                            false
                     )
             );
             cdao.insert(

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 import com.telephone.coursetable.LogMe.LogMe;
@@ -165,6 +166,16 @@ public class CourseCard extends AppCompatActivity {
                                     with_a_card.getCards().get(0).getEnd_week(),
                                     with_a_card.getCards().get(0).isOdd_week()
                             );
+                            MyApp.getCurrentAppDB().myCommentDao().delete(new Gson().toJson(new GoToClassKey(
+                                    MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                                    with_a_card.getTerm(),
+                                    with_a_card.getWeekday(),
+                                    with_a_card.getTime_id(),
+                                    with_a_card.getCards().get(0).getCno(),
+                                    with_a_card.getCards().get(0).getStart_week(),
+                                    with_a_card.getCards().get(0).getEnd_week(),
+                                    with_a_card.getCards().get(0).isOdd_week()
+                            )));
                             runOnUiThread(() -> {
                                 Toast.makeText(CourseCard.this, "删除成功", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(CourseCard.this, MainActivity.class));

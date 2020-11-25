@@ -13,7 +13,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.GoToClass;
+import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.Methods.Methods;
+import com.telephone.coursetable.Database.MyComment;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 import com.telephone.coursetable.LogMe.LogMe;
@@ -330,6 +332,13 @@ public class EditCourse extends AppCompatActivity {
                                                             maxcnt, grade_point_f, llxs, syxs, sjxs,
                                                             qtxs, sctcnt, custom_ref
                                                     ));
+                                                    MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
+                                                            new Gson().toJson(new GoToClassKey(
+                                                                    ac_username, term, weekday, seq,
+                                                                    cno, startweek, endweek, false
+                                                            )),
+                                                            my_comment
+                                                    ));
                                                     runOnUiThread(() -> {
                                                         Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
                                                         startActivity(new Intent(EditCourse.this, MainActivity.class));
@@ -376,6 +385,13 @@ public class EditCourse extends AppCompatActivity {
                                 maxcnt, grade_point, llxs, syxs, sjxs,
                                 qtxs, sctcnt, custom_ref
                         ));
+                        MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
+                                new Gson().toJson(new GoToClassKey(
+                                        ac_username, term, weekday, seq, cno, startweek,
+                                        endweek, false
+                                )),
+                                my_comment
+                        ));
                         runOnUiThread(() -> {
                             Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(EditCourse.this, MainActivity.class));
@@ -393,6 +409,19 @@ public class EditCourse extends AppCompatActivity {
                             intent_extra_CourseCardData.getCards().get(0).isOdd_week(),
                             ((EditText)findViewById(R.id.edit_course_my_comment)).getText().toString()
                     );
+                    MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
+                            new Gson().toJson(new GoToClassKey(
+                                    ac_username,
+                                    intent_extra_CourseCardData.getTerm(),
+                                    intent_extra_CourseCardData.getWeekday(),
+                                    intent_extra_CourseCardData.getTime_id(),
+                                    intent_extra_CourseCardData.getCards().get(0).getCno(),
+                                    intent_extra_CourseCardData.getCards().get(0).getStart_week(),
+                                    intent_extra_CourseCardData.getCards().get(0).getEnd_week(),
+                                    intent_extra_CourseCardData.getCards().get(0).isOdd_week()
+                            )),
+                            ((EditText)findViewById(R.id.edit_course_my_comment)).getText().toString()
+                    ));
                     Snackbar.make(view, "保存成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 }
             }
