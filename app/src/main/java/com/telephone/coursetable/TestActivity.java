@@ -29,6 +29,7 @@ import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
@@ -56,6 +57,11 @@ public class TestActivity extends AppCompatActivity {
     private ScrollView scrollView;
 
     private boolean fetch_lan_if_true = true;
+
+    List<User> activatedUsers = new LinkedList<>();
+    User current_user = null;
+    String name = "";
+    String username = null;
 
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
@@ -137,6 +143,15 @@ public class TestActivity extends AppCompatActivity {
         print(LogMe.log.toString());
 
         test_button2(null);
+
+        new Thread(()->{
+            activatedUsers = udao.getActivatedUser();
+            if (!activatedUsers.isEmpty()) {
+                current_user = activatedUsers.get(0);
+                name = pdao.selectAll().get(0).name;
+                username = current_user.username;
+            }
+        }).start();
     }
 
     public void test_button1(View view){
@@ -148,14 +163,7 @@ public class TestActivity extends AppCompatActivity {
             return;
         }
         new Thread(()->{
-            List<User> activatedUsers = udao.getActivatedUser();
-            User current_user = null;
-            String name = "";
-            String username = null;
             if (!activatedUsers.isEmpty()) {
-                current_user = udao.getActivatedUser().get(0);
-                name = pdao.selectAll().get(0).name;
-                username = current_user.username;
                 print("当前用户：" + current_user.username + " " + name);
             }else {
                 print("当前用户：无，已取消数据拉取");
@@ -217,7 +225,7 @@ public class TestActivity extends AppCompatActivity {
     public void print(String text){
         runOnUiThread(()->{
             textView.setText(textView.getText() + text + "\n");
-            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            scrollView.postDelayed(()->scrollView.fullScroll(View.FOCUS_DOWN), 200);
         });
     }
 
