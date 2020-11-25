@@ -274,7 +274,7 @@ public class WAN {
                 null,
                 null,
                 null,
-                10000
+                20000
         );
     }
 }

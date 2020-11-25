@@ -38,6 +38,7 @@ import com.telephone.coursetable.Gson.PersonInfo_s;
 import com.telephone.coursetable.Gson.StudentInfo;
 import com.telephone.coursetable.Gson.TermInfo;
 import com.telephone.coursetable.Gson.TermInfo_s;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
@@ -260,22 +261,31 @@ public class Merge {
         LAB_s lab_s = new Gson().fromJson(origin_lab, LAB_s.class);
         List<LAB> labList = lab_s.getData();
         for (LAB lab : labList) {
+            String time;
+            if (lab.getJc() < 1){
+                time = "1";
+            }else if (lab.getJc() > MyApp.times.length){
+                time = MyApp.times[MyApp.times.length - 1];
+            }else {
+                time = lab.getJc()+"";
+            }
+            long jc_long = Long.parseLong(time);
             labDao.insert(new com.telephone.coursetable.Database.LAB(
                     lab.getTerm(), lab.getLabid(), lab.getItemname(), lab.getCourseid(), lab.getCname(),
                     lab.getSpno(), lab.getSpname(), lab.getGrade(), lab.getTeacherno(), lab.getName(),
                     lab.getSrname(), lab.getSrdd(), lab.getXh(), lab.getBno(), lab.getPersons(),
-                    lab.getZc(), lab.getXq(), lab.getJc(), lab.getJc1(), lab.getAssistantno(), lab.getTeachers(),
+                    lab.getZc(), lab.getXq(), jc_long, lab.getJc1(), lab.getAssistantno(), lab.getTeachers(),
                     lab.getComm(), lab.getCourseno(), lab.getStusct(), lab.getSrid()
             ));
             goToClassDao.insert(new GoToClass(
                     username,
-                    lab.getTerm(), lab.getXq(), lab.getJc() + "",
+                    lab.getTerm(), lab.getXq(), time,
                     com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
                     lab.getZc(), lab.getZc(), false, 0, lab.getSrdd(), 0,
                     com.telephone.coursetable.Database.LAB.getFullLabName(lab.getCname(), lab.getItemname()) + "（备注：" + lab.getComm() + "）",
                     my_comment_map.get(new GoToClassKey(
                             username,
-                            lab.getTerm(), lab.getXq(), lab.getJc() + "",
+                            lab.getTerm(), lab.getXq(), time,
                             com.telephone.coursetable.Database.LAB.getUniqueSerialNumber(lab.getXh(), lab.getBno() + ""),
                             lab.getZc(), lab.getZc(), false
                     )), false

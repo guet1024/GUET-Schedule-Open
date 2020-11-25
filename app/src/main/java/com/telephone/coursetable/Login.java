@@ -733,7 +733,11 @@ public class Login extends AppCompatActivity {
                     continue;
                 }
                 LogMe.e(NAME, "fetching lab");
-                res = LAN.lab(c, cookie, term.term);
+                res.code = -1;
+                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
+                    res = LAN.lab(c, cookie, term.term);
+                }
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
