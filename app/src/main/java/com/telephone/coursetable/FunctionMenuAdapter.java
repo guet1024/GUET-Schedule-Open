@@ -322,13 +322,18 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setText(groups.get(i).getValue().get(i1).get(3));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setText(groups.get(i).getValue().get(i1).get(4));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setText(groups.get(i).getValue().get(i1).get(5));
-                if (groups.get(i).getValue().get(i1).get(6) != null){
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setText(groups.get(i).getValue().get(i1).get(6));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setText(groups.get(i).getValue().get(i1).get(7));
+                int color_index = 8;
+                if (groups.get(i).getValue().get(i1).get(color_index) != null){
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                 }else {
                     TypedValue a = new TypedValue();
                     context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
@@ -338,6 +343,8 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(a.data);
                 }
                 view.setOnClickListener(collapse);
                 break;
