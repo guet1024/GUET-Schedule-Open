@@ -382,6 +382,9 @@ public class FunctionMenu extends AppCompatActivity {
             child = new LinkedList<>();
             child.add("一键评教");
             children.add(child);
+            child = new LinkedList<>();
+            child.add("教材评价");
+            children.add(child);
             menus.add(Map.entry(teachers_eva_group, children));
 
             String cet_group = "等级考试成绩";

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
+import com.telephone.coursetable.TeachersEvaluation.TextBookEvaluation;
 
 public class TeacherEvaluationPanel extends AppCompatActivity {
 
@@ -111,6 +112,20 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
                     }
                 }).start();
                 break;
+            case R.id.book_evaluation_start:
+                new Thread(()->{
+                    if (!TextBookEvaluation.evaluation(
+                            TeacherEvaluationPanel.this,
+                            MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                            MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password
+                    )){
+                        Snackbar.make(textView,
+                                "上次教材评价还未结束，只有上次教材评价结束后才能开始新的教材评价哦~",
+                                BaseTransientBottomBar.LENGTH_SHORT
+                        ).setTextColor(Color.WHITE).show();
+                    }
+                }).start();
+                break;
         }
         return true;
     }
@@ -124,7 +139,7 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
 
     public void print_end_symbol(){
         print("");
-        print("======== 评教结束 ========");
+        print("======== 评教/评学结束 ========");
         print("");
     }
 

@@ -555,8 +555,7 @@ public class TeachersEvaluation {//评教
                 MyApp.getRunning_activity_pointer() == null ||
                 !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
                 !c_class.cast(c).isVisible() ||
-                getThread() == null ||
-                !isEvaluation_running()
+                getThread() == null
                 ;
     }
 
