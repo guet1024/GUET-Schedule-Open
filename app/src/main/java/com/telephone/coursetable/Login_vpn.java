@@ -46,7 +46,9 @@ import com.telephone.coursetable.Database.ExamInfoDao;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
+import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.LABDao;
+import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -99,6 +101,7 @@ public class Login_vpn extends AppCompatActivity {
     private CETDao cetDao = null;
     private LABDao labDao = null;
     private SharedPreferences.Editor editor = MyApp.getCurrentSharedPreferenceEditor();
+    private HashMap<GoToClassKey, String> my_comment_map = null;
 
     private String sid = "";
     private String aaw_pwd = "";//教务处密码
@@ -822,6 +825,8 @@ public class Login_vpn extends AppCompatActivity {
         labDao = db.labDao();
         title = getSupportActionBar().getTitle().toString();
 
+        new Thread(()->my_comment_map = Methods.getMyCommentMap(gdao, cdao)).start();
+
         first_login();
     }
 
@@ -874,7 +879,9 @@ public class Login_vpn extends AppCompatActivity {
      * 2. save the pulled data to database and shared preference
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie, PersonInfoDao pdao, TermInfoDao tdao,
+    public static boolean fetch_merge(Context c, String cookie,
+                                      HashMap<GoToClassKey, String> my_comm_map, String username,
+                                      PersonInfoDao pdao, TermInfoDao tdao,
                                       GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao,
                                       GradesDao grdao, ExamInfoDao edao , CETDao cetDao, LABDao labDao,
                                       SharedPreferences.Editor editor) {
@@ -916,7 +923,7 @@ public class Login_vpn extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch go-to-class and class info success, merging...");
-        Merge.goToClass_ClassInfo(res.comment, gdao, cdao);
+        Merge.goToClass_ClassInfo(res.comment, gdao, cdao, my_comm_map, username);
 
         LogMe.e(NAME, "fetching graduation courses");
         res = WAN.graduationScore(c, cookie);
@@ -979,7 +986,11 @@ public class Login_vpn extends AppCompatActivity {
                     continue;
                 }
                 LogMe.e(NAME, "fetching lab");
-                res = WAN.lab(c, cookie, term.term);
+                res.code = -1;
+                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
+                    res = WAN.lab(c, cookie, term.term);
+                }
                 if (res.code != 0) {
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
                     com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
@@ -987,7 +998,7 @@ public class Login_vpn extends AppCompatActivity {
                 }
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
                 LogMe.e(NAME, "fetch lab success, merging...");
-                Merge.lab(res.comment, labDao, gdao, cdao);
+                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
             }
         }
 
@@ -1196,6 +1207,11 @@ public class Login_vpn extends AppCompatActivity {
                 return;
             }
 
+            // edit by Telephone 2020/11/23 09:46, get currently activated username
+            String username = null;
+            if (!udao.getActivatedUser().isEmpty()){
+                username = udao.getActivatedUser().get(0).username;
+            }
             /** insert/replace new user into database */
             udao.insert(new User(sid, aaw_pwd, sys_pwd, vpn_pwd));
             /** deactivate all user in database */
@@ -1224,8 +1240,8 @@ public class Login_vpn extends AppCompatActivity {
                     /** commit shared preference */
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
-                    Login.deleteOldDataFromDatabase(gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
-                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
+                    Login.deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
+                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, my_comment_map, sid, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }
 

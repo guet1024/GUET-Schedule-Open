@@ -227,9 +227,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                                     a,
                                     a,
                                     ()-> a.runOnUiThread(()->{
-//                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，请重试/✈");
+                                        // edit by Telephone, 2020/11/20 10:29. Now, no need to override the on-click-listener. Just let it re-query.
+                                        t.setText(groups.get(i).getValue().get(i1).get(0) + "　网络错误，请重试/✈");
                                         p.setVisibility(View.INVISIBLE);
-//                                        v.setOnClickListener(view15 -> Check.this.run());
+                                        v.setOnClickListener(view15 -> Check.this.run());
                                     }),
                                     ()-> a.runOnUiThread(()->{
                                         p.setVisibility(View.INVISIBLE);
@@ -321,13 +322,18 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setText(groups.get(i).getValue().get(i1).get(3));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setText(groups.get(i).getValue().get(i1).get(4));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setText(groups.get(i).getValue().get(i1).get(5));
-                if (groups.get(i).getValue().get(i1).get(6) != null){
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
-                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(6)));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setText(groups.get(i).getValue().get(i1).get(6));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setText(groups.get(i).getValue().get(i1).get(7));
+                int color_index = 8;
+                if (groups.get(i).getValue().get(i1).get(color_index) != null){
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_cno)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                 }else {
                     TypedValue a = new TypedValue();
                     context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
@@ -337,17 +343,14 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_date)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_time)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(a.data);
+                    ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(a.data);
                 }
                 view.setOnClickListener(collapse);
                 break;
             case 6:
                 ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)).setText(groups.get(i).getValue().get(i1).get(0));
-                view.setOnClickListener(view14 -> new Thread(() -> TeachersEvaluation.evaluation(
-                        (FunctionMenu) context,
-                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
-                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password,
-                        MyApp.getCurrentAppDB().termInfoDao()
-                )).start());
+                view.setOnClickListener(view14 -> context.startActivity(new Intent(context, TeacherEvaluationPanel.class)));
                 break;
             case 7:
                 ((TextView)view.findViewById(R.id.cet_term)).setText(groups.get(i).getValue().get(i1).get(0));

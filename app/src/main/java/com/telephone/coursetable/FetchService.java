@@ -38,6 +38,7 @@ import com.telephone.coursetable.Database.GraduationScore;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.LAB;
 import com.telephone.coursetable.Database.LABDao;
+import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.ShowTableNode;
@@ -249,6 +250,8 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         MyApp.isRunning_login_thread()
         ){
             com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, NOT update shown lessons");
@@ -263,7 +266,9 @@ public class FetchService extends IntentService {
             update_foreground_notification("未登录");
             return;
         }
-        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime(today,
+        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime(
+                udao.getActivatedUser().get(0).username,
+                today,
                 tdao,
                 preferences,
                 DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
@@ -273,41 +278,53 @@ public class FetchService extends IntentService {
         );
         if (currentOrNextTime!=null) {
             if (currentOrNextTime.isNow) {
-                String text = "正在上课：";
+                StringBuilder text = new StringBuilder("正在上课：");
                 for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                     ShowTableNode nt = currentOrNextTime.list.get(i);
                     if (i > 0) {
                         if (nt.croomno != null) {
-                            text = text + " ( " + nt.croomno + " " + nt.cname + " )";
-                        } else text = text + " (" + " *　" + nt.cname + " )";
+                            text.append(" ( ").append(nt.croomno).append(" ").append(nt.cname).append(" )");
+                        } else text.append(" (").append(" *　").append(nt.cname).append(" )");
                     } else {
                         if (nt.croomno != null) {
-                            text = text + nt.croomno + " " + nt.cname;
-                        } else text = text + " *　" + nt.cname;
+                            text.append(nt.croomno).append(" ").append(nt.cname);
+                        } else text.append(" *　").append(nt.cname);
                     }
                 }
-                update_foreground_notification(text);
+                for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                    text.append("\n\n");
+                    ShowTableNode nt = currentOrNextTime.list.get(i);
+                    text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
+                    text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
+                }
+                update_foreground_notification(text.toString());
             }
             else {
                 if (currentOrNextTime.list.isEmpty()) {
                     update_foreground_notification("今日课程已全部完成");
                 }
                 else {
-                    String text = "下一节课：";
-                    if ( currentOrNextTime.start!=null ) text = "下一节课(" + currentOrNextTime.start + ")：";
+                    StringBuilder text = new StringBuilder("下一节课：");
+                    if ( currentOrNextTime.start!=null ) text = new StringBuilder("下一节课(" + currentOrNextTime.start + ")：");
                     for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                         ShowTableNode nt = currentOrNextTime.list.get(i);
                         if (i > 0) {
                             if (nt.croomno != null) {
-                                text = text + " ( " + nt.croomno + " " + nt.cname + " )";
-                            } else text = text + " (" + " *　" + nt.cname + " )";
+                                text.append(" ( ").append(nt.croomno).append(" ").append(nt.cname).append(" )");
+                            } else text.append(" (").append(" *　").append(nt.cname).append(" )");
                         } else {
                             if (nt.croomno != null) {
-                                text = text + nt.croomno + " " + nt.cname;
-                            } else text = text + " *　" + nt.cname;
+                                text.append(nt.croomno).append(" ").append(nt.cname);
+                            } else text.append(" *　").append(nt.cname);
                         }
                     }
-                    update_foreground_notification(text);
+                    for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                        text.append("\n\n");
+                        ShowTableNode nt = currentOrNextTime.list.get(i);
+                        text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
+                        text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
+                    }
+                    update_foreground_notification(text.toString());
                 }
             }
         }
@@ -324,6 +341,8 @@ public class FetchService extends IntentService {
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.TEST) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         MyApp.getRunning_activity().equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        MyApp.getRunning_activity().equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         MyApp.isRunning_login_thread()
         ){
             com.telephone.coursetable.LogMe.LogMe.e(NAME,"data is being change, list app-widgets NOT updated");
@@ -376,7 +395,7 @@ public class FetchService extends IntentService {
             }else {
                 String corresponding_time = MyApp.times[Arrays.asList(MyApp.appwidget_list_today_time_descriptions).indexOf(des)];
                 String now_time = today_locate.time;
-                List<ShowTableNode> courses_list = gdao.getNode(today_locate.term.term, today_locate.week, today_locate.weekday, corresponding_time);
+                List<ShowTableNode> courses_list = gdao.getNode(udao.getActivatedUser().get(0).username, today_locate.term.term, today_locate.week, today_locate.weekday, corresponding_time);
                 for (ShowTableNode course : courses_list){
                     res.add(null);
 
@@ -415,7 +434,7 @@ public class FetchService extends IntentService {
                 continue;
             }else {
                 String corresponding_time = MyApp.times[Arrays.asList(MyApp.appwidget_list_tomorrow_time_descriptions).indexOf(des)];
-                List<ShowTableNode> courses_list = gdao.getNode(tomorrow_locate.term.term, tomorrow_locate.week, tomorrow_locate.weekday, corresponding_time);
+                List<ShowTableNode> courses_list = gdao.getNode(udao.getActivatedUser().get(0).username, tomorrow_locate.term.term, tomorrow_locate.week, tomorrow_locate.weekday, corresponding_time);
                 for (ShowTableNode course : courses_list){
                     res.add(null);
 
@@ -461,6 +480,8 @@ public class FetchService extends IntentService {
                 return ((FunctionMenu)activity).setOutdated();
             case ABOUT:
                 return ((AboutActivity)activity).setOutdated();
+            case TEACHER_EVALUATION_PANEL:
+                return ((TeacherEvaluationPanel)activity).setOutdated();
             case WEB_LINKS:
                 return ((WebLinksActivity)activity).setOutdated();
             case GUET_MUSIC:
@@ -488,6 +509,8 @@ public class FetchService extends IntentService {
                 MyApp.isRunning_login_thread() ||
                         ra.equals(MyApp.RunningActivity.CHANGE_HOURS) ||
                         ra.equals(MyApp.RunningActivity.CHANGE_TERMS) ||
+                        ra.equals(MyApp.RunningActivity.COURSE_CARD) ||
+                        ra.equals(MyApp.RunningActivity.EDIT_COURSE) ||
                         ra.equals(MyApp.RunningActivity.TEST) ||
                         ra.equals(MyApp.RunningActivity.LOGIN) ||
                         ra.equals(MyApp.RunningActivity.LOGIN_VPN) ||
@@ -556,12 +579,15 @@ public class FetchService extends IntentService {
         LABDao labDao = MyApp.getCurrentAppDB().labDao();
         UserDao udao = MyApp.getCurrentAppDB().userDao();
         Login.deleteOldDataFromDatabase(
-            gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test, cetDao_test, labDao_test
+            user.username, gdao_test, cdao_test, tdao_test, pdao_test, gsdao_test, grdao_test, edao_test, cetDao_test, labDao_test
         );
         editor_test.clear().commit();
+        // edit by Telephone 2020/11/23 18:15, use the comment map from formal database, NOT test database
         boolean fetch_merge_res = Login.fetch_merge(
                 FetchService.this,
                 cookie_builder.toString(),
+                user.username,
+                Methods.getMyCommentMap(gdao, cdao),
                 pdao_test,
                 tdao_test,
                 gdao_test,
@@ -595,6 +621,7 @@ public class FetchService extends IntentService {
         /** migrate the pulled data to the database */
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "migrate the pulled data to the database...");
         lan_merge(
+                user.username,
                 pdao, pdao_test,
                 tdao, tdao_test,
                 gdao, gdao_test,
@@ -624,14 +651,17 @@ public class FetchService extends IntentService {
 
     public void wan_merge(){}
 
-    public void lan_merge(PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
-                          ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
-                          SharedPreferences.Editor editor, SharedPreferences pref_t,
-                          GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply,
-                          ExamInfoDao e, ExamInfoDao e_t,
-                          CETDao cet, CETDao cet_t,
-                          LABDao lab, LABDao lab_t){
-        Login.deleteOldDataFromDatabase(g, c, t, p, gs, gr, e, cet, lab);
+    public void lan_merge(
+            String username,
+            PersonInfoDao p, PersonInfoDao p_t, TermInfoDao t, TermInfoDao t_t, GoToClassDao g, GoToClassDao g_t,
+            ClassInfoDao c, ClassInfoDao c_t, GraduationScoreDao gs, GraduationScoreDao gs_t,
+            SharedPreferences.Editor editor, SharedPreferences pref_t,
+            GradesDao gr, GradesDao gr_t, List<Integer> delay_week_to_apply,
+            ExamInfoDao e, ExamInfoDao e_t,
+            CETDao cet, CETDao cet_t,
+            LABDao lab, LABDao lab_t
+    ){
+        Login.deleteOldDataFromDatabase(username, g, c, t, p, gs, gr, e, cet, lab);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
         for (PersonInfo p_a : p_t_all){
@@ -643,11 +673,11 @@ public class FetchService extends IntentService {
             t_a.setDelay(delay_week_to_apply.get(i));
             t.insert(t_a);
         }
-        List<GoToClass> g_t_all = g_t.selectAll();
+        List<GoToClass> g_t_all = g_t.selectAll(username);
         for (GoToClass g_a : g_t_all){
             g.insert(g_a);
         }
-        List<ClassInfo> c_t_all = c_t.selectAll();
+        List<ClassInfo> c_t_all = c_t.selectAll(username);
         for (ClassInfo c_a : c_t_all){
             c.insert(c_a);
         }

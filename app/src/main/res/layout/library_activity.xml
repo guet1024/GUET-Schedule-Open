@@ -31,7 +31,7 @@
                 android:id="@+id/send_message"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@color/colorLibraryLocalBackground"
+                android:background="@drawable/library_query_btn_border"
                 android:text="查询" />
 
         </LinearLayout>
@@ -58,6 +58,7 @@
 
                 <ProgressBar
                     android:id="@+id/progressBar"
+                    android:theme="@style/progressbar_accent"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -69,7 +70,8 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"/>
 
             </LinearLayout>
 

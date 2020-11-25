@@ -144,6 +144,7 @@ public class LAN {
                 null,
                 r.getString(R.string.lan_get_student_success_contain_response_text),
                 null,
+                null,
                 null
         );
     }
@@ -166,6 +167,7 @@ public class LAN {
                 "}",
                 null,
                 "\"success\":true",
+                null,
                 null,
                 null
         );
@@ -203,6 +205,7 @@ public class LAN {
                 "}",
                 null,
                 "\"success\":true",
+                null,
                 null,
                 null
         );
@@ -314,7 +317,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                10000
+                20000
         );
     }
 }

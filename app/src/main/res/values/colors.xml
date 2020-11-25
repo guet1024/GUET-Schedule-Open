@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#46494A</color>
-    <color name="colorPrimaryDark">#46494A</color>
+    <color name="colorPrimary">#0CABF3</color>
+    <color name="colorPrimaryDark">#0CABF3</color>
     <color name="colorAccent">#46494A</color>
 
+    <color name="colorLoginButton">#0CABF3</color>
+    <color name="colorCurrentWeekday">#0CABF3</color>
+
+    <color name="colorDefaultTextColor">#505050</color>
     <color name="colorTitleText">#FFFFFF</color>
     <color name="colorLoginButtonText">#FFFFFF</color>
-    <color name="colorForgetButtonText">#FFFFFF</color>
+    <color name="colorForgetButtonText">#858171</color>
+    <color name="colorPhoneNumberQueryButtonText">#393422</color>
     <color name="colorCurrentWeekdayText">#FFFFFF</color>
     <color name="colorPickerBackground">#FFFFFF</color>
     <color name="colorWeekdayAndTimeBackground">#FFFFFF</color>
 
-    <color name="colorForgetButton">#A0CFD5</color>
-    <color name="colorCurrentWeekday">#A0CFD5</color>
+    <color name="colorForgetButton">#FFECB4</color>
     <color name="colorFunctionMenuColor_0">#A0CFD5</color>
 
     <color name="colorRefresh1">#82C2D1</color>
@@ -21,17 +25,16 @@
     <color name="colorRefresh4">#FFC999</color>
     <color name="colorRefresh5">#B8D8BB</color>
 
-    <color name="colorLoginButton">#5D6161</color>
     <color name="colorLoginTextFill">#ECECEC</color>
     <color name="colorLoginTextBorder">#000000</color>
     <color name="colorLibraryBookText">#493E21</color>
     <color name="colorLibraryLocalText">#18302D</color>
     <color name="colorLoginProgressBar">#ACB4BA</color>
-    <color name="colorCurrentDateText">#00BCD4</color>
+    <color name="colorCurrentDateText">#10B5FF</color>
     <color name="colorTableNodeBackground">#EDEDED</color>
 
-    <color name="colorLibraryLocalBackground">#D1E9E9</color>
+    <color name="colorLibraryLocalBackground">#78D4FF</color>
     <color name="colorLibraryInfoBackground">#F4E5B2</color>
 
-    <color name="colorDefaultTextColor">#505050</color>
+    <color name="colorDeleteCourse">#F44336</color>
 </resources>

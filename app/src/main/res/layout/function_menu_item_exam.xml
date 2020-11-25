@@ -55,4 +55,20 @@
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/function_menu_itemtv_week_weekday_time"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/function_menu_itemtv_comment"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center" />
 </LinearLayout>

@@ -1,11 +1,16 @@
 package com.telephone.coursetable.Update;
 
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +30,8 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.telephone.coursetable.BuildConfig;
 import com.telephone.coursetable.Gson.Update.Release;
@@ -37,6 +44,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,7 +64,8 @@ public class Update {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(c);
 //        String url ="https://api.github.com/repos/Telephone2019/CourseTable/releases/latest";
-        String url ="https://gitee.com/api/v5/repos/telephone2019/guet-curriculum/releases/latest";
+//        String url ="https://gitee.com/api/v5/repos/telephone2019/guet-curriculum/releases/latest";
+        String url ="https://guetcob.com:44334/vmd5apk";
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(
                 Request.Method.GET,
@@ -69,51 +78,56 @@ public class Update {
                         com.telephone.coursetable.LogMe.LogMe.e(NAME, "response is null or empty");
                     } else {
                         com.telephone.coursetable.LogMe.LogMe.e(NAME, "response: " + response);
-                        Release latest = new Gson().fromJson(response, Release.class);
-                        String version = "v" + BuildConfig.VERSION_NAME;
-                        String latest_tag = latest.getTag_name();
+                        String version = BuildConfig.VERSION_NAME;
+                        String latest_tag = response.substring(0, response.indexOf(' '));
+                        String md5 = response.substring(response.indexOf(' ') + 1);
                         if (!latest_tag.equals(version)) {
                             if (new_version != null) {
                                 new_version.run();
                             }
                             if (tv != null && origin != null && app != null) {
-                                app.runOnUiThread(()->tv.setText(origin + "    new " + latest_tag + "⇧"));
+                                app.runOnUiThread(()->tv.setText(origin + "    new v" + latest_tag + "⇧"));
                             }
                             if (view != null && app != null) {
-                                app.runOnUiThread(()->view.setOnClickListener(view1 -> {
+                                app.runOnUiThread(() -> view.setOnClickListener(view1 -> {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(c);
                                     builder.setMessage("您想要查看最新版本更新详情吗?");
                                     builder.setPositiveButton("查看详情",
                                             (dialogInterface, i) -> {
                                                 Uri see_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-//                                            Uri see_uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
                                                 c.startActivity(new Intent(Intent.ACTION_VIEW, see_uri));
                                             })
                                             .setNegativeButton("直接下载",
                                                     (dialogInterface, i) -> {
-                                                        String body = latest.getBody();
-                                                        String apk_name = body.substring(0, body.indexOf(".apk") + 4);
-                                                        Uri download_uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/download/" + latest_tag + "/" + apk_name);
-                                                        c.startActivity(new Intent(Intent.ACTION_VIEW, download_uri));
+                                                        Update.use_download_manager_to_download_and_install(
+                                                                c, "GUET课程表v" + latest_tag + ".apk",
+                                                                "http://guetcob.com:10801/release/newest.apk",
+                                                                md5
+                                                        );
+                                                        app.runOnUiThread(()->
+                                                                Snackbar.make(view,
+                                                                        "正在下载新版本，下载完成后将会自动安装，请不要关闭应用",
+                                                                        BaseTransientBottomBar.LENGTH_LONG
+                                                                ).setTextColor(Color.WHITE).show()
+                                                        );
                                                     });
                                     builder.create().show();
                                 }));
                             }
                             Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-//                            Uri uri = Uri.parse("https://gitee.com/telephone2019/guet-curriculum/releases/" + latest_tag);
                             Intent notificationIntent = new Intent(Intent.ACTION_VIEW, uri);
                             PendingIntent pendingIntent =
                                     PendingIntent.getActivity(c, 0, notificationIntent, 0);
                             Notification notification =
                                     new NotificationCompat.Builder(c, MyApp.notification_channel_id_update)
                                             .setContentTitle("新版发布: " + latest_tag)
-                                            .setStyle(new NotificationCompat.BigTextStyle().bigText(latest_tag + "版本已发布! \n版本更新内容:\n    " + latest.getName() + "\n点击查看详情/下载安装"))
+                                            .setStyle(new NotificationCompat.BigTextStyle().bigText(latest_tag + "版本已发布! \n点击查看更新详情\n转到 “更多 -> 应用更新” 中即可下载安装"))
                                             .setSmallIcon(R.drawable.feather_pen_trans)
                                             .setContentIntent(pendingIntent)
                                             .setAutoCancel(true)
                                             .setTicker("新版发布: " + latest_tag)
                                             .build();
-                            if (already != null && already.equals(latest_tag)){
+                            if (already != null && already.equals(latest_tag)){ // if already notify, skip notify
                                 return;
                             }
                             NotificationManagerCompat.from(c).notify(MyApp.notification_id_new_version, notification);
@@ -121,6 +135,16 @@ public class Update {
                         } else {
                             if (no_new_version != null) {
                                 no_new_version.run();
+                            }
+                            File[] apk_fileList = c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).listFiles(new FilenameFilter() {
+                                @Override
+                                public boolean accept(File dir, String name) {
+                                    return name.endsWith(".apk");
+                                }
+                            });
+                            for(File apk : apk_fileList){
+                                LogMe.e(NAME, "deleted one apk file");
+                                apk.delete();
                             }
                         }
                     }
@@ -130,15 +154,16 @@ public class Update {
                     if (error != null) {
                         error.run();
                     }
-                    if (tv != null && origin != null && app != null) {
-                        app.runOnUiThread(()->tv.setText(origin + "　网络错误，请重试/✈"));
-                    }
-                    if (view != null && app != null) {
-                        app.runOnUiThread(()->view.setOnClickListener(view1 -> {
-                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
-                            c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        }));
-                    }
+                    // edit by Telephone, 2020/11/20 10:29. Now, no need to override the on-click-listener. Just let it re-query.
+//                    if (tv != null && origin != null && app != null) {
+//                        app.runOnUiThread(()->tv.setText(origin + "　网络错误，请重试/✈"));
+//                    }
+//                    if (view != null && app != null) {
+//                        app.runOnUiThread(()->view.setOnClickListener(view1 -> {
+//                            Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases/latest");
+//                            c.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+//                        }));
+//                    }
                 }
 //        );
         ){
@@ -146,8 +171,8 @@ public class Update {
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 String parsed;
                 try {
-                    parsed = new String(response.data, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
+                    parsed = new String(response.data, StandardCharsets.UTF_8);
+                } catch (Exception e) {
                     try {
                         parsed = new String(response.data, "GBK");
                     } catch (UnsupportedEncodingException ex) {
@@ -178,116 +203,47 @@ public class Update {
         c.startActivity(intent);
     }
 
-    /**
-     *
-     * @param c
-     * @param file_name the filename to save the downloaded file as
-     * @param md5 the MD5 value used to verify the downloaded file
-     * @return
-     * - true : download success, start installing
-     * - false : something went wrong
-     */
-    public static boolean download_and_install(Context c, String file_name, String md5){
-        final String NAME = "download_and_install()";
-        String dirname = "downloaded_apks";
-        Socket isocket = null;
-        FileOutputStream fos = null;
-        int dlen = 0;
-        int wlen = 0;
-        try {
-            File dir = new File(c.getFilesDir().getAbsolutePath() + "/" + dirname);
-            File file = new File(dir, file_name);
-            File new_file = new File(dir, md5);
-            if (new_file.exists()){
-                LogMe.e(NAME, "installing " + file_name + "...");
-                install(c, new_file);
-                return true;
-            }
-            try {
-                dir.mkdir();
-                file.createNewFile();
-            }catch (Exception ignored){}
-            FileOutputStream os = new FileOutputStream(file);
-            fos = os;
-            Socket socket = new Socket();
-            isocket = socket;
-            socket.setSoTimeout(15000); // 15s
-            socket.connect(new InetSocketAddress("47.115.61.46", 65535));
-            if (!socket.isConnected()){
-                LogMe.e(NAME, "can not connect the socket, fail...");
-                clean(socket, os);
-                return false;
-            }
-            LogMe.e(NAME, "local address: " + socket.getLocalAddress().getHostAddress() + " local port: " + socket.getLocalPort());
-            InputStream is = socket.getInputStream();
-            OutputStream sos = socket.getOutputStream();
-            byte[] request = new String("GET / HTTP/1.1").getBytes(StandardCharsets.UTF_8);
-            sos.write(request);
-            StringBuilder text = new StringBuilder();
-            byte[] bytes = new byte[1];
-            while (true){
-                int r = is.read();
-                if (r == -1){ // reach the end before break
-                    LogMe.e(NAME, "read HTTP fail...");
-                    clean(socket, os);
-                    return false;
-                }
-                // UTF-8使用8位码元和变长编码，通过以下措施：
-                //     1. 将非标准ASCII码元的最高位置1
-                //     2. 标准ASCII字符的UTF-8编码为单字节，其余字符的UTF-8编码使用一个以上的字节
-                // UTF-8可以兼容标准ASCII
-                // 这也就意味着，对于标准ASCII字符，可以像使用标准ASCII编码一样使用UTF-8编码
-                bytes[0] = (byte)r;
-                text.append(new String(bytes, StandardCharsets.UTF_8));
-                int size = text.length();
-                String current = text.toString();
-                if (size > 4 && current.substring(size - 4).equals("\r\n\r\n")){
-                    break;
-                }
-            }
-            String http = text.toString();
-            LogMe.e(NAME, http);
-            String symbol1 = "Content-Length: ";
-            String symbol2 = "\r\n";
-            int index1 = http.indexOf(symbol1);
-            int index2 = http.indexOf(symbol2, index1);
-            String len_s = http.substring(index1 + symbol1.length(), index2);
-            int len = Integer.parseInt(len_s);
-            LogMe.e(NAME, "get Content-Length: " + len);
-            byte[] apk = new byte[len];
-            int total = 0;
-            while (total < len) {
-                int res = is.read(apk, total, len - total);
-                if (res == -1){
-                    LogMe.e(NAME, "when getting apk, expect something but reach the end, fail...");
-                    clean(socket, os);
-                    return false;
-                }
-                total += res;
-                dlen += res;
-                LogMe.e(NAME, "receive " + res + " data, total: " + total + " , need: " + len);
-            }
-            os.write(apk, 0, len);
-            wlen += len;
-            LogMe.e(NAME, "downloaded file has been written to " + file_name);
-            socket.close();
-            os.close();
-            String dmd5 = getFileMD5(file);
-            LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
-            if (!dmd5.equals(md5)){
-                LogMe.e(NAME, "MD5 verification fail");
-                return false;
-            }
-            LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
-            LogMe.e(NAME, "installing " + file_name + "...");
-            install(c, file);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            LogMe.e(NAME, "dlen = " + dlen + " wlen = " + wlen);
-            clean(isocket, fos);
-            return false;
+    public static void use_download_manager_to_download_and_install(Context c, String file_name, String url, String md5) {
+        final String NAME = "use_download_manager_to_download()";
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setMimeType("application/vnd.android.package-archive");
+        request.setAllowedOverMetered(true);
+        request.setTitle("正在下载安装包");
+        request.setDescription(file_name);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        request.allowScanningByMediaScanner();
+        request.setDestinationInExternalFilesDir(c, Environment.DIRECTORY_DOWNLOADS, file_name);
+        File file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + file_name);
+        File new_file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + md5);
+        file.delete();
+        LogMe.e(NAME, "deleted the file already exists with the same name");
+        if (new_file.exists()){
+            LogMe.e(NAME, file_name + " already exists, installing " + file_name + "...");
+            install(c, new_file);
+            return;
         }
+        DownloadManager manager = (DownloadManager) c.getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        c.registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String dmd5 = getFileMD5(file);
+                        LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
+                        if (!dmd5.equals(md5)){
+                            file.delete();
+                            LogMe.e(NAME, "MD5 verification fail, downloaded file deleted, not install");
+                        }else {
+                            LogMe.e(NAME, "MD5 verification success, installing...");
+                            LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
+                            LogMe.e(NAME, "installing " + file_name + "...");
+                            install(c, new_file);
+                        }
+                    }
+                },
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        );
+        LogMe.e(NAME, "start to download: " + file_name);
     }
 
     /**

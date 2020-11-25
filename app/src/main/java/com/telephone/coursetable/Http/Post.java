@@ -42,7 +42,8 @@ public class Post {
                                              @Nullable final String cookie_delimiter,
                                              @Nullable final String success_resp_text,
                                              @Nullable final String[] accept_encodings,
-                                             @Nullable final Boolean redirect){
+                                             @Nullable final Boolean redirect,
+                                             @Nullable final String content_type){
         URL url = null;
         HttpURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -72,6 +73,9 @@ public class Post {
             cnt.setRequestProperty("Referer", referer);
             if (data != null) {
                 cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
+            }
+            if (content_type != null) {
+                cnt.setRequestProperty("Content-Type", content_type);
             }
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);

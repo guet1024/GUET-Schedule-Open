@@ -18,7 +18,7 @@ public class Grades {
     public String stid;
     public String name;
     public String term;    //"2019-2020_2" //选修学期
-    public String courseid;
+    public String courseid; // the course code of each course
     @NonNull
     @PrimaryKey
     public String courseno;    //"1920699" //课号
@@ -28,7 +28,7 @@ public class Grades {
     public String zpxs;    //"81" //总成绩//**
     public String kctype;
     public String typeno;
-    public String cid;
+    public String cid;      // the course code of each course
     public String cno;
     public double sycj;  //89 //实验成绩//**
     public double qzcj;  //0 //期中成绩

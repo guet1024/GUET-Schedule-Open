@@ -365,6 +365,8 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("日期: " + e.examdate);
                 child.add("时间: " + e.kssj);
                 child.add("教室: " + e.croomno);
+                child.add("第 " + e.zc + " 周  星期 " + e.xq + "  第 " + ((e.ksjc == null) ? "" : e.ksjc) + " 大节");
+                child.add("备注: " + ((e.comm == null) ? "" : e.comm));
                 if (e.ets >= Clock.nowTimeStamp()){
                     child.add("1");
                     children.add(child);
@@ -379,6 +381,9 @@ public class FunctionMenu extends AppCompatActivity {
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("一键评教");
+            children.add(child);
+            child = new LinkedList<>();
+            child.add("教材评价");
             children.add(child);
             menus.add(Map.entry(teachers_eva_group, children));
 
