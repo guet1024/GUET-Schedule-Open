@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -135,6 +136,16 @@ public class Update {
                             if (no_new_version != null) {
                                 no_new_version.run();
                             }
+                            File[] apk_fileList = c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).listFiles(new FilenameFilter() {
+                                @Override
+                                public boolean accept(File dir, String name) {
+                                    return name.endsWith(".apk");
+                                }
+                            });
+                            for(File apk : apk_fileList){
+                                LogMe.e(NAME, "deleted one apk file");
+                                apk.delete();
+                            }
                         }
                     }
                 },
@@ -204,6 +215,8 @@ public class Update {
         request.setDestinationInExternalFilesDir(c, Environment.DIRECTORY_DOWNLOADS, file_name);
         File file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + file_name);
         File new_file = new File(c.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + md5);
+        file.delete();
+        LogMe.e(NAME, "deleted the file already exists with the same name");
         if (new_file.exists()){
             LogMe.e(NAME, file_name + " already exists, installing " + file_name + "...");
             install(c, new_file);
@@ -218,7 +231,8 @@ public class Update {
                         String dmd5 = getFileMD5(file);
                         LogMe.e(NAME, "the MD5 of the downloaded file is: " + dmd5);
                         if (!dmd5.equals(md5)){
-                            LogMe.e(NAME, "MD5 verification fail, not install");
+                            file.delete();
+                            LogMe.e(NAME, "MD5 verification fail, downloaded file deleted, not install");
                         }else {
                             LogMe.e(NAME, "MD5 verification success, installing...");
                             LogMe.e(NAME, "rename res: " + file.renameTo(new_file));
