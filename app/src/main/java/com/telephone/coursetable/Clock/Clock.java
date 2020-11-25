@@ -40,9 +40,25 @@ public class Clock {
         long res = 0;
         if (nts >= sts){
             res = 1;
-            res += (nts - sts) / 604800000;
+            res += (nts - sts) / 604800000L;
         }
         return res;
+    }
+
+    /**
+     *
+     * @param sts
+     * @param week must > 0
+     * @param weekday must > 0
+     * @return 0 if wrong, else timestamp
+     */
+    public static long getTimeStampForWeekAndWeekdaySince(long sts, long week, long weekday){
+        if (week <= 0 || weekday <= 0){
+            return 0;
+        }
+        week--;
+        weekday--;
+        return ( sts + (week * 604800000L) + (weekday * 86400000L) + 3600000L );
     }
 
     /**
