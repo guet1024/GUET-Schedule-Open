@@ -278,41 +278,53 @@ public class FetchService extends IntentService {
         );
         if (currentOrNextTime!=null) {
             if (currentOrNextTime.isNow) {
-                String text = "正在上课：";
+                StringBuilder text = new StringBuilder("正在上课：");
                 for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                     ShowTableNode nt = currentOrNextTime.list.get(i);
                     if (i > 0) {
                         if (nt.croomno != null) {
-                            text = text + " ( " + nt.croomno + " " + nt.cname + " )";
-                        } else text = text + " (" + " *　" + nt.cname + " )";
+                            text.append(" ( ").append(nt.croomno).append(" ").append(nt.cname).append(" )");
+                        } else text.append(" (").append(" *　").append(nt.cname).append(" )");
                     } else {
                         if (nt.croomno != null) {
-                            text = text + nt.croomno + " " + nt.cname;
-                        } else text = text + " *　" + nt.cname;
+                            text.append(nt.croomno).append(" ").append(nt.cname);
+                        } else text.append(" *　").append(nt.cname);
                     }
                 }
-                update_foreground_notification(text);
+                for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                    text.append("\n\n");
+                    ShowTableNode nt = currentOrNextTime.list.get(i);
+                    text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
+                    text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
+                }
+                update_foreground_notification(text.toString());
             }
             else {
                 if (currentOrNextTime.list.isEmpty()) {
                     update_foreground_notification("今日课程已全部完成");
                 }
                 else {
-                    String text = "下一节课：";
-                    if ( currentOrNextTime.start!=null ) text = "下一节课(" + currentOrNextTime.start + ")：";
+                    StringBuilder text = new StringBuilder("下一节课：");
+                    if ( currentOrNextTime.start!=null ) text = new StringBuilder("下一节课(" + currentOrNextTime.start + ")：");
                     for (int i = 0; i < currentOrNextTime.list.size(); i++) {
                         ShowTableNode nt = currentOrNextTime.list.get(i);
                         if (i > 0) {
                             if (nt.croomno != null) {
-                                text = text + " ( " + nt.croomno + " " + nt.cname + " )";
-                            } else text = text + " (" + " *　" + nt.cname + " )";
+                                text.append(" ( ").append(nt.croomno).append(" ").append(nt.cname).append(" )");
+                            } else text.append(" (").append(" *　").append(nt.cname).append(" )");
                         } else {
                             if (nt.croomno != null) {
-                                text = text + nt.croomno + " " + nt.cname;
-                            } else text = text + " *　" + nt.cname;
+                                text.append(nt.croomno).append(" ").append(nt.cname);
+                            } else text.append(" *　").append(nt.cname);
                         }
                     }
-                    update_foreground_notification(text);
+                    for (int i = 0; i < currentOrNextTime.list.size(); i++) {
+                        text.append("\n\n");
+                        ShowTableNode nt = currentOrNextTime.list.get(i);
+                        text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
+                        text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
+                    }
+                    update_foreground_notification(text.toString());
                 }
             }
         }
