@@ -167,23 +167,54 @@ public class Merge {
         String ebs = r.getString(R.string.pref_hour_end_backup_suffix);
         String ds = r.getString(R.string.pref_hour_des_suffix);
         String dbs = r.getString(R.string.pref_hour_des_backup_suffix);
-        for (Hour i : h){
-            String memo = i.getMemo();
-            if (memo == null || memo.isEmpty()){
-                continue;
-            }
-            String des = i.getNodename();
-            String node_no = i.getNodeno();
-            int index = memo.indexOf('-');
-            String stime = memo.substring(0, index);
-            String etime = memo.substring(index + 1);
-            editor.putString(node_no + ss, stime);
-            editor.putString(node_no + es, etime);
-            editor.putString(node_no + ds, des);
-            editor.putString(node_no + sbs, stime);
-            editor.putString(node_no + ebs, etime);
-            editor.putString(node_no + dbs, des);
-        }
+        // edit by Telephone 2020/11/25, use predefined time
+//        for (Hour i : h){
+//            String memo = i.getMemo();
+//            if (memo == null || memo.isEmpty()){
+//                continue;
+//            }
+//            String des = i.getNodename();
+//            String node_no = i.getNodeno();
+//            int index = memo.indexOf('-');
+//            String stime = memo.substring(0, index);
+//            String etime = memo.substring(index + 1);
+//            editor.putString(node_no + ss, stime);
+//            editor.putString(node_no + es, etime);
+//            editor.putString(node_no + ds, des);
+//            editor.putString(node_no + sbs, stime);
+//            editor.putString(node_no + ebs, etime);
+//            editor.putString(node_no + dbs, des);
+//        }
+        editor.putString("1" + ss, "8:25");
+        editor.putString("1" + sbs, "8:25");
+        editor.putString("1" + es, "10:00");
+        editor.putString("1" + ebs, "10:00");
+        editor.putString("1" + ds, "第一大节");
+        editor.putString("1" + dbs, "第一大节");
+        editor.putString("2" + ss, "10:25");
+        editor.putString("2" + sbs, "10:25");
+        editor.putString("2" + es, "12:00");
+        editor.putString("2" + ebs, "12:00");
+        editor.putString("2" + ds, "第二大节");
+        editor.putString("2" + dbs, "第二大节");
+        editor.putString("3" + ss, "14:30");
+        editor.putString("3" + sbs, "14:30");
+        editor.putString("3" + es, "16:05");
+        editor.putString("3" + ebs, "16:05");
+        editor.putString("3" + ds, "第三大节");
+        editor.putString("3" + dbs, "第三大节");
+        editor.putString("4" + ss, "16:30");
+        editor.putString("4" + sbs, "16:30");
+        editor.putString("4" + es, "18:05");
+        editor.putString("4" + ebs, "18:05");
+        editor.putString("4" + ds, "第四大节");
+        editor.putString("4" + dbs, "第四大节");
+        editor.putString("5" + ss, "19:00");
+        editor.putString("5" + sbs, "19:00");
+        editor.putString("5" + es, "20:30");
+        editor.putString("5" + ebs, "20:30");
+        editor.putString("5" + ds, "第五大节");
+        editor.putString("5" + dbs, "第五大节");
         editor.commit();
     }
 
