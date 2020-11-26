@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +23,12 @@ import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 import com.telephone.coursetable.TeachersEvaluation.TextBookEvaluation;
 
 public class TeacherEvaluationPanel extends AppCompatActivity {
+
+    public static final String EXTRA_MENU_LAYOUT_ID = "which_menu";
+    public static final String EXTRA_TITLE = "what_title";
+    public static final String EXTRA_END_TIP = "what_tip";
+
+    private String end_tip = "======== 评教/评学结束 ========";
 
     private TextView textView;
     private NestedScrollView scrollView;
@@ -80,14 +87,31 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
         MyApp.setRunning_activity(MyApp.RunningActivity.TEACHER_EVALUATION_PANEL);
         MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_teacher_evaluation_panel);
+        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        if (title == null){
+            title = "评教评学";
+        }
+        getSupportActionBar().setTitle(title);
+        String etip = getIntent().getStringExtra(EXTRA_END_TIP);
+        if (etip != null){
+            end_tip = etip;
+        }
         textView = (TextView) findViewById(R.id.teachers_evaluation_panel_textview);
         scrollView = (NestedScrollView) findViewById(R.id.teachers_evaluation_panel_scroll);
         progressBar = (ProgressBar) findViewById(R.id.teachers_evaluation_panel_progressbar);
     }
 
+    public static void start(Context c, @NonNull String title, @NonNull String end_text, int menu_layout_id){
+        Intent intent = new Intent(c, TeacherEvaluationPanel.class);
+        intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_END_TIP, end_text);
+        intent.putExtra(EXTRA_MENU_LAYOUT_ID, menu_layout_id);
+        c.startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.teacher_evaluation_menu, menu);
+        getMenuInflater().inflate(getIntent().getIntExtra(EXTRA_MENU_LAYOUT_ID, R.menu.teacher_evaluation_menu), menu);
         return true;
     }
 
@@ -126,6 +150,8 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
                     }
                 }).start();
                 break;
+            case R.id.go_to_query_graduation_degree:
+                break;
         }
         return true;
     }
@@ -139,7 +165,7 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
 
     public void print_end_symbol(){
         print("");
-        print("======== 评教/评学结束 ========");
+        print(end_tip);
         print("");
     }
 

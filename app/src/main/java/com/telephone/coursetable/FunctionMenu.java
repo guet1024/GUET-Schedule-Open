@@ -401,10 +401,10 @@ public class FunctionMenu extends AppCompatActivity {
             }
             menus.add(Map.entry(cet_group, children));
 
-            String query_grade_points_group = "学分绩";
+            String query_grade_points_group = "毕业学位";
             children = new LinkedList<>();
             child = new LinkedList<>();
-            child.add("学分绩查询");
+            child.add("毕业学位查询");
             children.add(child);
             menus.add(Map.entry(query_grade_points_group, children));
 

@@ -144,7 +144,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="title">"评教评学"</item>
+        <item name="title">"面板"</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
     

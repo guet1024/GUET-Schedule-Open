@@ -362,7 +362,7 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 8:
                 ((TextView)view.findViewById(R.id.item_query_grade_points)).setText(groups.get(i).getValue().get(i1).get(0));
-                view.setOnClickListener(view_item_query_grade_points -> context.startActivity(new Intent(context, GradePointActivity.class)));
+                view.setOnClickListener(view_item_query_grade_points -> TeacherEvaluationPanel.start(context, "毕业学位查询", "======= 查询结束 =======", R.menu.graduation_degree));
                 break;
             case 9:
                 ((TextView)view.findViewById(R.id.item_guet_tools)).setText(groups.get(i).getValue().get(i1).get(0));
