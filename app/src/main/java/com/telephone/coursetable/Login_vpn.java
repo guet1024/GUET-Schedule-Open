@@ -244,6 +244,7 @@ public class Login_vpn extends AppCompatActivity {
 
 
     private void updateUserNameAutoFill(){
+        final String NAME = "updateUserNameAutoFill()";
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login_vpn.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
@@ -257,10 +258,31 @@ public class Login_vpn extends AppCompatActivity {
                             aaw_pwd = userSelected.get(0).aaw_password;
                             sys_pwd = userSelected.get(0).password;
                             ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).vpn_password);
-
                         });
                     }
                 }).start();
+            });
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus){
+                        LogMe.e(NAME, "the sid input box lost focus");
+                        String read_sid = ((AutoCompleteTextView)v).getText().toString();
+                        new Thread(()->{
+                            List<User> get_users = udao.selectUser(read_sid);
+                            User get_user = new User(read_sid, "", "", "");
+                            if (!get_users.isEmpty()){
+                                get_user = get_users.get(0);
+                            }
+                            User u_f = get_user;
+                            runOnUiThread(()->{
+                                ((EditText)findViewById(R.id.passwd_input)).setText(u_f.vpn_password);
+                                aaw_pwd = u_f.aaw_password;
+                                sys_pwd = u_f.password;
+                            });
+                        }).start();
+                    }
+                }
             });
         });
     }

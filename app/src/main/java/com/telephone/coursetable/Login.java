@@ -92,6 +92,9 @@ public class Login extends AppCompatActivity {
 
     private boolean isMenuEnabled = true;
 
+    private String aaw_p = "";
+    private String vpn_p = "";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -170,6 +173,7 @@ public class Login extends AppCompatActivity {
      * @clear
      */
     private void updateUserNameAutoFill(){
+        final String NAME = "updateUserNameAutoFill()";
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
@@ -185,6 +189,28 @@ public class Login extends AppCompatActivity {
                         });
                     }
                 }).start();
+            });
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus){
+                        LogMe.e(NAME, "the sid input box lost focus");
+                        String read_sid = ((AutoCompleteTextView)v).getText().toString();
+                        new Thread(()->{
+                            List<User> get_users = udao.selectUser(read_sid);
+                            User get_user = new User(read_sid, "", "", "");
+                            if (!get_users.isEmpty()){
+                                get_user = get_users.get(0);
+                            }
+                            User u_f = get_user;
+                            runOnUiThread(()->{
+                                ((EditText)findViewById(R.id.passwd_input)).setText(u_f.password);
+                                aaw_p = u_f.aaw_password;
+                                vpn_p = u_f.vpn_password;
+                            });
+                        }).start();
+                    }
+                }
             });
         });
     }
@@ -615,6 +641,8 @@ public class Login extends AppCompatActivity {
                     runOnUiThread((Runnable) () -> {
                         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
                         ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText("");
+                        aaw_p = "";
+                        vpn_p = "";
                         setFocusToEditText((EditText)findViewById(R.id.sid_input));
                         changeCode(null);
                     });
@@ -851,6 +879,8 @@ public class Login extends AppCompatActivity {
                     /** get aaw password, vpn password from input box */
                     final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
                     final String vpn_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).getText().toString();
+                    aaw_p = aaw_pwd;
+                    vpn_p = vpn_pwd;
                     /** start a new thread */
                     new Thread(() -> {
                         /** call {@link #login(Context, String, String, String, String, StringBuilder)} , passing {@link #cookie_builder} */
@@ -1047,15 +1077,8 @@ public class Login extends AppCompatActivity {
                 extra_pwd_dialog_layout,
                 getResources().getString(R.string.lan_extra_password_title), null, null);
         new Thread(() -> {
-            List<User> u = udao.selectUser(sid);
-            String aaw_pwd = "";
-            String vpn_pwd = "";
-            if (!u.isEmpty()){
-                aaw_pwd = u.get(0).aaw_password;
-                vpn_pwd = u.get(0).vpn_password;
-            }
-            final String aaw_pwdf = aaw_pwd;
-            final String vpn_pwdf = vpn_pwd;
+            final String aaw_pwdf = aaw_p;
+            final String vpn_pwdf = vpn_p;
             runOnUiThread(() -> {
                 ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).setText(aaw_pwdf);
                 ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).setText(vpn_pwdf);
