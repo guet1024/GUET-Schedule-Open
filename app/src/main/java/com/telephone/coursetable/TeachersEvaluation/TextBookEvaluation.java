@@ -196,7 +196,7 @@ public class TextBookEvaluation {
                 null,
                 null,
                 null,
-                10000
+                30000
         );
         for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
             if (check_should_exit(c)){
@@ -214,7 +214,7 @@ public class TextBookEvaluation {
                     null,
                     null,
                     null,
-                    10000
+                    30000
             );
         }
         if (httpURLConnection.code != 0) {
@@ -477,7 +477,7 @@ public class TextBookEvaluation {
                 null,
                 null,
                 null,
-                10000
+                30000
         );
         for (int i = 0; res.code != 0 && res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新获取 " + book.getName() + " 教材的评分表",Toast.LENGTH_SHORT,false);
@@ -493,7 +493,7 @@ public class TextBookEvaluation {
                     null,
                     null,
                     null,
-                    10000
+                    30000
             );
         }
         if (res.code == 0){
