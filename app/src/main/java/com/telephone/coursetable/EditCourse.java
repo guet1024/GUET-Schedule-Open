@@ -16,6 +16,7 @@ import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.MyComment;
+import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 import com.telephone.coursetable.LogMe.LogMe;
@@ -32,7 +33,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class EditCourse extends AppCompatActivity {
@@ -92,7 +95,7 @@ public class EditCourse extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(EditCourse.this, MainActivity.class));
+        go_back();
     }
 
     @Override
@@ -125,6 +128,9 @@ public class EditCourse extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case android.R.id.home:
+                go_back();
+                break;
             case R.id.menu_edit_course_save:
                 save(snack_bar_root_view);
                 break;
@@ -341,7 +347,7 @@ public class EditCourse extends AppCompatActivity {
                                                     ));
                                                     runOnUiThread(() -> {
                                                         Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(EditCourse.this, MainActivity.class));
+                                                        go_back();
                                                     });
                                                 }).start();
                                             }
@@ -394,7 +400,7 @@ public class EditCourse extends AppCompatActivity {
                         ));
                         runOnUiThread(() -> {
                             Toast.makeText(EditCourse.this, "保存成功", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(EditCourse.this, MainActivity.class));
+                            go_back();
                         });
                     }
                 }else {
@@ -438,5 +444,44 @@ public class EditCourse extends AppCompatActivity {
             }
             findViewById(R.id.edit_course_background_of_all_input).clearFocus();
         });
+    }
+
+    private void go_back(){
+        new Thread(()->{
+            List<ShowTableNode> nodes = MyApp.getCurrentAppDB().goToClassDao().getNode(
+                    MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                    intent_extra_CourseCardData.getTerm(),
+                    intent_extra_CourseCardData.getWeek(),
+                    intent_extra_CourseCardData.getWeekday(),
+                    intent_extra_CourseCardData.getTime_id()
+            );
+            CourseCardData data_to_go_back;
+            try {
+                data_to_go_back = intent_extra_CourseCardData.deepClone();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+            data_to_go_back.setCards(new LinkedList<>());
+            for (ShowTableNode node : nodes){
+                data_to_go_back.getCards().add(new ACard(
+                        (node.courseno == null)?(""):(node.courseno),
+                        (node.cname == null)?(""):(node.cname),
+                        (int)node.start_week,
+                        (int)node.end_week,
+                        (node.name == null)?(""):(node.name),
+                        (node.tno == null)?(""):(node.tno),
+                        (node.croomno == null)?(""):(node.croomno),
+                        node.grade_point,
+                        (node.ctype == null)?(""):(node.ctype),
+                        (node.examt == null)?(""):(node.examt),
+                        (node.sys_comm == null)?(""):(node.sys_comm),
+                        (node.my_comm == null)?(""):(node.my_comm),
+                        node.oddweek,
+                        node.customized
+                ));
+            }
+            CourseCard.startMe(EditCourse.this, data_to_go_back);
+        }).start();
     }
 }
