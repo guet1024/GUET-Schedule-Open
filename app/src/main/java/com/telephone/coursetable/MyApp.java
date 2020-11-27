@@ -22,8 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
+import com.telephone.coursetable.Gson.Adapters.NoNullStringAdapter;
 import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.LogMe.LogMe;
 
@@ -47,6 +50,8 @@ public class MyApp extends Application {
     private static SharedPreferences.Editor editor;
     private static SharedPreferences.Editor editor_test;
     private static ApplicationInfo app_info;
+
+    public static Gson gson;
 
     public volatile String new_version = "";
 
@@ -216,6 +221,8 @@ public class MyApp extends Application {
         editor = sp.edit();
         editor_test = sp_test.edit();
         app_info = getApplicationInfo();
+
+        gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).setPrettyPrinting().create();
         LogMe.init();
 
         NotificationChannel channel;
