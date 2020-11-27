@@ -37,12 +37,12 @@ public class PersonInfo {
     private String address; //家庭地址
     private String phoneno; //家庭联系电话
     private String familyheader; //家庭联系人姓名
-    private long total; //高考总分
-    private long chinese; //高考英语（或语文）
-    private long maths; //高考数学
-    private long english; //高考语文（或英语）
-    private long addscore1; //高考综合
-    private long addscore2; //高考其他
+    private double total; //高考总分
+    private double chinese; //高考英语（或语文）
+    private double maths; //高考数学
+    private double english; //高考语文（或英语）
+    private double addscore1; //高考综合
+    private double addscore2; //高考其他
     private String comment; //备注
     private String testnum; //高考考生号
     private String fmxm1; //监护人1姓名
@@ -188,27 +188,27 @@ public class PersonInfo {
         return familyheader;
     }
 
-    public long getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public long getChinese() {
+    public double getChinese() {
         return chinese;
     }
 
-    public long getMaths() {
+    public double getMaths() {
         return maths;
     }
 
-    public long getEnglish() {
+    public double getEnglish() {
         return english;
     }
 
-    public long getAddscore1() {
+    public double getAddscore1() {
         return addscore1;
     }
 
-    public long getAddscore2() {
+    public double getAddscore2() {
         return addscore2;
     }
 

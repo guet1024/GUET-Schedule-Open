@@ -43,12 +43,12 @@ public class PersonInfo {
     public String address; //家庭地址/*
     public String phoneno; //家庭联系电话/*
     public String familyheader; //家庭联系人姓名/*
-    public long total; //高考总分//
-    public long chinese; //高考英语（或语文）//
-    public long maths; //高考数学//
-    public long english; //高考语文（或英语）//
-    public long addscore1; //高考综合//
-    public long addscore2; //高考其他//
+    public double total; //高考总分//
+    public double chinese; //高考英语（或语文）//
+    public double maths; //高考数学//
+    public double english; //高考语文（或英语）//
+    public double addscore1; //高考综合//
+    public double addscore2; //高考其他//
     public String comment; //备注//
     public String testnum; //高考考生号//
     public String fmxm1; //监护人1姓名/*
@@ -65,7 +65,7 @@ public class PersonInfo {
     public String dptname; //学院名称//
     public String spname; //专业//
 
-    public PersonInfo(@NonNull String stid, long grade, String classno, String spno, String name, String name1, String engname, String sex, String pass, String degree, String direction, String changetype, String secspno, String classtype, String idcard, String stype, String xjzt, String changestate, String lqtype, String zsjj, String nation, String political, String nativeplace, String birthday, String enrolldate, String leavedate, String dossiercode, String hostel, String hostelphone, String postcode, String address, String phoneno, String familyheader, long total, long chinese, long maths, long english, long addscore1, long addscore2, String comment, String testnum, String fmxm1, String fmzjlx1, String fmzjhm1, String fmxm2, String fmzjlx2, String fmzjhm2, String ds, String xq, String rxfs, String oldno, String dptno, String dptname, String spname) {
+    public PersonInfo(@NonNull String stid, long grade, String classno, String spno, String name, String name1, String engname, String sex, String pass, String degree, String direction, String changetype, String secspno, String classtype, String idcard, String stype, String xjzt, String changestate, String lqtype, String zsjj, String nation, String political, String nativeplace, String birthday, String enrolldate, String leavedate, String dossiercode, String hostel, String hostelphone, String postcode, String address, String phoneno, String familyheader, double total, double chinese, double maths, double english, double addscore1, double addscore2, String comment, String testnum, String fmxm1, String fmzjlx1, String fmzjhm1, String fmxm2, String fmzjlx2, String fmzjhm2, String ds, String xq, String rxfs, String oldno, String dptno, String dptname, String spname) {
         this.stid = stid;
         this.grade = grade;
         this.classno = classno;
