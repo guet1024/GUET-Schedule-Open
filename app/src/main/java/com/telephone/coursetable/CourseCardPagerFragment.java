@@ -22,7 +22,7 @@ public class CourseCardPagerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        CourseCardData data = new Gson().fromJson(getActivity().getIntent().getStringExtra(CourseCard.EXTRA), CourseCardData.class);
+        CourseCardData data = MyApp.gson.fromJson(getActivity().getIntent().getStringExtra(CourseCard.EXTRA), CourseCardData.class);
         ((ViewPager2)view.findViewById(R.id.course_card_viewpager)).setAdapter(new CourseCardAdapter(this, data.getCards(), data));
     }
 }

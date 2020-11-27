@@ -227,7 +227,7 @@ public class TextBookEvaluation {
             LogMe.e(NAME, "evaluation thread stop");
             setEvaluation_running(false); return true;
         } else {
-            final PJGetValue_Data_s res = new Gson().fromJson(httpURLConnection.comment, PJGetValue_Data_s.class);
+            final PJGetValue_Data_s res = MyApp.gson.fromJson(httpURLConnection.comment, PJGetValue_Data_s.class);
             final List<PJGetValue_Data> pvdlist = res.getData();
             for (PJGetValue_Data g : pvdlist) {
 
@@ -413,7 +413,7 @@ public class TextBookEvaluation {
                     book.getTerm(), origin.getType(), origin.getZbnr()
             ).encode_myself());
         }
-        String post_body = new Gson().toJson(post_list);
+        String post_body = MyApp.gson.toJson(post_list);
         post_body = post_body.replace("\\\\u", "\\u");
         if (check_should_exit(c)){
             return null;
@@ -497,7 +497,7 @@ public class TextBookEvaluation {
             );
         }
         if (res.code == 0){
-            return new Gson().fromJson(res.comment, Detail_get_s.class).getData();
+            return MyApp.gson.fromJson(res.comment, Detail_get_s.class).getData();
         }else {
             return null;
         }

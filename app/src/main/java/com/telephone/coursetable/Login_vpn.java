@@ -623,7 +623,7 @@ public class Login_vpn extends AppCompatActivity {
                 false
         );
         if (login_res.code == 0){
-            LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
+            LoginResponse response = MyApp.gson.fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "body: " + body + " code: " + login_res.code + " resp_code: " + login_res.resp_code + " comment/msg: " + login_res.comment);
             return login_res;

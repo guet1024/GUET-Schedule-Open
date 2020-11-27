@@ -465,7 +465,7 @@ public class Login extends AppCompatActivity {
                 null
         );
         if ( login_res.code == 0 ) {
-            LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
+            LoginResponse response = MyApp.gson.fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
         }
         if (login_res.code == 0 && builder != null) {

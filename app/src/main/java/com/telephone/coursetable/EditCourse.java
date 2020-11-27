@@ -141,14 +141,14 @@ public class EditCourse extends AppCompatActivity {
     public static void start(Context c, boolean add, @NonNull CourseCardData courseCardData){
         Intent intent = new Intent(c, EditCourse.class);
         intent.putExtra(EXTRA_IF_ADD, add);
-        intent.putExtra(EXTRA_COURSE_CARD_DATA, new Gson().toJson(courseCardData));
+        intent.putExtra(EXTRA_COURSE_CARD_DATA, MyApp.gson.toJson(courseCardData));
         c.startActivity(intent);
     }
 
     private void initContentView(){
         View content = getLayoutInflater().inflate(R.layout.activity_edit_course, null);
         add_start = getIntent().getBooleanExtra(EXTRA_IF_ADD, false);
-        intent_extra_CourseCardData = new Gson().fromJson(getIntent().getStringExtra(EXTRA_COURSE_CARD_DATA), CourseCardData.class);
+        intent_extra_CourseCardData = MyApp.gson.fromJson(getIntent().getStringExtra(EXTRA_COURSE_CARD_DATA), CourseCardData.class);
         ((EditText)content.findViewById(R.id.edit_course_termname)).setText(intent_extra_CourseCardData.getTermname());
         ((EditText)content.findViewById(R.id.edit_course_weekday)).setText(intent_extra_CourseCardData.getWeekday()+"");
         ((EditText)content.findViewById(R.id.edit_course_time)).setText(intent_extra_CourseCardData.getTime_id());
@@ -339,7 +339,7 @@ public class EditCourse extends AppCompatActivity {
                                                             qtxs, sctcnt, custom_ref
                                                     ));
                                                     MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
-                                                            new Gson().toJson(new GoToClassKey(
+                                                            MyApp.gson.toJson(new GoToClassKey(
                                                                     ac_username, term, weekday, seq,
                                                                     cno, startweek, endweek, false
                                                             )),
@@ -392,7 +392,7 @@ public class EditCourse extends AppCompatActivity {
                                 qtxs, sctcnt, custom_ref
                         ));
                         MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
-                                new Gson().toJson(new GoToClassKey(
+                                MyApp.gson.toJson(new GoToClassKey(
                                         ac_username, term, weekday, seq, cno, startweek,
                                         endweek, false
                                 )),
@@ -416,7 +416,7 @@ public class EditCourse extends AppCompatActivity {
                             ((EditText)findViewById(R.id.edit_course_my_comment)).getText().toString()
                     );
                     MyApp.getCurrentAppDB().myCommentDao().insert(new MyComment(
-                            new Gson().toJson(new GoToClassKey(
+                            MyApp.gson.toJson(new GoToClassKey(
                                     ac_username,
                                     intent_extra_CourseCardData.getTerm(),
                                     intent_extra_CourseCardData.getWeekday(),
