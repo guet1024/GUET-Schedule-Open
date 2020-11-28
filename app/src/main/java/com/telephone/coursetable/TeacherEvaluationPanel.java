@@ -117,18 +117,18 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 startActivity(new Intent(TeacherEvaluationPanel.this, FunctionMenu.class));
                 break;
             case R.id.teacher_evaluation_start:
-                new Thread(()->{
+                new Thread(() -> {
                     if (!TeachersEvaluation.evaluation(
                             TeacherEvaluationPanel.this,
                             MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
                             MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password,
                             MyApp.getCurrentAppDB().termInfoDao()
-                    )){
+                    )) {
                         Snackbar.make(textView,
                                 "上次评教还未结束，只有上次评教结束后才能开始新的评教哦~",
                                 BaseTransientBottomBar.LENGTH_SHORT
@@ -137,12 +137,12 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
                 }).start();
                 break;
             case R.id.book_evaluation_start:
-                new Thread(()->{
+                new Thread(() -> {
                     if (!TextBookEvaluation.evaluation(
                             TeacherEvaluationPanel.this,
                             MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
                             MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password
-                    )){
+                    )) {
                         Snackbar.make(textView,
                                 "上次教材评价还未结束，只有上次教材评价结束后才能开始新的教材评价哦~",
                                 BaseTransientBottomBar.LENGTH_SHORT
@@ -151,6 +151,14 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
                 }).start();
                 break;
             case R.id.go_to_query_graduation_degree:
+                new Thread(() -> {
+                    if (!Byxw.Byxw_Query(TeacherEvaluationPanel.this)) {
+                        Snackbar.make(textView,
+                                "上次查询还未结束，只有上次查询结束后才能开始新的查询哦~",
+                                BaseTransientBottomBar.LENGTH_SHORT
+                        ).setTextColor(Color.WHITE).show();
+                    }
+                }).start();
                 break;
         }
         return true;
