@@ -166,4 +166,5 @@
     <string name="more">\n　　本APP由开发人员独立研发完成，与学校官方无关。\n　　如果您对我们的作品有任何宝贵意见(建议)，请联系我们。\n　　Q群号：336405176\n　　GitHub：Telephone2019/CourseTable\n\n　　👉点击右上角菜单可一键加入交流群\n</string>
     <string name="title_activity_edit_course_edit">自定义备注</string>
     <string name="title_activity_edit_course_add">添加课程</string>
+    <string name="update_download_url">https://guet-course-table-apks-1908252323.cos.ap-guangzhou.myqcloud.com/ctb.apk</string>
 </resources>

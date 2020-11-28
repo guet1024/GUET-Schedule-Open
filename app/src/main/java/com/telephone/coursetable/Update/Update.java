@@ -101,7 +101,7 @@ public class Update {
                                                     (dialogInterface, i) -> {
                                                         Update.use_download_manager_to_download_and_install(
                                                                 c, "GUET课程表v" + latest_tag + ".apk",
-                                                                "https://guet-course-table-apks-1908252323.cos.ap-guangzhou.myqcloud.com/ctb.apk",
+                                                                c.getString(R.string.update_download_url),
                                                                 md5
                                                         );
                                                         app.runOnUiThread(()->
