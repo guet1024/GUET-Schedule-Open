@@ -1,12 +1,10 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.TeachersEvaluation;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -21,7 +19,11 @@ import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
 import com.telephone.coursetable.LogMe.LogMe;
+import com.telephone.coursetable.Login;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.OCR.OCR;
+import com.telephone.coursetable.R;
+import com.telephone.coursetable.TeacherEvaluationPanel;
 
 import java.util.List;
 
