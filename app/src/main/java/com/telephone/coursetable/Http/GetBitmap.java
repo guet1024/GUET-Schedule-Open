@@ -50,7 +50,6 @@ public class GetBitmap {
             }
             url = new URL(u_bulider.toString());
             cnt = (HttpURLConnection) url.openConnection();
-            cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
             cnt.setRequestProperty("Referer", referer);
