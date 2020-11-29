@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Gson.Adapters.NoNullStringAdapter;
@@ -31,6 +32,7 @@ import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -241,6 +243,11 @@ public class MyApp extends Application {
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
+
+//        String testName = "comment_past_time()";
+//        String a = Clock.comment_past_time(System.currentTimeMillis()+(1000L * 60L * 60L * 24L));
+//        Log.i(testName,a);
+
     }
 
     public static MyApp getCurrentApp(){
