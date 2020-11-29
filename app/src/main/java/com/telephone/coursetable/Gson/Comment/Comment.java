@@ -9,7 +9,7 @@ public class Comment {
     private String dt; // "2020-11-19 20:02:34",
     private String cmt; // "测试网络评论功能"
     private String name; // "用户"
-    private long ts; // 1606574174
+    private long ts; // 1606574174, WARNING: this is second
 
     public Comment(String cno, String tno, String cname, String sno, long idx, String dt, String cmt, String name, long ts) {
         this.cno = cno;
@@ -57,5 +57,9 @@ public class Comment {
 
     public long getTs() {
         return ts;
+    }
+
+    public long getTimeStamp(){
+        return getTs() * 1000L;
     }
 }

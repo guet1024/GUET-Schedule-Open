@@ -168,4 +168,5 @@
     <string name="title_activity_edit_course_add">添加课程</string>
     <string name="update_download_url">https://guet-course-table-apks-1908252323.cos.ap-guangzhou.myqcloud.com/ctb.apk</string>
     <string name="get_cno_cmts_url">https://guetcob.com:44334/selectcnocmt</string>
+    <string name="put_cno_cmts_url">https://guetcob.com:44334/addtocnocmt</string>
 </resources>

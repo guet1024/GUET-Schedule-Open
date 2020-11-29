@@ -42,6 +42,7 @@ public class WAN {
                 null,
                 r.getString(R.string.lan_get_person_success_contain_response_text),
                 null,
+                null,
                 null
         );
     }
@@ -121,6 +122,7 @@ public class WAN {
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
@@ -140,6 +142,7 @@ public class WAN {
                 "}",
                 null,
                 "\"success\":true",
+                null,
                 null,
                 null
         );
@@ -172,6 +175,7 @@ public class WAN {
                 "}",
                 null,
                 "\"success\":true",
+                null,
                 null,
                 null
         );

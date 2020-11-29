@@ -206,7 +206,7 @@ public class Clock {
      * @clear
      */
     public static long nowTimeStamp(){
-        return Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
+        return System.currentTimeMillis();
     }
 
     /**

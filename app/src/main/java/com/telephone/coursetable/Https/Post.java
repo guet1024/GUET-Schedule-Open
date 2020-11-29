@@ -8,13 +8,16 @@ import androidx.annotation.Nullable;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.MyApp;
 
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +50,8 @@ public class Post {
                                              @Nullable final String cookie_delimiter,
                                              @Nullable final String success_resp_text,
                                              @Nullable final String[] accept_encodings,
-                                             @Nullable final Boolean redirect){
+                                             @Nullable final Boolean redirect,
+                                             @Nullable final Boolean utf8){
         URL url = null;
         HttpsURLConnection cnt = null;
         DataOutputStream dos = null;
@@ -80,7 +84,11 @@ public class Post {
             }
             cnt.setRequestProperty("Referer", referer);
             if (data != null) {
-                cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
+                if (utf8 != null && utf8){
+                    cnt.setRequestProperty("Content-Length", String.valueOf(data.getBytes(StandardCharsets.UTF_8).length));
+                }else {
+                    cnt.setRequestProperty("Content-Length", String.valueOf(data.length()));
+                }
             }
             if (cookie != null){
                 cnt.setRequestProperty("Cookie", cookie);
@@ -120,9 +128,16 @@ public class Post {
             return new HttpConnectionAndCode(-3);
         }
         try {
-            dos.writeBytes(body);
-            dos.flush();
-//            dos.close();
+            if (utf8 != null && utf8){
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(cnt.getOutputStream(), StandardCharsets.UTF_8));
+                bw.write(body);
+                bw.flush();
+//                bw.close();
+            }else {
+                dos.writeBytes(body);
+                dos.flush();
+//                dos.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-4);
