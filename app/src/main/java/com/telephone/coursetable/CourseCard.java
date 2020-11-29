@@ -29,7 +29,7 @@ public class CourseCard extends AppCompatActivity {
 
     public static void startMe(@NonNull Context c, @NonNull CourseCardData data){
         Intent intent = new Intent(c, CourseCard.class);
-        intent.putExtra(EXTRA, new Gson().toJson(data));
+        intent.putExtra(EXTRA, MyApp.gson.toJson(data));
         c.startActivity(intent);
     }
 
@@ -87,7 +87,7 @@ public class CourseCard extends AppCompatActivity {
         if (data_string == null){
             return;
         }else {
-            data = new Gson().fromJson(data_string, CourseCardData.class);
+            data = MyApp.gson.fromJson(data_string, CourseCardData.class);
         }
         setContentView(R.layout.activity_course_card);
         ((TextView)findViewById(R.id.card_date_left_top)).setText(data.getTermname());
@@ -166,7 +166,7 @@ public class CourseCard extends AppCompatActivity {
                                     with_a_card.getCards().get(0).getEnd_week(),
                                     with_a_card.getCards().get(0).isOdd_week()
                             );
-                            MyApp.getCurrentAppDB().myCommentDao().delete(new Gson().toJson(new GoToClassKey(
+                            MyApp.getCurrentAppDB().myCommentDao().delete(MyApp.gson.toJson(new GoToClassKey(
                                     MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
                                     with_a_card.getTerm(),
                                     with_a_card.getWeekday(),

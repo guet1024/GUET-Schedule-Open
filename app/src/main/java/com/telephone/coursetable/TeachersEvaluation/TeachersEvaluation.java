@@ -207,7 +207,7 @@ public class TeachersEvaluation {//评教
                     null,
                     null,
                     null,
-                    10000
+                    30000
             );
             for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
                 if (check_should_exit(c)){
@@ -225,7 +225,7 @@ public class TeachersEvaluation {//评教
                         null,
                         null,
                         null,
-                        10000
+                        30000
                 );
             }
             if (httpURLConnection.code != 0) {
@@ -237,7 +237,7 @@ public class TeachersEvaluation {//评教
                 addtoast( t.termname+" 评教未开放",Toast.LENGTH_SHORT,false);
                 flag++;
             } else {
-                final PJGetValue_DataS res = new Gson().fromJson(httpURLConnection.comment, PJGetValue_DataS.class);
+                final PJGetValue_DataS res = MyApp.gson.fromJson(httpURLConnection.comment, PJGetValue_DataS.class);
                 final List<PJGetValue_Data> pvdlist = res.getData();
                 for (PJGetValue_Data g : pvdlist) {
 
@@ -454,7 +454,7 @@ public class TeachersEvaluation {//评教
                     origin.getQz(), origin.getZt()
             ).encode_myself());
         }
-        String post_body = new Gson().toJson(post_list);
+        String post_body = MyApp.gson.toJson(post_list);
         post_body = post_body.replace("\\\\u", "\\u");
         if (check_should_exit(c)){
             return null;
@@ -524,7 +524,7 @@ public class TeachersEvaluation {//评教
                 null,
                 null,
                 null,
-                10000
+                30000
         );
         for (int i = 0; res.code != 0 && res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新获取 "+t.termname+" "+teacher.getName()+" 老师的评分表",Toast.LENGTH_SHORT,false);
@@ -540,11 +540,11 @@ public class TeachersEvaluation {//评教
                     null,
                     null,
                     null,
-                    10000
+                    30000
             );
         }
         if (res.code == 0){
-            return new Gson().fromJson(res.comment, Detail_get_s.class).getData();
+            return MyApp.gson.fromJson(res.comment, Detail_get_s.class).getData();
         }else {
             return null;
         }

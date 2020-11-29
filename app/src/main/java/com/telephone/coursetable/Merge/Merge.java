@@ -56,9 +56,9 @@ public class Merge {
      * @clear
      */
     public static void personInfo(@NonNull String origin_p, @NonNull String origin_stu, @NonNull PersonInfoDao pdao){
-        PersonInfo_s p_s = new Gson().fromJson(origin_p, PersonInfo_s.class);
+        PersonInfo_s p_s = MyApp.gson.fromJson(origin_p, PersonInfo_s.class);
         PersonInfo p = p_s.getData();
-        StudentInfo stu = new Gson().fromJson(origin_stu, StudentInfo.class);
+        StudentInfo stu = MyApp.gson.fromJson(origin_stu, StudentInfo.class);
         pdao.insert(
                 new com.telephone.coursetable.Database.PersonInfo(
                         p.getStid(),p.getGrade(),p.getClassno(),p.getSpno(),p.getName(),p.getName1(),
@@ -80,7 +80,7 @@ public class Merge {
      * @clear
      */
     public static void goToClass_ClassInfo(@NonNull String origin_g, @NonNull GoToClassDao gdao, @NonNull ClassInfoDao cdao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username) {
-        GoToClass_ClassInfo_s g_s = new Gson().fromJson(origin_g, GoToClass_ClassInfo_s.class);
+        GoToClass_ClassInfo_s g_s = MyApp.gson.fromJson(origin_g, GoToClass_ClassInfo_s.class);
         List<GoToClass_ClassInfo> g = g_s.getData();
         for (GoToClass_ClassInfo i : g) {
             gdao.insert(
@@ -94,7 +94,7 @@ public class Merge {
 //                                    i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
 //                                    i.getEndweek(), i.isOddweek()
 //                            )),
-                            MyApp.getCurrentAppDB().myCommentDao().getComment(new Gson().toJson(
+                            MyApp.getCurrentAppDB().myCommentDao().getComment(MyApp.gson.toJson(
                                     new GoToClassKey(
                                             username,
                                             i.getTerm(), i.getWeek(), i.getSeq(), i.getCourseno(), i.getStartweek(),
@@ -121,8 +121,8 @@ public class Merge {
      * @clear
      */
     public static void graduationScore(@NonNull String origin_g, @NonNull String origin_g2, @NonNull GraduationScoreDao gdao){
-        GraduationScore_s yxxf = new Gson().fromJson(origin_g, GraduationScore_s.class);
-        GraduationScore_s plan_cj = new Gson().fromJson(origin_g2, GraduationScore_s.class);
+        GraduationScore_s yxxf = MyApp.gson.fromJson(origin_g, GraduationScore_s.class);
+        GraduationScore_s plan_cj = MyApp.gson.fromJson(origin_g2, GraduationScore_s.class);
         List<GraduationScore> yxxf_list = yxxf.getData();
         List<GraduationScore> plan_cj_list = plan_cj.getData();
         //plan cj
@@ -143,7 +143,7 @@ public class Merge {
      * @clear
      */
     public static void termInfo(@NonNull Context c, @NonNull String origin_t, @NonNull TermInfoDao tdao){
-        TermInfo_s t_s = new Gson().fromJson(origin_t, TermInfo_s.class);
+        TermInfo_s t_s = MyApp.gson.fromJson(origin_t, TermInfo_s.class);
         List<TermInfo> t = t_s.getData();
         Resources r = c.getResources();
         DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.server_terminfo_datetime_format));
@@ -167,7 +167,7 @@ public class Merge {
      * @clear
      */
     public static void hour(@NonNull Context c, @NonNull String origin_h, @NonNull SharedPreferences.Editor editor){
-        Hour_s h_s = new Gson().fromJson(origin_h, Hour_s.class);
+        Hour_s h_s = MyApp.gson.fromJson(origin_h, Hour_s.class);
         List<Hour> h = h_s.getData();
         Resources r = c.getResources();
         String ss = r.getString(R.string.pref_hour_start_suffix);
@@ -232,7 +232,7 @@ public class Merge {
      * @clear
      */
     public static void grades(@NonNull String origin_g, @NonNull GradesDao gdao){
-        Grades_s g_s = new Gson().fromJson(origin_g, Grades_s.class);
+        Grades_s g_s = MyApp.gson.fromJson(origin_g, Grades_s.class);
         List<Grades> g = g_s.getData();
         for (Grades i : g){
             gdao.insert(
@@ -254,7 +254,7 @@ public class Merge {
      * @clear
      */
     public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c){
-        ExamInfo_s e_s = new Gson().fromJson(origin_e, ExamInfo_s.class);
+        ExamInfo_s e_s = MyApp.gson.fromJson(origin_e, ExamInfo_s.class);
         List<ExamInfo> e = e_s.getData();
         for (ExamInfo i : e){
             if (i.getKssj() == null){
@@ -282,7 +282,7 @@ public class Merge {
      * @clear
      */
     public static void cet(@NonNull String origin_cet, @NonNull CETDao cetDao){
-        CET_s c_s = new Gson().fromJson(origin_cet, CET_s.class);
+        CET_s c_s = MyApp.gson.fromJson(origin_cet, CET_s.class);
         List<CET> c = c_s.getData();
         for (CET i : c){
             cetDao.insert(new com.telephone.coursetable.Database.CET(
@@ -298,7 +298,7 @@ public class Merge {
      * @clear
      */
     public static void lab(@NonNull String origin_lab, @NonNull LABDao labDao, @NonNull GoToClassDao goToClassDao, @NonNull ClassInfoDao classInfoDao, @NonNull HashMap<GoToClassKey, String> my_comment_map, @NonNull String username){
-        LAB_s lab_s = new Gson().fromJson(origin_lab, LAB_s.class);
+        LAB_s lab_s = MyApp.gson.fromJson(origin_lab, LAB_s.class);
         List<LAB> labList = lab_s.getData();
         for (LAB lab : labList) {
             String time;

@@ -18,27 +18,11 @@
         android:textSize="18sp"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/login_vpn_aaw_tip"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
-
-    <TextView
-        android:id="@+id/login_vpn_aaw_tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text=" 教务处密码 "
-        android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/login_vpn_sys_tip"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toBottomOf="@+id/login_vpn_sid_tip" />
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <TextView
         android:id="@+id/login_vpn_sys_tip"
@@ -54,7 +38,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toBottomOf="@+id/login_vpn_aaw_tip" />
+        app:layout_constraintTop_toBottomOf="@+id/login_vpn_sid_tip" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -164,39 +148,8 @@
         android:layout_height="wrap_content"
         app:barrierDirection="end"
         app:barrierMargin="8dp"
-        app:constraint_referenced_ids="login_vpn_sid_tip,login_vpn_aaw_tip,login_vpn_sys_tip"
+        app:constraint_referenced_ids="login_vpn_sid_tip,login_vpn_sys_tip"
         tools:layout_editor_absoluteX="411dp" />
-
-    <AutoCompleteTextView
-        android:id="@+id/aaw_pwd_input"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/login_text_border"
-        android:gravity="center"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintEnd_toStartOf="@+id/guideline7"
-        app:layout_constraintStart_toEndOf="@id/barrier2"
-        app:layout_constraintTop_toTopOf="@id/login_vpn_aaw_tip"
-        app:layout_constraintBottom_toBottomOf="@id/login_vpn_aaw_tip"/>
-
-    <Button
-        android:id="@+id/show_pwd_21"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/eye_close"
-        app:layout_constraintBottom_toBottomOf="@+id/aaw_pwd_input"
-        app:layout_constraintDimensionRatio="W,1:1"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/aaw_pwd_input"
-        app:layout_constraintTop_toTopOf="@+id/aaw_pwd_input" />
-
 
     <AutoCompleteTextView
         android:id="@+id/sys_pwd_input"

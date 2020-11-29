@@ -92,6 +92,9 @@ public class Login extends AppCompatActivity {
 
     private boolean isMenuEnabled = true;
 
+    private String aaw_p = "";
+    private String vpn_p = "";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -170,6 +173,7 @@ public class Login extends AppCompatActivity {
      * @clear
      */
     private void updateUserNameAutoFill(){
+        final String NAME = "updateUserNameAutoFill()";
         final ArrayAdapter<String> ada = new ArrayAdapter<>(Login.this, android.R.layout.simple_dropdown_item_1line, udao.selectAllUserName());
         runOnUiThread(() -> {
             ((AutoCompleteTextView) findViewById(R.id.sid_input)).setAdapter(ada);
@@ -181,10 +185,34 @@ public class Login extends AppCompatActivity {
                     if (!userSelected.isEmpty()) {
                         runOnUiThread(() -> {
                             ((AutoCompleteTextView) findViewById(R.id.passwd_input)).setText(userSelected.get(0).password);
+                            aaw_p = userSelected.get(0).aaw_password;
+                            vpn_p = userSelected.get(0).vpn_password;
                             setFocusToEditText((EditText)findViewById(R.id.checkcode_input));
                         });
                     }
                 }).start();
+            });
+            ((AutoCompleteTextView) findViewById(R.id.sid_input)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus){
+                        LogMe.e(NAME, "the sid input box lost focus");
+                        String read_sid = ((AutoCompleteTextView)v).getText().toString();
+                        new Thread(()->{
+                            List<User> get_users = udao.selectUser(read_sid);
+                            User get_user = new User(read_sid, "", "", "");
+                            if (!get_users.isEmpty()){
+                                get_user = get_users.get(0);
+                            }
+                            User u_f = get_user;
+                            runOnUiThread(()->{
+                                ((EditText)findViewById(R.id.passwd_input)).setText(u_f.password);
+                                aaw_p = u_f.aaw_password;
+                                vpn_p = u_f.vpn_password;
+                            });
+                        }).start();
+                    }
+                }
             });
         });
     }
@@ -335,7 +363,7 @@ public class Login extends AppCompatActivity {
         EditText ets = (EditText)findViewById(R.id.sid_input);
         EditText etp = (EditText)findViewById(R.id.passwd_input);
         EditText etc = (EditText)findViewById(R.id.checkcode_input);
-        EditText eta = (EditText)findViewById(R.id.aaw_passwd_input);
+//        EditText eta = (EditText)findViewById(R.id.aaw_passwd_input);
         EditText etv = (EditText)findViewById(R.id.vpn_passwd_input);
         if (ets != null) {
             ets.setEnabled(!ets.isEnabled());
@@ -352,11 +380,11 @@ public class Login extends AppCompatActivity {
             etc.setEnabled(!etc.isEnabled());
             etc.clearFocus();
         }
-        if (eta != null) {
-            eta.setEnabled(!eta.isEnabled());
-            eta.setEnabled(!eta.isEnabled());
-            eta.clearFocus();
-        }
+//        if (eta != null) {
+//            eta.setEnabled(!eta.isEnabled());
+//            eta.setEnabled(!eta.isEnabled());
+//            eta.clearFocus();
+//        }
         if (etv != null) {
             etv.setEnabled(!etv.isEnabled());
             etv.setEnabled(!etv.isEnabled());
@@ -437,7 +465,7 @@ public class Login extends AppCompatActivity {
                 null
         );
         if ( login_res.code == 0 ) {
-            LoginResponse response = new Gson().fromJson(login_res.comment, LoginResponse.class);
+            LoginResponse response = MyApp.gson.fromJson(login_res.comment, LoginResponse.class);
             login_res.comment = response.getMsg();
         }
         if (login_res.code == 0 && builder != null) {
@@ -474,34 +502,36 @@ public class Login extends AppCompatActivity {
      * @clear
      */
     public static HttpConnectionAndCode outside_login_test(Context c, final String sid, final String pwd){
-        final String NAME = "outside_login_test()";
-        Resources r = c.getResources();
-        String body = "username=" + sid + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
-        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "body", body);
-        HttpConnectionAndCode login_res = Post.post(
-                r.getString(R.string.lan_outside_login_url),
-                null,
-                r.getString(R.string.user_agent),
-                r.getString(R.string.lan_outside_login_referer),
-                body,
-                null,
-                null,
-                r.getString(R.string.cookie_delimiter),
-                null,
-                null,
-                false,
-                null
-        );
-        if (login_res.code == -7){
-            login_res.code = 0;
-            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "success");
-        }else {
-            if (login_res.code == 0){
-                login_res.code = -6;
-            }
-            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
-        }
-        return login_res;
+//        final String NAME = "outside_login_test()";
+//        Resources r = c.getResources();
+//        String body = "username=" + sid + "&passwd=" + pwd + "&login=%B5%C7%A1%A1%C2%BC";
+//        com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "body", body);
+//        HttpConnectionAndCode login_res = Post.post(
+//                r.getString(R.string.lan_outside_login_url),
+//                null,
+//                r.getString(R.string.user_agent),
+//                r.getString(R.string.lan_outside_login_referer),
+//                body,
+//                null,
+//                null,
+//                r.getString(R.string.cookie_delimiter),
+//                null,
+//                null,
+//                false,
+//                null
+//        );
+//        if (login_res.code == -7){
+//            login_res.code = 0;
+//            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "success");
+//        }else {
+//            if (login_res.code == 0){
+//                login_res.code = -6;
+//            }
+//            com.telephone.coursetable.LogMe.LogMe.e(NAME + " " + "login status", "fail" + " code: " + login_res.code);
+//        }
+//        return login_res;
+
+        return new HttpConnectionAndCode(0);
     }
 
     /**
@@ -615,6 +645,8 @@ public class Login extends AppCompatActivity {
                     runOnUiThread((Runnable) () -> {
                         ((AutoCompleteTextView)findViewById(R.id.sid_input)).setText("");
                         ((AutoCompleteTextView)findViewById(R.id.passwd_input)).setText("");
+                        aaw_p = "";
+                        vpn_p = "";
                         setFocusToEditText((EditText)findViewById(R.id.sid_input));
                         changeCode(null);
                     });
@@ -849,8 +881,11 @@ public class Login extends AppCompatActivity {
                     /** call {@link #lock()} */
                     lock();
                     /** get aaw password, vpn password from input box */
-                    final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
+//                    final String aaw_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).getText().toString();
+                    final String aaw_pwd = "";
                     final String vpn_pwd = ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).getText().toString();
+                    aaw_p = aaw_pwd;
+                    vpn_p = vpn_pwd;
                     /** start a new thread */
                     new Thread(() -> {
                         /** call {@link #login(Context, String, String, String, String, StringBuilder)} , passing {@link #cookie_builder} */
@@ -1047,19 +1082,12 @@ public class Login extends AppCompatActivity {
                 extra_pwd_dialog_layout,
                 getResources().getString(R.string.lan_extra_password_title), null, null);
         new Thread(() -> {
-            List<User> u = udao.selectUser(sid);
-            String aaw_pwd = "";
-            String vpn_pwd = "";
-            if (!u.isEmpty()){
-                aaw_pwd = u.get(0).aaw_password;
-                vpn_pwd = u.get(0).vpn_password;
-            }
-            final String aaw_pwdf = aaw_pwd;
-            final String vpn_pwdf = vpn_pwd;
+            final String aaw_pwdf = aaw_p;
+            final String vpn_pwdf = vpn_p;
             runOnUiThread(() -> {
-                ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).setText(aaw_pwdf);
+//                ((EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input)).setText(aaw_pwdf);
                 ((EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input)).setText(vpn_pwdf);
-                setHintForEditText("默认为身份证后6位", 10, (EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input));
+//                setHintForEditText("默认为身份证后6位", 10, (EditText)extra_pwd_dialog_layout.findViewById(R.id.aaw_passwd_input));
                 setHintForEditText("上网登录页密码，默认为身份证后6位", 8, (EditText)extra_pwd_dialog_layout.findViewById(R.id.vpn_passwd_input));
                 extra_pwd_dialog.show();
             });

@@ -317,7 +317,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                20000
+                30000
         );
     }
 }
