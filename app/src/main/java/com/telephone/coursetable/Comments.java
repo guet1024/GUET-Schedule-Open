@@ -260,7 +260,7 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                     setAdapter(comments);
                     LogMe.e(NAME, "get comments for " + key + ": " + key_value + " | success");
                 } else {
-                    Toast.makeText(Comments.this, "网络连接失败，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Comments.this, "网络连接失败，评论列表刷新失败，请重试", Toast.LENGTH_SHORT).show();
                     LogMe.e(NAME, "fail to get comments for " + key + ": " + key_value);
                 }
                 ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
