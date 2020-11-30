@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,15 +25,16 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
+import com.telephone.coursetable.Database.Version;
 import com.telephone.coursetable.Gson.Adapters.NoNullStringAdapter;
 import com.telephone.coursetable.Http.Get;
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.Https.Post;
 import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -66,7 +68,7 @@ public class MyApp extends Application {
     public enum RunningActivity{
         MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, ABOUT, USAGE,
         WEB_LINKS, GUET_MUSIC, GUET_PHONE, WEB_INFO, IMAGE_MAP, GRADE_POINTS, TEST, COURSE_CARD,
-        EDIT_COURSE, TEACHER_EVALUATION_PANEL, NULL
+        EDIT_COURSE, TEACHER_EVALUATION_PANEL, COMMENT, NULL
     }
     private volatile static RunningActivity running_activity = RunningActivity.NULL;
     private volatile static AppCompatActivity running_activity_pointer = null;
@@ -244,10 +246,27 @@ public class MyApp extends Application {
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
 
-//        String testName = "comment_past_time()";
-//        String a = Clock.comment_past_time(System.currentTimeMillis()+(1000L * 60L * 60L * 24L));
-//        Log.i(testName,a);
-
+        new Thread(()->{
+            if (getCurrentAppDB().versionDao().selectVersion(BuildConfig.VERSION_NAME).isEmpty()){
+                HttpConnectionAndCode report_res = Post.post(
+                        "https://guetcob.com:44334/reportversion",
+                        null,
+                        "",
+                        "",
+                        BuildConfig.VERSION_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        true
+                );
+                if (report_res.code == 0){
+                    getCurrentAppDB().versionDao().insert(new Version(BuildConfig.VERSION_NAME));
+                }
+            }
+        }).start();
     }
 
     public static MyApp getCurrentApp(){

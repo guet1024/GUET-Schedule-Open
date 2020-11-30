@@ -66,15 +66,28 @@
         <service android:name=".Webinfo.MediaService" />
 
         <activity
-            android:name=".TeacherEvaluationPanel"
-            android:parentActivityName=".FunctionMenu"
+            android:name=".Comments"
+            android:parentActivityName=".CourseCard"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_teacher_evaluation_panel">
+            android:theme="@style/AppTheme_comments">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".TeacherEvaluationPanel"
+            android:parentActivityName=".FunctionMenu"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme_teacher_evaluation_panel">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".EditCourse"

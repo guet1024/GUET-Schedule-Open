@@ -209,7 +209,7 @@ public class Clock {
      * @clear
      */
     public static long nowTimeStamp(){
-        return Timestamp.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
+        return System.currentTimeMillis();
     }
 
     /**
@@ -314,13 +314,11 @@ public class Clock {
         }
     }
 
-
     public static String comment_past_time(long compare_timestamp){
 
         SimpleDateFormat chineseformat = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
         Date now = new Date(compare_timestamp);
         chineseformat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        //chineseformat.format(now);
 
         long NowTime = nowTimeStamp();
         long gap = NowTime - compare_timestamp;
@@ -328,12 +326,12 @@ public class Clock {
 
         if(gap < 0L){
             tip = chineseformat.format(now);
-            //return tip;
+            tip = "未来";
         }
 
         //1分钟以内
         long gap_temp = gap/60000L;
-        if(0L < gap_temp && gap_temp < 1L){
+        if(gap_temp == 0L){
             tip = "刚刚";
         }
 

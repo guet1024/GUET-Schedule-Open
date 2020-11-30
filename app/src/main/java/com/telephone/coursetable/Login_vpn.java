@@ -620,7 +620,8 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 r.getString(R.string.lan_login_success_contain_response_text),
                 null,
-                false
+                false,
+                null
         );
         if (login_res.code == 0){
             LoginResponse response = MyApp.gson.fromJson(login_res.comment, LoginResponse.class);
@@ -668,7 +669,8 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 null,
                 null,
-                false
+                false,
+                null
         );
         if (login_res.code == -7 && login_res.c.getHeaderFields().get("location").get(0).contains("menu.asp?menu=mnall.asp")){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "success -> " + login_res.c.getHeaderFields().get("location").get(0));
@@ -780,6 +782,7 @@ public class Login_vpn extends AppCompatActivity {
                 null,
                 r.getString(R.string.wan_vpn_login_success_contain_response_text),
                 null,
+                null,
                 null
         );
         if (try_to_login_res.code == 0) {
@@ -797,6 +800,7 @@ public class Login_vpn extends AppCompatActivity {
                     r.getString(R.string.wan_vpn_confirm_login_referer),
                     null,
                     cookie,
+                    null,
                     null,
                     null,
                     null,

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -38,6 +40,7 @@ import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
+import com.telephone.coursetable.Database.Privacy;
 import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
@@ -206,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         MyApp.setRunning_main(this);
@@ -295,169 +297,204 @@ public class MainActivity extends AppCompatActivity {
             ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
             setContentView(view);
         } else {
-            new Thread(() -> {
-                if (udao.getActivatedUser().isEmpty()) {
-                    boolean islan = MyApp.isLAN();
-                    runOnUiThread(() -> {
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
-                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
-                        ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
-                        for (int id : MyApp.timetvIds) {
-                            ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
-                        }
-                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
-                        Intent notificationIntent;
-                        if (islan){
-                            notificationIntent = new Intent(MainActivity.this, Login.class);
-                        }else {
-                            notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
-                        }
-                        PendingIntent pendingIntent =
-                                PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
-                        Notification notification =
-                                new NotificationCompat.Builder(MainActivity.this, MyApp.notification_channel_id_normal)
-                                        .setContentTitle("您还未登录")
-                                        .setStyle(new NotificationCompat.BigTextStyle().bigText("点击登录 >>"))
-                                        .setSmallIcon(R.drawable.feather_pen_trans)
-                                        .setContentIntent(pendingIntent)
-                                        .setAutoCancel(true)
-                                        .setTicker("您还未登录")
-                                        .build();
-                        NotificationManagerCompat.from(MainActivity.this).notify(MyApp.notification_id_click_to_login, notification);
-                        ((TextView)MainActivity.this.view.findViewById(R.id.textView_title)).setOnClickListener(MainActivity.this::Login);
-                        setContentView(view);
-                    });
-                } else {
-                    User u = udao.getActivatedUser().get(0);
-                    String name = pdao.selectAll().get(0).name;
-                    Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                            DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                            getResources().getString(R.string.pref_hour_start_suffix),
-                            getResources().getString(R.string.pref_hour_end_suffix),
-                            getResources().getString(R.string.pref_hour_des_suffix)
-                    );
-                    List<TermInfo> terms = tdao.selectAll();
-                    List<String> term_names = new LinkedList<>();
-                    term_names.add(getResources().getString(R.string.term_vacation));
-                    for (TermInfo term : terms) {
-                        term_names.add(term.termname);
-                    }
-                    termValues = term_names.toArray(new String[0]);
+            new Thread(()->{
+                if (MyApp.getCurrentAppDB().privacyDao().selectPrivacy(getString(R.string.privacy_version)).isEmpty()){
                     runOnUiThread(()->{
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
-                        ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.VISIBLE);
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
-                        ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
-                        ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
-                        for (int id : MyApp.timetvIds) {
-                            ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(MainActivity.this::setTime);
-                        }
-                        ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(true);
-                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
-                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setTag(u.username);
-                        MainActivity.this.view.findViewById(R.id.main_drag_background).setOnDragListener(new View.OnDragListener() {
-                            @Override
-                            public boolean onDrag(View view, DragEvent dragEvent) {
-                                int action = dragEvent.getAction();
-                                switch (action) {
-                                    case DragEvent.ACTION_DRAG_STARTED:
-                                    case DragEvent.ACTION_DRAG_ENTERED:
-                                    case DragEvent.ACTION_DROP:
-                                        break;
-                                    case DragEvent.ACTION_DRAG_EXITED:
-                                        view.updateDragShadow(new View.DragShadowBuilder());
-                                        break;
-                                    case DragEvent.ACTION_DRAG_ENDED:
-                                        MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.VISIBLE);
-                                        break;
-                                    case DragEvent.ACTION_DRAG_LOCATION:
-                                        float y = dragEvent.getY();
-                                        float h = MainActivity.this.view.findViewById(R.id.floatingActionButton).getHeight();
-                                        float margin = 10;
-                                        com.telephone.coursetable.LogMe.LogMe.i("FAB", "drag y(relative) = " + y);
-                                        if (y + h + margin > view.getHeight()){
-                                            com.telephone.coursetable.LogMe.LogMe.i("FAB", "lower boundary");
-                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(view.getHeight() - margin - h));
-                                        }else if (y - h - margin < 0){
-                                            com.telephone.coursetable.LogMe.LogMe.i("FAB", "upper boundary");
-                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(0 + margin + h));
-                                        }else {
-                                            setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(y));
-                                        }
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setOnLongClickListener(view -> {
-                            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                            MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
-                            view.startDragAndDrop(null, shadowBuilder, null, 0);
-                            ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-                            return true;
-                        });
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDisplayedValues(termValues);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMinValue(0);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMaxValue(termValues.length - 1);
-                        weekValues = new String[]{
-                                "0",
-                                "1",
-                                "2",
-                                "3",
-                                "4",
-                                "5",
-                                "6",
-                                "7",
-                                "8",
-                                "9",
-                                "10",
-                                "11",
-                                "12",
-                                "13",
-                                "14",
-                                "15",
-                                "16",
-                                "17",
-                                "18",
-                                "19",
-                                "20",
-                                "21",
-                                "22",
-                                "23",
-                                "24"
-                        };
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDisplayedValues(weekValues);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMinValue(0);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setOnScrollListener(scroll);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                        current_week = new CurrentWeek(MainActivity.this);
-                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
-                        if (locate.term != null) {
-                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
-                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
-                            current_week.setValue(Math.toIntExact(locate.week));
-                        } else {
-                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
-                            ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
-                            current_week.setValue(0);
-                        }
-                        new Thread(()->{
-                            Map.Entry<Integer, Integer> g = getTime_enhanced();
-                            runOnUiThread(()->{
-                                showTable(u.username, locate, g);
-                                setContentView(view);
-                            });
-                        }).start();
+                        AlertDialog dialog = Login.getAlertDialog(
+                                MainActivity.this,
+                                null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new Thread(()->MyApp.getCurrentAppDB().privacyDao().insert(new Privacy(getString(R.string.privacy_version)))).start();
+                                        init_thread();
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        FetchService.startAction_STOP_SERVICE(MainActivity.this);
+                                        System.exit(0);
+                                    }
+                                },
+                                getLayoutInflater().inflate(R.layout.privacy_dialog, null),
+                                getString(R.string.privacy_title_no_line),
+                                "我已阅读且同意",
+                                "我不同意，退出"
+                        );
+                        dialog.setCancelable(false);
+                        dialog.show();
                     });
+                }else {
+                    init_thread();
                 }
             }).start();
         }
+    }
+
+    private void init_thread(){
+        new Thread(() -> {
+            if (udao.getActivatedUser().isEmpty()) {
+                boolean islan = MyApp.isLAN();
+                runOnUiThread(() -> {
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title) + getResources().getString(R.string.no_user_title_suffix));
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.INVISIBLE);
+                    ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.INVISIBLE);
+                    ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                    for (int id : MyApp.timetvIds) {
+                        ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
+                    }
+                    ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
+                    Intent notificationIntent;
+                    if (islan) {
+                        notificationIntent = new Intent(MainActivity.this, Login.class);
+                    } else {
+                        notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
+                    }
+                    PendingIntent pendingIntent =
+                            PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
+                    Notification notification =
+                            new NotificationCompat.Builder(MainActivity.this, MyApp.notification_channel_id_normal)
+                                    .setContentTitle("您还未登录")
+                                    .setStyle(new NotificationCompat.BigTextStyle().bigText("点击登录 >>"))
+                                    .setSmallIcon(R.drawable.feather_pen_trans)
+                                    .setContentIntent(pendingIntent)
+                                    .setAutoCancel(true)
+                                    .setTicker("您还未登录")
+                                    .build();
+                    NotificationManagerCompat.from(MainActivity.this).notify(MyApp.notification_id_click_to_login, notification);
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setOnClickListener(MainActivity.this::Login);
+                    setContentView(view);
+                });
+            } else {
+                User u = udao.getActivatedUser().get(0);
+                String name = pdao.selectAll().get(0).name;
+                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                        getResources().getString(R.string.pref_hour_start_suffix),
+                        getResources().getString(R.string.pref_hour_end_suffix),
+                        getResources().getString(R.string.pref_hour_des_suffix)
+                );
+                List<TermInfo> terms = tdao.selectAll();
+                List<String> term_names = new LinkedList<>();
+                term_names.add(getResources().getString(R.string.term_vacation));
+                for (TermInfo term : terms) {
+                    term_names.add(term.termname);
+                }
+                termValues = term_names.toArray(new String[0]);
+                runOnUiThread(() -> {
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
+                    ((TextView) MainActivity.this.view.findViewById(R.id.main_into_more_text_view)).setVisibility(View.VISIBLE);
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setText("  " + name + "\n" + "  " + u.updateTime + "同步");
+                    ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setOnClickListener(MainActivity.this::openFunctionMenu);
+                    ((ImageView) MainActivity.this.view.findViewById(R.id.imageView3)).setOnClickListener(MainActivity.this::Login);
+                    for (int id : MyApp.timetvIds) {
+                        ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(MainActivity.this::setTime);
+                    }
+                    ((SwipeRefreshLayout) MainActivity.this.view.findViewById(R.id.main_pull_refresh)).setEnabled(true);
+                    ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.VISIBLE);
+                    ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setTag(u.username);
+                    MainActivity.this.view.findViewById(R.id.main_drag_background).setOnDragListener(new View.OnDragListener() {
+                        @Override
+                        public boolean onDrag(View view, DragEvent dragEvent) {
+                            int action = dragEvent.getAction();
+                            switch (action) {
+                                case DragEvent.ACTION_DRAG_STARTED:
+                                case DragEvent.ACTION_DRAG_ENTERED:
+                                case DragEvent.ACTION_DROP:
+                                    break;
+                                case DragEvent.ACTION_DRAG_EXITED:
+                                    view.updateDragShadow(new View.DragShadowBuilder());
+                                    break;
+                                case DragEvent.ACTION_DRAG_ENDED:
+                                    MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.VISIBLE);
+                                    break;
+                                case DragEvent.ACTION_DRAG_LOCATION:
+                                    float y = dragEvent.getY();
+                                    float h = MainActivity.this.view.findViewById(R.id.floatingActionButton).getHeight();
+                                    float margin = 10;
+                                    com.telephone.coursetable.LogMe.LogMe.i("FAB", "drag y(relative) = " + y);
+                                    if (y + h + margin > view.getHeight()) {
+                                        com.telephone.coursetable.LogMe.LogMe.i("FAB", "lower boundary");
+                                        setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(view.getHeight() - margin - h));
+                                    } else if (y - h - margin < 0) {
+                                        com.telephone.coursetable.LogMe.LogMe.i("FAB", "upper boundary");
+                                        setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(0 + margin + h));
+                                    } else {
+                                        setCenterToAbsoluteYofScreen(getAbsoluteYofScreenFromDragBackgroundRelativeY(y));
+                                    }
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                    ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setOnLongClickListener(view -> {
+                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                        MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
+                        view.startDragAndDrop(null, shadowBuilder, null, 0);
+                        ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+                        return true;
+                    });
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDisplayedValues(termValues);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMinValue(0);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMaxValue(termValues.length - 1);
+                    weekValues = new String[]{
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9",
+                            "10",
+                            "11",
+                            "12",
+                            "13",
+                            "14",
+                            "15",
+                            "16",
+                            "17",
+                            "18",
+                            "19",
+                            "20",
+                            "21",
+                            "22",
+                            "23",
+                            "24"
+                    };
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDisplayedValues(weekValues);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMinValue(0);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setOnScrollListener(scroll);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                    current_week = new CurrentWeek(MainActivity.this);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
+                    if (locate.term != null) {
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
+                        current_week.setValue(Math.toIntExact(locate.week));
+                    } else {
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
+                        ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
+                        current_week.setValue(0);
+                    }
+                    new Thread(() -> {
+                        Map.Entry<Integer, Integer> g = getTime_enhanced();
+                        runOnUiThread(() -> {
+                            showTable(u.username, locate, g);
+                            setContentView(view);
+                        });
+                    }).start();
+                });
+            }
+        }).start();
     }
 
     private float getAbsoluteYofScreenFromDragBackgroundRelativeY(float y){

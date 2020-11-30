@@ -4,4 +4,6 @@
     <dimen name="edit_course_content_margin">32dp</dimen>
     <dimen name="edit_course_content_gap">8dp</dimen>
     <dimen name="course_card_item_height">45dp</dimen>
+    <dimen name="comment_card_inner_margin">16dp</dimen>
+    <dimen name="comment_card_out_margin">8dp</dimen>
 </resources>

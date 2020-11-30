@@ -48,7 +48,6 @@ public class Get {
                                             ){
         URL url = null;
         HttpURLConnection cnt = null;
-        DataOutputStream dos = null;
         InputStreamReader in = null;
         String response = null;
         int resp_code = 0;
@@ -60,7 +59,6 @@ public class Get {
             }
             url = new URL(u_bulider.toString());
             cnt = (HttpURLConnection) url.openConnection();
-            cnt.setDoOutput(true);
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
             if (accept_encodings != null && accept_encodings.length > 0){

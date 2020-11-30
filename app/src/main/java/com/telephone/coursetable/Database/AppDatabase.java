@@ -10,7 +10,7 @@ import com.telephone.coursetable.BuildConfig;
 /**
  * @clear
  */
-@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class, LAB.class, MyComment.class}, version = 6, exportSchema = false)
+@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class, LAB.class, MyComment.class, Version.class, Privacy.class}, version = 8, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract GoToClassDao goToClassDao();
     public abstract ClassInfoDao classInfoDao();
@@ -23,4 +23,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CETDao cetDao();
     public abstract LABDao labDao();
     public abstract MyCommentDao myCommentDao();
+    public abstract VersionDao versionDao();
+    public abstract PrivacyDao privacyDao();
 }

@@ -120,7 +120,23 @@ public class CourseCard extends AppCompatActivity {
         ((TextView)findViewById(R.id.card_date_right_bottom)).setText("共 " + data.getCards().size() + " 节课");
     }
 
-    public void comment(View view){}
+    public static final int TYPE_KEY_KEY = 1800301127;
+    public static final int TYPE_TNAME_KEY = 1800301128;
+    public static final int TYPE_CCD_KEY = 1800301130;
+
+    public void comment(View view) {
+        new Thread(() ->
+                Comments.start(
+                        CourseCard.this,
+                        (String) view.getTag(TYPE_KEY_KEY),
+                        (String) view.getTag(),
+                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                        MyApp.getCurrentAppDB().personInfoDao().selectAll().get(0).name,
+                        (String) view.getTag(TYPE_TNAME_KEY),
+                        (CourseCardData) view.getTag(TYPE_CCD_KEY)
+                )
+        ).start();
+    }
 
     public static final int TITLE_TAG_KEY = 1800301129;
 

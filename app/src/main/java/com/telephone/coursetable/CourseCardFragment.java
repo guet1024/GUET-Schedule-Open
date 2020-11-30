@@ -60,6 +60,7 @@ public class CourseCardFragment extends Fragment {
                 ((TextView) view.findViewById(R.id.course_card_source)).setText("自定义");
                 ((TextView) view.findViewById(R.id.course_card_cmt_cno)).setEnabled(true);
                 ((TextView) view.findViewById(R.id.course_card_cmt_teacher)).setEnabled(true);
+                ((TextView) view.findViewById(R.id.course_card_cmt_cname)).setEnabled(true);
                 View.OnClickListener listener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -68,14 +69,39 @@ public class CourseCardFragment extends Fragment {
                 };
                 ((TextView) view.findViewById(R.id.course_card_cmt_cno)).setOnClickListener(listener);
                 ((TextView) view.findViewById(R.id.course_card_cmt_teacher)).setOnClickListener(listener);
+                ((TextView) view.findViewById(R.id.course_card_cmt_cname)).setOnClickListener(listener);
             }else {
                 ((TextView) view.findViewById(R.id.course_card_source)).setText("系统");
                 ((TextView) view.findViewById(R.id.course_card_cmt_cno)).setEnabled(true);
                 ((TextView) view.findViewById(R.id.course_card_cmt_teacher)).setEnabled(true);
+                ((TextView) view.findViewById(R.id.course_card_cmt_cname)).setEnabled(true);
+
+                if (card.getCno() != null && !card.getCno().isEmpty()) {
+                    view.findViewById(R.id.course_card_cmt_cno).setTag(card.getCno()); // the cno
+                    view.findViewById(R.id.course_card_cmt_cno).setTag(CourseCard.TYPE_KEY_KEY, Comments.cno_key);
+                    view.findViewById(R.id.course_card_cmt_cno).setTag(CourseCard.TYPE_TNAME_KEY, null);
+                    view.findViewById(R.id.course_card_cmt_cno).setTag(CourseCard.TYPE_CCD_KEY, total_data);
+                }else {
+                    view.findViewById(R.id.course_card_cmt_cno).setOnClickListener(null);
+                }
+                if (card.getTno() != null && !card.getTno().isEmpty()) {
+                    view.findViewById(R.id.course_card_cmt_teacher).setTag(card.getTno()); // the tno
+                    view.findViewById(R.id.course_card_cmt_teacher).setTag(CourseCard.TYPE_KEY_KEY, Comments.tno_key);
+                    view.findViewById(R.id.course_card_cmt_teacher).setTag(CourseCard.TYPE_TNAME_KEY, card.getTname());
+                    view.findViewById(R.id.course_card_cmt_teacher).setTag(CourseCard.TYPE_CCD_KEY, total_data);
+                }else {
+                    view.findViewById(R.id.course_card_cmt_teacher).setOnClickListener(null);
+                }
+                if (card.getCname() != null && !card.getCname().isEmpty()) {
+                    view.findViewById(R.id.course_card_cmt_cname).setTag(card.getCname()); // the cname
+                    view.findViewById(R.id.course_card_cmt_cname).setTag(CourseCard.TYPE_KEY_KEY, Comments.cname_key);
+                    view.findViewById(R.id.course_card_cmt_cname).setTag(CourseCard.TYPE_TNAME_KEY, null);
+                    view.findViewById(R.id.course_card_cmt_cname).setTag(CourseCard.TYPE_CCD_KEY, total_data);
+                }else {
+                    view.findViewById(R.id.course_card_cmt_cname).setOnClickListener(null);
+                }
             }
 
-            view.findViewById(R.id.course_card_cmt_cno).setTag(card.getCno()); // the cno
-            view.findViewById(R.id.course_card_cmt_teacher).setTag(card.getTno()); // the tno
             view.findViewById(R.id.course_card_cname).setTag(card.getCname()); // the cname
             view.findViewById(R.id.course_card_cname).setTag(CourseCard.TITLE_TAG_KEY, "课程名称"); // the cname title
             view.findViewById(R.id.course_card_sysccommet).setTag(card.getSys_comm()); // the system comment

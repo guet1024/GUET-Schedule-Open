@@ -72,13 +72,25 @@
                         android:id="@+id/course_card_cname"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="6"
+                        android:layout_weight="5"
                         android:gravity="center"
                         android:textAlignment="viewStart"
                         android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
                         android:scrollbars="vertical"
                         android:onClick="show_detail"/>
+                    <TextView
+                        android:id="@+id/course_card_cmt_cname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:text="评论"
+                        android:onClick="comment"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/comment_and_edit_border"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="5dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

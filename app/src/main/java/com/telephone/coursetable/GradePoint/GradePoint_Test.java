@@ -64,7 +64,8 @@ public class GradePoint_Test {
                 null,
                 null,
                 null,
-                false
+                false,
+                null
         );
         if(gpc.code == 0 && !gpc.comment.isEmpty()){
             String html = gpc.comment;
