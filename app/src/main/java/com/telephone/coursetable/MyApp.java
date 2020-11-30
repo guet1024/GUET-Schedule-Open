@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,8 +27,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.AppTestDatabase;
+import com.telephone.coursetable.Database.Version;
 import com.telephone.coursetable.Gson.Adapters.NoNullStringAdapter;
 import com.telephone.coursetable.Http.Get;
+import com.telephone.coursetable.Http.HttpConnectionAndCode;
+import com.telephone.coursetable.Https.Post;
 import com.telephone.coursetable.LogMe.LogMe;
 
 import java.util.ArrayList;
@@ -241,6 +245,28 @@ public class MyApp extends Application {
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
+
+        new Thread(()->{
+            if (getCurrentAppDB().versionDao().selectVersion(BuildConfig.VERSION_NAME).isEmpty()){
+                HttpConnectionAndCode report_res = Post.post(
+                        "https://guetcob.com:44334/reportversion",
+                        null,
+                        "",
+                        "",
+                        BuildConfig.VERSION_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        true
+                );
+                if (report_res.code == 0){
+                    getCurrentAppDB().versionDao().insert(new Version(BuildConfig.VERSION_NAME));
+                }
+            }
+        }).start();
     }
 
     public static MyApp getCurrentApp(){
