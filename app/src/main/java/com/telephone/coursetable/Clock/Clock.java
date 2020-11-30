@@ -13,6 +13,7 @@ import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,9 +21,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Clock {
 
@@ -310,4 +313,60 @@ public class Clock {
             return new FindClassOfCurrentOrNextTimeRes(surplus, false, start);
         }
     }
+
+
+    public static String comment_past_time(long compare_timestamp){
+
+        SimpleDateFormat chineseformat = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
+        Date now = new Date(compare_timestamp);
+        chineseformat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        //chineseformat.format(now);
+
+        long NowTime = nowTimeStamp();
+        long gap = NowTime - compare_timestamp;
+        String tip = "";
+
+        if(gap < 0L){
+            tip = chineseformat.format(now);
+            //return tip;
+        }
+
+        //1分钟以内
+        long gap_temp = gap/60000L;
+        if(0L < gap_temp && gap_temp < 1L){
+            tip = "刚刚";
+        }
+
+        //1分钟到60分钟之间
+        if(1L <= gap_temp && gap_temp < 60L){
+            tip = gap_temp + "分钟前";
+        }
+
+        //1个小时到1天之间
+        gap_temp /= 60L;
+        if(1L <= gap_temp && gap_temp < 24L){
+            tip = gap_temp + "小时前";
+        }
+
+        //1天到1个月之间
+        gap_temp /= 24L;
+        if(1L <= gap_temp && gap_temp < 30L){
+            tip = gap_temp + "天前";
+        }
+
+        //1个月到1年之间
+        gap_temp /= 30L;
+        if(1L <= gap_temp && gap_temp < 12L){
+            tip = gap_temp + "个月前";
+        }
+
+        //大于1年前
+        gap_temp /= 12L;
+        if(1 <= gap_temp){
+            tip = gap_temp + "年前";
+        }
+
+        return tip;
+    }
+
 }
