@@ -212,8 +212,6 @@ public class MyApp extends Application {
             R.id.main_rest_45
     };
 
-    public volatile SSLSocketFactory ssl = null;
-
     @Override
     public void onCreate() {
         super.onCreate();

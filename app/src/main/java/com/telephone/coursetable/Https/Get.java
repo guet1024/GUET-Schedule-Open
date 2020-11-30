@@ -100,10 +100,6 @@ public class Get {
             }else {
                 cnt.setConnectTimeout(connect_timeout);
             }
-            SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
-            if (exist_ssl != null){
-                cnt.setSSLSocketFactory(exist_ssl);
-            }
             if (MyApp.ip_override && cnt.getURL().toString().contains(MyApp.guet_v_ip)) {
                 cnt.setRequestProperty("Host", MyApp.guet_v_domain);
                 cnt.setSSLSocketFactory(new TelTlsSniSocketFactory(cnt));
@@ -114,7 +110,6 @@ public class Get {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
-        MyApp.getCurrentApp().ssl = cnt.getSSLSocketFactory();
         try {
             resp_code = cnt.getResponseCode();
             if (redirect != null && !redirect && resp_code == 302){
