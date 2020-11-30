@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Gson.Comment.Comment;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         Comment cmt = data.get(position);
         ((TextView)holder.mcv.findViewById(R.id.comment_card_sid)).setText(cmt.getSno() + cmt.getName());
         ((TextView)holder.mcv.findViewById(R.id.comment_card_comment)).setText(cmt.getCmt());
-        ((TextView)holder.mcv.findViewById(R.id.comment_card_dt)).setText(cmt.getDt());
+        ((TextView)holder.mcv.findViewById(R.id.comment_card_dt)).setText(cmt.getDt() + "（" + Clock.comment_past_time(cmt.getTimeStamp()) + "）");
     }
 
     @Override
