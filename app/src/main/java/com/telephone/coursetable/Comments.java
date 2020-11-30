@@ -11,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -22,6 +23,8 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.TermInfo;
@@ -46,6 +49,8 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
     private static final String ua = "guet-coursetable";
     private static final String referer = "guet-coursetable";
 
+    private View snack_bar_root_view;
+
     public static final String EXTRA_key = "key";
     public static final String EXTRA_key_value = "key_v";
     public static final String EXTRA_sid = "sid";
@@ -64,6 +69,8 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
     private String tname;
     private CourseCardData ccd;
 
+    private String getcmturl;
+    private String putcmturl;
 
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
@@ -118,6 +125,12 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
         ((RecyclerView)findViewById(R.id.comments_list_view)).setLayoutManager(new LinearLayoutManager(Comments.this));
         ((RecyclerView)findViewById(R.id.comments_list_view)).setAdapter(new CommentsAdapter(new LinkedList<>()));
         ((SwipeRefreshLayout)findViewById(R.id.comment_swipe_refresh)).setOnRefreshListener(Comments.this);
+        ((SwipeRefreshLayout)findViewById(R.id.comment_swipe_refresh)).setColorSchemeResources(
+                R.color.colorPrimary
+        );
+
+        snack_bar_root_view = findViewById(R.id.comments_list_view);
+
         key = getIntent().getStringExtra(EXTRA_key);
         key_value = getIntent().getStringExtra(EXTRA_key_value);
         sid = getIntent().getStringExtra(EXTRA_sid);
@@ -125,11 +138,17 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
         tname = getIntent().getStringExtra(EXTRA_tname);
         ccd = MyApp.gson.fromJson(getIntent().getStringExtra(EXTRA_ccd), CourseCardData.class);
 
+        getcmturl = getString(R.string.get_cmts_url_s) + key + getString(R.string.get_put_cmts_url_e);
+        putcmturl = getString(R.string.put_cmts_url_s) + key + getString(R.string.get_put_cmts_url_e);
+
         if (tname != null){
             getSupportActionBar().setTitle(tname);
         }else {
             getSupportActionBar().setTitle(key_value);
         }
+
+        ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(true);
+        onRefresh();
     }
 
     public static void start(@NonNull Context c, @NonNull String key, @NonNull String key_value, @NonNull String sid, @NonNull String name, @Nullable String tname, @NonNull CourseCardData ccd){
@@ -168,11 +187,12 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                                 if (cmt.isEmpty()) {
                                     Toast.makeText(Comments.this, "评论不能为空", Toast.LENGTH_SHORT).show();
                                 } else {
+                                    ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(true);
                                     new Thread(() -> {
                                         HttpConnectionAndCode post_res = null;
                                         try {
                                             post_res = Post.post(
-                                                    getString(R.string.put_cno_cmts_url),
+                                                    putcmturl,
                                                     new String[]{
                                                             key + "=" + URLEncoder.encode(key_value, "utf-8"),
                                                             "sno" + "=" + sid
@@ -195,12 +215,14 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                                         HttpConnectionAndCode post_res_f = post_res;
                                         runOnUiThread(() -> {
                                             if (post_res_f.code == 0) {
-                                                Toast.makeText(Comments.this, "评论发表成功", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(snack_bar_root_view, "评论发表成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                                 onRefresh();
                                             }else if (post_res_f.c != null && post_res_f.resp_code == 500){
-                                                Toast.makeText(Comments.this, "评论发表失败(服务器错误)", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(snack_bar_root_view, "评论发表失败(服务器错误)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
                                             }else {
-                                                Toast.makeText(Comments.this, "评论发表失败(网络异常)", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(snack_bar_root_view, "评论发表失败(网络异常)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
                                             }
                                         });
                                     }).start();
@@ -236,7 +258,7 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
             HttpConnectionAndCode get_comments_res = null;
             try {
                 get_comments_res = Get.get(
-                        getString(R.string.get_cno_cmts_url),
+                        getcmturl,
                         new String[]{
                                 key + "=" + URLEncoder.encode(key_value, "utf-8")
                         },
@@ -262,7 +284,7 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                     setAdapter(comments);
                     LogMe.e(NAME, "get comments for " + key + ": " + key_value + " | success");
                 } else {
-                    Toast.makeText(Comments.this, "评论列表刷新失败(网络异常)", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(snack_bar_root_view, "评论列表刷新失败(网络异常)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                     LogMe.e(NAME, "fail to get comments for " + key + ": " + key_value);
                 }
                 ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
