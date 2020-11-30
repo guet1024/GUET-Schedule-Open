@@ -197,8 +197,10 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                                             if (post_res_f.code == 0) {
                                                 Toast.makeText(Comments.this, "评论发表成功", Toast.LENGTH_SHORT).show();
                                                 onRefresh();
+                                            }else if (post_res_f.c != null && post_res_f.resp_code == 500){
+                                                Toast.makeText(Comments.this, "评论发表失败(服务器错误)", Toast.LENGTH_SHORT).show();
                                             }else {
-                                                Toast.makeText(Comments.this, "网络连接失败，评论发表失败", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(Comments.this, "评论发表失败(网络异常)", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }).start();
@@ -260,7 +262,7 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
                     setAdapter(comments);
                     LogMe.e(NAME, "get comments for " + key + ": " + key_value + " | success");
                 } else {
-                    Toast.makeText(Comments.this, "网络连接失败，评论列表刷新失败，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Comments.this, "评论列表刷新失败(网络异常)", Toast.LENGTH_SHORT).show();
                     LogMe.e(NAME, "fail to get comments for " + key + ": " + key_value);
                 }
                 ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);

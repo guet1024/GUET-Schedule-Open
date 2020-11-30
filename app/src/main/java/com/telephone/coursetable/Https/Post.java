@@ -170,7 +170,7 @@ public class Post {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpConnectionAndCode(-5);
+            return new HttpConnectionAndCode(cnt, -5, resp_code);
         }
 //        try {
 //            in.close();
