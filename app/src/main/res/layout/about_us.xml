@@ -197,7 +197,7 @@
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"
-                android:text="\n\nGUET课程表隐私政策（v1.0）"
+                android:text="@string/privacy_title"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
                 android:layout_width="match_parent"

@@ -179,12 +179,8 @@ public class FetchService extends IntentService {
     }
 
     /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
+     * Call me to stop the service
      */
-    // TODO: Customize helper method
     public static void startAction_STOP_SERVICE(Context context) {
         Intent intent = new Intent(context, FetchService.class);
         intent.setAction(ACTION_STOP_SERVICE);
