@@ -102,10 +102,6 @@ public class Post {
             cnt.setRequestProperty("Connection", "keep-alive");
             cnt.setReadTimeout(4000);
             cnt.setConnectTimeout(2000);
-            SSLSocketFactory exist_ssl = MyApp.getCurrentApp().ssl;
-            if (exist_ssl != null){
-                cnt.setSSLSocketFactory(exist_ssl);
-            }
             if (MyApp.ip_override && cnt.getURL().toString().contains(MyApp.guet_v_ip)) {
                 cnt.setRequestProperty("Host", MyApp.guet_v_domain);
                 cnt.setSSLSocketFactory(new TelTlsSniSocketFactory(cnt));
@@ -116,7 +112,6 @@ public class Post {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
-        MyApp.getCurrentApp().ssl = cnt.getSSLSocketFactory();
         String body = "";
         if (data != null){
             body += data;
