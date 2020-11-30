@@ -281,6 +281,11 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
             runOnUiThread(() -> {
                 if (get_comments_res_f.code == 0) {
                     List<Comment> comments = Arrays.asList(MyApp.gson.fromJson(get_comments_res_f.comment, Comment[].class));
+                    if (comments.isEmpty()){
+                        findViewById(R.id.comments_sofa).setVisibility(View.VISIBLE);
+                    }else {
+                        findViewById(R.id.comments_sofa).setVisibility(View.INVISIBLE);
+                    }
                     setAdapter(comments);
                     LogMe.e(NAME, "get comments for " + key + ": " + key_value + " | success");
                 } else {
