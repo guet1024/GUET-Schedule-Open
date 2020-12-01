@@ -126,7 +126,7 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
         ((RecyclerView)findViewById(R.id.comments_list_view)).setAdapter(new CommentsAdapter(new LinkedList<>()));
         ((SwipeRefreshLayout)findViewById(R.id.comment_swipe_refresh)).setOnRefreshListener(Comments.this);
         ((SwipeRefreshLayout)findViewById(R.id.comment_swipe_refresh)).setColorSchemeResources(
-                R.color.colorPrimary
+                R.color.colorProgressbar
         );
 
         snack_bar_root_view = findViewById(R.id.comments_list_view);

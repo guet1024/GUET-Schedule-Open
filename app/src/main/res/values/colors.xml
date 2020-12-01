@@ -7,6 +7,8 @@
     <color name="colorLoginButton">#0CABF3</color>
     <color name="colorCurrentWeekday">#0CABF3</color>
 
+    <color name="colorProgressbar">@color/colorPrimary</color>
+
     <color name="colorDefaultTextColor">#505050</color>
     <color name="colorTitleText">#FFFFFF</color>
     <color name="colorLoginButtonText">#FFFFFF</color>
@@ -29,7 +31,6 @@
     <color name="colorLoginTextBorder">#000000</color>
     <color name="colorLibraryBookText">#493E21</color>
     <color name="colorLibraryLocalText">#18302D</color>
-    <color name="colorLoginProgressBar">#ACB4BA</color>
     <color name="colorCurrentDateText">#10B5FF</color>
     <color name="colorTableNodeBackground">#EDEDED</color>
 
