@@ -87,8 +87,14 @@ public class AboutActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.itgh:
-                boolean blgh = joinGitHub();
+                boolean blgh = browse("https://github.com/Telephone2019/CourseTable");
                 if ( !blgh ) {
+                    Snackbar.make(findViewById(R.id.aboutus), "页面跳转失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                }
+                break;
+            case R.id.itge:
+                boolean blge = browse("https://gitee.com/telephone2019/guet-curriculum");
+                if ( !blge ) {
                     Snackbar.make(findViewById(R.id.aboutus), "页面跳转失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                 }
                 break;
@@ -119,8 +125,8 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    public boolean joinGitHub() {
-        Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable");
+    public boolean browse(@NonNull String url) {
+        Uri uri = Uri.parse(url);
         try {
             AboutActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
             return true;

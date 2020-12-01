@@ -11,4 +11,8 @@
         android:id="@+id/itgh"
         app:showAsAction="never"
         android:title="在浏览器中浏览GitHub" />
+    <item
+        android:id="@+id/itge"
+        app:showAsAction="never"
+        android:title="在浏览器中浏览码云" />
 </menu>

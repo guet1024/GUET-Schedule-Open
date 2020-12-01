@@ -65,7 +65,8 @@ public class Update {
         RequestQueue queue = Volley.newRequestQueue(c);
 //        String url ="https://api.github.com/repos/Telephone2019/CourseTable/releases/latest";
 //        String url ="https://gitee.com/api/v5/repos/telephone2019/guet-curriculum/releases/latest";
-        String url ="https://guetcob.com:44334/vmd5apk";
+//        String url ="https://guetcob.com:44334/vmd5apk";
+        String url ="https://guetcob.com:44334/vmd5urlapk";
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(
                 Request.Method.GET,
@@ -80,7 +81,8 @@ public class Update {
                         com.telephone.coursetable.LogMe.LogMe.e(NAME, "response: " + response);
                         String version = BuildConfig.VERSION_NAME;
                         String latest_tag = response.substring(0, response.indexOf(' '));
-                        String md5 = response.substring(response.indexOf(' ') + 1);
+                        String md5 = response.substring(response.indexOf(' ') + 1, response.indexOf(' ', response.indexOf(' ') + 1));
+                        String apk_url = response.substring(response.indexOf(' ', response.indexOf(' ') + 1) + 1);
                         if (!latest_tag.equals(version)) {
                             if (new_version != null) {
                                 new_version.run();
@@ -99,17 +101,23 @@ public class Update {
                                             })
                                             .setNegativeButton("直接下载",
                                                     (dialogInterface, i) -> {
-                                                        Update.use_download_manager_to_download_and_install(
-                                                                c, "GUET课程表v" + latest_tag + ".apk",
-                                                                c.getString(R.string.update_download_url),
-                                                                md5
-                                                        );
                                                         app.runOnUiThread(()->
-                                                                Snackbar.make(view,
-                                                                        "正在下载新版本，下载完成后将会自动安装，请不要关闭应用",
-                                                                        BaseTransientBottomBar.LENGTH_LONG
-                                                                ).setTextColor(Color.WHITE).show()
+//                                                                Snackbar.make(view,
+//                                                                        "正在下载新版本，下载完成后将会自动安装，请不要关闭应用",
+//                                                                        BaseTransientBottomBar.LENGTH_LONG
+//                                                                ).setTextColor(Color.WHITE).show()
+                                                                        Snackbar.make(view,
+                                                                                "正在跳转到浏览器下载......",
+                                                                                BaseTransientBottomBar.LENGTH_SHORT
+                                                                        ).setTextColor(Color.WHITE).show()
                                                         );
+//                                                        Update.use_download_manager_to_download_and_install(
+//                                                                c, "GUET课程表v" + latest_tag + ".apk",
+//                                                                c.getString(R.string.update_download_url),
+//                                                                md5
+//                                                        );
+                                                        Uri see_uri = Uri.parse(apk_url);
+                                                        c.startActivity(new Intent(Intent.ACTION_VIEW, see_uri));
                                                     });
                                     builder.create().show();
                                 }));
