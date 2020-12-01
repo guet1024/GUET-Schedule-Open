@@ -840,23 +840,29 @@
         app:layout_constraintStart_toEndOf="@id/imageView3"
         app:layout_constraintTop_toTopOf="@id/imageView_child_image" />
 
-    <TextView
-        android:id="@+id/main_into_more_text_view"
+    <FrameLayout
+        android:id="@+id/main_into_more_text_view_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="@color/colorTitleText"
-        android:textSize="14sp"
-        android:text="更多"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/imageView_child_image"
         app:layout_constraintTop_toTopOf="@id/imageView_child_image"
         app:layout_constraintBottom_toBottomOf="@id/imageView_child_image"
-        android:layout_marginEnd="8dp"
-        android:onClick="More"/>
-
+        android:layout_marginEnd="8dp">
+        <TextView
+            android:id="@+id/main_into_more_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/colorTitleText"
+            android:textSize="14sp"
+            android:text="更多"
+            android:onClick="More"
+            android:layout_marginEnd="4dp"/>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView_update_time"
@@ -906,7 +912,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp"
         app:rippleColor="@color/colorCurrentWeekdayText"
-        app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+        app:srcCompat="@android:drawable/ic_menu_my_calendar"
+        app:tint="@android:color/white"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton2"
@@ -926,7 +933,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="30dp"
         app:rippleColor="@color/colorCurrentWeekdayText"
-        app:srcCompat="@android:drawable/ic_popup_sync" />
+        app:srcCompat="@android:drawable/ic_popup_sync"
+        app:tint="@android:color/white"/>
 
     <ImageView
         android:id="@+id/termPickerBackground"

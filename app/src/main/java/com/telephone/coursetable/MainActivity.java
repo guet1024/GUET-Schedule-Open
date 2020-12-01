@@ -20,6 +20,7 @@ import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
@@ -642,6 +645,7 @@ public class MainActivity extends AppCompatActivity {
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
             runOnUiThread(()->{
+                clearRedPoint();
                 if (locate.term != null) {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
@@ -927,6 +931,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                addRedPoint();
                 pickerPanel.hide(MainActivity.this);
             });
         }).start();
@@ -974,5 +979,26 @@ public class MainActivity extends AppCompatActivity {
                 DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix));
+    }
+
+    private void addRedPoint(){
+        runOnUiThread(()->{
+            BadgeDrawable badgeDrawable = BadgeDrawable.create(MainActivity.this);
+            badgeDrawable.setBackgroundColor(getColor(R.color.colorRedPoint));
+
+            FrameLayout frameLayout = findViewById(R.id.main_into_more_text_view_frame);
+            TextView textView = findViewById(R.id.main_into_more_text_view);
+
+            frameLayout.setForeground(badgeDrawable);
+            frameLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                    badgeDrawable.updateBadgeCoordinates(textView, frameLayout)
+            );
+        });
+    }
+
+    private void clearRedPoint(){
+        runOnUiThread(()->{
+            ((FrameLayout)findViewById(R.id.main_into_more_text_view_frame)).setForeground(null);
+        });
     }
 }
