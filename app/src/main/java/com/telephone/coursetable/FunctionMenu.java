@@ -3,6 +3,7 @@ package com.telephone.coursetable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,9 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.CET;
 import com.telephone.coursetable.Database.CETDao;
@@ -56,6 +60,8 @@ public class FunctionMenu extends AppCompatActivity {
     private TermInfoDao tdao;
     private CETDao cetDao;
     private ExpandableListView menu_list;
+
+    private boolean dv = false;
 
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
@@ -125,27 +131,66 @@ public class FunctionMenu extends AppCompatActivity {
                 if (parent.isGroupExpanded(groupPosition)){
                     parent.collapseGroup(groupPosition);
                 }else {
-                    int num = 0;
-                    for (int i = 0; i < parent.getCount(); i++){
-                        if (parent.isGroupExpanded(i)){
-                            parent.collapseGroup(i);
-                            num++;
-                        }
-                    }
-                    int num_f = num;
-                    new Thread(()->{
-                        if (num_f > 0) {
-                            try {
-                                Thread.sleep(1);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            int num = 0;
+                            for (int i = 0; i < parent.getCount(); i++){
+                                if (parent.isGroupExpanded(i)){
+                                    parent.collapseGroup(i);
+                                    num++;
+                                }
                             }
-                        }
-                        runOnUiThread(()->{
-                            parent.expandGroup(groupPosition, true);
+                            int num_f = num;
+                            new Thread(()->{
+                                if (num_f > 0) {
+                                    try {
+                                        Thread.sleep(1);
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                }
+                                runOnUiThread(()->{
+                                    parent.expandGroup(groupPosition, true);
 //                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
-                        });
-                    }).start();
+                                });
+                            }).start();
+                        }
+                    };
+                    if (groupPosition == 0 && !dv){
+                        View dialog_view = getLayoutInflater().inflate(R.layout.double_verification, null);
+                        EditText dinput = dialog_view.findViewById(R.id.double_verify_input);
+                        Login.getAlertDialog(
+                                FunctionMenu.this,
+                                null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String pwd_input = dinput.getText().toString();
+                                        new Thread(() -> {
+                                            if (pwd_input.equals(MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password)) {
+                                                dv = true;
+                                                runOnUiThread(runnable);
+                                            } else {
+                                                Snackbar.make(menu_list, "双重验证失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                            }
+                                        }).start();
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // do nothing
+                                    }
+                                },
+                                dialog_view,
+                                "双重验证",
+                                null,
+                                null
+                        ).show();
+                    }else {
+                        runnable.run();
+                    }
                 }
                 return true;
             }
