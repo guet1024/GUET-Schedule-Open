@@ -348,24 +348,6 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
                     }
                     ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
-                    Intent notificationIntent;
-                    if (islan) {
-                        notificationIntent = new Intent(MainActivity.this, Login.class);
-                    } else {
-                        notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
-                    }
-                    PendingIntent pendingIntent =
-                            PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
-                    Notification notification =
-                            new NotificationCompat.Builder(MainActivity.this, MyApp.notification_channel_id_normal)
-                                    .setContentTitle("您还未登录")
-                                    .setStyle(new NotificationCompat.BigTextStyle().bigText("点击登录 >>"))
-                                    .setSmallIcon(R.drawable.feather_pen_trans)
-                                    .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true)
-                                    .setTicker("您还未登录")
-                                    .build();
-                    NotificationManagerCompat.from(MainActivity.this).notify(MyApp.notification_id_click_to_login, notification);
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setOnClickListener(MainActivity.this::Login);
                     setContentView(view);
                 });
