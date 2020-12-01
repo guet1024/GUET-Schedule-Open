@@ -225,7 +225,9 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             child = new LinkedList<>();
             child.add("学院");
-            child.add(pinfo.dptno + "院 " + pinfo.dptname);
+            // THIS MAY BE OUTDATED / WRONG
+//            child.add(pinfo.dptno + "院 " + pinfo.dptname);
+            child.add(pinfo.dptname);
             children.add(child);
             child = new LinkedList<>();
             child.add("专业");
