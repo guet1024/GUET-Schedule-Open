@@ -31,7 +31,7 @@
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
         <item name="android:textColor">@color/colorDefaultTextColor</item>
     </style>
-    <style name="AppTheme_FunctionMenu" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme_FunctionMenu" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

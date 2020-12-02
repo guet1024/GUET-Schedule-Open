@@ -626,8 +626,10 @@ public class MainActivity extends AppCompatActivity {
                     getResources().getString(R.string.pref_hour_start_suffix),
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
-            runOnUiThread(()->{
-                clearRedPoint();
+            runOnUiThread(()-> {
+                clearRedPoint(MainActivity.this,
+                        (FrameLayout) findViewById(R.id.main_into_more_text_view_frame)
+                );
                 if (locate.term != null) {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
@@ -913,7 +915,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                addRedPoint();
+                addRedPoint(
+                        MainActivity.this,
+                        (FrameLayout)findViewById(R.id.main_into_more_text_view_frame),
+                        findViewById(R.id.main_into_more_text_view)
+                );
                 pickerPanel.hide(MainActivity.this);
             });
         }).start();
@@ -963,24 +969,21 @@ public class MainActivity extends AppCompatActivity {
                 getResources().getString(R.string.pref_hour_end_suffix));
     }
 
-    private void addRedPoint(){
-        runOnUiThread(()->{
-            BadgeDrawable badgeDrawable = BadgeDrawable.create(MainActivity.this);
-            badgeDrawable.setBackgroundColor(getColor(R.color.colorRedPoint));
-
-            FrameLayout frameLayout = findViewById(R.id.main_into_more_text_view_frame);
-            TextView textView = findViewById(R.id.main_into_more_text_view);
+    public static void addRedPoint(@NonNull AppCompatActivity c, @NonNull FrameLayout frameLayout, @NonNull View anchor){
+        c.runOnUiThread(()->{
+            BadgeDrawable badgeDrawable = BadgeDrawable.create(c);
+            badgeDrawable.setBackgroundColor(c.getColor(R.color.colorRedPoint));
 
             frameLayout.setForeground(badgeDrawable);
             frameLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
-                    badgeDrawable.updateBadgeCoordinates(textView, frameLayout)
+                    badgeDrawable.updateBadgeCoordinates(anchor, frameLayout)
             );
         });
     }
 
-    private void clearRedPoint(){
-        runOnUiThread(()->{
-            ((FrameLayout)findViewById(R.id.main_into_more_text_view_frame)).setForeground(null);
+    public static void clearRedPoint(@NonNull AppCompatActivity c, @NonNull FrameLayout frameLayout){
+        c.runOnUiThread(()->{
+            frameLayout.setForeground(null);
         });
     }
 }

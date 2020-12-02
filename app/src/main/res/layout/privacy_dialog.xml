@@ -23,7 +23,8 @@
                 android:text="@string/privacy"
                 android:textColor="@android:color/black"
                 android:gravity="top"
-                android:textAlignment="viewStart"/>
+                android:textAlignment="viewStart"
+                android:lineSpacingExtra="4dp"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
