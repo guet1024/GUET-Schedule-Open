@@ -905,7 +905,7 @@ public class Login_vpn extends AppCompatActivity {
      * 2. save the pulled data to database and shared preference
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie,
+    public static boolean fetch_merge(boolean formal, Context c, String cookie,
                                       HashMap<GoToClassKey, String> my_comm_map, String username,
                                       PersonInfoDao pdao, TermInfoDao tdao,
                                       GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao,
@@ -968,7 +968,7 @@ public class Login_vpn extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch grades success, merging...");
-        Merge.grades(res.comment, grdao);
+        Merge.grades(res.comment, grdao, formal, !formal);
 
         LogMe.e(NAME, "fetching exam info");
         res = WAN.examInfo(c, cookie);
@@ -977,7 +977,7 @@ public class Login_vpn extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch exam info success, merging...");
-        Merge.examInfo(res.comment, edao, tdao, c);
+        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal);
 
         LogMe.e(NAME, "fetching cet");
         res = WAN.cet(c, cookie);
@@ -1269,7 +1269,7 @@ public class Login_vpn extends AppCompatActivity {
                     editor.commit();
                     /** call {@link #deleteOldDataFromDatabase()} */
                     Login.deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
-                    fetch_merge_res = fetch_merge(Login_vpn.this, cookie, my_comment_map, sid, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
+                    fetch_merge_res = fetch_merge(true, Login_vpn.this, cookie, my_comment_map, sid, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
                     times++;
                 }
 

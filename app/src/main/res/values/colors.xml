@@ -38,4 +38,5 @@
     <color name="colorLibraryInfoBackground">#F4E5B2</color>
 
     <color name="colorDeleteCourse">#F44336</color>
+    <color name="colorRedPoint">#F44336</color>
 </resources>

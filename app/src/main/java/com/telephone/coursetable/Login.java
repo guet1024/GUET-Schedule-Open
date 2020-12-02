@@ -664,7 +664,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+    public static boolean fetch_merge(boolean formal, Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
 
@@ -730,7 +730,7 @@ public class Login extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch grades success, merging...");
-        Merge.grades(res.comment, grdao);
+        Merge.grades(res.comment, grdao, formal, !formal);
 
         LogMe.e(NAME, "fetching exam info");
         res = LAN.examInfo(c, cookie);
@@ -739,7 +739,7 @@ public class Login extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch exam info success, merging...");
-        Merge.examInfo(res.comment, edao, tdao, c);
+        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal);
 
         LogMe.e(NAME, "fetching cet");
         res = LAN.cet(c, cookie);
@@ -827,9 +827,9 @@ public class Login extends AppCompatActivity {
      *              11. commit shared preference
      *              12. show tip snack-bar, change title
      *              13. call {@link #deleteOldDataFromDatabase(String, GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao, LABDao)}
-     *              14. call {@link #fetch_merge(Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
+     *              14. call {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
      *              15. commit shared preference
-     *              16. the result of {@link #fetch_merge(Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
+     *              16. the result of {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -1007,7 +1007,7 @@ public class Login extends AppCompatActivity {
                             /** call {@link #deleteOldDataFromDatabase()} */
                             deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                             /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                            boolean fetch_merge_res = fetch_merge(Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+                            boolean fetch_merge_res = fetch_merge(true, Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
                             /** commit shared preference */
                             editor.commit();
                             if (fetch_merge_res) {

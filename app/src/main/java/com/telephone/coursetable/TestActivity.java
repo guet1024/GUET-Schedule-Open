@@ -201,9 +201,9 @@ public class TestActivity extends AppCompatActivity {
 
     private boolean fetch_merge(Context c, String cookie, HashMap<GoToClassKey, String> my_comm_map, String username, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
         if (fetch_lan_if_true){
-            return Login.fetch_merge(c, cookie, username, my_comm_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+            return Login.fetch_merge(true, c, cookie, username, my_comm_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
         }else {
-            return Login_vpn.fetch_merge(c, cookie, my_comm_map, username, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
+            return Login_vpn.fetch_merge(true, c, cookie, my_comm_map, username, pdao, tdao, gdao, cdao, gsdao, grdao, edao, cetDao, labDao, editor);
         }
     }
 

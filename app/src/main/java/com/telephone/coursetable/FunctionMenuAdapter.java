@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,6 +42,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
 
     private DataSetObservable dataSetObservable;
     private List<Map.Entry<String, List<List<String>>>> groups;
+
+    public List<Map.Entry<String, List<List<String>>>> getGroups() {
+        return groups;
+    }
+
     private boolean singleExpanded;
     private ExpandableListView list;
     private FunctionMenu menu;
@@ -103,6 +109,21 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
     public View getGroupView(int i, boolean isExpanded, View view, ViewGroup viewGroup) {
         view = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.function_menu_group, viewGroup, false);
         ((TextView)view.findViewById(R.id.textView_group_text)).setText(groups.get(i).getKey());
+        // clear red point first
+        MainActivity.clearRedPoint(
+                menu,
+                (FrameLayout)view.findViewById(R.id.textView_group_text_frame)
+        );
+        if (((TextView)view.findViewById(R.id.textView_group_text)).getText().toString().endsWith(" ")) { // if need red point, add it
+            ((TextView) view.findViewById(R.id.textView_group_text)).setText(
+                    ((TextView) view.findViewById(R.id.textView_group_text)).getText().toString().trim()
+            );
+            MainActivity.addRedPoint(
+                    menu,
+                    (FrameLayout)view.findViewById(R.id.textView_group_text_frame),
+                    view.findViewById(R.id.textView_group_text)
+            );
+        }
         switch (i){
             case 0:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.personal_info);

@@ -20,6 +20,7 @@ import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -35,10 +36,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Database.AppDatabaseCompare;
+import com.telephone.coursetable.Database.ExamTotalDao;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotalDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.Privacy;
 import com.telephone.coursetable.Database.ShowTableNode;
@@ -345,24 +351,6 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView) MainActivity.this.view.findViewById(id)).setOnClickListener(null);
                     }
                     ((FloatingActionButton) MainActivity.this.view.findViewById(R.id.floatingActionButton)).setVisibility(View.INVISIBLE);
-                    Intent notificationIntent;
-                    if (islan) {
-                        notificationIntent = new Intent(MainActivity.this, Login.class);
-                    } else {
-                        notificationIntent = new Intent(MainActivity.this, Login_vpn.class);
-                    }
-                    PendingIntent pendingIntent =
-                            PendingIntent.getActivity(MainActivity.this, 0, notificationIntent, 0);
-                    Notification notification =
-                            new NotificationCompat.Builder(MainActivity.this, MyApp.notification_channel_id_normal)
-                                    .setContentTitle("您还未登录")
-                                    .setStyle(new NotificationCompat.BigTextStyle().bigText("点击登录 >>"))
-                                    .setSmallIcon(R.drawable.feather_pen_trans)
-                                    .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true)
-                                    .setTicker("您还未登录")
-                                    .build();
-                    NotificationManagerCompat.from(MainActivity.this).notify(MyApp.notification_id_click_to_login, notification);
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setOnClickListener(MainActivity.this::Login);
                     setContentView(view);
                 });
@@ -382,6 +370,11 @@ public class MainActivity extends AppCompatActivity {
                     term_names.add(term.termname);
                 }
                 termValues = term_names.toArray(new String[0]);
+                Map.Entry<Integer, Integer> g = getTime_enhanced();
+                AppDatabaseCompare appDatabaseCompare = MyApp.getDb_compare();
+                ExamTotalDao examTotalDao = appDatabaseCompare.examTotalDao();
+                GradeTotalDao gradeTotalDao = appDatabaseCompare.gradeTotalDao();
+                boolean red_point = examTotalDao.unreadNum() > 0 || gradeTotalDao.unreadNum() > 0;
                 runOnUiThread(() -> {
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
@@ -485,13 +478,17 @@ public class MainActivity extends AppCompatActivity {
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                         current_week.setValue(0);
                     }
-                    new Thread(() -> {
-                        Map.Entry<Integer, Integer> g = getTime_enhanced();
-                        runOnUiThread(() -> {
-                            showTable(u.username, locate, g);
-                            setContentView(view);
-                        });
-                    }).start();
+                    showTable(u.username, locate, g);
+                    //********************
+                    setContentView(view);
+                    //********************
+                    if (red_point){
+                        addRedPoint(
+                                MainActivity.this,
+                                (FrameLayout)findViewById(R.id.main_into_more_text_view_frame),
+                                findViewById(R.id.main_into_more_text_view)
+                        );
+                    }
                 });
             }
         }).start();
@@ -641,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
                     getResources().getString(R.string.pref_hour_start_suffix),
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
-            runOnUiThread(()->{
+            runOnUiThread(()-> {
                 if (locate.term != null) {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
@@ -974,5 +971,23 @@ public class MainActivity extends AppCompatActivity {
                 DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix));
+    }
+
+    public static void addRedPoint(@NonNull AppCompatActivity c, @NonNull FrameLayout frameLayout, @NonNull View anchor){
+        c.runOnUiThread(()->{
+            BadgeDrawable badgeDrawable = BadgeDrawable.create(c);
+            badgeDrawable.setBackgroundColor(c.getColor(R.color.colorRedPoint));
+
+            frameLayout.setForeground(badgeDrawable);
+            frameLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                    badgeDrawable.updateBadgeCoordinates(anchor, frameLayout)
+            );
+        });
+    }
+
+    public static void clearRedPoint(@NonNull AppCompatActivity c, @NonNull FrameLayout frameLayout){
+        c.runOnUiThread(()->{
+            frameLayout.setForeground(null);
+        });
     }
 }

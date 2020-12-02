@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -124,77 +125,6 @@ public class FunctionMenu extends AppCompatActivity {
         tdao = MyApp.getCurrentAppDB().termInfoDao();
         cetDao = MyApp.getCurrentAppDB().cetDao();
         menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
-        menu_list.setGroupIndicator(null);
-        menu_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (parent.isGroupExpanded(groupPosition)){
-                    parent.collapseGroup(groupPosition);
-                }else {
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            int num = 0;
-                            for (int i = 0; i < parent.getCount(); i++){
-                                if (parent.isGroupExpanded(i)){
-                                    parent.collapseGroup(i);
-                                    num++;
-                                }
-                            }
-                            int num_f = num;
-                            new Thread(()->{
-                                if (num_f > 0) {
-                                    try {
-                                        Thread.sleep(1);
-                                    } catch (InterruptedException e) {
-                                        Thread.currentThread().interrupt();
-                                    }
-                                }
-                                runOnUiThread(()->{
-                                    parent.expandGroup(groupPosition, true);
-//                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
-                                });
-                            }).start();
-                        }
-                    };
-                    if (groupPosition == 0 && !dv){
-                        View dialog_view = getLayoutInflater().inflate(R.layout.double_verification, null);
-                        EditText dinput = dialog_view.findViewById(R.id.double_verify_input);
-                        Login.getAlertDialog(
-                                FunctionMenu.this,
-                                null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String pwd_input = dinput.getText().toString();
-                                        new Thread(() -> {
-                                            if (pwd_input.equals(MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password)) {
-                                                dv = true;
-                                                runOnUiThread(runnable);
-                                            } else {
-                                                Snackbar.make(menu_list, "双重验证失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
-                                            }
-                                        }).start();
-                                    }
-                                },
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // do nothing
-                                    }
-                                },
-                                dialog_view,
-                                "双重验证",
-                                null,
-                                null
-                        ).show();
-                    }else {
-                        runnable.run();
-                    }
-                }
-                return true;
-            }
-        });
 
         final ExpandableListView menu_listf = menu_list;
 
@@ -340,6 +270,9 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(graduation_score_group, children));
 
             String grades_group = "成绩单";
+            if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0){
+                grades_group += " ";
+            }
             List<Grades> grades_list = grdao.selectAll();
             children = new LinkedList<>();
             child = new LinkedList<>();
@@ -387,6 +320,9 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(change_term_group, children));
 
             String exams_group = "考试安排";
+            if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0){
+                exams_group += " ";
+            }
             List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
             children = new LinkedList<>();
             String cno = "";
@@ -479,7 +415,100 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(about_group, children));
 
-            runOnUiThread(() -> menu_listf.setAdapter(new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this)));
+            runOnUiThread(() -> {
+                FunctionMenuAdapter adapter = new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this);
+                menu_listf.setAdapter(adapter);
+                menu_listf.setGroupIndicator(null);
+                menu_listf.setOnGroupClickListener((ExpandableListView.OnGroupClickListener) (parent, v, groupPosition, id) -> {
+                    if (parent.isGroupExpanded(groupPosition)){
+                        parent.collapseGroup(groupPosition);
+                    }else {
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                int num = 0;
+                                for (int i = 0; i < parent.getCount(); i++){
+                                    if (parent.isGroupExpanded(i)){
+                                        parent.collapseGroup(i);
+                                        num++;
+                                    }
+                                }
+                                int num_f = num;
+                                new Thread(()->{
+                                    if (num_f > 0) {
+                                        try {
+                                            Thread.sleep(1);
+                                        } catch (InterruptedException e) {
+                                            Thread.currentThread().interrupt();
+                                        }
+                                    }
+                                    runOnUiThread(()->{
+                                        parent.expandGroup(groupPosition, true);
+//                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
+                                        MainActivity.clearRedPoint(
+                                                FunctionMenu.this,
+                                                (FrameLayout)v.findViewById(R.id.textView_group_text_frame)
+                                        );
+                                        List<Entry<String, List<List<String>>>> groups = adapter.getGroups();
+                                        String origin_key = groups.get(groupPosition).getKey();
+                                        List<List<String>> origin_value = groups.get(groupPosition).getValue();
+                                        groups.remove(groupPosition);
+                                        groups.add(groupPosition, Map.entry(origin_key.trim(), origin_value));
+                                        new Thread(()->{
+                                            switch (groupPosition){
+                                                case 2: // grades
+                                                    MyApp.getDb_compare().gradeTotalDao().readAll();
+                                                    break;
+                                                case 5: // exam
+                                                    MyApp.getDb_compare().examTotalDao().readAll();
+                                                    break;
+                                                default:
+                                                    // do nothing
+                                                    break;
+                                            }
+                                        }).start();
+                                    });
+                                }).start();
+                            }
+                        };
+                        if (groupPosition == 0 && !dv){
+                            View dialog_view = getLayoutInflater().inflate(R.layout.double_verification, null);
+                            EditText dinput = dialog_view.findViewById(R.id.double_verify_input);
+                            Login.getAlertDialog(
+                                    FunctionMenu.this,
+                                    null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String pwd_input = dinput.getText().toString();
+                                            new Thread(() -> {
+                                                if (pwd_input.equals(MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password)) {
+                                                    dv = true;
+                                                    runOnUiThread(runnable);
+                                                } else {
+                                                    Snackbar.make(menu_list, "双重验证失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                }
+                                            }).start();
+                                        }
+                                    },
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    },
+                                    dialog_view,
+                                    "双重验证",
+                                    null,
+                                    null
+                            ).show();
+                        }else {
+                            runnable.run();
+                        }
+                    }
+                    return true;
+                });
+            });
         }).start();
     }
 
