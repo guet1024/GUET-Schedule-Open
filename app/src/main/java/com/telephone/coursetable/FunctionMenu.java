@@ -445,28 +445,7 @@ public class FunctionMenu extends AppCompatActivity {
                                     runOnUiThread(()->{
                                         parent.expandGroup(groupPosition, true);
 //                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
-                                        MainActivity.clearRedPoint(
-                                                FunctionMenu.this,
-                                                (FrameLayout)v.findViewById(R.id.textView_group_text_frame)
-                                        );
-                                        List<Entry<String, List<List<String>>>> groups = adapter.getGroups();
-                                        String origin_key = groups.get(groupPosition).getKey();
-                                        List<List<String>> origin_value = groups.get(groupPosition).getValue();
-                                        groups.remove(groupPosition);
-                                        groups.add(groupPosition, Map.entry(origin_key.trim(), origin_value));
-                                        new Thread(()->{
-                                            switch (groupPosition){
-                                                case 2: // grades
-                                                    MyApp.getDb_compare().gradeTotalDao().readAll();
-                                                    break;
-                                                case 5: // exam
-                                                    MyApp.getDb_compare().examTotalDao().readAll();
-                                                    break;
-                                                default:
-                                                    // do nothing
-                                                    break;
-                                            }
-                                        }).start();
+                                        clearUnread(FunctionMenu.this, v, adapter, groupPosition);
                                     });
                                 }).start();
                             }
@@ -509,6 +488,34 @@ public class FunctionMenu extends AppCompatActivity {
                     return true;
                 });
             });
+        }).start();
+    }
+
+    /**
+     * must be called from ui thread
+     */
+    public static void clearUnread(@NonNull AppCompatActivity activity, @NonNull View groupView, @NonNull FunctionMenuAdapter functionMenuAdapter, int groupPosition){
+        MainActivity.clearRedPoint(
+                activity,
+                (FrameLayout)groupView.findViewById(R.id.textView_group_text_frame)
+        );
+        List<Entry<String, List<List<String>>>> groups = functionMenuAdapter.getGroups();
+        String origin_key = groups.get(groupPosition).getKey();
+        List<List<String>> origin_value = groups.get(groupPosition).getValue();
+        groups.remove(groupPosition);
+        groups.add(groupPosition, Map.entry(origin_key.trim(), origin_value));
+        new Thread(()->{
+            switch (groupPosition){
+                case 2: // grades
+                    MyApp.getDb_compare().gradeTotalDao().readAll();
+                    break;
+                case 5: // exam
+                    MyApp.getDb_compare().examTotalDao().readAll();
+                    break;
+                default:
+                    // do nothing
+                    break;
+            }
         }).start();
     }
 

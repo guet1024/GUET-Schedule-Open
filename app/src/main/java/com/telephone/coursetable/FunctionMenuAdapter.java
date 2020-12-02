@@ -134,7 +134,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 2:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.grades);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "成绩单为空", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
+                    view.setOnClickListener(v -> {
+                        Snackbar.make(v, "成绩单为空", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                        FunctionMenu.clearUnread(menu, v, FunctionMenuAdapter.this, i);
+                    });
                 }
                 break;
             case 3:
@@ -146,7 +149,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 5:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.exam);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "暂无考试安排", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
+                    view.setOnClickListener(v -> {
+                        Snackbar.make(v, "暂无考试安排", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                        FunctionMenu.clearUnread(menu, v, FunctionMenuAdapter.this, i);
+                    });
                 }
                 break;
             case 6:
@@ -155,7 +161,10 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
             case 7:
                 ((ImageView)view.findViewById(R.id.group_image)).setImageResource(R.drawable.cet);
                 if (groups.get(i).getValue().isEmpty()){
-                    view.setOnClickListener(v -> Snackbar.make(v, "未查询到等级考试成绩", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show());
+                    view.setOnClickListener(v -> {
+                        Snackbar.make(v, "未查询到等级考试成绩", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                        FunctionMenu.clearUnread(menu, v, FunctionMenuAdapter.this, i);
+                    });
                 }
                 break;
             case 8:
