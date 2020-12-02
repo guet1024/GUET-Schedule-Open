@@ -73,5 +73,5 @@ public class LAB {
 
     public static String getLabName(String cname){return cname + "实验";}
     public static String getFullLabName(String cname, String item_name){return cname + "实验" + ": " + item_name;}
-    public static String getUniqueSerialNumber(String project_id, String batch_no){return project_id + batch_no;}
+    public static String getUniqueSerialNumber(String project_id, String batch_no){return project_id + ".批次" + batch_no;}
 }

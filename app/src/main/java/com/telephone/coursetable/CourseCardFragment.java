@@ -102,6 +102,8 @@ public class CourseCardFragment extends Fragment {
                 }
             }
 
+            view.findViewById(R.id.course_card_cno).setTag(card.getCno()); // the cno
+            view.findViewById(R.id.course_card_cno).setTag(CourseCard.TITLE_TAG_KEY, "课号"); // the cno title
             view.findViewById(R.id.course_card_cname).setTag(card.getCname()); // the cname
             view.findViewById(R.id.course_card_cname).setTag(CourseCard.TITLE_TAG_KEY, "课程名称"); // the cname title
             view.findViewById(R.id.course_card_sysccommet).setTag(card.getSys_comm()); // the system comment
