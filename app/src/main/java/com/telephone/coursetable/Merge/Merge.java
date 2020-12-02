@@ -11,8 +11,10 @@ import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.ExamInfoDao;
+import com.telephone.coursetable.Database.ExamTotal;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotal;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
@@ -231,7 +233,13 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void grades(@NonNull String origin_g, @NonNull GradesDao gdao){
+    public static void grades(@NonNull String origin_g, @NonNull GradesDao gdao, boolean formal, boolean test){
+        if (formal){
+            MyApp.getDb_compare().gradeTotalDao().insert(new GradeTotal(origin_g));
+        }
+        if (test){
+            MyApp.getDb_compare_test().gradeTotalDao().insert(new GradeTotal(origin_g));
+        }
         Grades_s g_s = MyApp.gson.fromJson(origin_g, Grades_s.class);
         List<Grades> g = g_s.getData();
         for (Grades i : g){
@@ -253,7 +261,13 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c){
+    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c, boolean formal, boolean test){
+        if (formal){
+            MyApp.getDb_compare().examTotalDao().insert(new ExamTotal(origin_e));
+        }
+        if (test){
+            MyApp.getDb_compare_test().examTotalDao().insert(new ExamTotal(origin_e));
+        }
         ExamInfo_s e_s = MyApp.gson.fromJson(origin_e, ExamInfo_s.class);
         List<ExamInfo> e = e_s.getData();
         for (ExamInfo i : e){

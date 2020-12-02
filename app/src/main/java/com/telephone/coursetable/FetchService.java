@@ -24,14 +24,17 @@ import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.FindClassOfCurrentOrNextTimeRes;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.AppDatabaseCompare;
 import com.telephone.coursetable.Database.CET;
 import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
 import com.telephone.coursetable.Database.ClassInfoDao;
 import com.telephone.coursetable.Database.ExamInfo;
 import com.telephone.coursetable.Database.ExamInfoDao;
+import com.telephone.coursetable.Database.ExamTotal;
 import com.telephone.coursetable.Database.GoToClass;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotal;
 import com.telephone.coursetable.Database.Grades;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScore;
@@ -582,6 +585,7 @@ public class FetchService extends IntentService {
         editor_test.clear().commit();
         // edit by Telephone 2020/11/23 18:15, use the comment map from formal database, NOT test database
         boolean fetch_merge_res = Login.fetch_merge(
+                false,
                 FetchService.this,
                 cookie_builder.toString(),
                 user.username,
@@ -704,6 +708,14 @@ public class FetchService extends IntentService {
         List<LAB> lab_t_all = lab_t.selectAll();
         for (LAB lab_a : lab_t_all){
             lab.insert(lab_a);
+        }
+        List<ExamTotal> examTotalList_from_test = MyApp.getDb_compare_test().examTotalDao().selectAll();
+        for (ExamTotal i : examTotalList_from_test){
+            MyApp.getDb_compare().examTotalDao().insert(i);
+        }
+        List<GradeTotal> gradeTotalList_from_test = MyApp.getDb_compare_test().gradeTotalDao().selectAll();
+        for (GradeTotal i : gradeTotalList_from_test){
+            MyApp.getDb_compare().gradeTotalDao().insert(i);
         }
     }
 
