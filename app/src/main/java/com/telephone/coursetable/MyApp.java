@@ -26,6 +26,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.AppDatabaseCompare;
+import com.telephone.coursetable.Database.AppDatabaseCompareTest;
 import com.telephone.coursetable.Database.AppTestDatabase;
 import com.telephone.coursetable.Database.Version;
 import com.telephone.coursetable.Gson.Adapters.NoNullStringAdapter;
@@ -49,6 +51,8 @@ public class MyApp extends Application {
     private static MyApp app;
     private static AppDatabase db;
     private static AppTestDatabase db_test;
+    private static AppDatabaseCompare db_compare;
+    private static AppDatabaseCompareTest db_compare_test;
     private static SharedPreferences sp;
     private static SharedPreferences sp_test;
     private static SharedPreferences.Editor editor;
@@ -217,7 +221,9 @@ public class MyApp extends Application {
         super.onCreate();
         app = this;
         db = Room.databaseBuilder(this, AppDatabase.class, "telephone-db").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
+        db_compare = Room.databaseBuilder(this, AppDatabaseCompare.class, "telephone-db-compare").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
+        db_compare_test = Room.databaseBuilder(this, AppDatabaseCompareTest.class, "telephone-db-compare-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
@@ -277,6 +283,14 @@ public class MyApp extends Application {
 
     public static AppTestDatabase getCurrentAppDB_Test(){
         return db_test;
+    }
+
+    public static AppDatabaseCompare getDb_compare() {
+        return db_compare;
+    }
+
+    public static AppDatabaseCompareTest getDb_compare_test() {
+        return db_compare_test;
     }
 
     public static SharedPreferences getCurrentSharedPreference(){
