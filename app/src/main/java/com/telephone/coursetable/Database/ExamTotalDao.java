@@ -18,7 +18,7 @@ public interface ExamTotalDao {
     @Query("select count(*) from ExamTotal")
     int totalNum();
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(ExamTotal tuple);
 
     @Query("select * from ExamTotal")

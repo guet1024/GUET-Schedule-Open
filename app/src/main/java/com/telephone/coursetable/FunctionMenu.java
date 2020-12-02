@@ -233,7 +233,7 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(person_group, children));
 
-            String graduation_score_group = "毕业计划课程" + " ";
+            String graduation_score_group = "毕业计划课程";
             List<GraduationScore> graduation_score_list = gsdao.selectAll();
             children = new LinkedList<>();
             child = new LinkedList<>();
@@ -270,6 +270,9 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(graduation_score_group, children));
 
             String grades_group = "成绩单";
+            if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0){
+                grades_group += " ";
+            }
             List<Grades> grades_list = grdao.selectAll();
             children = new LinkedList<>();
             child = new LinkedList<>();
@@ -317,6 +320,9 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(change_term_group, children));
 
             String exams_group = "考试安排";
+            if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0){
+                exams_group += " ";
+            }
             List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
             children = new LinkedList<>();
             String cno = "";
@@ -448,6 +454,19 @@ public class FunctionMenu extends AppCompatActivity {
                                         List<List<String>> origin_value = groups.get(groupPosition).getValue();
                                         groups.remove(groupPosition);
                                         groups.add(groupPosition, Map.entry(origin_key.trim(), origin_value));
+                                        new Thread(()->{
+                                            switch (groupPosition){
+                                                case 2: // grades
+                                                    MyApp.getDb_compare().gradeTotalDao().readAll();
+                                                    break;
+                                                case 5: // exam
+                                                    MyApp.getDb_compare().examTotalDao().readAll();
+                                                    break;
+                                                default:
+                                                    // do nothing
+                                                    break;
+                                            }
+                                        }).start();
                                     });
                                 }).start();
                             }

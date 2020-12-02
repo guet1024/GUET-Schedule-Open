@@ -41,7 +41,10 @@ import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Database.AppDatabaseCompare;
+import com.telephone.coursetable.Database.ExamTotalDao;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotalDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.Privacy;
 import com.telephone.coursetable.Database.ShowTableNode;
@@ -367,6 +370,11 @@ public class MainActivity extends AppCompatActivity {
                     term_names.add(term.termname);
                 }
                 termValues = term_names.toArray(new String[0]);
+                Map.Entry<Integer, Integer> g = getTime_enhanced();
+                AppDatabaseCompare appDatabaseCompare = MyApp.getDb_compare();
+                ExamTotalDao examTotalDao = appDatabaseCompare.examTotalDao();
+                GradeTotalDao gradeTotalDao = appDatabaseCompare.gradeTotalDao();
+                boolean red_point = examTotalDao.unreadNum() > 0 || gradeTotalDao.unreadNum() > 0;
                 runOnUiThread(() -> {
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_title)).setText(getResources().getString(R.string.title));
                     ((TextView) MainActivity.this.view.findViewById(R.id.textView_update_time)).setVisibility(View.VISIBLE);
@@ -470,13 +478,17 @@ public class MainActivity extends AppCompatActivity {
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
                         current_week.setValue(0);
                     }
-                    new Thread(() -> {
-                        Map.Entry<Integer, Integer> g = getTime_enhanced();
-                        runOnUiThread(() -> {
-                            showTable(u.username, locate, g);
-                            setContentView(view);
-                        });
-                    }).start();
+                    showTable(u.username, locate, g);
+                    //********************
+                    setContentView(view);
+                    //********************
+                    if (red_point){
+                        addRedPoint(
+                                MainActivity.this,
+                                (FrameLayout)findViewById(R.id.main_into_more_text_view_frame),
+                                findViewById(R.id.main_into_more_text_view)
+                        );
+                    }
                 });
             }
         }).start();
@@ -627,9 +639,6 @@ public class MainActivity extends AppCompatActivity {
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
             runOnUiThread(()-> {
-                clearRedPoint(MainActivity.this,
-                        (FrameLayout) findViewById(R.id.main_into_more_text_view_frame)
-                );
                 if (locate.term != null) {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
@@ -915,11 +924,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                addRedPoint(
-                        MainActivity.this,
-                        (FrameLayout)findViewById(R.id.main_into_more_text_view_frame),
-                        findViewById(R.id.main_into_more_text_view)
-                );
                 pickerPanel.hide(MainActivity.this);
             });
         }).start();
