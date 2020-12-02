@@ -662,29 +662,29 @@ public class FetchService extends IntentService {
             ExamInfoDao e, ExamInfoDao e_t,
             CETDao cet, CETDao cet_t,
             LABDao lab, LABDao lab_t
-    ){
+    ) {
         Login.deleteOldDataFromDatabase(username, g, c, t, p, gs, gr, e, cet, lab);
 //        editor.clear().commit();
         List<PersonInfo> p_t_all = p_t.selectAll();
-        for (PersonInfo p_a : p_t_all){
+        for (PersonInfo p_a : p_t_all) {
             p.insert(p_a);
         }
         List<TermInfo> t_t_all = t_t.selectAll();
-        for (int i = 0; i < t_t_all.size(); i++){
+        for (int i = 0; i < t_t_all.size(); i++) {
             TermInfo t_a = t_t_all.get(i);
             t_a.setDelay(delay_week_to_apply.get(i));
             t.insert(t_a);
         }
         List<GoToClass> g_t_all = g_t.selectAll(username);
-        for (GoToClass g_a : g_t_all){
+        for (GoToClass g_a : g_t_all) {
             g.insert(g_a);
         }
         List<ClassInfo> c_t_all = c_t.selectAll(username);
-        for (ClassInfo c_a : c_t_all){
+        for (ClassInfo c_a : c_t_all) {
             c.insert(c_a);
         }
         List<GraduationScore> gs_t_all = gs_t.selectAll();
-        for (GraduationScore gs_a : gs_t_all){
+        for (GraduationScore gs_a : gs_t_all) {
             gs.insert(gs_a);
         }
 //        Set<String> keys = pref_t.getAll().keySet();
@@ -694,28 +694,46 @@ public class FetchService extends IntentService {
 //        }
 //        editor.commit();
         List<Grades> gr_t_all = gr_t.selectAll();
-        for (Grades gr_a : gr_t_all){
+        for (Grades gr_a : gr_t_all) {
             gr.insert(gr_a);
         }
         List<ExamInfo> e_t_all = e_t.selectAll();
-        for (ExamInfo e_a : e_t_all){
+        for (ExamInfo e_a : e_t_all) {
             e.insert(e_a);
         }
         List<CET> cet_t_all = cet_t.selectAll();
-        for (CET cet_a : cet_t_all){
+        for (CET cet_a : cet_t_all) {
             cet.insert(cet_a);
         }
         List<LAB> lab_t_all = lab_t.selectAll();
-        for (LAB lab_a : lab_t_all){
+        for (LAB lab_a : lab_t_all) {
             lab.insert(lab_a);
         }
         List<ExamTotal> examTotalList_from_test = MyApp.getDb_compare_test().examTotalDao().selectAll();
-        for (ExamTotal i : examTotalList_from_test){
+        for (ExamTotal i : examTotalList_from_test) {
             MyApp.getDb_compare().examTotalDao().insert(i);
         }
+        if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0) {
+            sendNotification(
+                    FetchService.this,
+                    MyApp.notification_channel_id_new_data,
+                    "您有新的考试安排",
+                    "到 “更多-考试安排” 中查看 >>",
+                    MyApp.notification_id_new_exam
+            );
+        }
         List<GradeTotal> gradeTotalList_from_test = MyApp.getDb_compare_test().gradeTotalDao().selectAll();
-        for (GradeTotal i : gradeTotalList_from_test){
+        for (GradeTotal i : gradeTotalList_from_test) {
             MyApp.getDb_compare().gradeTotalDao().insert(i);
+        }
+        if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0) {
+            sendNotification(
+                    FetchService.this,
+                    MyApp.notification_channel_id_new_data,
+                    "出成绩了！",
+                    "到 “更多-成绩单” 中查看 >>",
+                    MyApp.notification_id_new_grade
+            );
         }
     }
 
@@ -753,6 +771,22 @@ public class FetchService extends IntentService {
                         .setTicker("同步失败了 ಥ_ಥ")
                         .build();
         NotificationManagerCompat.from(this).notify(MyApp.notification_id_fetch_service_lan_password_wrong, notification);
+    }
+
+    public static void sendNotification(@NonNull Context c, @NonNull String channel_id, @NonNull String title, @NonNull String msg, int notification_id){
+        Intent notificationIntent = new Intent(c, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(c, 0, notificationIntent, 0);
+        Notification notification =
+                new NotificationCompat.Builder(c, channel_id)
+                        .setContentTitle(title)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                        .setSmallIcon(R.drawable.feather_pen_trans)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .setTicker(title)
+                        .build();
+        NotificationManagerCompat.from(c).notify(notification_id, notification);
     }
 
     private void lan_fetch_service_loginFail(HttpConnectionAndCode res){
