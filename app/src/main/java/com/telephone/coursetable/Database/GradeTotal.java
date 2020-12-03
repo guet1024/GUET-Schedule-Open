@@ -14,4 +14,12 @@ public class GradeTotal {
     public GradeTotal(@NonNull String total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "GradeTotal{" +
+                "total='" + total + '\'' +
+                ", read=" + read +
+                '}';
+    }
 }

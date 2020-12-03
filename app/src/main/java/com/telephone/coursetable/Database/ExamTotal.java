@@ -14,4 +14,12 @@ public class ExamTotal {
     public ExamTotal(@NonNull String total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "ExamTotal{" +
+                "total='" + total + '\'' +
+                ", read=" + read +
+                '}';
+    }
 }

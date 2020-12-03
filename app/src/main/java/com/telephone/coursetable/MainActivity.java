@@ -39,11 +39,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabaseCompare;
+import com.telephone.coursetable.Database.ExamTotal;
 import com.telephone.coursetable.Database.ExamTotalDao;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotal;
 import com.telephone.coursetable.Database.GradeTotalDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.Privacy;
@@ -996,5 +999,23 @@ public class MainActivity extends AppCompatActivity {
         c.runOnUiThread(()->{
             frameLayout.setForeground(null);
         });
+    }
+
+    public void copyFromExamTotalAndGradeTotal(View view){
+        new Thread(()->{
+            StringBuilder sb = new StringBuilder();
+            List<ExamTotal> elist = MyApp.getDb_compare().examTotalDao().selectAll();
+            List<GradeTotal> glist = MyApp.getDb_compare().gradeTotalDao().selectAll();
+            for (ExamTotal e : elist){
+                sb.append(e.toString());
+                sb.append("\n\n\n\n");
+            }
+            for (GradeTotal g : glist){
+                sb.append(g.toString());
+                sb.append("\n\n\n\n");
+            }
+            Login.copyText(MainActivity.this, sb.toString());
+            runOnUiThread(()-> Toast.makeText(MainActivity.this, "已复制", Toast.LENGTH_SHORT).show());
+        }).start();
     }
 }
