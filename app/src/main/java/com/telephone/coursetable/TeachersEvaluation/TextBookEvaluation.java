@@ -290,7 +290,8 @@ public class TextBookEvaluation {
 
             }
         }
-        addtoast(  "评学结束。",Toast.LENGTH_LONG,true);
+        addtoast(  "",Toast.LENGTH_LONG,false);
+        addtoast(  "评学结束。评学成功。",Toast.LENGTH_LONG,true);
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "book evaluation end");
         LogMe.e(NAME, "evaluation thread stop");
         setEvaluation_running(false); return true;

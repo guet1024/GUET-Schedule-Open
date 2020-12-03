@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -178,7 +179,11 @@ public class FetchService extends IntentService {
         if (tip != null){
             intent.putExtra(EXTRA_start_toast, tip);
         }
-        context.startForegroundService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            context.startForegroundService(intent);
+        }else {
+            context.startService(intent);
+        }
     }
 
     /**
@@ -265,12 +270,12 @@ public class FetchService extends IntentService {
             update_foreground_notification("未登录");
             return;
         }
-        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime(
+        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime_low_api(
                 udao.getActivatedUser().get(0).username,
                 today,
                 tdao,
                 preferences,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
@@ -367,20 +372,20 @@ public class FetchService extends IntentService {
         }
         long today = Clock.nowTimeStamp();
         long tomorrow = today + 86400000;
-        Locate today_locate = Clock.locateNow(today,
+        Locate today_locate = Clock.locateNow_low_api(today,
                 tdao,
                 preferences,
                 MyApp.times,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
         );
-        Locate tomorrow_locate = Clock.locateNow(tomorrow,
+        Locate tomorrow_locate = Clock.locateNow_low_api(tomorrow,
                 tdao,
                 preferences,
                 MyApp.times,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)

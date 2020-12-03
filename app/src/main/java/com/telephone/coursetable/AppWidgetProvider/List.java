@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.crypto.spec.OAEPParameterSpec;
 
@@ -67,9 +69,10 @@ public class List extends AppWidgetProvider {
 //                open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getBroadcast(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
                 // refresh date
-                LocalDateTime now = LocalDateTime.now();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
                 remoteViews.setTextViewText(R.id.appwidget_list_title_date,
-                        now.getMonthValue() + "月" + now.getDayOfMonth() + "日"
+                        (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日"
                                 + new String[]{
                                 "",
                                 "星期一",
@@ -78,7 +81,7 @@ public class List extends AppWidgetProvider {
                                 "星期四",
                                 "星期五",
                                 "星期六",
-                                "星期日"}[now.getDayOfWeek().getValue()] + "    ");
+                                "星期日"}[( (calendar.get(Calendar.DAY_OF_WEEK) == 1) ? (7) : (calendar.get(Calendar.DAY_OF_WEEK) - 1) )] + "    ");
                 // declare the remote views service, so that the app-widget can get its old remote adapter
                 Intent data_intent = new Intent(context, ListRemoteViewsService.class);
                 // no need to add extra, because even if you send some extra, the extra won't be sent to the old remote adapter

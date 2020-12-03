@@ -3,8 +3,12 @@ package com.telephone.coursetable.Database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @clear
@@ -47,6 +51,8 @@ public class User {
         this.aaw_password = aaw_password;
         this.vpn_password = vpn_password;
         this.activated = false;
-        this.updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.M.d H:mm:ss"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.M.d H:mm:ss", Locale.US);
+        format.setTimeZone(TimeZone.getDefault());
+        this.updateTime = format.format(new Date());
     }
 }

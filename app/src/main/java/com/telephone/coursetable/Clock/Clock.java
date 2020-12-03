@@ -13,6 +13,8 @@ import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -21,9 +23,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -65,10 +69,11 @@ public class Clock {
     }
 
     /**
+     * the Timezone used to convert the string in the SharedPreferences to {@link Date} is represented by the formatter passed in
      * @param nts the timestamp of current
      * @param pref the SharedPreferences storing time period information
      * @param timenos the array of time code
-     * @param formatter the DateTimeFormatter of the time period information in the SharedPreferences
+     * @param formatter the SimpleDateFormat of the time period information in the SharedPreferences
      * @param s_suffix the suffix of start time key
      * @param e_suffix the suffix of end time key
      * @param d_suffix the suffix of description key
@@ -77,21 +82,27 @@ public class Clock {
      * - not null : corresponding time period of specified current time
      * @clear
      */
-    public static TimeAndDescription whichTime(long nts, SharedPreferences pref, String[] timenos, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix){
+    public static TimeAndDescription whichTime_low_api(long nts, SharedPreferences pref, String[] timenos, SimpleDateFormat formatter, String s_suffix, String e_suffix, String d_suffix){
+        nts %= ( 1000L * 60L * 60L * 24L );
         TimeAndDescription res = null;
-        LocalTime n = Instant.ofEpochMilli(nts).atZone(ZoneOffset.ofHours(8)).toLocalTime();
+        Date n = new Date(nts);
         for (String timeno : timenos) {
             String sj = pref.getString(timeno + s_suffix, null);
             String ej = pref.getString(timeno + e_suffix, null);
             String des = pref.getString(timeno + d_suffix, null);
             if (sj != null && ej != null && des != null) {
-                LocalTime sl = LocalTime.parse(sj, formatter);
-                LocalTime el = LocalTime.parse(ej, formatter);
-                if (sl.isBefore(n) || sl.equals(n)) {
-                    if (el.isAfter(n) || el.equals(n)) {
-                        res = new TimeAndDescription(timeno, des);
-                        break;
+                try {
+                    Date sl = formatter.parse(sj);
+                    Date el = formatter.parse(ej);
+                    if (sl.before(n) || sl.equals(n)){
+                        if (el.after(n) || el.equals(n)){
+                            res = new TimeAndDescription(timeno, des);
+                            return res;
+                        }
                     }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return res;
                 }
             }
         }
@@ -103,13 +114,18 @@ public class Clock {
      * if not found, return null.
      * @clear
      */
-    public static LocalTime getStartTimeUsingDefaultConfig(Context c, String time_id){
+    public static Date getStartTimeUsingDefaultConfig_low_api(Context c, String time_id){
         String key = time_id + getSSFor_locateNow(c);
         String time_str = MyApp.getCurrentSharedPreference().getString(key, null);
         if (time_str == null){
             return null;
         }else {
-            return LocalTime.parse(time_str, getDateTimeFormatterFor_locateNow(c));
+            try {
+                return getDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -118,13 +134,18 @@ public class Clock {
      * if not found, return null.
      * @clear
      */
-    public static LocalTime getEndTimeUsingDefaultConfig(Context c, String time_id){
+    public static Date getEndTimeUsingDefaultConfig_low_api(Context c, String time_id){
         String key = time_id + getESFor_locateNow(c);
         String time_str = MyApp.getCurrentSharedPreference().getString(key, null);
         if (time_str == null){
             return null;
         }else {
-            return LocalTime.parse(time_str, getDateTimeFormatterFor_locateNow(c));
+            try {
+                return getDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -141,12 +162,12 @@ public class Clock {
     /**
      * @param nts the timestamp of current
      * @param tdao the {@link com.telephone.coursetable.Database.TermInfoDao} used to query the database for term info
-     * @param pref {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
-     * @param times {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
-     * @param pref_time_period_formatter {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
-     * @param pref_s_suffix {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
-     * @param pref_e_suffix {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
-     * @param pref_d_suffix {@link #whichTime(long, SharedPreferences, String[], DateTimeFormatter, String, String, String)}
+     * @param pref {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param times {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param pref_time_period_formatter {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param pref_s_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param pref_e_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param pref_d_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
      * @return a {@link Locate}
      *      - res.{@link Locate#term} : corresponding {@link TermInfo} of specified current time, null if not found
      *      - res.{@link Locate#week} : corresponding week num of specified current time, {@link #NO_TERM} if res.{@link Locate#term} is null
@@ -157,18 +178,21 @@ public class Clock {
      *      - res.{@link Locate#time_description} : corresponding time description of specified current time, null if not found
      * @clear
      */
-    public static Locate locateNow(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, DateTimeFormatter pref_time_period_formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
+    public static Locate locateNow_low_api(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, SimpleDateFormat pref_time_period_formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
         Locate res = new Locate(null, NO_TERM, 0, 0, 0, null, null);
-        LocalDateTime n = Instant.ofEpochMilli(nts).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+        Date n = new Date(nts);
         List<TermInfo> which_term_res = tdao.whichTerm(nts);
         if (!which_term_res.isEmpty()){
             res.term = which_term_res.get(0);
             res.week = whichWeek(res.term.sts, nts);
         }
-        res.weekday = n.getDayOfWeek().getValue();
-        res.month = n.getMonthValue();
-        res.day = n.getDayOfMonth();
-        TimeAndDescription which_time_res = whichTime(nts, pref, times, pref_time_period_formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
+        // use default Timezone to calculate the month/day/weekday
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(n);
+        res.weekday = ( (calendar.get(Calendar.DAY_OF_WEEK) == 1) ? (7) : (calendar.get(Calendar.DAY_OF_WEEK) - 1) );
+        res.month = calendar.get(Calendar.MONTH) + 1;
+        res.day = calendar.get(Calendar.DAY_OF_MONTH);
+        TimeAndDescription which_time_res = whichTime_low_api(nts, pref, times, pref_time_period_formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
         if (which_time_res != null){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
@@ -179,8 +203,12 @@ public class Clock {
     /**
      * @clear
      */
-    public static DateTimeFormatter getDateTimeFormatterFor_locateNow(Context c){
-        return DateTimeFormatter.ofPattern(c.getResources().getString(R.string.server_hours_time_format));
+    public static SimpleDateFormat getDateTimeFormatterFor_locateNow_low_api(Context c){
+        // 默认使用 Locale.US
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(c.getResources().getString(R.string.server_hours_time_format), Locale.US);
+        // 文件中记录的是北京时间
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        return simpleDateFormat;
     }
 
     /**
@@ -213,74 +241,78 @@ public class Clock {
     }
 
     /**
+     * the Timezone used to convert the string in the SharedPreferences to {@link Date} is represented by the formatter passed in
      * @return
      * null means can not get time from file
      */
-    public static Map.Entry<Integer, Integer> findNowTime(long nts, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix) {
+    public static Map.Entry<Integer, Integer> findNowTime_low_api(long nts, SharedPreferences pref, SimpleDateFormat formatter, String s_suffix, String e_suffix) {
+        nts %= ( 1000L * 60L * 60L * 24L );
         Map.Entry<Integer, Integer> res = null;
-        LocalTime start = LocalTime.parse("00:00", formatter);
-        LocalTime end = LocalTime.parse("23:59", formatter);
-        LocalTime n = Instant.ofEpochMilli(nts).atZone(ZoneOffset.ofHours(8)).toLocalTime();
-        List<Integer> timelist = new ArrayList<>();
+        try {
+            Date start = formatter.parse("00:00");
+            Date end = formatter.parse("23:59");
+            Date n = new Date(nts);
+            List<Integer> timelist = new ArrayList<>();
 
-        timelist.add(-1);
-        for ( int i=0 ; i<MyApp.times.length ; i++ ){
-            timelist.add( i );
-            timelist.add( i );
-        }
-        timelist.add(-1);
+            timelist.add(-1);
+            for (int i = 0; i < MyApp.times.length; i++) {
+                timelist.add(i);
+                timelist.add(i);
+            }
+            timelist.add(-1);
 
-        for ( int i=0 ; i<timelist.size()-1 ; i++ ){
-            if ( !timelist.get(i).equals(-1) && !timelist.get(i+1).equals(-1) ) {
-                String sj;
-                String ej;
-                if (timelist.get(i).equals(timelist.get(i+1))) {
-                    sj = pref.getString(MyApp.times[timelist.get(i)] + s_suffix, null);
-                    ej = pref.getString(MyApp.times[timelist.get(i + 1)] + e_suffix, null);
-                }else {
-                    sj = pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null);
-                    ej = pref.getString(MyApp.times[timelist.get(i+1)] + s_suffix, null);
-                }
-                if (sj != null && ej != null) {
-                    LocalTime sl = LocalTime.parse(sj, formatter);
-                    LocalTime el = LocalTime.parse(ej, formatter);
-                    if ( timelist.get(i).equals(timelist.get(i+1)) ){
-                        if (sl.isBefore(n) || sl.equals(n)) {
-                            if (el.isAfter(n) || el.equals(n)) {
-                                res = Map.entry(timelist.get(i), timelist.get(i+1));
-                                break;
+            for (int i = 0; i < timelist.size() - 1; i++) {
+                if (!timelist.get(i).equals(-1) && !timelist.get(i + 1).equals(-1)) {
+                    String sj;
+                    String ej;
+                    if (timelist.get(i).equals(timelist.get(i + 1))) {
+                        sj = pref.getString(MyApp.times[timelist.get(i)] + s_suffix, null);
+                        ej = pref.getString(MyApp.times[timelist.get(i + 1)] + e_suffix, null);
+                    } else {
+                        sj = pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null);
+                        ej = pref.getString(MyApp.times[timelist.get(i + 1)] + s_suffix, null);
+                    }
+                    if (sj != null && ej != null) {
+                        Date sl = formatter.parse(sj);
+                        Date el = formatter.parse(ej);
+                        if (timelist.get(i).equals(timelist.get(i + 1))) {
+                            if (sl.before(n) || sl.equals(n)) {
+                                if (el.after(n) || el.equals(n)) {
+                                    res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (sl.before(n)) {
+                                if (el.after(n)) {
+                                    res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                                    break;
+                                }
                             }
                         }
-                    }else {
-                        if (sl.isBefore(n)) {
-                            if (el.isAfter(n)) {
-                                res = Map.entry(timelist.get(i), timelist.get(i+1));
-                                break;
-                            }
+                    }
+                } else if (timelist.get(i).equals(-1)) {
+                    Date st = formatter.parse(pref.getString(MyApp.times[timelist.get(i + 1)] + s_suffix, null));
+                    if (start.before(n) || start.equals(n)) {
+                        if (st != null && st.after(n)) {
+                            res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                            break;
+                        }
+                    }
+                } else if (timelist.get(i + 1).equals(-1)) {
+                    Date et = formatter.parse(pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null));
+                    if (et != null && et.before(n)) {
+                        if (end.after(n) || end.equals(n)) {
+                            res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                            break;
                         }
                     }
                 }
             }
-            else if (timelist.get(i).equals(-1)){
-                LocalTime st = LocalTime.parse(pref.getString(MyApp.times[timelist.get(i+1)] + s_suffix, null), formatter);
-                if (start.isBefore(n) || start.equals(n)) {
-                    if (st!=null && st.isAfter(n)){
-                        res = Map.entry(timelist.get(i), timelist.get(i+1));
-                        break;
-                    }
-                }
-            }
-            else if (timelist.get(i+1).equals(-1)){
-                LocalTime et = LocalTime.parse(pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null), formatter);
-                if (et!=null && et.isBefore(n)) {
-                    if (end.isAfter(n) || end.equals(n)){
-                        res = Map.entry(timelist.get(i), timelist.get(i+1));
-                        break;
-                    }
-                }
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            res = null;
         }
-
         return res;
     }
 
@@ -288,10 +320,10 @@ public class Clock {
      * @return
      * null 找不到当前时间段 || 处于假期 || 当天没课
      */
-    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime(String username, long nts, TermInfoDao tdao, SharedPreferences pref, DateTimeFormatter formatter, String s_suffix, String e_suffix, String d_suffix) {
-        Map.Entry<Integer, Integer> nowTime = findNowTime(nts, pref, formatter, s_suffix, e_suffix);
+    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime_low_api(String username, long nts, TermInfoDao tdao, SharedPreferences pref, SimpleDateFormat formatter, String s_suffix, String e_suffix, String d_suffix) {
+        Map.Entry<Integer, Integer> nowTime = findNowTime_low_api(nts, pref, formatter, s_suffix, e_suffix);
         List<ShowTableNode> surplus = new LinkedList<>();
-        Locate locateNow = locateNow(nts, tdao, pref, MyApp.times, formatter, s_suffix, e_suffix, d_suffix);
+        Locate locateNow = locateNow_low_api(nts, tdao, pref, MyApp.times, formatter, s_suffix, e_suffix, d_suffix);
         TermInfo term = locateNow.term;
         long week = locateNow.week;
         long weekday = locateNow.weekday;
@@ -316,16 +348,13 @@ public class Clock {
 
     public static String comment_past_time(long compare_timestamp){
 
-        SimpleDateFormat chineseformat = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
         Date now = new Date(compare_timestamp);
-        chineseformat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         long NowTime = nowTimeStamp();
         long gap = NowTime - compare_timestamp;
         String tip = "";
 
         if(gap < 0L){
-            tip = chineseformat.format(now);
             tip = "未来";
         }
 

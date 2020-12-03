@@ -45,11 +45,15 @@ import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Merge {
 
@@ -148,13 +152,17 @@ public class Merge {
         TermInfo_s t_s = MyApp.gson.fromJson(origin_t, TermInfo_s.class);
         List<TermInfo> t = t_s.getData();
         Resources r = c.getResources();
-        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.server_terminfo_datetime_format));
-        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.ts_datetime_format));
+        SimpleDateFormat server_formatter = new SimpleDateFormat(r.getString(R.string.server_terminfo_datetime_format), Locale.US);
+        server_formatter.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         for (TermInfo i : t){
-            String sts_string = LocalDateTime.parse(i.getStartdate(), server_formatter).format(ts_formatter);
-            String ets_string = LocalDateTime.parse(i.getEnddate(), server_formatter).format(ts_formatter);
-            long sts = Timestamp.valueOf(sts_string).getTime();
-            long ets = Timestamp.valueOf(ets_string).getTime();
+            long sts = 1;
+            long ets = 2;
+            try {
+                sts = server_formatter.parse(i.getStartdate()).getTime();
+                ets = server_formatter.parse(i.getEnddate()).getTime();
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
             tdao.insert(
                     new com.telephone.coursetable.Database.TermInfo(
                             i.getTerm(), i.getStartdate(), i.getEnddate(), i.getWeeknum(), i.getTermname(),

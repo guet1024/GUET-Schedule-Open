@@ -238,23 +238,25 @@ public class MyApp extends Application {
         gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).setPrettyPrinting().create();
         LogMe.init();
 
-        NotificationChannel channel;
-        channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
-        channel.setDescription(notification_channel_des_running);
-        channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_update);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_fetch_fail);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_normal);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_new_data, notification_channel_name_new_data, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_new_data);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel;
+            channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(notification_channel_des_running);
+            channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_update);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_fetch_fail);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_normal);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_new_data, notification_channel_name_new_data, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_new_data);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        }
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
 

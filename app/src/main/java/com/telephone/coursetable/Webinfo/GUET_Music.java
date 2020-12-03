@@ -27,7 +27,7 @@ import java.util.Map;
 public class GUET_Music extends AppCompatActivity implements View.OnClickListener,
         Runnable, ServiceConnection, SeekBar.OnSeekBarChangeListener {
 
-    List<Map.Entry<String, String>> lyric= new LinkedList<>();//存歌词
+    List<Map.Entry<String, String>> lyric = new LinkedList<>();//存歌词
     private ImageView pause_start, schoolicon;//暂停键，学校图标（歌词切换）
     private volatile MediaService.MusicController mMusicController;//音乐播放器
     private SeekBar mSeekBar;
@@ -39,19 +39,19 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
 
-    synchronized public boolean setOutdated(){
+    synchronized public boolean setOutdated() {
         if (visible) return false;
         outdated = new Intent(this, MainActivity.class);
         return true;
     }
 
-    synchronized public void hide(){
+    synchronized public void hide() {
         visible = false;
     }
 
-    synchronized public void show(){
+    synchronized public void show() {
         visible = true;
-        if (outdated != null){
+        if (outdated != null) {
             Intent intent = new Intent(this, MediaService.class);
             unbindService(this);
             stopService(intent);
@@ -153,7 +153,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         mMusicController = ((MediaService.MusicController) iBinder);
         musicDuration = mMusicController.getMusicDuration();//文件总长度
-        com.telephone.coursetable.LogMe.LogMe.e("file length",""+musicDuration);
+        com.telephone.coursetable.LogMe.LogMe.e("file length", "" + musicDuration);
         mSeekBar.setMax((int) musicDuration);
         totaltime.setText("/" + millisToTimeString(musicDuration));
     }
@@ -166,14 +166,13 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id==R.id.totalsongwards ) {
-            if(schoolicon.getVisibility()==View.VISIBLE){
+        if (id == R.id.totalsongwards) {
+            if (schoolicon.getVisibility() == View.VISIBLE) {
                 schoolicon.setVisibility(View.INVISIBLE);
                 now_lyric.setVisibility(View.VISIBLE);
                 pre_lyric.setVisibility(View.VISIBLE);
                 next_lyric.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 schoolicon.setVisibility(View.VISIBLE);
                 now_lyric.setVisibility(View.INVISIBLE);
                 pre_lyric.setVisibility(View.INVISIBLE);
@@ -181,16 +180,15 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
             }
         }
         if (id == R.id.musicstart) {
-            if(mMusicController.isruning()){
+            if (mMusicController.isruning()) {
                 mMusicController.pause();
-            }
-            else {
+            } else {
                 mMusicController.play();//播放
             }
         }
     }
 
-    private String millisToTimeString(long millis){
+    private String millisToTimeString(long millis) {
         long min = 0;
         long sec = 0;
         long msPm = 60000;
@@ -200,48 +198,47 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
         return String.format(Locale.SIMPLIFIED_CHINESE, "%02d:%02d", min, sec);
     }
 
-    private long timeStringToLong(String string){
+    private long timeStringToLong(String string) {
         int _index = string.indexOf(":");
         long min = Long.parseLong(string.substring(0, _index));
         long sec = Long.parseLong(string.substring(_index + 1));
         return min * 60000 + sec * 1000;
     }
 
-    private void setLyric(String n,String p,String next){
-        String n_=now_lyric.getText().toString();
-        String p_=pre_lyric.getText().toString();
-        String next_=next_lyric.getText().toString();
-        if(!n_.equals(n)){
+    private void setLyric(String n, String p, String next) {
+        String n_ = now_lyric.getText().toString();
+        String p_ = pre_lyric.getText().toString();
+        String next_ = next_lyric.getText().toString();
+        if (!n_.equals(n)) {
             now_lyric.setText(n);
         }
-        if(!p_.equals(p)){
+        if (!p_.equals(p)) {
             pre_lyric.setText(p);
         }
-        if(!next_.equals(next)){
+        if (!next_.equals(next)) {
             next_lyric.setText(next);
         }
     }
 
-    private String getnowlyric(int i){
-        if(i>=0 && i<lyric.size()){
+    private String getnowlyric(int i) {
+        if (i >= 0 && i < lyric.size()) {
             return lyric.get(i).getKey();
-        }
-        else
+        } else
             return "";
     }
 
-    private String[] getLyric(long time){
+    private String[] getLyric(long time) {
         int index = 0;
-        for(int i=index;i<lyric.size()-1;i++){
+        for (int i = index; i < lyric.size() - 1; i++) {
             String text = lyric.get(i + 1).getValue();
             long read_time = timeStringToLong(text);
-            com.telephone.coursetable.LogMe.LogMe.i("time","read time = "+read_time+" time = "+time+" text = "+text);
-            if( read_time > time ){
+            com.telephone.coursetable.LogMe.LogMe.i("time", "read time = " + read_time + " time = " + time + " text = " + text);
+            if (read_time > time) {
                 index = i;
                 break;
             }
         }
-        com.telephone.coursetable.LogMe.LogMe.i("index","index = "+index);
+        com.telephone.coursetable.LogMe.LogMe.i("index", "index = " + index);
         String[] s = new String[3];
         s[0] = getnowlyric(index - 1);
         s[1] = getnowlyric(index);
@@ -252,12 +249,12 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onProgressChanged(SeekBar seekBar, int j, boolean b) {
         final int position = seekBar.getProgress();
-        com.telephone.coursetable.LogMe.LogMe.i("progress","change = "+position);
+        com.telephone.coursetable.LogMe.LogMe.i("progress", "change = " + position);
 
         String r = millisToTimeString(position);
-        if(!r.equals(runtime.getText().toString())) runtime.setText(r);
+        if (!r.equals(runtime.getText().toString())) runtime.setText(r);
 
-        String[] gl= getLyric(position);
+        String[] gl = getLyric(position);
         setLyric(gl[1], gl[0], gl[2]);
     }
 
@@ -265,7 +262,7 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     public void onStartTrackingTouch(SeekBar seekBar) {
         com.telephone.coursetable.LogMe.LogMe.e("seekbar", "touch");
         pause_start.setEnabled(false);
-        if(mMusicController.isruning())
+        if (mMusicController.isruning())
             mMusicController.pause();
     }
 
@@ -273,60 +270,62 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     public void onStopTrackingTouch(SeekBar seekBar) {
         com.telephone.coursetable.LogMe.LogMe.e("seekbar", "not touch");
         mMusicController.setPosition(seekBar.getProgress());
-        if(!mMusicController.isruning()) {
+        if (!mMusicController.isruning()) {
             mMusicController.play();
         }
-        new Thread(()->{
+        new Thread(() -> {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            runOnUiThread(()->pause_start.setEnabled(true));
+            runOnUiThread(() -> pause_start.setEnabled(true));
         }).start();
     }
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MediaService.class);
-        unbindService(this);
-        stopService(intent);
-        startActivity(new Intent(GUET_Music.this,Webinfo.class));
+        new Thread(() -> {
+            unbindService(this);
+            stopService(intent);
+        }).start();
+        startActivity(new Intent(GUET_Music.this, Webinfo.class));
     }
 
     @Override
     public void run() {
-        com.telephone.coursetable.LogMe.LogMe.e("guet music","refresh ui thread start");
-        try {
-            while (visible) {
-                if (mMusicController != null) {
-                    if (mMusicController.isruning() && pic_id != R.drawable.musicstop) {
+        com.telephone.coursetable.LogMe.LogMe.e("guet music", "refresh ui thread start");
+        while (visible) {
+            if (mMusicController != null) {
+                if (mMusicController.isruning() && pic_id != R.drawable.musicstop) {
+                    runOnUiThread(() -> {
                         pause_start.setImageResource(R.drawable.musicstop);
                         pic_id = R.drawable.musicstop;
-                    } else if (!mMusicController.isruning() && pic_id != R.drawable.musicstart) {
+                    });
+                } else if (!mMusicController.isruning() && pic_id != R.drawable.musicstart) {
+                    runOnUiThread(() -> {
                         pause_start.setImageResource(R.drawable.musicstart);
                         pic_id = R.drawable.musicstart;
-                    }
-
-                    final long position = mMusicController.getPosition();//进度
-                    GUET_Music.this.runOnUiThread(() -> {
-                        if (pause_start.isEnabled()) {
-                            int old = mSeekBar.getProgress();
-                            if (old != position) {
-                                long position_set = position;
-//                                if (position_set == musicDuration) position_set = 0;
-                                com.telephone.coursetable.LogMe.LogMe.i("mSeekBar", "set position = " + position_set + " max = " + musicDuration);
-                                mSeekBar.setProgress((int) position_set);
-                            }
-                        }
                     });
-                }else {
-                    com.telephone.coursetable.LogMe.LogMe.e("guet music", "controller is null");
                 }
+
+                final long position = mMusicController.getPosition();//进度
+                if (pause_start.isEnabled()) {
+                    int old = mSeekBar.getProgress();
+                    if (old != position) {
+                        long position_set = position;
+//                                if (position_set == musicDuration) position_set = 0;
+                        com.telephone.coursetable.LogMe.LogMe.i("mSeekBar", "set position = " + position_set + " max = " + musicDuration);
+                        runOnUiThread(() -> {
+                            mSeekBar.setProgress((int) position_set);
+                        });
+                    }
+                }
+            } else {
+                com.telephone.coursetable.LogMe.LogMe.e("guet music", "controller is null");
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
-        com.telephone.coursetable.LogMe.LogMe.e("guet music","refresh ui thread end");
+        com.telephone.coursetable.LogMe.LogMe.e("guet music", "refresh ui thread end");
     }
 }

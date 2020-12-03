@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
                             String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
                             long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
                             new Thread(() -> {
-                                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                        Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                                         getResources().getString(R.string.pref_hour_start_suffix),
                                         getResources().getString(R.string.pref_hour_end_suffix),
                                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -264,8 +264,8 @@ public class MainActivity extends AppCompatActivity {
                         String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
                         long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
                         new Thread(() -> {
-                            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                    Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                                     getResources().getString(R.string.pref_hour_start_suffix),
                                     getResources().getString(R.string.pref_hour_end_suffix),
                                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -357,8 +357,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 User u = udao.getActivatedUser().get(0);
                 String name = pdao.selectAll().get(0).name;
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                        Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix)
@@ -426,7 +426,14 @@ public class MainActivity extends AppCompatActivity {
                         View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                         MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
                         view.startDragAndDrop(null, shadowBuilder, null, 0);
-                        ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        long vibrate_millis = 100;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(vibrate_millis, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(vibrate_millis);
+                        }
                         return true;
                     });
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
@@ -525,8 +532,8 @@ public class MainActivity extends AppCompatActivity {
             String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
             long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                        Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -633,8 +640,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void returnToday(View view){
         new Thread(()->{
-            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                    Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                     getResources().getString(R.string.pref_hour_start_suffix),
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -940,8 +947,8 @@ public class MainActivity extends AppCompatActivity {
             String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
             long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                        Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -966,9 +973,9 @@ public class MainActivity extends AppCompatActivity {
      * @clear
      */
     private Map.Entry<Integer, Integer> getTime_enhanced(){
-        return Clock.findNowTime(Clock.nowTimeStamp(),
+        return Clock.findNowTime_low_api(Clock.nowTimeStamp(),
                 MyApp.getCurrentSharedPreference(),
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix));
     }

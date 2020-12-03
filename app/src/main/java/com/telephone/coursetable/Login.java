@@ -751,9 +751,9 @@ public class Login extends AppCompatActivity {
         Merge.cet(res.comment, cetDao);
 
         term_list = tdao.selectAll();
-        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
                 MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow(c),
+                Clock.getDateTimeFormatterFor_locateNow_low_api(c),
                 Clock.getSSFor_locateNow(c),
                 Clock.getESFor_locateNow(c),
                 Clock.getDSFor_locateNow(c)
@@ -1014,9 +1014,9 @@ public class Login extends AppCompatActivity {
                                 /** locate now, print the locate-result to log */
                                 com.telephone.coursetable.LogMe.LogMe.e(
                                         NAME + " " + "locate now",
-                                        Clock.locateNow(
+                                        Clock.locateNow_low_api(
                                                 Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                                Clock.getDateTimeFormatterFor_locateNow_low_api(Login.this),
                                                 getResources().getString(R.string.pref_hour_start_suffix),
                                                 getResources().getString(R.string.pref_hour_end_suffix),
                                                 getResources().getString(R.string.pref_hour_des_suffix)
