@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                             new Thread(() -> {
                                 Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                                         Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                                        Clock.getDefaultDelimiterFor_whichTime(),
                                         getResources().getString(R.string.pref_hour_start_suffix),
                                         getResources().getString(R.string.pref_hour_end_suffix),
                                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -269,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                         new Thread(() -> {
                             Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                                     Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                                    Clock.getDefaultDelimiterFor_whichTime(),
                                     getResources().getString(R.string.pref_hour_start_suffix),
                                     getResources().getString(R.string.pref_hour_end_suffix),
                                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -362,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 String name = pdao.selectAll().get(0).name;
                 Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                         Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                        Clock.getDefaultDelimiterFor_whichTime(),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix)
@@ -537,6 +540,7 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> {
                 Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                         Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                        Clock.getDefaultDelimiterFor_whichTime(),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -645,6 +649,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(()->{
             Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                     Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                    Clock.getDefaultDelimiterFor_whichTime(),
                     getResources().getString(R.string.pref_hour_start_suffix),
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -952,6 +957,7 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> {
                 Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
                         Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                        Clock.getDefaultDelimiterFor_whichTime(),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix));
@@ -979,6 +985,7 @@ public class MainActivity extends AppCompatActivity {
         return Clock.findNowTime_low_api(Clock.nowTimeStamp(),
                 MyApp.getCurrentSharedPreference(),
                 Clock.getDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix));
     }

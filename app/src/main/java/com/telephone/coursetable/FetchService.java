@@ -276,6 +276,7 @@ public class FetchService extends IntentService {
                 tdao,
                 preferences,
                 Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
@@ -377,6 +378,7 @@ public class FetchService extends IntentService {
                 preferences,
                 MyApp.times,
                 Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
@@ -386,6 +388,7 @@ public class FetchService extends IntentService {
                 preferences,
                 MyApp.times,
                 Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)

@@ -13,6 +13,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.DateTime;
 import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.FetchService;
 import com.telephone.coursetable.MainActivity;
@@ -69,10 +70,9 @@ public class List extends AppWidgetProvider {
 //                open_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 remoteViews.setOnClickPendingIntent(R.id.appwidget_list_title_text, PendingIntent.getBroadcast(context, 0, open_intent, PendingIntent.FLAG_UPDATE_CURRENT));
                 // refresh date
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
+                DateTime dateTime = DateTime.getDefault_Instance(Clock.nowTimeStamp());
                 remoteViews.setTextViewText(R.id.appwidget_list_title_date,
-                        (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日"
+                        dateTime.getMonth() + "月" + dateTime.getDay() + "日"
                                 + new String[]{
                                 "",
                                 "星期一",
@@ -81,7 +81,7 @@ public class List extends AppWidgetProvider {
                                 "星期四",
                                 "星期五",
                                 "星期六",
-                                "星期日"}[( (calendar.get(Calendar.DAY_OF_WEEK) == 1) ? (7) : (calendar.get(Calendar.DAY_OF_WEEK) - 1) )] + "    ");
+                                "星期日"}[dateTime.getWeekday()] + "    ");
                 // declare the remote views service, so that the app-widget can get its old remote adapter
                 Intent data_intent = new Intent(context, ListRemoteViewsService.class);
                 // no need to add extra, because even if you send some extra, the extra won't be sent to the old remote adapter

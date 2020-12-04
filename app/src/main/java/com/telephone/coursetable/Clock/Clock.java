@@ -68,45 +68,11 @@ public class Clock {
         return ( sts + (week * 604800000L) + (weekday * 86400000L) + 3600000L );
     }
 
-    /**
-     * the Timezone used to convert the string in the SharedPreferences to {@link Date} is represented by the formatter passed in
-     * @param nts the timestamp of current
-     * @param pref the SharedPreferences storing time period information
-     * @param timenos the array of time code
-     * @param formatter the SimpleDateFormat of the time period information in the SharedPreferences
-     * @param s_suffix the suffix of start time key
-     * @param e_suffix the suffix of end time key
-     * @param d_suffix the suffix of description key
-     * @return
-     * - null : corresponding time period not found
-     * - not null : corresponding time period of specified current time
-     * @clear
-     */
-    public static TimeAndDescription whichTime_low_api(long nts, SharedPreferences pref, String[] timenos, SimpleDateFormat formatter, String s_suffix, String e_suffix, String d_suffix){
-        nts %= ( 1000L * 60L * 60L * 24L );
-        TimeAndDescription res = null;
-        Date n = new Date(nts);
-        for (String timeno : timenos) {
-            String sj = pref.getString(timeno + s_suffix, null);
-            String ej = pref.getString(timeno + e_suffix, null);
-            String des = pref.getString(timeno + d_suffix, null);
-            if (sj != null && ej != null && des != null) {
-                try {
-                    Date sl = formatter.parse(sj);
-                    Date el = formatter.parse(ej);
-                    if (sl.before(n) || sl.equals(n)){
-                        if (el.after(n) || el.equals(n)){
-                            res = new TimeAndDescription(timeno, des);
-                            return res;
-                        }
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return res;
-                }
-            }
-        }
-        return res;
+    private static DateTime getNowDateTimeFor_locate_time_period(long nts){
+        // 使用东八区时区意味着，将传入的时间戳转换成东八区的时间，假设你当下在东八区，然后判断你当前在哪个时间段
+        // 使用默认时区意味着，将传入的时间戳转换成默认时区的时间，假设你当下在默认时区，然后判断你当前在哪个时间段
+        /** 使用东八区时区 */
+        return DateTime.getGMT8_Instance(nts);
     }
 
     /**
@@ -162,12 +128,13 @@ public class Clock {
     /**
      * @param nts the timestamp of current
      * @param tdao the {@link com.telephone.coursetable.Database.TermInfoDao} used to query the database for term info
-     * @param pref {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
-     * @param times {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
-     * @param pref_time_period_formatter {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
-     * @param pref_s_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
-     * @param pref_e_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
-     * @param pref_d_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String)}
+     * @param pref {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param times {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param pref_time_period_formatter {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param delimiter {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param pref_s_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param pref_e_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
+     * @param pref_d_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
      * @return a {@link Locate}
      *      - res.{@link Locate#term} : corresponding {@link TermInfo} of specified current time, null if not found
      *      - res.{@link Locate#week} : corresponding week num of specified current time, {@link #NO_TERM} if res.{@link Locate#term} is null
@@ -178,7 +145,7 @@ public class Clock {
      *      - res.{@link Locate#time_description} : corresponding time description of specified current time, null if not found
      * @clear
      */
-    public static Locate locateNow_low_api(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, SimpleDateFormat pref_time_period_formatter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
+    public static Locate locateNow_low_api(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, SimpleDateFormat pref_time_period_formatter, String delimiter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
         Locate res = new Locate(null, NO_TERM, 0, 0, 0, null, null);
         Date n = new Date(nts);
         List<TermInfo> which_term_res = tdao.whichTerm(nts);
@@ -187,12 +154,11 @@ public class Clock {
             res.week = whichWeek(res.term.sts, nts);
         }
         // use default Timezone to calculate the month/day/weekday
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(n);
-        res.weekday = ( (calendar.get(Calendar.DAY_OF_WEEK) == 1) ? (7) : (calendar.get(Calendar.DAY_OF_WEEK) - 1) );
-        res.month = calendar.get(Calendar.MONTH) + 1;
-        res.day = calendar.get(Calendar.DAY_OF_MONTH);
-        TimeAndDescription which_time_res = whichTime_low_api(nts, pref, times, pref_time_period_formatter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
+        DateTime dateTime = DateTime.getDefault_Instance(nts);
+        res.weekday = dateTime.getWeekday();
+        res.month = dateTime.getMonth();
+        res.day = dateTime.getDay();
+        TimeAndDescription which_time_res = whichTime_low_api(nts, pref, times, pref_time_period_formatter, delimiter, pref_s_suffix, pref_e_suffix, pref_d_suffix);
         if (which_time_res != null){
             res.time = which_time_res.time;
             res.time_description = which_time_res.des;
@@ -209,6 +175,13 @@ public class Clock {
         // 文件中记录的是北京时间
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return simpleDateFormat;
+    }
+
+    /**
+     * @clear
+     */
+    public static String getDefaultDelimiterFor_whichTime(){
+        return ":";
     }
 
     /**
@@ -241,17 +214,50 @@ public class Clock {
     }
 
     /**
-     * the Timezone used to convert the string in the SharedPreferences to {@link Date} is represented by the formatter passed in
+     * @param nts the timestamp of current
+     * @param pref the SharedPreferences storing time period information
+     * @param timenos the array of time code
+     * @param formatter the SimpleDateFormat of the time period information in the SharedPreferences
+     * @param delimiter the delimiter of time config
+     * @param s_suffix the suffix of start time key
+     * @param e_suffix the suffix of end time key
+     * @param d_suffix the suffix of description key
+     * @return
+     * - null : corresponding time period not found
+     * - not null : corresponding time period of specified current time
+     * @clear
+     */
+    public static TimeAndDescription whichTime_low_api(long nts, SharedPreferences pref, String[] timenos, SimpleDateFormat formatter, String delimiter, String s_suffix, String e_suffix, String d_suffix){
+        TimeAndDescription res = null;
+        DateTime n = getNowDateTimeFor_locate_time_period(nts);
+        for (String timeno : timenos) {
+            String sj = pref.getString(timeno + s_suffix, null);
+            String ej = pref.getString(timeno + e_suffix, null);
+            String des = pref.getString(timeno + d_suffix, null);
+            if (sj != null && ej != null && des != null) {
+                DateTime sl = new DateTime(n, sj, delimiter);
+                DateTime el = new DateTime(n, ej, delimiter);
+                if (sl.before(n) || sl.equals(n)){
+                    if (el.after(n) || el.equals(n)){
+                        res = new TimeAndDescription(timeno, des);
+                        return res;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
      * @return
      * null means can not get time from file
      */
-    public static Map.Entry<Integer, Integer> findNowTime_low_api(long nts, SharedPreferences pref, SimpleDateFormat formatter, String s_suffix, String e_suffix) {
-        nts %= ( 1000L * 60L * 60L * 24L );
+    public static Map.Entry<Integer, Integer> findNowTime_low_api(long nts, SharedPreferences pref, SimpleDateFormat formatter, String delimiter, String s_suffix, String e_suffix) {
         Map.Entry<Integer, Integer> res = null;
         try {
-            Date start = formatter.parse("00:00");
-            Date end = formatter.parse("23:59");
-            Date n = new Date(nts);
+            String start_str = "00" + delimiter + "00";
+            String end_str = "23" + delimiter + "59";
+            DateTime n = getNowDateTimeFor_locate_time_period(nts);
             List<Integer> timelist = new ArrayList<>();
 
             timelist.add(-1);
@@ -273,8 +279,8 @@ public class Clock {
                         ej = pref.getString(MyApp.times[timelist.get(i + 1)] + s_suffix, null);
                     }
                     if (sj != null && ej != null) {
-                        Date sl = formatter.parse(sj);
-                        Date el = formatter.parse(ej);
+                        DateTime sl = new DateTime(n, sj, delimiter);
+                        DateTime el = new DateTime(n, ej, delimiter);
                         if (timelist.get(i).equals(timelist.get(i + 1))) {
                             if (sl.before(n) || sl.equals(n)) {
                                 if (el.after(n) || el.equals(n)) {
@@ -292,7 +298,12 @@ public class Clock {
                         }
                     }
                 } else if (timelist.get(i).equals(-1)) {
-                    Date st = formatter.parse(pref.getString(MyApp.times[timelist.get(i + 1)] + s_suffix, null));
+                    String st_str = pref.getString(MyApp.times[timelist.get(i + 1)] + s_suffix, null);
+                    if (st_str == null){
+                        throw new NullPointerException("can not get st_str");
+                    }
+                    DateTime st = new DateTime(n, st_str, delimiter);
+                    DateTime start = new DateTime(n, start_str, delimiter);
                     if (start.before(n) || start.equals(n)) {
                         if (st != null && st.after(n)) {
                             res = Map.entry(timelist.get(i), timelist.get(i + 1));
@@ -300,7 +311,12 @@ public class Clock {
                         }
                     }
                 } else if (timelist.get(i + 1).equals(-1)) {
-                    Date et = formatter.parse(pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null));
+                    String et_str = pref.getString(MyApp.times[timelist.get(i)] + e_suffix, null);
+                    if (et_str == null){
+                        throw new NullPointerException("can not get et_str");
+                    }
+                    DateTime et = new DateTime(n, et_str, delimiter);
+                    DateTime end = new DateTime(n, end_str, delimiter);
                     if (et != null && et.before(n)) {
                         if (end.after(n) || end.equals(n)) {
                             res = Map.entry(timelist.get(i), timelist.get(i + 1));
@@ -320,10 +336,10 @@ public class Clock {
      * @return
      * null 找不到当前时间段 || 处于假期 || 当天没课
      */
-    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime_low_api(String username, long nts, TermInfoDao tdao, SharedPreferences pref, SimpleDateFormat formatter, String s_suffix, String e_suffix, String d_suffix) {
-        Map.Entry<Integer, Integer> nowTime = findNowTime_low_api(nts, pref, formatter, s_suffix, e_suffix);
+    public static FindClassOfCurrentOrNextTimeRes findClassOfCurrentOrNextTime_low_api(String username, long nts, TermInfoDao tdao, SharedPreferences pref, SimpleDateFormat formatter, String delimiter, String s_suffix, String e_suffix, String d_suffix) {
+        Map.Entry<Integer, Integer> nowTime = findNowTime_low_api(nts, pref, formatter, delimiter, s_suffix, e_suffix);
         List<ShowTableNode> surplus = new LinkedList<>();
-        Locate locateNow = locateNow_low_api(nts, tdao, pref, MyApp.times, formatter, s_suffix, e_suffix, d_suffix);
+        Locate locateNow = locateNow_low_api(nts, tdao, pref, MyApp.times, formatter, delimiter, s_suffix, e_suffix, d_suffix);
         TermInfo term = locateNow.term;
         long week = locateNow.week;
         long weekday = locateNow.weekday;

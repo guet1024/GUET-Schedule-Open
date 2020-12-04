@@ -1001,6 +1001,7 @@ public class Login_vpn extends AppCompatActivity {
         Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
                 MyApp.times,
                 Clock.getDateTimeFormatterFor_locateNow_low_api(c),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 Clock.getSSFor_locateNow(c),
                 Clock.getESFor_locateNow(c),
                 Clock.getDSFor_locateNow(c)
@@ -1285,6 +1286,7 @@ public class Login_vpn extends AppCompatActivity {
                             Clock.locateNow_low_api(
                                     Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
                                     Clock.getDateTimeFormatterFor_locateNow_low_api(Login_vpn.this),
+                                    Clock.getDefaultDelimiterFor_whichTime(),
                                     getResources().getString(R.string.pref_hour_start_suffix),
                                     getResources().getString(R.string.pref_hour_end_suffix),
                                     getResources().getString(R.string.pref_hour_des_suffix)
