@@ -1258,11 +1258,12 @@ public class Login_vpn extends AppCompatActivity {
                 int times = 0;
                 boolean fetch_merge_res = false;
                 while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
-                    if (times >= MyApp.web_vpn_refetch_times / 3) {
-                        if (login_res.c != null) {
-                            login_res.c.disconnect();
-                        }
-                    }
+                    // it seems to be useless
+//                    if (times >= MyApp.web_vpn_refetch_times / 3) {
+//                        if (login_res.c != null) {
+//                            login_res.c.disconnect();
+//                        }
+//                    }
                     /** clear shared preference */
                     editor.clear();
                     /** commit shared preference */
