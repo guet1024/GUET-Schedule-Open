@@ -35,7 +35,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentsViewHolder holder, int position) {
         Comment cmt = data.get(position);
-        ((TextView)holder.mcv.findViewById(R.id.comment_card_sid)).setText(cmt.getSno() + cmt.getName());
+        if (!cmt.getMask().isEmpty()){
+            ((TextView) holder.mcv.findViewById(R.id.comment_card_sid)).setText("[匿名] " + cmt.getMask());
+        }else {
+            ((TextView) holder.mcv.findViewById(R.id.comment_card_sid)).setText(cmt.getSno() + cmt.getName());
+        }
         ((TextView)holder.mcv.findViewById(R.id.comment_card_comment)).setText(cmt.getCmt());
         ((TextView)holder.mcv.findViewById(R.id.comment_card_dt)).setText(cmt.getDt() + "（" + Clock.comment_past_time(cmt.getTimeStamp()) + "）");
     }

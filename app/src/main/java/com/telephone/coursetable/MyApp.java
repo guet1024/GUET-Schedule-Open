@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.AppDatabaseComments;
 import com.telephone.coursetable.Database.AppDatabaseCompare;
 import com.telephone.coursetable.Database.AppDatabaseCompareTest;
 import com.telephone.coursetable.Database.AppTestDatabase;
@@ -53,6 +54,7 @@ public class MyApp extends Application {
     private static AppTestDatabase db_test;
     private static AppDatabaseCompare db_compare;
     private static AppDatabaseCompareTest db_compare_test;
+    private static AppDatabaseComments db_comments;
     private static SharedPreferences sp;
     private static SharedPreferences sp_test;
     private static SharedPreferences.Editor editor;
@@ -229,6 +231,7 @@ public class MyApp extends Application {
         db_compare = Room.databaseBuilder(this, AppDatabaseCompare.class, "telephone-db-compare").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         db_compare_test = Room.databaseBuilder(this, AppDatabaseCompareTest.class, "telephone-db-compare-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
+        db_comments = Room.databaseBuilder(this, AppDatabaseComments.class, "telephone-db-comments").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
@@ -301,6 +304,10 @@ public class MyApp extends Application {
 
     public static AppDatabaseCompareTest getDb_compare_test() {
         return db_compare_test;
+    }
+
+    public static AppDatabaseComments getDb_comments() {
+        return db_comments;
     }
 
     public static SharedPreferences getCurrentSharedPreference(){
