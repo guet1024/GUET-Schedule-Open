@@ -1,11 +1,14 @@
-package com.telephone.coursetable;
+package com.telephone.coursetable.GuetTools;
 
 import androidx.annotation.NonNull;
 
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Database.ExamInfo;
 import com.telephone.coursetable.Database.ExamInfoDao;
+import com.telephone.coursetable.MyApp;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class ExamMap {
+public class ExamFilter {
 
     static class key_exam{
         @NonNull
@@ -55,11 +58,9 @@ public class ExamMap {
             if(exam_map.containsKey(key)){
                 exam_map.get(key).add(e);
             }else {
-                exam_map.put(key, new LinkedList<ExamInfo>(){
-                    {
-                        add(e);
-                    }
-                });
+                List<ExamInfo> list = new LinkedList<>();
+                list.add(e);
+                exam_map.put(key, list);
             }
         }
 
@@ -81,6 +82,16 @@ public class ExamMap {
             res.add(Map.entry(examInfo,str));
 
         }
+
+        Collections.sort(res, new Comparator<Map.Entry<ExamInfo, String>>() {
+            @Override
+            public int compare(Map.Entry<ExamInfo, String> o1, Map.Entry<ExamInfo, String> o2) {
+                // <0: o1 --> o2
+                // >0: o2 --> o1
+                if (o2.getKey().sts == o1.getKey().sts) return 0;
+                return (o2.getKey().sts > o1.getKey().sts)?(-1):(1);
+            }
+        });
 
         return res;
     }

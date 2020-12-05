@@ -269,7 +269,7 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c, boolean formal, boolean test){
+    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c, boolean formal, boolean test, @NonNull String sid){
         if (formal){
             MyApp.getDb_compare().examTotalDao().insert(new ExamTotal(origin_e));
         }
@@ -294,7 +294,7 @@ public class Merge {
                     i.getExamdate(), i.getExamtime(), i.getExamstate(), i.getExammode(), i.getXm(),
                     i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
                     i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
-                    i.getPostdate(), i.getOperator(), termInfoDao, c
+                    i.getPostdate(), i.getOperator(), termInfoDao, c, sid
             ));
         }
     }

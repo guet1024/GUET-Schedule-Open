@@ -7,6 +7,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.telephone.coursetable.Clock.Clock;
@@ -23,18 +24,18 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class SetMyExam {
-    public static void sts_or_ets_date_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, boolean isSTS) {
+    public static void sts_or_ets_date_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, boolean isSTS, @Nullable Runnable ui_run) {
         activity.runOnUiThread(() -> {
             DateTime now = DateTime.getDefault_Instance(Clock.nowTimeStamp());
             new DatePickerDialog(
                     activity,
                     R.style.date_time_picker,
-                    new DatePickerDialog.OnDateSetListener() {
+                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             month++;
                             DateTime start = new DateTime(TimeZone.getDefault(), year, month, dayOfMonth);
-                            sts_or_ets_time(activity, examInfos, start, isSTS);
+                            sts_or_ets_time(activity, examInfos, start, isSTS, ui_run);
                         }
                     },
                     now.getYear(),
@@ -43,7 +44,7 @@ public class SetMyExam {
             ).show();
         });
     }
-    private static void sts_or_ets_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, @NonNull DateTime start, boolean isSTS){
+    private static void sts_or_ets_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, @NonNull DateTime start, boolean isSTS, @Nullable Runnable ui_run){
         activity.runOnUiThread(() -> {
             DateTime now = DateTime.getDefault_Instance(Clock.nowTimeStamp());
             new TimePickerDialog(
@@ -68,6 +69,9 @@ public class SetMyExam {
                                         pool_dao.insert(new CustomizedExam(sid, exam.croomno, exam.examdate, exam.kssj, exam.sts, ts));
                                     }
                                 }
+                                if (ui_run != null){
+                                    activity.runOnUiThread(ui_run);
+                                }
                             }).start();
                         }
                     },
@@ -77,20 +81,16 @@ public class SetMyExam {
             ).show();
         });
     }
-    public static final int TAG_KEY_EXAM_LIST = 18;
-    public static final int TAG_KEY_IS_STS = 17;
     public static void setTag_exam_list(View view, @NonNull String gson_string){
         ExamInfo[] examInfos_ary = MyApp.gson.fromJson(gson_string, ExamInfo[].class);
-        view.setTag(TAG_KEY_EXAM_LIST, Arrays.asList(examInfos_ary));
+        view.setTag(R.integer.edit_exam_tag_exams_list, Arrays.asList(examInfos_ary));
     }
     public static void setTag_is_sts(View view, boolean isSTS){
-        view.setTag(TAG_KEY_IS_STS, (Boolean)isSTS);
+        view.setTag(R.integer.edit_exam_tag_is_sts, (Boolean)isSTS);
     }
-    public static void editExam_in_a_new_thread(@NonNull AppCompatActivity activity, @NonNull View view){
-        List<ExamInfo> examList = (List<ExamInfo>) view.getTag(TAG_KEY_EXAM_LIST);
-        boolean isSTS = (Boolean) view.getTag(TAG_KEY_IS_STS);
-        new Thread(()->{
-            sts_or_ets_date_time(activity, examList, isSTS);
-        }).start();
+    public static void show_dialog_to_editExam_in_specific_activity_ui_thread(@NonNull AppCompatActivity activity, @NonNull View view, @Nullable Runnable ui_run){
+        List<ExamInfo> examList = (List<ExamInfo>) view.getTag(R.integer.edit_exam_tag_exams_list);
+        boolean isSTS = (Boolean) view.getTag(R.integer.edit_exam_tag_is_sts);
+        sts_or_ets_date_time(activity, examList, isSTS, ui_run);
     }
 }

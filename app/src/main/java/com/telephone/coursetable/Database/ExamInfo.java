@@ -8,6 +8,7 @@ import androidx.room.Entity;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
+import com.telephone.coursetable.MyApp;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -18,6 +19,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -82,7 +84,7 @@ public class ExamInfo {
 
     public ExamInfo(){}// this is for Room
 
-    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c) {
+    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c, @NonNull String sid) {
         this.croomno = croomno;
         this.croomname = croomname;
         this.tch = tch;
@@ -131,7 +133,13 @@ public class ExamInfo {
         this.checked1 = checked1;
         this.postdate = postdate;
         this.operator = operator;
-        setSTSandETS(c, examdate, kssj, termInfoDao);
+        List<CustomizedExam.CustomizedSTSAndETS> read_from_pool = MyApp.getCurrentAppDB().customizedExamDao().selectForUserAndExam(sid, this.croomno, this.examdate, this.kssj);
+        if (!read_from_pool.isEmpty()) {
+            this.sts = read_from_pool.get(0).sts;
+            this.ets = read_from_pool.get(0).ets;
+        }else {
+            setSTSandETS(c, examdate, kssj, termInfoDao);
+        }
     }
 
     private void setSTSandETS(Context c, String date, String time, TermInfoDao termInfoDao){

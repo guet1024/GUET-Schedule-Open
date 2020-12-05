@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="edit_exam_tag_exams_list">18</integer>
+    <integer name="edit_exam_tag_is_sts">17</integer>
+</resources>

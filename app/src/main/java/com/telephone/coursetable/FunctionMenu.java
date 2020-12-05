@@ -1,22 +1,20 @@
 package com.telephone.coursetable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -33,10 +31,9 @@ import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.GuetTools.ExamFilter;
 import com.telephone.coursetable.GuetTools.SetMyExam;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +41,6 @@ import java.util.Map.Entry;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @clear
@@ -113,10 +109,10 @@ public class FunctionMenu extends AppCompatActivity {
         MyApp.setRunning_activity(MyApp.RunningActivity.FUNCTION_MENU);
         MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_function_menu);
-        setFunctionMenuAdapter(FunctionMenu.this);
+        setFunctionMenuAdapter_in_a_new_thread(FunctionMenu.this, null);
     }
 
-    public static void setFunctionMenuAdapter(@NonNull FunctionMenu functionMenu) {
+    public static void setFunctionMenuAdapter_in_a_new_thread(@NonNull FunctionMenu functionMenu, @Nullable Runnable ui_run) {
         PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
         GraduationScoreDao gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
         GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
@@ -322,24 +318,10 @@ public class FunctionMenu extends AppCompatActivity {
             if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0) {
                 exams_group += " ";
             }
-            List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
             children = new LinkedList<>();
-            String cno = "";
-            String edate = "";
-            String etime = "";
-            List<ExamInfo> filter_elist = new LinkedList<>();
-            for (ExamInfo e : exam_list) {
-                if (e.courseno.equals(cno) && e.examdate.equals(edate) && e.kssj.equals(etime)) {
-                    filter_elist.get(filter_elist.size() - 1).croomno += ", " + e.croomno;
-                } else {
-                    filter_elist.add(e);
-                }
-                cno = e.courseno;
-                edate = e.examdate;
-                etime = e.kssj;
-            }
-            exam_list = filter_elist;
-            for (ExamInfo e : exam_list) {
+            List<Map.Entry<ExamInfo, String>> exam_list = ExamFilter.Generate_ExamList();
+            for (Map.Entry<ExamInfo, String> entry : exam_list) {
+                ExamInfo e = entry.getKey();
                 child = new LinkedList<>();
                 child.add("学期: " + tdao.select(e.term).get(0).termname);
                 child.add("课程名称: " + e.cname);
@@ -351,6 +333,7 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("备注: " + ((e.comm == null) ? "" : e.comm));
                 child.add("始: " + DateTime.getDefault_Instance(e.sts).dateTimeString(Locale.SIMPLIFIED_CHINESE));
                 child.add("止: " + DateTime.getDefault_Instance(e.ets).dateTimeString(Locale.SIMPLIFIED_CHINESE));
+                child.add(entry.getValue());
                 if (e.ets >= Clock.nowTimeStamp()) {
                     child.add("1");
                     children.add(child);
@@ -488,6 +471,9 @@ public class FunctionMenu extends AppCompatActivity {
                     }
                     return true;
                 });
+                if (ui_run != null){
+                    ui_run.run();
+                }
             });
         }).start();
     }
@@ -560,6 +546,11 @@ public class FunctionMenu extends AppCompatActivity {
     }
 
     public void editExam(View view){
-        SetMyExam.editExam_in_a_new_thread(FunctionMenu.this, view);
+        SetMyExam.show_dialog_to_editExam_in_specific_activity_ui_thread(FunctionMenu.this, view, ()->{
+            setFunctionMenuAdapter_in_a_new_thread(FunctionMenu.this, ()->{
+                // the expandable list view is collapsed by default after the adapter is set, so i just expand some group without need to collapse the other groups
+                ((ExpandableListView) FunctionMenu.this.findViewById(R.id.function_menu_list)).expandGroup(5, true);
+            });
+        });
     }
 }

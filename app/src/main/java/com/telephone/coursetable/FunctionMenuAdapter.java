@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.GradePoint.GradePointActivity;
+import com.telephone.coursetable.GuetTools.SetMyExam;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 import com.telephone.coursetable.Update.Update;
@@ -357,7 +358,11 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setText(groups.get(i).getValue().get(i1).get(7));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_sts)).setText(groups.get(i).getValue().get(i1).get(8));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_ets)).setText(groups.get(i).getValue().get(i1).get(9));
-                int color_index = 10;
+                SetMyExam.setTag_exam_list(((TextView)view.findViewById(R.id.function_menu_itemtv_sts_edit)), groups.get(i).getValue().get(i1).get(10));
+                SetMyExam.setTag_is_sts(((TextView)view.findViewById(R.id.function_menu_itemtv_sts_edit)), true);
+                SetMyExam.setTag_exam_list(((TextView)view.findViewById(R.id.function_menu_itemtv_ets_edit)), groups.get(i).getValue().get(i1).get(10));
+                SetMyExam.setTag_is_sts(((TextView)view.findViewById(R.id.function_menu_itemtv_ets_edit)), false);
+                int color_index = 11;
                 if (groups.get(i).getValue().get(i1).get(color_index) != null){
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
