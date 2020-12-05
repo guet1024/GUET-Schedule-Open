@@ -7,4 +7,10 @@
     <style name="progressbar_accent">
         <item name="colorAccent">@color/colorProgressbar</item>
     </style>
+    <style name="date_time_picker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+    <style name="mask" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

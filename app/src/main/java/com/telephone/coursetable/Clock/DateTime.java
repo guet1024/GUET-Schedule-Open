@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -16,9 +17,9 @@ public class DateTime {
     private TimeZone tz;
     private Calendar cld;
 
-    private int year;
-    private int month;
-    private int day;
+    private final int year;
+    private final int month;
+    private final int day;
     private int weekday;
 
     public int hour_24;
@@ -31,6 +32,24 @@ public class DateTime {
 
     public static DateTime getDefault_Instance(long timestamp){
         return new DateTime(TimeZone.getDefault(), timestamp);
+    }
+
+    /**
+     * the {@link #weekday} won't be set
+     * the data MUST be valid
+     * all of the the time fields will be set to 0
+     */
+    public DateTime(TimeZone tz, int year, int month, int day){
+        this.tz = tz;
+        this.cld = Calendar.getInstance(this.tz);
+
+        this.year = year;
+        this.month = month;
+        this.day = day;
+
+        this.hour_24 = 0;
+        this.minute = 0;
+        this.second = 0;
     }
 
     public DateTime(TimeZone timeZone, long timestamp){
@@ -129,5 +148,13 @@ public class DateTime {
                 ", second=" + second +
                 ", timestamp=" + this.getTime() +
                 '}';
+    }
+
+    public String dateTimeString(){
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d %02d:%02d:%02d %s", year, month, day, hour_24, minute, second, tz.getDisplayName());
+    }
+
+    public String dateTimeString(Locale locale){
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d %02d:%02d:%02d %s", year, month, day, hour_24, minute, second, tz.getDisplayName(locale));
     }
 }

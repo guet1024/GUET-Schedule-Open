@@ -194,13 +194,11 @@ public class Login_vpn extends AppCompatActivity {
 //                    aaw_pwd = u.aaw_password;
                     sys_pwd = u.password;
 
-                    ((AutoCompleteTextView)findViewById(R.id.sid_input)).clearFocus();
-                    fillStringExtra();
+                    fillStringExtra(true);
                 });
             }else {
                 runOnUiThread( ()->{
-                    ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
-                    fillStringExtra();
+                    fillStringExtra(true);
                 });
             }
         }).start();
@@ -419,7 +417,7 @@ public class Login_vpn extends AppCompatActivity {
      * @ui
      * @clear
      */
-    private void fillStringExtra(){
+    private void fillStringExtra(boolean firstPage){
         Intent intent = getIntent();
         String sid = intent.getStringExtra(EXTRA_USERNAME);
         String vpn_pwd = intent.getStringExtra(EXTRA_VPN_PASSWORD);
@@ -450,6 +448,13 @@ public class Login_vpn extends AppCompatActivity {
 //            if (aaw_pwd_input != null) {
 //                aaw_pwd_input.setText(aaw_pwd);
 //            }
+        }
+        if (firstPage) {
+            if (sid == null || sid.isEmpty()) {
+                setFocusToEditText(sid_input);
+            } else {
+                setFocusToEditText(vpn_pwd_input);
+            }
         }
     }
 

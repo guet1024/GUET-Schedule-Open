@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Clock.Clock;
+import com.telephone.coursetable.Clock.DateTime;
 import com.telephone.coursetable.Database.CET;
 import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ExamInfo;
@@ -32,15 +33,18 @@ import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.PersonInfo;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.TermInfoDao;
+import com.telephone.coursetable.GuetTools.SetMyExam;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @clear
@@ -350,6 +354,8 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("教室: " + e.croomno);
                 child.add("第 " + e.zc + " 周  星期 " + e.xq + "  第 " + ((e.ksjc == null) ? "" : e.ksjc) + " 大节");
                 child.add("备注: " + ((e.comm == null) ? "" : e.comm));
+                child.add("始: " + DateTime.getDefault_Instance(e.sts).dateTimeString(Locale.SIMPLIFIED_CHINESE));
+                child.add("止: " + DateTime.getDefault_Instance(e.ets).dateTimeString(Locale.SIMPLIFIED_CHINESE));
                 if (e.ets >= Clock.nowTimeStamp()){
                     child.add("1");
                     children.add(child);
@@ -556,5 +562,9 @@ public class FunctionMenu extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    public void editExam(View view){
+        SetMyExam.editExam_in_a_new_thread(FunctionMenu.this, view);
     }
 }

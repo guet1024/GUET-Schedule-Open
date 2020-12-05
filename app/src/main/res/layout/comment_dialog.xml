@@ -42,6 +42,7 @@
             android:maxLength="20"
             android:background="@null"
             android:textSize="16sp"
-            android:textColor="@color/colorPrimary"/>
+            android:textColor="@color/colorPrimary"
+            android:theme="@style/mask"/>
     </LinearLayout>
 </LinearLayout>
