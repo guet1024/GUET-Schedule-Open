@@ -58,14 +58,6 @@ public class FunctionMenu extends AppCompatActivity {
         }
     };
 
-    private PersonInfoDao pdao;
-    private GraduationScoreDao gsdao;
-    private GradesDao grdao;
-    private ExamInfoDao edao;
-    private TermInfoDao tdao;
-    private CETDao cetDao;
-    private ExpandableListView menu_list;
-
     private boolean dv = false;
 
     private volatile boolean visible = true;
@@ -121,14 +113,17 @@ public class FunctionMenu extends AppCompatActivity {
         MyApp.setRunning_activity(MyApp.RunningActivity.FUNCTION_MENU);
         MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_function_menu);
+        setFunctionMenuAdapter(FunctionMenu.this);
+    }
 
-        pdao = MyApp.getCurrentAppDB().personInfoDao();
-        gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
-        grdao = MyApp.getCurrentAppDB().gradesDao();
-        edao = MyApp.getCurrentAppDB().examInfoDao();
-        tdao = MyApp.getCurrentAppDB().termInfoDao();
-        cetDao = MyApp.getCurrentAppDB().cetDao();
-        menu_list = (ExpandableListView)findViewById(R.id.function_menu_list);
+    public static void setFunctionMenuAdapter(@NonNull FunctionMenu functionMenu) {
+        PersonInfoDao pdao = MyApp.getCurrentAppDB().personInfoDao();
+        GraduationScoreDao gsdao = MyApp.getCurrentAppDB().graduationScoreDao();
+        GradesDao grdao = MyApp.getCurrentAppDB().gradesDao();
+        ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
+        TermInfoDao tdao = MyApp.getCurrentAppDB().termInfoDao();
+        CETDao cetDao = MyApp.getCurrentAppDB().cetDao();
+        ExpandableListView menu_list = (ExpandableListView) functionMenu.findViewById(R.id.function_menu_list);
 
         final ExpandableListView menu_listf = menu_list;
 
@@ -151,7 +146,7 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             child = new LinkedList<>();
             child.add("年级");
-            child.add(pinfo.grade+"");
+            child.add(pinfo.grade + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("班级");
@@ -205,27 +200,27 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             child = new LinkedList<>();
             child.add("高考总分");
-            child.add(pinfo.total+"");
+            child.add(pinfo.total + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("高考英语（或语文）");
-            child.add(pinfo.chinese+"");
+            child.add(pinfo.chinese + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("高考数学");
-            child.add(pinfo.maths+"");
+            child.add(pinfo.maths + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("高考语文（或英语）");
-            child.add(pinfo.english+"");
+            child.add(pinfo.english + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("高考综合");
-            child.add(pinfo.addscore1+"");
+            child.add(pinfo.addscore1 + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("高考其他");
-            child.add(pinfo.addscore2+"");
+            child.add(pinfo.addscore2 + "");
             children.add(child);
             child = new LinkedList<>();
             child.add("备注");
@@ -249,14 +244,14 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             double credit_hour_total = 0;
             double credit_hour_total_got = 0;
-            for (GraduationScore gs : graduation_score_list){
+            for (GraduationScore gs : graduation_score_list) {
                 child = new LinkedList<>();
                 child.add(gs.cname);
-                child.add(gs.credithour+"");
+                child.add(gs.credithour + "");
                 child.add(gs.zpxs);
-                if (gs.courseno == null){
+                if (gs.courseno == null) {
                     child.add(" ");
-                }else {
+                } else {
                     credit_hour_total_got += gs.credithour;
                     child.add("√");
                 }
@@ -266,15 +261,15 @@ public class FunctionMenu extends AppCompatActivity {
             }
             child = new LinkedList<>();
             child.add("毕业计划学分");
-            child.add(credit_hour_total+"");
+            child.add(credit_hour_total + "");
             child.add("");
-            child.add(credit_hour_total_got+"");
+            child.add(credit_hour_total_got + "");
             child.add(null);
             children.add(child);
             menus.add(Map.entry(graduation_score_group, children));
 
             String grades_group = "成绩单";
-            if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0){
+            if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0) {
                 grades_group += " ";
             }
             List<Grades> grades_list = grdao.selectAll();
@@ -289,20 +284,20 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             String last_sterm = null;
             boolean color = false;
-            for (Grades gr : grades_list){
+            for (Grades gr : grades_list) {
                 child = new LinkedList<>();
                 child.add(gr.cname);
                 child.add(gr.zpxs);
-                child.add(gr.pscj+"");
-                child.add(gr.sycj+"");
-                child.add(gr.khcj+"");
-                if (!gr.term.equals(last_sterm)){
+                child.add(gr.pscj + "");
+                child.add(gr.sycj + "");
+                child.add(gr.khcj + "");
+                if (!gr.term.equals(last_sterm)) {
                     color = !color;
                 }
                 last_sterm = gr.term;
-                if (color){
+                if (color) {
                     child.add("0");
-                }else {
+                } else {
                     child.add(null);
                 }
                 children.add(child);
@@ -324,7 +319,7 @@ public class FunctionMenu extends AppCompatActivity {
             menus.add(Map.entry(change_term_group, children));
 
             String exams_group = "考试安排";
-            if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0){
+            if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0) {
                 exams_group += " ";
             }
             List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
@@ -333,10 +328,10 @@ public class FunctionMenu extends AppCompatActivity {
             String edate = "";
             String etime = "";
             List<ExamInfo> filter_elist = new LinkedList<>();
-            for (ExamInfo e : exam_list){
-                if (e.courseno.equals(cno) && e.examdate.equals(edate) && e.kssj.equals(etime)){
+            for (ExamInfo e : exam_list) {
+                if (e.courseno.equals(cno) && e.examdate.equals(edate) && e.kssj.equals(etime)) {
                     filter_elist.get(filter_elist.size() - 1).croomno += ", " + e.croomno;
-                }else {
+                } else {
                     filter_elist.add(e);
                 }
                 cno = e.courseno;
@@ -344,7 +339,7 @@ public class FunctionMenu extends AppCompatActivity {
                 etime = e.kssj;
             }
             exam_list = filter_elist;
-            for (ExamInfo e : exam_list){
+            for (ExamInfo e : exam_list) {
                 child = new LinkedList<>();
                 child.add("学期: " + tdao.select(e.term).get(0).termname);
                 child.add("课程名称: " + e.cname);
@@ -356,10 +351,10 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("备注: " + ((e.comm == null) ? "" : e.comm));
                 child.add("始: " + DateTime.getDefault_Instance(e.sts).dateTimeString(Locale.SIMPLIFIED_CHINESE));
                 child.add("止: " + DateTime.getDefault_Instance(e.ets).dateTimeString(Locale.SIMPLIFIED_CHINESE));
-                if (e.ets >= Clock.nowTimeStamp()){
+                if (e.ets >= Clock.nowTimeStamp()) {
                     child.add("1");
                     children.add(child);
-                }else {
+                } else {
                     child.add(null);
                     children.add(child);
                 }
@@ -379,7 +374,7 @@ public class FunctionMenu extends AppCompatActivity {
             String cet_group = "等级考试成绩";
             children = new LinkedList<>();
             List<CET> cet_list = cetDao.selectAll();
-            for (CET cet : cet_list){
+            for (CET cet : cet_list) {
                 child = new LinkedList<>();
                 child.add("学期: " + cet.term);
                 child.add(cet.code);
@@ -421,26 +416,26 @@ public class FunctionMenu extends AppCompatActivity {
             children.add(child);
             menus.add(Map.entry(about_group, children));
 
-            runOnUiThread(() -> {
-                FunctionMenuAdapter adapter = new FunctionMenuAdapter(FunctionMenu.this, menus, true, menu_listf, FunctionMenu.this);
+            functionMenu.runOnUiThread(() -> {
+                FunctionMenuAdapter adapter = new FunctionMenuAdapter(functionMenu, menus, true, menu_listf, functionMenu);
                 menu_listf.setAdapter(adapter);
                 menu_listf.setGroupIndicator(null);
                 menu_listf.setOnGroupClickListener((ExpandableListView.OnGroupClickListener) (parent, v, groupPosition, id) -> {
-                    if (parent.isGroupExpanded(groupPosition)){
+                    if (parent.isGroupExpanded(groupPosition)) {
                         parent.collapseGroup(groupPosition);
-                    }else {
+                    } else {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
                                 int num = 0;
-                                for (int i = 0; i < parent.getCount(); i++){
-                                    if (parent.isGroupExpanded(i)){
+                                for (int i = 0; i < parent.getCount(); i++) {
+                                    if (parent.isGroupExpanded(i)) {
                                         parent.collapseGroup(i);
                                         num++;
                                     }
                                 }
                                 int num_f = num;
-                                new Thread(()->{
+                                new Thread(() -> {
                                     if (num_f > 0) {
                                         try {
                                             Thread.sleep(1);
@@ -448,19 +443,19 @@ public class FunctionMenu extends AppCompatActivity {
                                             Thread.currentThread().interrupt();
                                         }
                                     }
-                                    runOnUiThread(()->{
+                                    functionMenu.runOnUiThread(() -> {
                                         parent.expandGroup(groupPosition, true);
 //                            parent.smoothScrollToPositionFromTop(groupPosition, 10);
-                                        clearUnread(FunctionMenu.this, v, adapter, groupPosition);
+                                        clearUnread(functionMenu, v, adapter, groupPosition);
                                     });
                                 }).start();
                             }
                         };
-                        if (groupPosition == 0 && !dv){
-                            View dialog_view = getLayoutInflater().inflate(R.layout.double_verification, null);
+                        if (groupPosition == 0 && !functionMenu.dv) {
+                            View dialog_view = functionMenu.getLayoutInflater().inflate(R.layout.double_verification, null);
                             EditText dinput = dialog_view.findViewById(R.id.double_verify_input);
                             Login.getAlertDialog(
-                                    FunctionMenu.this,
+                                    functionMenu,
                                     null,
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -468,8 +463,8 @@ public class FunctionMenu extends AppCompatActivity {
                                             String pwd_input = dinput.getText().toString();
                                             new Thread(() -> {
                                                 if (pwd_input.equals(MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).password)) {
-                                                    dv = true;
-                                                    runOnUiThread(runnable);
+                                                    functionMenu.dv = true;
+                                                    functionMenu.runOnUiThread(runnable);
                                                 } else {
                                                     Snackbar.make(menu_list, "双重验证失败", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
                                                 }
@@ -487,7 +482,7 @@ public class FunctionMenu extends AppCompatActivity {
                                     null,
                                     null
                             ).show();
-                        }else {
+                        } else {
                             runnable.run();
                         }
                     }
