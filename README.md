@@ -71,3 +71,7 @@
 ### 声明
 
 ❎与学校官方无关
+
+### 码云同步代码仓库
+
+[GUET课程表](https://gitee.com/telephone2019/guet-curriculum)
