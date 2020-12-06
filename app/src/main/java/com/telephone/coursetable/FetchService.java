@@ -52,6 +52,7 @@ import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.GradePoint.GradePointActivity;
+import com.telephone.coursetable.GuetTools.ExamFilter;
 import com.telephone.coursetable.GuetTools.ImageActivity;
 import com.telephone.coursetable.GuetTools.WebLinksActivity;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
@@ -143,7 +144,11 @@ public class FetchService extends IntentService {
         return START_STICKY;
     }
 
-    private void update_foreground_notification(@NonNull String text){
+    private void update_foreground_notification(@NonNull String text, @Nullable String title_suffix){
+        String title = "加油~今天也要打起精神来";
+        if (title_suffix != null){
+            title += title_suffix;
+        }
         Intent stopIntent = new Intent(this, FetchService.class);
         stopIntent.setAction(ACTION_STOP_SERVICE);
         PendingIntent stopPendingIntent =
@@ -153,11 +158,11 @@ public class FetchService extends IntentService {
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
                 new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
-                        .setContentTitle("加油~今天也要打起精神来")
+                        .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                         .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
-                        .setTicker("加油~今天也要打起精神来")
+                        .setTicker(title)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .addAction(0, "强行停止", stopPendingIntent)
                         .build();
@@ -267,7 +272,7 @@ public class FetchService extends IntentService {
         SharedPreferences preferences = MyApp.getCurrentSharedPreference();
         long today = Clock.nowTimeStamp();
         if (udao.getActivatedUser().isEmpty()){
-            update_foreground_notification("未登录");
+            update_foreground_notification("未登录", null);
             return;
         }
         FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime_low_api(
@@ -281,6 +286,7 @@ public class FetchService extends IntentService {
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
         );
+        String msg = "";
         if (currentOrNextTime!=null) {
             if (currentOrNextTime.isNow) {
                 StringBuilder text = new StringBuilder("正在上课：");
@@ -302,11 +308,11 @@ public class FetchService extends IntentService {
                     text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
                     text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
                 }
-                update_foreground_notification(text.toString());
+                msg = text.toString();
             }
             else {
                 if (currentOrNextTime.list.isEmpty()) {
-                    update_foreground_notification("今日课程已全部完成");
+                    msg = "今日课程已全部完成";
                 }
                 else {
                     StringBuilder text = new StringBuilder("下一节课：");
@@ -329,13 +335,20 @@ public class FetchService extends IntentService {
                         text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
                         text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
                     }
-                    update_foreground_notification(text.toString());
+                    msg = text.toString();
                 }
             }
         }
         else {
-            update_foreground_notification("今日无课");
+            msg = "今日无课";
         }
+        String exam_tip = ExamFilter.getDisplayExamTip();
+        if (exam_tip != null && !exam_tip.isEmpty()){
+            exam_tip = " " + exam_tip;
+        }else {
+            exam_tip = null;
+        }
+        update_foreground_notification(msg, exam_tip);
     }
 
     private ArrayList<String> getListForListAppWidgets(){

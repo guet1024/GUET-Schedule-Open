@@ -54,7 +54,7 @@ public class ExamFilter {
     }
 
 
-    public static List<Map.Entry<ExamInfo,String>> Generate_ExamList(){
+    public static List<Map.Entry<ExamInfo,String>> generate_ExamList(){
 
         ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
         List<ExamInfo> exam_list = edao.selectFromToday(Clock.nowTimeStamp());
@@ -103,5 +103,20 @@ public class ExamFilter {
         return res;
     }
 
-
+    public static String getDisplayExamTip(){
+        List<Map.Entry<ExamInfo,String>> exam_list = generate_ExamList();
+        StringBuilder res = new StringBuilder();
+        if (!exam_list.isEmpty()){
+            long nts = Clock.nowTimeStamp();
+            for (int i = 0; i < exam_list.size() && i < 3; i++) {
+                long sts = exam_list.get(i).getKey().sts;
+                if (sts < nts) sts = nts;
+                long days = (sts - nts) / 86_400_000L;
+                if (i > 0) res.append(" | ");
+                res.append(days);
+            }
+            res.append(" 天后考试");
+        }
+        return res.toString();
+    }
 }

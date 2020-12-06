@@ -319,7 +319,7 @@ public class FunctionMenu extends AppCompatActivity {
                 exams_group += " ";
             }
             children = new LinkedList<>();
-            List<Map.Entry<ExamInfo, String>> exam_list = ExamFilter.Generate_ExamList();
+            List<Map.Entry<ExamInfo, String>> exam_list = ExamFilter.generate_ExamList();
             for (Map.Entry<ExamInfo, String> entry : exam_list) {
                 ExamInfo e = entry.getKey();
                 child = new LinkedList<>();
