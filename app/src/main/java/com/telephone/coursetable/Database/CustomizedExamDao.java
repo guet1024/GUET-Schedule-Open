@@ -10,8 +10,8 @@ import java.util.List;
 
 @Dao
 public interface CustomizedExamDao {
-    @Query("select sts, ets from CustomizedExam where sid=:sid and room=:room and date=:date and time=:time")
-    List<CustomizedExam.CustomizedSTSAndETS> selectForUserAndExam(@NonNull String sid, @NonNull String room, @NonNull String date, @NonNull String time);
+    @Query("select sts, ets from CustomizedExam where sid=:sid and date=:date and time=:time and week=:week and weekday=:weekday and cno=:cno and comment=:comment")
+    List<CustomizedExam.CustomizedSTSAndETS> selectForUserAndExam(@NonNull String sid, @NonNull String date, @NonNull String time, long week, long weekday, @NonNull String cno, @NonNull String comment);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(CustomizedExam tuple);

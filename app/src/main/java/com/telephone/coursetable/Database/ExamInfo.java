@@ -26,10 +26,18 @@ import java.util.TimeZone;
 /**
  * @clear
  */
-@Entity(primaryKeys = {"examdate", "kssj", "croomno"})
+// primary keys: when + where + cno + comment
+@Entity(primaryKeys = {"sts", "ets", "croomno", "courseno", "comm"})
 public class ExamInfo {
+    public long sts;
+    public long ets;
     @NonNull
     public String croomno;//	"02204Y"    教室
+    @NonNull
+    public String courseno;//	"1920736"   课号
+    @NonNull
+    public String comm;
+
     public String croomname;
     public String tch;
     public String tch1;
@@ -44,7 +52,6 @@ public class ExamInfo {
     public String spno;
     public String spname;
     public String courseid;
-    public String courseno;//	"1920736"   课号
     public String labno;
     public String labname;
     public String dptno;
@@ -58,7 +65,6 @@ public class ExamInfo {
     public String examt;
     public String kctype;
     public String typeno;
-    @NonNull
     public String examdate;//	"2020-07-15"    日期
     public String examtime;
     public long examstate;
@@ -70,21 +76,17 @@ public class ExamInfo {
     public String ksjc;
     public String jsjc;
     public long bkzt;
-    @NonNull
     public String kssj;//	"14:00-16:00"   考试时间
-    public String comm;
     public String rooms;
     public String lsh;
     public long zone;
     public String checked1;
     public String postdate;
     public String operator;
-    public long sts;
-    public long ets;
 
     public ExamInfo(){}// this is for Room
 
-    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c, @NonNull String sid) {
+    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, @NonNull String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, String kssj, @NonNull String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c, @NonNull String sid) {
         this.croomno = croomno;
         this.croomname = croomname;
         this.tch = tch;
@@ -133,7 +135,7 @@ public class ExamInfo {
         this.checked1 = checked1;
         this.postdate = postdate;
         this.operator = operator;
-        List<CustomizedExam.CustomizedSTSAndETS> read_from_pool = MyApp.getCurrentAppDB().customizedExamDao().selectForUserAndExam(sid, this.croomno, this.examdate, this.kssj);
+        List<CustomizedExam.CustomizedSTSAndETS> read_from_pool = MyApp.getCurrentAppDB().customizedExamDao().selectForUserAndExam(sid, this.examdate, this.kssj, this.zc, this.xq, this.courseno, this.comm);
         if (!read_from_pool.isEmpty()) {
             this.sts = read_from_pool.get(0).sts;
             this.ets = read_from_pool.get(0).ets;

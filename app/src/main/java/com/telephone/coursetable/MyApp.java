@@ -238,7 +238,8 @@ public class MyApp extends Application {
         editor_test = sp_test.edit();
         app_info = getApplicationInfo();
 
-        gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).setPrettyPrinting().create();
+        // make Gson serialize null String fields to "", other "null"
+        gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).serializeNulls().create();
         LogMe.init();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -286,18 +286,19 @@ public class Merge {
                 i.setExamdate("");
             }
             edao.insert(new com.telephone.coursetable.Database.ExamInfo(
-                    i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
+                    no_null_string(i.getCroomno()), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
                     i.getJs1(), i.getJs2(), i.getRoomrs(), i.getTerm(), i.getGrade(), i.getDpt(),
-                    i.getSpno(), i.getSpname(), i.getCourseid(),i.getCourseno(), i.getLabno(), i.getLabname(),
+                    i.getSpno(), i.getSpname(), i.getCourseid(),no_null_string(i.getCourseno()), i.getLabno(), i.getLabname(),
                     i.getDptno(), i.getTeacherno(), i.getName(), i.getXf(), i.getCname(), i.getSctcnt(),
                     i.getStucnt(), i.getScoretype(), i.getExamt(), i.getKctype(), i.getTypeno(),
                     i.getExamdate(), i.getExamtime(), i.getExamstate(), i.getExammode(), i.getXm(),
                     i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
-                    i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
+                    i.getKssj(), no_null_string(i.getComm()), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
                     i.getPostdate(), i.getOperator(), termInfoDao, c, sid
             ));
         }
     }
+    private static String no_null_string(String s){return (s == null)?(""):(s);}
 
     /**
      * the origin must have corresponding content

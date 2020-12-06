@@ -44,7 +44,7 @@ public class SetMyExam {
             ).show();
         });
     }
-    private static void sts_or_ets_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, @NonNull DateTime start, boolean isSTS, @Nullable Runnable ui_run){
+    private static void sts_or_ets_time(@NonNull AppCompatActivity activity, @NonNull List<ExamInfo> examInfos, @NonNull DateTime start, boolean isSTS, @Nullable Runnable ui_run) {
         activity.runOnUiThread(() -> {
             DateTime now = DateTime.getDefault_Instance(Clock.nowTimeStamp());
             new TimePickerDialog(
@@ -58,18 +58,30 @@ public class SetMyExam {
                             long ts = start.getTime();
                             ExamInfoDao edao = MyApp.getCurrentAppDB().examInfoDao();
                             CustomizedExamDao pool_dao = MyApp.getCurrentAppDB().customizedExamDao();
-                            new Thread(()->{
+                            new Thread(() -> {
                                 String sid = MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username;
-                                for (ExamInfo exam : examInfos){
+                                for (ExamInfo exam : examInfos) {
                                     if (isSTS) {
-                                        edao.updateSTS(exam.croomno, exam.examdate, exam.kssj, ts);
-                                        pool_dao.insert(new CustomizedExam(sid, exam.croomno, exam.examdate, exam.kssj, ts, exam.ets));
-                                    }else {
-                                        edao.updateETS(exam.croomno, exam.examdate, exam.kssj, ts);
-                                        pool_dao.insert(new CustomizedExam(sid, exam.croomno, exam.examdate, exam.kssj, exam.sts, ts));
+                                        edao.updateSTS(
+                                                exam.sts, exam.ets, exam.croomno, exam.courseno,
+                                                exam.comm, ts
+                                        );
+                                        pool_dao.insert(new CustomizedExam(
+                                                sid, exam.examdate, exam.kssj, exam.zc, exam.xq, exam.courseno,
+                                                exam.comm, ts, exam.ets
+                                        ));
+                                    } else {
+                                        edao.updateETS(
+                                                exam.sts, exam.ets, exam.croomno, exam.courseno,
+                                                exam.comm, ts
+                                        );
+                                        pool_dao.insert(new CustomizedExam(
+                                                sid, exam.examdate, exam.kssj, exam.zc, exam.xq, exam.courseno,
+                                                exam.comm, exam.sts, ts
+                                        ));
                                     }
                                 }
-                                if (ui_run != null){
+                                if (ui_run != null) {
                                     activity.runOnUiThread(ui_run);
                                 }
                             }).start();

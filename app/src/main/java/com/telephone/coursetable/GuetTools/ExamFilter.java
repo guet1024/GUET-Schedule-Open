@@ -18,16 +18,22 @@ import java.util.Set;
 
 public class ExamFilter {
 
+    /**
+     * // primary keys: when + cno + comment
+     */
     static class key_exam{
+        public long sts;
+        public long ets;
         @NonNull
-        String courseno;
-        long sts;
-        long ets;
+        public String courseno;
+        @NonNull
+        public String comm;
 
-        public key_exam(@NonNull String courseno, long sts, long ets) {
-            this.courseno = courseno;
+        public key_exam(long sts, long ets, @NonNull String courseno, @NonNull String comm) {
             this.sts = sts;
             this.ets = ets;
+            this.courseno = courseno;
+            this.comm = comm;
         }
 
         @Override
@@ -37,12 +43,13 @@ public class ExamFilter {
             key_exam key_exam = (key_exam) o;
             return sts == key_exam.sts &&
                     ets == key_exam.ets &&
-                    courseno.equals(key_exam.courseno);
+                    courseno.equals(key_exam.courseno) &&
+                    comm.equals(key_exam.comm);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(courseno, sts, ets);
+            return Objects.hash(sts, ets, courseno, comm);
         }
     }
 
@@ -54,7 +61,7 @@ public class ExamFilter {
         Map<key_exam,List<ExamInfo>> exam_map = new HashMap<>();
 
         for(ExamInfo e : exam_list){
-            key_exam key = new key_exam(e.courseno,e.sts,e.ets);
+            key_exam key = new key_exam(e.sts, e.ets, e.courseno, e.comm);
             if(exam_map.containsKey(key)){
                 exam_map.get(key).add(e);
             }else {
@@ -83,13 +90,13 @@ public class ExamFilter {
 
         }
 
-        Collections.sort(res, new Comparator<Map.Entry<ExamInfo, String>>() {
+        res.sort(new Comparator<Map.Entry<ExamInfo, String>>() {
             @Override
             public int compare(Map.Entry<ExamInfo, String> o1, Map.Entry<ExamInfo, String> o2) {
                 // <0: o1 --> o2
                 // >0: o2 --> o1
                 if (o2.getKey().sts == o1.getKey().sts) return 0;
-                return (o2.getKey().sts > o1.getKey().sts)?(-1):(1);
+                return (o2.getKey().sts > o1.getKey().sts) ? (-1) : (1);
             }
         });
 
