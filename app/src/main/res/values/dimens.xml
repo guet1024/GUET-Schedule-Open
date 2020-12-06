@@ -8,4 +8,5 @@
     <dimen name="comment_card_out_margin">8dp</dimen>
     <dimen name="edit_exam_button_margin_se">8dp</dimen>
     <dimen name="edit_exam_button_padding">4dp</dimen>
+    <dimen name="main_activity_weekday_height">40dp</dimen>
 </resources>
