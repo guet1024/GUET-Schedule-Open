@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/teacher_evaluation_start"
+        android:id="@+id/book_evaluation_start"
         app:showAsAction="ifRoom"
-        android:title="开始评教" />
+        android:title="开始教材评价" />
 </menu>
