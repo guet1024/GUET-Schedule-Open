@@ -285,4 +285,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:onClick="help"/>
 
+    <CheckBox
+        android:id="@+id/lab_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步实验安排"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline6"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        android:checked="true"
+        android:buttonTint="@color/colorPrimary"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

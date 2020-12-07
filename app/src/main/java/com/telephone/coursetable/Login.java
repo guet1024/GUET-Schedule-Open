@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -666,7 +667,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(boolean formal, Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+    public static boolean fetch_merge(boolean formal, Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao, boolean lab){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
 
@@ -753,38 +754,40 @@ public class Login extends AppCompatActivity {
         Merge.cet(res.comment, cetDao);
 
 
-        // edited by Telephone, 2020/12/7, 17:21, not fetch lab because there is something wrong with the server
-//        term_list = tdao.selectAll();
-//        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
-//                MyApp.times,
-//                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(c),
-//                Clock.getDefaultDelimiterFor_whichTime(),
-//                Clock.getSSFor_locateNow(c),
-//                Clock.getESFor_locateNow(c),
-//                Clock.getDSFor_locateNow(c)
-//        );
-//        if (locate.term != null) {
-//            for (TermInfo term : term_list) {
-//                if (!term.term.equals(locate.term.term)) {
-//                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
-//                    continue;
-//                }
-//                LogMe.e(NAME, "fetching lab");
-//                res.code = -1;
-//                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
-//                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
-//                    res = LAN.lab(c, cookie, term.term);
-//                }
-//                if (res.code != 0) {
-//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
-//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
-//                    return false;
-//                }
-//                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
-//                LogMe.e(NAME, "fetch lab success, merging...");
-//                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
-//            }
-//        }
+        // edited by Telephone, 2020/12/7, 20:06, optional lab
+        if (lab) {
+            term_list = tdao.selectAll();
+            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+                    MyApp.times,
+                    Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(c),
+                    Clock.getDefaultDelimiterFor_whichTime(),
+                    Clock.getSSFor_locateNow(c),
+                    Clock.getESFor_locateNow(c),
+                    Clock.getDSFor_locateNow(c)
+            );
+            if (locate.term != null) {
+                for (TermInfo term : term_list) {
+                    if (!term.term.equals(locate.term.term)) {
+                        LogMe.e(NAME, "skip lab-fetch: " + term.term);
+                        continue;
+                    }
+                    LogMe.e(NAME, "fetching lab");
+                    res.code = -1;
+                    for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+                        LogMe.e(NAME, "fetching lab time: " + (i + 1));
+                        res = LAN.lab(c, cookie, term.term);
+                    }
+                    if (res.code != 0) {
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
+                        return false;
+                    }
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                    LogMe.e(NAME, "fetch lab success, merging...");
+                    Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
+                }
+            }
+        }
 
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
@@ -832,9 +835,9 @@ public class Login extends AppCompatActivity {
      *              11. commit shared preference
      *              12. show tip snack-bar, change title
      *              13. call {@link #deleteOldDataFromDatabase(String, GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao, LABDao)}
-     *              14. call {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
+     *              14. call {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao, boolean)}
      *              15. commit shared preference
-     *              16. the result of {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
+     *              16. the result of {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao, boolean)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -1012,7 +1015,7 @@ public class Login extends AppCompatActivity {
                             /** call {@link #deleteOldDataFromDatabase()} */
                             deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                             /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                            boolean fetch_merge_res = fetch_merge(true, Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+                            boolean fetch_merge_res = fetch_merge(true, Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao, ((CheckBox)findViewById(R.id.lab_checkBox)).isChecked());
                             /** commit shared preference */
                             editor.commit();
                             if (fetch_merge_res) {

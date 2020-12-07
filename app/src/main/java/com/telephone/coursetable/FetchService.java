@@ -617,7 +617,8 @@ public class FetchService extends IntentService {
                 grdao_test,
                 edao_test,
                 cetDao_test,
-                labDao_test
+                labDao_test,
+                true
         );
         if (!fetch_merge_res){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | fetch fail");
