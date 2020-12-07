@@ -96,30 +96,30 @@ public class GUET_Music extends AppCompatActivity implements View.OnClickListene
     }
 
     private void addwongwords() {
-        lyric.add(Map.entry("山连着水", "00:18"));
-        lyric.add(Map.entry("水连着山", "00:21"));
-        lyric.add(Map.entry("我们从东西南北走过来", "00:24"));
-        lyric.add(Map.entry("一个目标", "00:29"));
-        lyric.add(Map.entry("一个理想", "00:31"));
-        lyric.add(Map.entry("自强不惜，艰苦奋斗", "00:33"));
-        lyric.add(Map.entry("攀登电子科技高峰", "00:36"));
-        lyric.add(Map.entry("造福人类未来", "00:38"));
-        lyric.add(Map.entry("造福人类未来", "00:42"));
-        lyric.add(Map.entry("啊 正德育栋梁", "00:45"));
-        lyric.add(Map.entry("厚学出英才", "00:48"));
-        lyric.add(Map.entry("笃行为根本", "00:50"));
-        lyric.add(Map.entry("致新创品牌", "00:52"));
-        lyric.add(Map.entry("啊 桂花树成林", "00:55"));
-        lyric.add(Map.entry("尧山杜鹃开", "00:57"));
-        lyric.add(Map.entry("漓江东流海", "01:00"));
-        lyric.add(Map.entry("扬帆新时代 新时代", "01:02"));
-        lyric.add(Map.entry("手手挽着 心连着心", "01:07"));
-        lyric.add(Map.entry("我们从东西南北走过来", "01:11"));
-        lyric.add(Map.entry("走向未来 走向未来", "01:16"));
-        lyric.add(Map.entry("手挽着手 心连着心", "01:19"));
-        lyric.add(Map.entry("我们从东西南北", "01:24"));
-        lyric.add(Map.entry("走过来 走过来 走向未来", "01:26"));
-        lyric.add(Map.entry("", "01:45"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("山连着水", "00:18"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("水连着山", "00:21"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("我们从东西南北走过来", "00:24"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("一个目标", "00:29"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("一个理想", "00:31"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("自强不惜，艰苦奋斗", "00:33"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("攀登电子科技高峰", "00:36"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("造福人类未来", "00:38"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("造福人类未来", "00:42"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("啊 正德育栋梁", "00:45"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("厚学出英才", "00:48"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("笃行为根本", "00:50"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("致新创品牌", "00:52"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("啊 桂花树成林", "00:55"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("尧山杜鹃开", "00:57"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("漓江东流海", "01:00"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("扬帆新时代 新时代", "01:02"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("手手挽着 心连着心", "01:07"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("我们从东西南北走过来", "01:11"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("走向未来 走向未来", "01:16"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("手挽着手 心连着心", "01:19"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("我们从东西南北", "01:24"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("走过来 走过来 走向未来", "01:26"));
+        lyric.add(com.telephone.coursetable.Database.Methods.Methods.entry("", "01:45"));
     }
 
     private void initViews() {

@@ -86,7 +86,7 @@ public class ExamFilter {
             ExamInfo examInfo = elist.get(0);
             examInfo.croomno = sb.toString();
 
-            res.add(Map.entry(examInfo,str));
+            res.add(com.telephone.coursetable.Database.Methods.Methods.entry(examInfo,str));
 
         }
 

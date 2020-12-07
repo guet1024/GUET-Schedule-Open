@@ -167,7 +167,7 @@ public class GradePointActivity extends AppCompatActivity {
     private void Processing_error(boolean clickable) {
         tvToast.setVisibility(View.INVISIBLE);
         List<Map.Entry<String, String>> Grade_point_array = new LinkedList<>();
-        points_list.add(Map.entry("学分绩", Grade_point_array));
+        points_list.add(com.telephone.coursetable.Database.Methods.Methods.entry("学分绩", Grade_point_array));
         progressBar.setVisibility(View.INVISIBLE);
         menu_listf.setAdapter(new GradePointAdapter(GradePointActivity.this, points_list, true, menu_listf));
         menu_listf.setGroupIndicator(null);
@@ -177,7 +177,7 @@ public class GradePointActivity extends AppCompatActivity {
     private void Processing_correct(List<Map.Entry<String, String>> sublist) {
         tvToast.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
-        points_list.add(Map.entry("学分绩", sublist));
+        points_list.add(com.telephone.coursetable.Database.Methods.Methods.entry("学分绩", sublist));
         menu_listf.setAdapter(new GradePointAdapter(GradePointActivity.this, points_list, true, menu_listf));
         menu_listf.setGroupIndicator(null);
         menu_listf.expandGroup(0);

@@ -105,7 +105,13 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(Login.this, MainActivity.class));
                 return true;
             case R.id.login_menu_switch_login_mode:
-                startActivity(new Intent(Login.this, Login_vpn.class));
+
+                // edited by Telephone, 2020/12/7, 17:58, NO VPN LOGIN
+
+//                startActivity(new Intent(Login.this, Login_vpn.class));
+
+                Toast.makeText(Login.this, "外网登录暂不可用", Toast.LENGTH_SHORT).show();
+
                 return true;
         }
         return true;

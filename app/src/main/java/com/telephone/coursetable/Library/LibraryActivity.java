@@ -425,7 +425,7 @@ public class LibraryActivity extends AppCompatActivity {
         for (int i=0 ; i<res_1.size() ; i++) {
             List<Map.Entry<String, String>> infos = res_1.get(i);
             List<List<Map.Entry<String, String>>> locals = res_2.get(i);
-            groups.add(Map.entry(infos, locals));
+            groups.add(com.telephone.coursetable.Database.Methods.Methods.entry(infos, locals));
         }
         return groups;
     }

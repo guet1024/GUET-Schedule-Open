@@ -123,7 +123,7 @@ public class GradePoint_Test {
             com.telephone.coursetable.LogMe.LogMe.e("grade point", "year = " + year + " point = " + sscore);
             if (sscore == null) return null;
             if (year.isEmpty()) year = "入学至今";
-            gp_arr.add(Map.entry(sscore, year));
+            gp_arr.add(com.telephone.coursetable.Database.Methods.Methods.entry(sscore, year));
         }
         gp_arr.add(gp_arr.get(0));
         gp_arr.remove(0);

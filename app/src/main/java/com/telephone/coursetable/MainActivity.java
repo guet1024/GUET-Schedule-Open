@@ -543,19 +543,20 @@ public class MainActivity extends AppCompatActivity {
      */
     public void Login(View view){
         NotificationManagerCompat.from(MainActivity.this).cancel(MyApp.notification_id_click_to_login);
-        new Thread(() -> {
-            if (MyApp.isLAN()){
-                runOnUiThread(() -> {
+        // edited by Telephone, 2020/12/7, 17:58, NO VPN LOGIN
+//        new Thread(() -> {
+//            if (MyApp.isLAN()){
+//                runOnUiThread(() -> {
                     Intent intent = new Intent(MainActivity.this, Login.class);
                     startActivity(intent);
-                });
-            }else {
-                runOnUiThread(() -> {
-                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
-                    startActivity(intent);
-                });
-            }
-        }).start();
+//                });
+//            } else {
+//                runOnUiThread(() -> {
+//                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
+//                    startActivity(intent);
+//                });
+//            }
+//        }).start();
     }
 
     /**

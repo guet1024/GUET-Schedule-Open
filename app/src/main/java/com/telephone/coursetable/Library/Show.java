@@ -29,12 +29,12 @@ public class Show {
 
             Elements bokkids = book.select("ul.resultlist > li > input#StrTmpRecno.inputISBN");
             String bokkid = bokkids.attr("value");
-            bookinfoes.add(Map.entry("书籍编号：", bokkid));
+            bookinfoes.add(com.telephone.coursetable.Database.Methods.Methods.entry("书籍编号：", bokkid));
 //            com.telephone.coursetable.LogMe.LogMe.e("书籍编号：", bokkid);
 
             Elements titles = book.select("ul.resultlist > li > div.into > h3.title > a");
             String title = titles.get(0).ownText();
-            bookinfoes.add(Map.entry("名称：", title));
+            bookinfoes.add(com.telephone.coursetable.Database.Methods.Methods.entry("名称：", title));
 //            com.telephone.coursetable.LogMe.LogMe.e("名称：", title);
 
             Element titlebar = book.select("ul.resultlist > li > div.into > div.titbar").get(0);
@@ -43,7 +43,7 @@ public class Show {
                 String name = span.ownText();
                 String value = span.select("span > strong").get(0).ownText();
                 if( value.equals("v., :") ) value="";
-                bookinfoes.add(Map.entry(name, value));
+                bookinfoes.add(com.telephone.coursetable.Database.Methods.Methods.entry(name, value));
 //                com.telephone.coursetable.LogMe.LogMe.e(name, value);
             }
 
@@ -53,7 +53,6 @@ public class Show {
         return books;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     public static List<List<List<Map.Entry<String, String>>>> getBookLocal(String xml) {
         Document doc_xml = Jsoup.parse(xml);
         Elements statuses = doc_xml.select("bookinfo > books");
@@ -65,17 +64,17 @@ public class Show {
             for (Element b : bs){
                 List<Map.Entry<String, String>> local_node = new LinkedList<>();
 
-                local_node.add(Map.entry("图书编号：", b.select("book > bookid ").get(0).ownText()));
-                local_node.add(Map.entry("条码号：", b.select("book > barcode ").get(0).ownText()));
-                local_node.add(Map.entry("索书号：", b.select("book > callno ").get(0).ownText()));
-                local_node.add(Map.entry("馆藏状态：", b.select("book > localstatu ").get(0).ownText()));
-                local_node.add(Map.entry("馆藏地点：", b.select("book > local ").get(0).ownText()));
-                local_node.add(Map.entry("流通类型：", b.select("book > cirType ").get(0).ownText()));
-                local_node.add(Map.entry("预约处理：", b.select("book > servicePoint ").get(0).ownText()));
-                local_node.add(Map.entry("出借数据编号：", b.select("book > loanDatanum ").get(0).ownText()));
-                local_node.add(Map.entry("登录号：", b.select("book > loannum ").get(0).ownText()));
-                local_node.add(Map.entry("藏书编号：", b.select("book > hldcount ").get(0).ownText()));
-                local_node.add(Map.entry("所有藏书编号：", b.select("book > hldallnum ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("图书编号：", b.select("book > bookid ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("条码号：", b.select("book > barcode ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("索书号：", b.select("book > callno ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("馆藏状态：", b.select("book > localstatu ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("馆藏地点：", b.select("book > local ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("流通类型：", b.select("book > cirType ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("预约处理：", b.select("book > servicePoint ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("出借数据编号：", b.select("book > loanDatanum ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("登录号：", b.select("book > loannum ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("藏书编号：", b.select("book > hldcount ").get(0).ownText()));
+                local_node.add(com.telephone.coursetable.Database.Methods.Methods.entry("所有藏书编号：", b.select("book > hldallnum ").get(0).ownText()));
 
 //                com.telephone.coursetable.LogMe.LogMe.e("图书编号", b.select("book > bookid ").get(0).ownText());
 //                com.telephone.coursetable.LogMe.LogMe.e("条码号",  b.select("book > barcode ").get(0).ownText());
