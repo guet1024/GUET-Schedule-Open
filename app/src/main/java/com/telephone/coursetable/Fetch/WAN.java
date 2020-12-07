@@ -7,6 +7,7 @@ import com.telephone.coursetable.Https.Get;
 import com.telephone.coursetable.Https.GetBitmap;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Https.Post;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 public class WAN {
@@ -132,20 +133,20 @@ public class WAN {
     //有效学分
     public static HttpConnectionAndCode graduationScore(Context c,String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/Getyxxf",
-                null,
-                r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/MainDesktop",
-                "stid=1",
-                cookie,
-                "}",
-                null,
-                "\"success\":true",
-                null,
-                null,
-                null
-        );
+//        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
+//                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/Getyxxf",
+//                null,
+//                r.getString(R.string.user_agent),
+//                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/MainDesktop",
+//                "stid=1",
+//                cookie,
+//                "}",
+//                null,
+//                "\"success\":true",
+//                null,
+//                null,
+//                null
+//        );
         return Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/Getyxxf",
                 null,
@@ -165,20 +166,20 @@ public class WAN {
     //计划学分
     public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/Getyxxf",
-                null,
-                r.getString(R.string.user_agent),
-                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/MainDesktop",
-                "stid=1",
-                cookie,
-                "}",
-                null,
-                "\"success\":true",
-                null,
-                null,
-                null
-        );
+//        HttpConnectionAndCode gen = com.telephone.coursetable.Https.Post.post(
+//                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/Getyxxf",
+//                null,
+//                r.getString(R.string.user_agent),
+//                "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/Login/MainDesktop",
+//                "stid=1",
+//                cookie,
+//                "}",
+//                null,
+//                "\"success\":true",
+//                null,
+//                null,
+//                null
+//        );
         return com.telephone.coursetable.Https.Get.get(
                 "https://v.guet.edu.cn/http/77726476706e69737468656265737421a1a013d2766626012d46dbfe/student/getplancj",
                 null,
@@ -278,7 +279,7 @@ public class WAN {
                 null,
                 null,
                 null,
-                30000
+                MyApp.wan_fetch_lab_read_timeout
         );
     }
 }

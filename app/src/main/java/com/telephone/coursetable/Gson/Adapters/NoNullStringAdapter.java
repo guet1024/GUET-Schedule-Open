@@ -10,6 +10,9 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
+/**
+ * actually, Gson skips all null fields when deserializing, so the NoNull deserializer won't work
+ */
 public class NoNullStringAdapter implements JsonSerializer<String>, JsonDeserializer<String> {
     @Override
     public String deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

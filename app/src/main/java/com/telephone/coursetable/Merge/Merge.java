@@ -45,11 +45,15 @@ import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Merge {
 
@@ -148,13 +152,17 @@ public class Merge {
         TermInfo_s t_s = MyApp.gson.fromJson(origin_t, TermInfo_s.class);
         List<TermInfo> t = t_s.getData();
         Resources r = c.getResources();
-        DateTimeFormatter server_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.server_terminfo_datetime_format));
-        DateTimeFormatter ts_formatter = DateTimeFormatter.ofPattern(r.getString(R.string.ts_datetime_format));
+        SimpleDateFormat server_formatter = new SimpleDateFormat(r.getString(R.string.server_terminfo_datetime_format), Locale.US);
+        server_formatter.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         for (TermInfo i : t){
-            String sts_string = LocalDateTime.parse(i.getStartdate(), server_formatter).format(ts_formatter);
-            String ets_string = LocalDateTime.parse(i.getEnddate(), server_formatter).format(ts_formatter);
-            long sts = Timestamp.valueOf(sts_string).getTime();
-            long ets = Timestamp.valueOf(ets_string).getTime();
+            long sts = 1;
+            long ets = 2;
+            try {
+                sts = server_formatter.parse(i.getStartdate()).getTime();
+                ets = server_formatter.parse(i.getEnddate()).getTime();
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
             tdao.insert(
                     new com.telephone.coursetable.Database.TermInfo(
                             i.getTerm(), i.getStartdate(), i.getEnddate(), i.getWeeknum(), i.getTermname(),
@@ -261,7 +269,7 @@ public class Merge {
      * the origin must have corresponding content
      * @clear
      */
-    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c, boolean formal, boolean test){
+    public static void examInfo(@NonNull String origin_e, @NonNull ExamInfoDao edao, @NonNull TermInfoDao termInfoDao, @NonNull Context c, boolean formal, boolean test, @NonNull String sid){
         if (formal){
             MyApp.getDb_compare().examTotalDao().insert(new ExamTotal(origin_e));
         }
@@ -278,18 +286,19 @@ public class Merge {
                 i.setExamdate("");
             }
             edao.insert(new com.telephone.coursetable.Database.ExamInfo(
-                    i.getCroomno(), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
+                    no_null_string(i.getCroomno()), i.getCroomname(), i.getTch(), i.getTch1(), i.getTch2(), i.getJs(),
                     i.getJs1(), i.getJs2(), i.getRoomrs(), i.getTerm(), i.getGrade(), i.getDpt(),
-                    i.getSpno(), i.getSpname(), i.getCourseid(),i.getCourseno(), i.getLabno(), i.getLabname(),
+                    i.getSpno(), i.getSpname(), i.getCourseid(),no_null_string(i.getCourseno()), i.getLabno(), i.getLabname(),
                     i.getDptno(), i.getTeacherno(), i.getName(), i.getXf(), i.getCname(), i.getSctcnt(),
                     i.getStucnt(), i.getScoretype(), i.getExamt(), i.getKctype(), i.getTypeno(),
                     i.getExamdate(), i.getExamtime(), i.getExamstate(), i.getExammode(), i.getXm(),
                     i.getRefertime(), i.getZc(), i.getXq(), i.getKsjc(), i.getJsjc(), i.getBkzt(),
-                    i.getKssj(), i.getComm(), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
-                    i.getPostdate(), i.getOperator(), termInfoDao, c
+                    i.getKssj(), no_null_string(i.getComm()), i.getRooms(), i.getLsh(), i.getZone(), i.getChecked1(),
+                    i.getPostdate(), i.getOperator(), termInfoDao, c, sid
             ));
         }
     }
+    private static String no_null_string(String s){return (s == null)?(""):(s);}
 
     /**
      * the origin must have corresponding content

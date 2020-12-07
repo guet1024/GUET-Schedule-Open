@@ -18,6 +18,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.GradePoint.GradePointActivity;
+import com.telephone.coursetable.GuetTools.SetMyExam;
 import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.TeachersEvaluation.TeachersEvaluation;
 import com.telephone.coursetable.Update.Update;
@@ -334,12 +336,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 3:
                 ((TextView)view.findViewById(R.id.library)).setText(groups.get(i).getValue().get(i1).get(0));
-                view.setOnClickListener(view12 -> new Thread(() -> {
-                    Intent intent = new Intent(context, LibraryActivity.class);
-                    intent.putExtra(LibraryActivity.EXTRA_USERNAME, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username);
-                    intent.putExtra(LibraryActivity.EXTRA_VPN_PASSWORD, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).vpn_password);
-                    context.startActivity(intent);
-                }).start());
+                // edited by Telephone, 2020/12/7, 17:44, no web vpn, no library
+//                view.setOnClickListener(view12 -> new Thread(() -> {
+//                    Intent intent = new Intent(context, LibraryActivity.class);
+//                    intent.putExtra(LibraryActivity.EXTRA_USERNAME, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username);
+//                    intent.putExtra(LibraryActivity.EXTRA_VPN_PASSWORD, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).vpn_password);
+//                    context.startActivity(intent);
+//                }).start());
                 break;
             case 4:
                 ((TextView)view.findViewById(R.id.change_term_item)).setText(groups.get(i).getValue().get(i1).get(0));
@@ -354,7 +357,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setText(groups.get(i).getValue().get(i1).get(5));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setText(groups.get(i).getValue().get(i1).get(6));
                 ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setText(groups.get(i).getValue().get(i1).get(7));
-                int color_index = 8;
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_sts)).setText(groups.get(i).getValue().get(i1).get(8));
+                ((TextView)view.findViewById(R.id.function_menu_itemtv_ets)).setText(groups.get(i).getValue().get(i1).get(9));
+                SetMyExam.setTag_exam_list(((TextView)view.findViewById(R.id.function_menu_itemtv_sts_edit)), groups.get(i).getValue().get(i1).get(10));
+                SetMyExam.setTag_is_sts(((TextView)view.findViewById(R.id.function_menu_itemtv_sts_edit)), true);
+                SetMyExam.setTag_exam_list(((TextView)view.findViewById(R.id.function_menu_itemtv_ets_edit)), groups.get(i).getValue().get(i1).get(10));
+                SetMyExam.setTag_is_sts(((TextView)view.findViewById(R.id.function_menu_itemtv_ets_edit)), false);
+                int color_index = 11;
                 if (groups.get(i).getValue().get(i1).get(color_index) != null){
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_term)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_cname)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
@@ -364,6 +373,8 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((LinearLayout)view.findViewById(R.id.function_menu_itemtv_sts_background)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
+                    ((LinearLayout)view.findViewById(R.id.function_menu_itemtv_ets_background)).setBackgroundColor(FunctionMenu.colors.get(groups.get(i).getValue().get(i1).get(color_index)));
                 }else {
                     TypedValue a = new TypedValue();
                     context.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
@@ -375,12 +386,19 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_room)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_week_weekday_time)).setBackgroundColor(a.data);
                     ((TextView)view.findViewById(R.id.function_menu_itemtv_comment)).setBackgroundColor(a.data);
+                    ((LinearLayout)view.findViewById(R.id.function_menu_itemtv_sts_background)).setBackgroundColor(a.data);
+                    ((LinearLayout)view.findViewById(R.id.function_menu_itemtv_ets_background)).setBackgroundColor(a.data);
                 }
                 view.setOnClickListener(collapse);
                 break;
             case 6:
                 ((TextView)view.findViewById(R.id.teachers_evaluation_evaluation)).setText(groups.get(i).getValue().get(i1).get(0));
-                view.setOnClickListener(view14 -> context.startActivity(new Intent(context, TeacherEvaluationPanel.class)));
+                if (i1 == 0){
+                    view.setOnClickListener(view14 -> TeacherEvaluationPanel.start(context, "评教", "======= 评教结束 =======", R.menu.teacher_evaluation_menu));
+                }
+                else if (i1 == 1){
+                    view.setOnClickListener(view14 -> TeacherEvaluationPanel.start(context, "教材评价", "======= 评学结束 =======", R.menu.textbook_evaluation_menu));
+                }
                 break;
             case 7:
                 ((TextView)view.findViewById(R.id.cet_term)).setText(groups.get(i).getValue().get(i1).get(0));

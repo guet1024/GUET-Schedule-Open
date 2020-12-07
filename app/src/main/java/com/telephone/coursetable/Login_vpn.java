@@ -31,12 +31,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
@@ -54,7 +52,6 @@ import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
-import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Fetch.WAN;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
@@ -67,12 +64,10 @@ import com.telephone.coursetable.MyException.ExceptionNetworkError;
 import com.telephone.coursetable.MyException.ExceptionUnknown;
 import com.telephone.coursetable.MyException.ExceptionWrongCheckCode;
 import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
-import com.telephone.coursetable.MyException.MyException;
 import com.telephone.coursetable.OCR.OCR;
 
 
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,13 +189,11 @@ public class Login_vpn extends AppCompatActivity {
 //                    aaw_pwd = u.aaw_password;
                     sys_pwd = u.password;
 
-                    ((AutoCompleteTextView)findViewById(R.id.sid_input)).clearFocus();
-                    fillStringExtra();
+                    fillStringExtra(true);
                 });
             }else {
                 runOnUiThread( ()->{
-                    ((AutoCompleteTextView)findViewById(R.id.sid_input)).requestFocus();
-                    fillStringExtra();
+                    fillStringExtra(true);
                 });
             }
         }).start();
@@ -419,7 +412,7 @@ public class Login_vpn extends AppCompatActivity {
      * @ui
      * @clear
      */
-    private void fillStringExtra(){
+    private void fillStringExtra(boolean firstPage){
         Intent intent = getIntent();
         String sid = intent.getStringExtra(EXTRA_USERNAME);
         String vpn_pwd = intent.getStringExtra(EXTRA_VPN_PASSWORD);
@@ -450,6 +443,13 @@ public class Login_vpn extends AppCompatActivity {
 //            if (aaw_pwd_input != null) {
 //                aaw_pwd_input.setText(aaw_pwd);
 //            }
+        }
+        if (firstPage) {
+            if (sid == null || sid.isEmpty()) {
+                setFocusToEditText(sid_input);
+            } else {
+                setFocusToEditText(vpn_pwd_input);
+            }
         }
     }
 
@@ -977,7 +977,7 @@ public class Login_vpn extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch exam info success, merging...");
-        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal);
+        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal, username);
 
         LogMe.e(NAME, "fetching cet");
         res = WAN.cet(c, cookie);
@@ -997,36 +997,39 @@ public class Login_vpn extends AppCompatActivity {
         LogMe.e(NAME, "fetch hour info success, merging...");
         Merge.hour(c, res.comment, editor);
 
-        term_list = tdao.selectAll();
-        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
-                MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow(c),
-                Clock.getSSFor_locateNow(c),
-                Clock.getESFor_locateNow(c),
-                Clock.getDSFor_locateNow(c)
-        );
-        if (locate.term != null) {
-            for (TermInfo term : term_list) {
-                if (!term.term.equals(locate.term.term)){
-                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
-                    continue;
-                }
-                LogMe.e(NAME, "fetching lab");
-                res.code = -1;
-                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
-                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
-                    res = WAN.lab(c, cookie, term.term);
-                }
-                if (res.code != 0) {
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
-                    return false;
-                }
-                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
-                LogMe.e(NAME, "fetch lab success, merging...");
-                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
-            }
-        }
+
+        // edited by Telephone, 2020/12/7, 17:21, not fetch lab because there is something wrong with the server
+//        term_list = tdao.selectAll();
+//        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+//                MyApp.times,
+//                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(c),
+//                Clock.getDefaultDelimiterFor_whichTime(),
+//                Clock.getSSFor_locateNow(c),
+//                Clock.getESFor_locateNow(c),
+//                Clock.getDSFor_locateNow(c)
+//        );
+//        if (locate.term != null) {
+//            for (TermInfo term : term_list) {
+//                if (!term.term.equals(locate.term.term)){
+//                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
+//                    continue;
+//                }
+//                LogMe.e(NAME, "fetching lab");
+//                res.code = -1;
+//                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+//                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
+//                    res = WAN.lab(c, cookie, term.term);
+//                }
+//                if (res.code != 0) {
+//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
+//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
+//                    return false;
+//                }
+//                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+//                LogMe.e(NAME, "fetch lab success, merging...");
+//                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
+//            }
+//        }
 
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
@@ -1258,11 +1261,12 @@ public class Login_vpn extends AppCompatActivity {
                 int times = 0;
                 boolean fetch_merge_res = false;
                 while (times < MyApp.web_vpn_refetch_times && !fetch_merge_res) {
-                    if (times >= MyApp.web_vpn_refetch_times / 3) {
-                        if (login_res.c != null) {
-                            login_res.c.disconnect();
-                        }
-                    }
+                    // it seems to be useless
+//                    if (times >= MyApp.web_vpn_refetch_times / 3) {
+//                        if (login_res.c != null) {
+//                            login_res.c.disconnect();
+//                        }
+//                    }
                     /** clear shared preference */
                     editor.clear();
                     /** commit shared preference */
@@ -1281,9 +1285,10 @@ public class Login_vpn extends AppCompatActivity {
                     /** locate now, print the locate-result to log */
                     com.telephone.coursetable.LogMe.LogMe.e(
                             NAME + " " + "locate now",
-                            Clock.locateNow(
+                            Clock.locateNow_low_api(
                                     Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                    Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(Login_vpn.this),
+                                    Clock.getDefaultDelimiterFor_whichTime(),
                                     getResources().getString(R.string.pref_hour_start_suffix),
                                     getResources().getString(R.string.pref_hour_end_suffix),
                                     getResources().getString(R.string.pref_hour_des_suffix)

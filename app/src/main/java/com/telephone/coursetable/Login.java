@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,7 +36,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
@@ -46,7 +46,6 @@ import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
-import com.telephone.coursetable.Database.KeyAndValue.GoToClassKeyAndValue;
 import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfoDao;
@@ -58,7 +57,6 @@ import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
-import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
 import com.telephone.coursetable.MyException.ExceptionIpForbidden;
@@ -67,7 +65,6 @@ import com.telephone.coursetable.MyException.ExceptionUnknown;
 import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
 import com.telephone.coursetable.OCR.OCR;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -109,7 +106,13 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(Login.this, MainActivity.class));
                 return true;
             case R.id.login_menu_switch_login_mode:
-                startActivity(new Intent(Login.this, Login_vpn.class));
+
+                // edited by Telephone, 2020/12/7, 17:58, NO VPN LOGIN
+
+//                startActivity(new Intent(Login.this, Login_vpn.class));
+
+                Toast.makeText(Login.this, "外网登录暂不可用", Toast.LENGTH_SHORT).show();
+
                 return true;
         }
         return true;
@@ -664,7 +667,7 @@ public class Login extends AppCompatActivity {
      * - false : something went wrong
      * @clear
      */
-    public static boolean fetch_merge(boolean formal, Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao){
+    public static boolean fetch_merge(boolean formal, Context c, String cookie, String username, HashMap<GoToClassKey, String> my_comm_map, PersonInfoDao pdao, TermInfoDao tdao, GoToClassDao gdao, ClassInfoDao cdao, GraduationScoreDao gsdao, SharedPreferences.Editor editor, GradesDao grdao, ExamInfoDao edao, CETDao cetDao, LABDao labDao, boolean lab){
         final String NAME = "fetch_merge()";
         HttpConnectionAndCode res;
 
@@ -739,7 +742,7 @@ public class Login extends AppCompatActivity {
             return false;
         }
         LogMe.e(NAME, "fetch exam info success, merging...");
-        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal);
+        Merge.examInfo(res.comment, edao, tdao, c, formal, !formal, username);
 
         LogMe.e(NAME, "fetching cet");
         res = LAN.cet(c, cookie);
@@ -750,34 +753,39 @@ public class Login extends AppCompatActivity {
         LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
 
-        term_list = tdao.selectAll();
-        Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
-                MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow(c),
-                Clock.getSSFor_locateNow(c),
-                Clock.getESFor_locateNow(c),
-                Clock.getDSFor_locateNow(c)
-        );
-        if (locate.term != null) {
-            for (TermInfo term : term_list) {
-                if (!term.term.equals(locate.term.term)) {
-                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
-                    continue;
+
+        // edited by Telephone, 2020/12/7, 20:06, optional lab
+        if (lab) {
+            term_list = tdao.selectAll();
+            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+                    MyApp.times,
+                    Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(c),
+                    Clock.getDefaultDelimiterFor_whichTime(),
+                    Clock.getSSFor_locateNow(c),
+                    Clock.getESFor_locateNow(c),
+                    Clock.getDSFor_locateNow(c)
+            );
+            if (locate.term != null) {
+                for (TermInfo term : term_list) {
+                    if (!term.term.equals(locate.term.term)) {
+                        LogMe.e(NAME, "skip lab-fetch: " + term.term);
+                        continue;
+                    }
+                    LogMe.e(NAME, "fetching lab");
+                    res.code = -1;
+                    for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+                        LogMe.e(NAME, "fetching lab time: " + (i + 1));
+                        res = LAN.lab(c, cookie, term.term);
+                    }
+                    if (res.code != 0) {
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
+                        com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
+                        return false;
+                    }
+                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+                    LogMe.e(NAME, "fetch lab success, merging...");
+                    Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
                 }
-                LogMe.e(NAME, "fetching lab");
-                res.code = -1;
-                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
-                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
-                    res = LAN.lab(c, cookie, term.term);
-                }
-                if (res.code != 0) {
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
-                    return false;
-                }
-                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
-                LogMe.e(NAME, "fetch lab success, merging...");
-                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
             }
         }
 
@@ -827,9 +835,9 @@ public class Login extends AppCompatActivity {
      *              11. commit shared preference
      *              12. show tip snack-bar, change title
      *              13. call {@link #deleteOldDataFromDatabase(String, GoToClassDao, ClassInfoDao, TermInfoDao, PersonInfoDao, GraduationScoreDao, GradesDao, ExamInfoDao, CETDao, LABDao)}
-     *              14. call {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}
+     *              14. call {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao, boolean)}
      *              15. commit shared preference
-     *              16. the result of {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao)}:
+     *              16. the result of {@link #fetch_merge(boolean, Context, String, String, HashMap, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor, GradesDao, ExamInfoDao, CETDao, LABDao, boolean)}:
      *                  - if everything is ok:
      *                      1. locate now, print the locate-result to log
      *                      2. activate the user
@@ -1007,16 +1015,17 @@ public class Login extends AppCompatActivity {
                             /** call {@link #deleteOldDataFromDatabase()} */
                             deleteOldDataFromDatabase(username, gdao, cdao, tdao, pdao, gsdao, grdao, edao, cetDao, labDao);
                             /** call {@link #fetch_merge(Context, String, PersonInfoDao, TermInfoDao, GoToClassDao, ClassInfoDao, GraduationScoreDao, SharedPreferences.Editor)} */
-                            boolean fetch_merge_res = fetch_merge(true, Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao);
+                            boolean fetch_merge_res = fetch_merge(true, Login.this, cookie_after_login, sid, my_comment_map, pdao, tdao, gdao, cdao, gsdao, editor, grdao, edao, cetDao, labDao, ((CheckBox)findViewById(R.id.lab_checkBox)).isChecked());
                             /** commit shared preference */
                             editor.commit();
                             if (fetch_merge_res) {
                                 /** locate now, print the locate-result to log */
                                 com.telephone.coursetable.LogMe.LogMe.e(
                                         NAME + " " + "locate now",
-                                        Clock.locateNow(
+                                        Clock.locateNow_low_api(
                                                 Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                                                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(Login.this),
+                                                Clock.getDefaultDelimiterFor_whichTime(),
                                                 getResources().getString(R.string.pref_hour_start_suffix),
                                                 getResources().getString(R.string.pref_hour_end_suffix),
                                                 getResources().getString(R.string.pref_hour_des_suffix)

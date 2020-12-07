@@ -1,23 +1,15 @@
 package com.telephone.coursetable;
 
-import android.animation.ObjectAnimator;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.DragEvent;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,20 +22,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabaseCompare;
+import com.telephone.coursetable.Database.ExamTotal;
 import com.telephone.coursetable.Database.ExamTotalDao;
 import com.telephone.coursetable.Database.GoToClassDao;
+import com.telephone.coursetable.Database.GradeTotal;
 import com.telephone.coursetable.Database.GradeTotalDao;
 import com.telephone.coursetable.Database.PersonInfoDao;
 import com.telephone.coursetable.Database.Privacy;
@@ -55,9 +45,6 @@ import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Gson.CourseCard.ACard;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,16 +52,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
-
-import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 
 public class MainActivity extends AppCompatActivity {
 
     private boolean term_week_is_changing = false;
 
-    private CurrentWeek current_week = null;
+    private CurrentTermInfoAndWeek current_terminfo_and_week = null;
 
     /** the timestamp of last pressing back */
     private long exit_ts = 0;
@@ -126,48 +111,6 @@ public class MainActivity extends AppCompatActivity {
         visible = true;
         if (outdated != null){
             startActivity(outdated);
-        }else {
-            new Thread(()-> {
-                String username = null;
-                if (udao != null) {
-                    List<User> ac_users = udao.getActivatedUser();
-                    if (!ac_users.isEmpty()) {
-                        username = ac_users.get(0).username;
-                    }
-                }
-                if (resume_time > 1 && username != null) {
-                    String username_f = username;
-                    returnToday(null);
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        runOnUiThread(() -> {
-                            String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
-                            long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
-                            new Thread(() -> {
-                                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                                        getResources().getString(R.string.pref_hour_start_suffix),
-                                        getResources().getString(R.string.pref_hour_end_suffix),
-                                        getResources().getString(R.string.pref_hour_des_suffix));
-                                List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
-                                if (!term_list.isEmpty()) {
-                                    locate.term = term_list.get(0);
-                                    locate.week = selected_week;
-                                } else {
-                                    locate.term = null;
-                                    locate.week = Clock.NO_TERM;
-                                }
-                                Map.Entry<Integer, Integer> g = getTime_enhanced();
-                                runOnUiThread(() -> showTable(username_f, locate, g));
-                            }).start();
-                        });
-                    }).start();
-                }
-            }).start();
         }
     }
 
@@ -264,8 +207,9 @@ public class MainActivity extends AppCompatActivity {
                         String selected_term_name = termValues[((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
                         long selected_week = ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
                         new Thread(() -> {
-                            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                                    Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                                    Clock.getDefaultDelimiterFor_whichTime(),
                                     getResources().getString(R.string.pref_hour_start_suffix),
                                     getResources().getString(R.string.pref_hour_end_suffix),
                                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -275,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                                 locate.week = selected_week;
                             } else {
                                 locate.term = null;
-                                locate.week = Clock.NO_TERM;
+                                locate.week = Clock.WEEK_NUN_OF_NO_TERM;
                             }
                             Map.Entry<Integer, Integer> g = getTime_enhanced();
                             runOnUiThread(() -> {
@@ -339,6 +283,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init_thread(){
+        final TextView[] week_boxes = new TextView[]{
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd1)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd2)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd3)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd4)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd5)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd6)),
+                ((TextView) MainActivity.this.view.findViewById(R.id.textView_wd7))
+        };
+        final FloatingActionButton week_button = ((FloatingActionButton)MainActivity.this.view.findViewById(R.id.floatingActionButton));
+        current_terminfo_and_week = new CurrentTermInfoAndWeek(MainActivity.this, week_boxes, week_button);
         new Thread(() -> {
             if (udao.getActivatedUser().isEmpty()) {
                 boolean islan = MyApp.isLAN();
@@ -357,8 +312,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 User u = udao.getActivatedUser().get(0);
                 String name = pdao.selectAll().get(0).name;
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                        Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                        Clock.getDefaultDelimiterFor_whichTime(),
                         getResources().getString(R.string.pref_hour_start_suffix),
                         getResources().getString(R.string.pref_hour_end_suffix),
                         getResources().getString(R.string.pref_hour_des_suffix)
@@ -426,10 +382,17 @@ public class MainActivity extends AppCompatActivity {
                         View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                         MainActivity.this.view.findViewById(R.id.floatingActionButton).setVisibility(View.INVISIBLE);
                         view.startDragAndDrop(null, shadowBuilder, null, 0);
-                        ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        long vibrate_millis = 100;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(vibrate_millis, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(vibrate_millis);
+                        }
                         return true;
                     });
-                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
+
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDisplayedValues(termValues);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMinValue(0);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setMaxValue(termValues.length - 1);
@@ -463,21 +426,26 @@ public class MainActivity extends AppCompatActivity {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDisplayedValues(weekValues);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMinValue(0);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setMaxValue(weekValues.length - 1);
+
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setWrapSelectorWheel(false);
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setWrapSelectorWheel(true);
+
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setOnScrollListener(scroll);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnScrollListener(scroll);
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                    current_week = new CurrentWeek(MainActivity.this);
-                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_week.setValue(newValue));
+
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_terminfo_and_week.updateWeek(newValue));
+                    ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setOnValueChangedListener((numberPicker, oldValue, newValue) -> current_terminfo_and_week.updateTermInfo(termValues[newValue]));
+
                     if (locate.term != null) {
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
-                        current_week.setValue(Math.toIntExact(locate.week));
                     } else {
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
                         ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
-                        current_week.setValue(0);
                     }
+                    current_terminfo_and_week.update(locate.term, locate.week);
                     showTable(u.username, locate, g);
                     //********************
                     setContentView(view);
@@ -520,27 +488,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         final String NAME = "onBackPressed()";
-        if (pickerPanel.isShown()){
+        if (pickerPanel.isShown()) {
             if (term_week_is_changing) return;
-            String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
-            long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                        getResources().getString(R.string.pref_hour_start_suffix),
-                        getResources().getString(R.string.pref_hour_end_suffix),
-                        getResources().getString(R.string.pref_hour_des_suffix));
-                List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
-                if (!term_list.isEmpty()) {
-                    locate.term = term_list.get(0);
-                    locate.week = selected_week;
-                }else {
-                    locate.term = null;
-                    locate.week = Clock.NO_TERM;
-                }
+                Locate locate = getLocateForNowAndSelectedTermAndWeek();
                 Map.Entry<Integer, Integer> g = getTime_enhanced();
-                String username = udao.getActivatedUser().get(0).username;
-                runOnUiThread(()-> showTable(username, locate, g));
+                runOnUiThread(() -> showTable(
+                        ((FloatingActionButton)MainActivity.this.view.findViewById(R.id.floatingActionButton)).getTag().toString(),
+                        locate,
+                        g
+                ));
             }).start();
         }else {
             long nts = Clock.nowTimeStamp();
@@ -586,19 +543,20 @@ public class MainActivity extends AppCompatActivity {
      */
     public void Login(View view){
         NotificationManagerCompat.from(MainActivity.this).cancel(MyApp.notification_id_click_to_login);
-        new Thread(() -> {
-            if (MyApp.isLAN()){
-                runOnUiThread(() -> {
+        // edited by Telephone, 2020/12/7, 17:58, NO VPN LOGIN
+//        new Thread(() -> {
+//            if (MyApp.isLAN()){
+//                runOnUiThread(() -> {
                     Intent intent = new Intent(MainActivity.this, Login.class);
                     startActivity(intent);
-                });
-            }else {
-                runOnUiThread(() -> {
-                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
-                    startActivity(intent);
-                });
-            }
-        }).start();
+//                });
+//            } else {
+//                runOnUiThread(() -> {
+//                    Intent intent = new Intent(MainActivity.this, Login_vpn.class);
+//                    startActivity(intent);
+//                });
+//            }
+//        }).start();
     }
 
     /**
@@ -633,8 +591,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void returnToday(View view){
         new Thread(()->{
-            Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                    DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+            Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                    Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                    Clock.getDefaultDelimiterFor_whichTime(),
                     getResources().getString(R.string.pref_hour_start_suffix),
                     getResources().getString(R.string.pref_hour_end_suffix),
                     getResources().getString(R.string.pref_hour_des_suffix));
@@ -642,12 +601,11 @@ public class MainActivity extends AppCompatActivity {
                 if (locate.term != null) {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(locate.term.termname));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(Math.toIntExact(locate.week));
-                    current_week.setValue(Math.toIntExact(locate.week));
                 } else {
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.termPicker)).setValue(Arrays.asList(termValues).indexOf(getResources().getString(R.string.term_vacation)));
                     ((NumberPicker) MainActivity.this.view.findViewById(R.id.weekPicker)).setValue(0);
-                    current_week.setValue(0);
                 }
+                current_terminfo_and_week.update(locate.term, locate.week);
             });
         }).start();
     }
@@ -692,14 +650,16 @@ public class MainActivity extends AppCompatActivity {
             String my_day = null;
             if (locate.term != null) {
                 nodes = gdao.getSpecifiedWeekTable(username, locate.term.term, locate.week);
-                long that_ts = Clock.getTimeStampForWeekAndWeekdaySince(locate.term.sts, locate.week, locate.weekday);
-                if (that_ts > 0) {
-                    Date date = new Date(that_ts);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    my_month = (calendar.get(Calendar.MONTH) + 1) + "";
-                    my_day = calendar.get(Calendar.DAY_OF_MONTH) + "";
-                }
+
+                // edited by Telephone 2020/12/7 16:26, just show today
+//                long that_ts = Clock.getTimeStampForWeekAndWeekdaySince(locate.term.sts, locate.week, locate.weekday);
+//                if (that_ts > 0) {
+//                    Date date = new Date(that_ts);
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTime(date);
+//                    my_month = (calendar.get(Calendar.MONTH) + 1) + "";
+//                    my_day = calendar.get(Calendar.DAY_OF_MONTH) + "";
+//                }
             }
             String my_month_f = my_month;
             String my_day_f = my_day;
@@ -842,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
                             ));
                         }
                     }
-                    texts.add(Map.entry(text.toString(), Map.entry(color, text_color)));
+                    texts.add(com.telephone.coursetable.Database.Methods.Methods.entry(text.toString(), com.telephone.coursetable.Database.Methods.Methods.entry(color, text_color)));
                     courseCardDataList.add(data);
                 }
             }
@@ -891,7 +851,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ((TextView) MainActivity.this.view.findViewById(R.id.textView_date)).setText(
                         ((my_month_f == null) ? (locate.month + "") : (my_month_f)) +
-                                "/" +
+                                "." +
                                 ((my_day_f == null) ? (locate.day + "") : (my_day_f))
                 );
                 int time_tv_ids_index = -1;
@@ -915,7 +875,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (breakTime != null) {
-                    Map.Entry<Integer, Integer> mbreakTime = Map.entry(breakTime.getKey() + 1, breakTime.getValue() + 1);
+                    Map.Entry<Integer, Integer> mbreakTime = com.telephone.coursetable.Database.Methods.Methods.entry(breakTime.getKey() + 1, breakTime.getValue() + 1);
                     if (!mbreakTime.getKey().equals(mbreakTime.getValue())) {
                         int index = mbreakTime.getKey();
                         if (index < MyApp.restLineIds.length) {
@@ -937,28 +897,47 @@ public class MainActivity extends AppCompatActivity {
         String username = view.getTag().toString();
         if (pickerPanel.isShown()){
             if (term_week_is_changing) return;
-            String selected_term_name = termValues[((NumberPicker)MainActivity.this.view.findViewById(R.id.termPicker)).getValue()];
-            long selected_week = ((NumberPicker)MainActivity.this.view.findViewById(R.id.weekPicker)).getValue();
             new Thread(() -> {
-                Locate locate = Clock.locateNow(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
-                        DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
-                        getResources().getString(R.string.pref_hour_start_suffix),
-                        getResources().getString(R.string.pref_hour_end_suffix),
-                        getResources().getString(R.string.pref_hour_des_suffix));
-                List<TermInfo> term_list = tdao.getTermByTermName(selected_term_name);
-                if (!term_list.isEmpty()) {
-                    locate.term = term_list.get(0);
-                    locate.week = selected_week;
-                }else {
-                    locate.term = null;
-                    locate.week = Clock.NO_TERM;
-                }
+                Locate locate = getLocateForNowAndSelectedTermAndWeek();
                 Map.Entry<Integer, Integer> g = getTime_enhanced();
-                runOnUiThread(()-> showTable(username, locate, g));
+                runOnUiThread(() -> showTable(
+                        username,
+                        locate,
+                        g
+                ));
             }).start();
         }else{
             pickerPanel.show(MainActivity.this);
         }
+    }
+
+    private Locate getLocateForNowAndSelectedTermAndWeek(){
+        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, pref, MyApp.times,
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
+                Clock.getSSFor_locateNow(MainActivity.this),
+                Clock.getESFor_locateNow(MainActivity.this),
+                Clock.getDSFor_locateNow(MainActivity.this)
+        );
+        TermInfo[] current_term = new TermInfo[1];
+        long[] current_week = new long[1];
+        CountDownLatch ui_done = new CountDownLatch(1);
+        runOnUiThread(()->{
+            current_term[0] = current_terminfo_and_week.currentTermInfo_must_ui();
+            current_week[0] = current_terminfo_and_week.currentWeek_must_ui();
+            ui_done.countDown();
+        });
+        try {
+            ui_done.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        if (current_term[0] == null){
+            current_week[0] = Clock.WEEK_NUN_OF_NO_TERM;
+        }
+        locate.term = current_term[0];
+        locate.week = current_week[0];
+        return locate;
     }
 
     /**
@@ -966,9 +945,10 @@ public class MainActivity extends AppCompatActivity {
      * @clear
      */
     private Map.Entry<Integer, Integer> getTime_enhanced(){
-        return Clock.findNowTime(Clock.nowTimeStamp(),
+        return Clock.findNowTime_low_api(Clock.nowTimeStamp(),
                 MyApp.getCurrentSharedPreference(),
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(MainActivity.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix));
     }
@@ -989,5 +969,23 @@ public class MainActivity extends AppCompatActivity {
         c.runOnUiThread(()->{
             frameLayout.setForeground(null);
         });
+    }
+
+    public void copyFromExamTotalAndGradeTotal(View view){
+        new Thread(()->{
+            StringBuilder sb = new StringBuilder();
+            List<ExamTotal> elist = MyApp.getDb_compare().examTotalDao().selectAll();
+            List<GradeTotal> glist = MyApp.getDb_compare().gradeTotalDao().selectAll();
+            for (ExamTotal e : elist){
+                sb.append(e.toString());
+                sb.append("\n\n\n\n");
+            }
+            for (GradeTotal g : glist){
+                sb.append(g.toString());
+                sb.append("\n\n\n\n");
+            }
+            Login.copyText(MainActivity.this, sb.toString());
+            runOnUiThread(()-> Toast.makeText(MainActivity.this, "已复制", Toast.LENGTH_SHORT).show());
+        }).start();
     }
 }

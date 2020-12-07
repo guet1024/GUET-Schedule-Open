@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.AppDatabaseComments;
 import com.telephone.coursetable.Database.AppDatabaseCompare;
 import com.telephone.coursetable.Database.AppDatabaseCompareTest;
 import com.telephone.coursetable.Database.AppTestDatabase;
@@ -53,6 +54,7 @@ public class MyApp extends Application {
     private static AppTestDatabase db_test;
     private static AppDatabaseCompare db_compare;
     private static AppDatabaseCompareTest db_compare_test;
+    private static AppDatabaseComments db_comments;
     private static SharedPreferences sp;
     private static SharedPreferences sp_test;
     private static SharedPreferences.Editor editor;
@@ -174,7 +176,10 @@ public class MyApp extends Application {
     final public static int web_vpn_relogin_times = 2;
     final public static int web_vpn_wck_times = 6;
     final public static int web_vpn_ticket_regain_times = 6;
-    final public static int web_vpn_refetch_times = 6;
+    final public static int web_vpn_refetch_times = 2;
+    final public static int lan_fetch_normal_read_timeout = 30_000; // 10s --> 30s
+    final public static int lan_fetch_lab_read_timeout = 120_000; // 30s --> 120s
+    final public static int wan_fetch_lab_read_timeout = 30_000; // 30s
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
             "今天: 第二大节 (上午)",
@@ -229,32 +234,36 @@ public class MyApp extends Application {
         db_compare = Room.databaseBuilder(this, AppDatabaseCompare.class, "telephone-db-compare").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         db_test = Room.databaseBuilder(this, AppTestDatabase.class, "telephone-db-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         db_compare_test = Room.databaseBuilder(this, AppDatabaseCompareTest.class, "telephone-db-compare-test").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
+        db_comments = Room.databaseBuilder(this, AppDatabaseComments.class, "telephone-db-comments").enableMultiInstanceInvalidation().fallbackToDestructiveMigration().build();
         sp = getSharedPreferences(getResources().getString(R.string.preference_file_name), MODE_PRIVATE);
         sp_test = getSharedPreferences(getResources().getString(R.string.preference_file_name_test), MODE_PRIVATE);
         editor = sp.edit();
         editor_test = sp_test.edit();
         app_info = getApplicationInfo();
 
-        gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).setPrettyPrinting().create();
+        // make Gson serialize null String fields to "", other "null"
+        gson = new GsonBuilder().registerTypeAdapter(String.class, new NoNullStringAdapter()).serializeNulls().create();
         LogMe.init();
 
-        NotificationChannel channel;
-        channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
-        channel.setDescription(notification_channel_des_running);
-        channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_update);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_fetch_fail);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_normal);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        channel = new NotificationChannel(notification_channel_id_new_data, notification_channel_name_new_data, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(notification_channel_des_new_data);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel;
+            channel = new NotificationChannel(notification_channel_id_running, notification_channel_name_running, NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(notification_channel_des_running);
+            channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_update, notification_channel_name_update, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_update);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_fetch_fail, notification_channel_name_fetch_fail, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_fetch_fail);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_normal, notification_channel_name_normal, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_normal);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+            channel = new NotificationChannel(notification_channel_id_new_data, notification_channel_name_new_data, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(notification_channel_des_new_data);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        }
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
 
@@ -299,6 +308,10 @@ public class MyApp extends Application {
 
     public static AppDatabaseCompareTest getDb_compare_test() {
         return db_compare_test;
+    }
+
+    public static AppDatabaseComments getDb_comments() {
+        return db_comments;
     }
 
     public static SharedPreferences getCurrentSharedPreference(){

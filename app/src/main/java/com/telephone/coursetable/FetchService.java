@@ -9,8 +9,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.PowerManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +24,6 @@ import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.FindClassOfCurrentOrNextTimeRes;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
-import com.telephone.coursetable.Database.AppDatabaseCompare;
 import com.telephone.coursetable.Database.CET;
 import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
@@ -51,6 +50,7 @@ import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.GradePoint.GradePointActivity;
+import com.telephone.coursetable.GuetTools.ExamFilter;
 import com.telephone.coursetable.GuetTools.ImageActivity;
 import com.telephone.coursetable.GuetTools.WebLinksActivity;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
@@ -61,7 +61,6 @@ import com.telephone.coursetable.Webinfo.GUET_Music;
 import com.telephone.coursetable.Webinfo.Guetphonenums;
 import com.telephone.coursetable.Webinfo.Webinfo;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -142,7 +141,11 @@ public class FetchService extends IntentService {
         return START_STICKY;
     }
 
-    private void update_foreground_notification(@NonNull String text){
+    private void update_foreground_notification(@NonNull String text, @Nullable String title_suffix){
+        String title = "加油~今天也要打起精神来";
+        if (title_suffix != null){
+            title += title_suffix;
+        }
         Intent stopIntent = new Intent(this, FetchService.class);
         stopIntent.setAction(ACTION_STOP_SERVICE);
         PendingIntent stopPendingIntent =
@@ -152,11 +155,11 @@ public class FetchService extends IntentService {
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification =
                 new NotificationCompat.Builder(this, MyApp.notification_channel_id_running)
-                        .setContentTitle("加油~今天也要打起精神来")
+                        .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                         .setSmallIcon(R.drawable.feather_pen_trans)
                         .setContentIntent(pendingIntent)
-                        .setTicker("加油~今天也要打起精神来")
+                        .setTicker(title)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .addAction(0, "强行停止", stopPendingIntent)
                         .build();
@@ -178,7 +181,11 @@ public class FetchService extends IntentService {
         if (tip != null){
             intent.putExtra(EXTRA_start_toast, tip);
         }
-        context.startForegroundService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            context.startForegroundService(intent);
+        }else {
+            context.startService(intent);
+        }
     }
 
     /**
@@ -262,19 +269,21 @@ public class FetchService extends IntentService {
         SharedPreferences preferences = MyApp.getCurrentSharedPreference();
         long today = Clock.nowTimeStamp();
         if (udao.getActivatedUser().isEmpty()){
-            update_foreground_notification("未登录");
+            update_foreground_notification("未登录", null);
             return;
         }
-        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime(
+        FindClassOfCurrentOrNextTimeRes currentOrNextTime = Clock.findClassOfCurrentOrNextTime_low_api(
                 udao.getActivatedUser().get(0).username,
                 today,
                 tdao,
                 preferences,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
         );
+        String msg = "";
         if (currentOrNextTime!=null) {
             if (currentOrNextTime.isNow) {
                 StringBuilder text = new StringBuilder("正在上课：");
@@ -296,11 +305,11 @@ public class FetchService extends IntentService {
                     text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
                     text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
                 }
-                update_foreground_notification(text.toString());
+                msg = text.toString();
             }
             else {
                 if (currentOrNextTime.list.isEmpty()) {
-                    update_foreground_notification("今日课程已全部完成");
+                    msg = "今日课程已全部完成";
                 }
                 else {
                     StringBuilder text = new StringBuilder("下一节课：");
@@ -323,13 +332,20 @@ public class FetchService extends IntentService {
                         text.append(nt.cname).append("🔎").append("系统备注：").append(((nt.sys_comm == null)?(""):(nt.sys_comm))).append("\n");
                         text.append(nt.cname).append("📝").append("自定义备注：").append(((nt.my_comm == null)?(""):(nt.my_comm)));
                     }
-                    update_foreground_notification(text.toString());
+                    msg = text.toString();
                 }
             }
         }
         else {
-            update_foreground_notification("今日无课");
+            msg = "今日无课";
         }
+        String exam_tip = ExamFilter.getDisplayExamTip();
+        if (exam_tip != null && !exam_tip.isEmpty()){
+            exam_tip = " " + exam_tip;
+        }else {
+            exam_tip = null;
+        }
+        update_foreground_notification(msg, exam_tip);
     }
 
     private ArrayList<String> getListForListAppWidgets(){
@@ -367,20 +383,22 @@ public class FetchService extends IntentService {
         }
         long today = Clock.nowTimeStamp();
         long tomorrow = today + 86400000;
-        Locate today_locate = Clock.locateNow(today,
+        Locate today_locate = Clock.locateNow_low_api(today,
                 tdao,
                 preferences,
                 MyApp.times,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
         );
-        Locate tomorrow_locate = Clock.locateNow(tomorrow,
+        Locate tomorrow_locate = Clock.locateNow_low_api(tomorrow,
                 tdao,
                 preferences,
                 MyApp.times,
-                DateTimeFormatter.ofPattern(getResources().getString(R.string.server_hours_time_format)),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
                 getResources().getString(R.string.pref_hour_des_suffix)
@@ -599,7 +617,8 @@ public class FetchService extends IntentService {
                 grdao_test,
                 edao_test,
                 cetDao_test,
-                labDao_test
+                labDao_test,
+                true
         );
         if (!fetch_merge_res){
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail | fetch fail");

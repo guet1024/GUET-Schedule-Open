@@ -1,16 +1,12 @@
 package com.telephone.coursetable.Database;
 
-import android.os.Build;
-
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
-
-import com.telephone.coursetable.BuildConfig;
 
 /**
  * @clear
  */
-@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class, LAB.class, MyComment.class, Version.class, Privacy.class}, version = 8, exportSchema = false)
+@Database(entities = {GoToClass.class, ClassInfo.class, TermInfo.class, User.class, PersonInfo.class, GraduationScore.class, Grades.class, ExamInfo.class, CET.class, LAB.class, MyComment.class, Version.class, Privacy.class, CustomizedExam.class}, version = 10, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract GoToClassDao goToClassDao();
     public abstract ClassInfoDao classInfoDao();
@@ -25,4 +21,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MyCommentDao myCommentDao();
     public abstract VersionDao versionDao();
     public abstract PrivacyDao privacyDao();
+    public abstract CustomizedExamDao customizedExamDao();
 }

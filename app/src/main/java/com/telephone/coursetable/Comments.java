@@ -22,11 +22,13 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
+import com.telephone.coursetable.Database.Mask;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Gson.Comment.Comment;
 import com.telephone.coursetable.Gson.CourseCard.CourseCardData;
@@ -177,69 +179,91 @@ public class Comments extends AppCompatActivity implements SwipeRefreshLayout.On
             case R.id.add_a_comment:
                 final View dialog_view = getLayoutInflater().inflate(R.layout.comment_dialog, null);
                 final EditText inputbox = (EditText) dialog_view.findViewById(R.id.comment_dialog_inputbox);
-                Login.getAlertDialog(
-                        this,
-                        null,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String cmt = inputbox.getText().toString();
-                                if (cmt.isEmpty()) {
-                                    Toast.makeText(Comments.this, "评论不能为空", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(true);
-                                    new Thread(() -> {
-                                        HttpConnectionAndCode post_res = null;
-                                        try {
-                                            post_res = Post.post(
-                                                    putcmturl,
-                                                    new String[]{
-                                                            key + "=" + URLEncoder.encode(key_value, "utf-8"),
-                                                            "sno" + "=" + sid
-                                                    },
-                                                    ua,
-                                                    referer,
-                                                    name + " " + cmt,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    true
-                                            );
-                                        } catch (UnsupportedEncodingException e) {
-                                            e.printStackTrace();
-                                            post_res = new HttpConnectionAndCode(99);
-                                        }
-                                        HttpConnectionAndCode post_res_f = post_res;
-                                        runOnUiThread(() -> {
-                                            if (post_res_f.code == 0) {
-                                                Snackbar.make(snack_bar_root_view, "评论发表成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
-                                                onRefresh();
-                                            }else if (post_res_f.c != null && post_res_f.resp_code == 500){
-                                                Snackbar.make(snack_bar_root_view, "评论发表失败(服务器错误)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
-                                                ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
-                                            }else {
-                                                Snackbar.make(snack_bar_root_view, "评论发表失败(网络异常)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
-                                                ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
+                final EditText mask_et = (EditText) dialog_view.findViewById(R.id.comment_mask_edit_text);
+                new Thread(()->{
+                    List<String> masks = MyApp.getDb_comments().maskDao().getMask(
+                            MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username
+                    );
+                    runOnUiThread(()->{
+                        if (!masks.isEmpty()){
+                            String mask_fill = masks.get(0);
+                            mask_et.setText(mask_fill);
+                        }
+                        Login.getAlertDialog(
+                                this,
+                                null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String cmt = inputbox.getText().toString();
+                                        if (cmt.isEmpty()) {
+                                            Toast.makeText(Comments.this, "评论不能为空", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(true);
+                                            if (mask_et.getText().toString().isEmpty()){
+                                                mask_et.setText(getString(R.string.default_mask));
                                             }
-                                        });
-                                    }).start();
-                                }
-                            }
-                        },
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        },
-                        dialog_view,
-                        "发表评论",
-                        "发表",
-                        "取消"
-                ).show();
+                                            String mask = mask_et.getText().toString();
+                                            MaterialCheckBox checkBox = (MaterialCheckBox)dialog_view.findViewById(R.id.comment_mask_checkbox);
+                                            new Thread(() -> {
+                                                MyApp.getDb_comments().maskDao().insert(new Mask(
+                                                        MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username,
+                                                        mask
+                                                ));
+                                                HttpConnectionAndCode post_res = null;
+                                                try {
+                                                    post_res = Post.post(
+                                                            putcmturl,
+                                                            new String[]{
+                                                                    key + "=" + URLEncoder.encode(key_value, "utf-8"),
+                                                                    "sno" + "=" + sid,
+                                                                    (checkBox.isChecked())?("mask" + "=" + URLEncoder.encode(mask, "utf-8")):("")
+                                                            },
+                                                            ua,
+                                                            referer,
+                                                            name + " " + cmt,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            true
+                                                    );
+                                                } catch (UnsupportedEncodingException e) {
+                                                    e.printStackTrace();
+                                                    post_res = new HttpConnectionAndCode(99);
+                                                }
+                                                HttpConnectionAndCode post_res_f = post_res;
+                                                runOnUiThread(() -> {
+                                                    if (post_res_f.code == 0) {
+                                                        Snackbar.make(snack_bar_root_view, "评论发表成功", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                        onRefresh();
+                                                    }else if (post_res_f.c != null && post_res_f.resp_code == 500){
+                                                        Snackbar.make(snack_bar_root_view, "评论发表失败(服务器错误)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                        ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
+                                                    }else {
+                                                        Snackbar.make(snack_bar_root_view, "评论发表失败(网络异常)", BaseTransientBottomBar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
+                                                        ((SwipeRefreshLayout) findViewById(R.id.comment_swipe_refresh)).setRefreshing(false);
+                                                    }
+                                                });
+                                            }).start();
+                                        }
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // do nothing
+                                    }
+                                },
+                                dialog_view,
+                                "发表评论",
+                                "发表",
+                                "取消"
+                        ).show();
+                    });
+                }).start();
                 break;
         }
         return true;

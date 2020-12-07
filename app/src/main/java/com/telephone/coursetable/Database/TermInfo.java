@@ -65,18 +65,25 @@ public class TermInfo {
         }
     }
 
-    public LocalDate getDateOfWeekAndDay(int week, int weekday){
+    public long getTheLastTimeStampOfWeekAndDay(int week, int weekday){
+        weekday++;
         long week_ts = (week - 1) * 86400000L * 7;
         long day_ts = (weekday - 1) * 86400000L;
-        long some_ts = 1000;
-        Date date = new Date(this.sts + week_ts + day_ts + some_ts);
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return (this.sts + week_ts + day_ts - 1L);
     }
 
-    public LocalDate getDateOfTheLastDay(){
-        long some_ts = 1000;
-        Date date = new Date(this.ets - some_ts);
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    public long getTheFirstTimeStampOfWeekAndDay(int week, int weekday){
+        long week_ts = (week - 1) * 86400000L * 7;
+        long day_ts = (weekday - 1) * 86400000L;
+        return (this.sts + week_ts + day_ts);
+    }
+
+    public long getTheLastTimeStampOfTheLastDay(){
+        return (this.ets - 1L);
+    }
+
+    public long getTheFirstTimeStampOfTheLastDay(){
+        return (this.ets - 86400000L);
     }
 
     @Override

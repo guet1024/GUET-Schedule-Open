@@ -270,11 +270,11 @@ public class LibraryActivity extends AppCompatActivity {
                 if (maxPage > 50) maxPage = 50;
                 if (maxBookNum > 500) maxBookNum = 500;
                 else if (maxBookNum == 0) {
-                    tvPage.setText("第0本，共0本");
+                    runOnUiThread(()->tvPage.setText("第0本，共0本"));
                     ExceptionError( getResources().getString(R.string.wan_library_search_null) );
                     return;
                 }
-                tvPage.setText("第" + bookNum + "本/共" + maxBookNum + "本");
+                runOnUiThread(()->tvPage.setText("第" + bookNum + "本/共" + maxBookNum + "本"));
 
                 for (int page = 1; page <= maxPage; page++) {
                     com.telephone.coursetable.LogMe.LogMe.e("共" + maxPage + "页", "第" + page + "页");
@@ -425,7 +425,7 @@ public class LibraryActivity extends AppCompatActivity {
         for (int i=0 ; i<res_1.size() ; i++) {
             List<Map.Entry<String, String>> infos = res_1.get(i);
             List<List<Map.Entry<String, String>>> locals = res_2.get(i);
-            groups.add(Map.entry(infos, locals));
+            groups.add(com.telephone.coursetable.Database.Methods.Methods.entry(infos, locals));
         }
         return groups;
     }

@@ -7,4 +7,17 @@
     <style name="progressbar_accent">
         <item name="colorAccent">@color/colorProgressbar</item>
     </style>
+
+    <style name="dialog_button_primary" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="date_time_picker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/dialog_button_primary</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/dialog_button_primary</item>
+    </style>
+    <style name="mask" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

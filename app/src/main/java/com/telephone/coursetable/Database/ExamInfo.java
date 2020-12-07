@@ -8,20 +8,36 @@ import androidx.room.Entity;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
+import com.telephone.coursetable.MyApp;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @clear
  */
-@Entity(primaryKeys = {"examdate", "kssj", "croomno"})
+// primary keys: when + where + cno + comment
+@Entity(primaryKeys = {"sts", "ets", "croomno", "courseno", "comm"})
 public class ExamInfo {
+    public long sts;
+    public long ets;
     @NonNull
     public String croomno;//	"02204Y"    教室
+    @NonNull
+    public String courseno;//	"1920736"   课号
+    @NonNull
+    public String comm;
+
     public String croomname;
     public String tch;
     public String tch1;
@@ -36,7 +52,6 @@ public class ExamInfo {
     public String spno;
     public String spname;
     public String courseid;
-    public String courseno;//	"1920736"   课号
     public String labno;
     public String labname;
     public String dptno;
@@ -50,7 +65,6 @@ public class ExamInfo {
     public String examt;
     public String kctype;
     public String typeno;
-    @NonNull
     public String examdate;//	"2020-07-15"    日期
     public String examtime;
     public long examstate;
@@ -62,21 +76,17 @@ public class ExamInfo {
     public String ksjc;
     public String jsjc;
     public long bkzt;
-    @NonNull
     public String kssj;//	"14:00-16:00"   考试时间
-    public String comm;
     public String rooms;
     public String lsh;
     public long zone;
     public String checked1;
     public String postdate;
     public String operator;
-    public long sts;
-    public long ets;
 
     public ExamInfo(){}// this is for Room
 
-    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, @NonNull String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, @NonNull String kssj, String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c) {
+    public ExamInfo(@NonNull String croomno, String croomname, String tch, String tch1, String tch2, String js, String js1, String js2, long roomrs, String term, String grade, String dpt, String spno, String spname, String courseid, @NonNull String courseno, String labno, String labname, String dptno, String teacherno, String name, String xf, String cname, String sctcnt, String stucnt, String scoretype, String examt, String kctype, String typeno, String examdate, String examtime, long examstate, String exammode, String xm, String refertime, long zc, long xq, String ksjc, String jsjc, long bkzt, String kssj, @NonNull String comm, String rooms, String lsh, long zone, String checked1, String postdate, String operator, TermInfoDao termInfoDao, Context c, @NonNull String sid) {
         this.croomno = croomno;
         this.croomname = croomname;
         this.tch = tch;
@@ -125,64 +135,78 @@ public class ExamInfo {
         this.checked1 = checked1;
         this.postdate = postdate;
         this.operator = operator;
-        this.sts = getSTS(c, examdate, kssj, termInfoDao);
-        this.ets = getETS(c, examdate, kssj, termInfoDao);
+        List<CustomizedExam.CustomizedSTSAndETS> read_from_pool = MyApp.getCurrentAppDB().customizedExamDao().selectForUserAndExam(sid, this.examdate, this.kssj, this.zc, this.xq, this.courseno, this.comm);
+        if (!read_from_pool.isEmpty()) {
+            this.sts = read_from_pool.get(0).sts;
+            this.ets = read_from_pool.get(0).ets;
+        }else {
+            setSTSandETS(c, examdate, kssj, termInfoDao);
+        }
     }
 
-    private long getSTS(Context c, String date, String time, TermInfoDao termInfoDao){
-        LocalDate localDate;
-        LocalTime localTime;
+    private void setSTSandETS(Context c, String date, String time, TermInfoDao termInfoDao){
+        long day_first_ts = 0;
         try {
-            localDate = getD(date).getLocalDate();
-        }catch (Exception e){
-            if (this.zc != 0 && this.xq != 0){
-                localDate = termInfoDao.select(this.term).get(0).getDateOfWeekAndDay((int)this.zc, (int)this.xq);
-            }else {
-                localDate = termInfoDao.select(this.term).get(0).getDateOfTheLastDay();
+            d d = getD(date); // try to read date
+            day_first_ts += get_the_first_ts_of_day_from_d_timezone_gmt8(d);
+        }catch (Exception e){ // if fail
+            if (this.zc != 0 && this.xq != 0){ // if week and weekday is set
+                day_first_ts += termInfoDao.select(this.term).get(0).getTheFirstTimeStampOfWeekAndDay((int)this.zc, (int)this.xq);
+            }else { // if week and weekday is NOT set
+                day_first_ts += termInfoDao.select(this.term).get(0).getTheFirstTimeStampOfTheLastDay();
             }
         }
+        long sts = day_first_ts;
+        long ets = day_first_ts;
         try {
-            localTime = getT(time).getStartLocalTime();
-        }catch (Exception e){
-            LocalTime temp = null;
-            if (this.ksjc != null && !this.ksjc.isEmpty()){
-                temp = Clock.getStartTimeUsingDefaultConfig(c, this.ksjc);
-            }
-            if (temp == null){
-                temp = LocalTime.of(23, 58);
-            }
-            localTime = temp;
+            t t = getT(time); // try to read start time and end time
+            sts += (t.start_hour * 60 + t.start_minute) * 60000L;
+            ets += (t.end_hour * 60 + t.end_minute) * 60000L;
+        }catch (Exception e){ // if fail
+            ets += (23 * 60 + 59) * 60000L;
+            sts = ets - 1;
         }
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        return Timestamp.valueOf(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
+        this.sts = sts;
+        this.ets = ets;
     }
 
-    private long getETS(Context c, String date, String time, TermInfoDao termInfoDao){
-        LocalDate localDate;
-        LocalTime localTime;
+    private static long get_s_ts_from_d_t_timezone_gmt8(d d, t t){
+        String format_str = "yyyy-MM-dd HH-mm";
+        String str = String.format("%04d-%02d-%02d %02d-%02d", d.year, d.month, d.day, t.start_hour, t.start_minute);
+        SimpleDateFormat format = new SimpleDateFormat(format_str, Locale.US);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         try {
-            localDate = getD(date).getLocalDate();
-        }catch (Exception e){
-            if (this.zc != 0 && this.xq != 0){
-                localDate = termInfoDao.select(this.term).get(0).getDateOfWeekAndDay((int)this.zc, (int)this.xq);
-            }else {
-                localDate = termInfoDao.select(this.term).get(0).getDateOfTheLastDay();
-            }
+            return format.parse(str).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 1;
         }
+    }
+
+    private static long get_e_ts_from_d_t_timezone_gmt8(d d, t t){
+        String format_str = "yyyy-MM-dd HH-mm";
+        String str = String.format("%04d-%02d-%02d %02d-%02d", d.year, d.month, d.day, t.end_hour, t.end_minute);
+        SimpleDateFormat format = new SimpleDateFormat(format_str, Locale.US);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         try {
-            localTime = getT(time).getEndLocalTime();
-        }catch (Exception e){
-            LocalTime temp = null;
-            if (this.ksjc != null && !this.ksjc.isEmpty()){
-                temp = Clock.getEndTimeUsingDefaultConfig(c, this.ksjc);
-            }
-            if (temp == null){
-                temp = LocalTime.of(23, 59);
-            }
-            localTime = temp;
+            return format.parse(str).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 1;
         }
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        return Timestamp.valueOf(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).getTime();
+    }
+
+    private static long get_the_first_ts_of_day_from_d_timezone_gmt8(d d){
+        String format_str = "yyyy-MM-dd HH-mm";
+        String str = String.format("%04d-%02d-%02d 00-00", d.year, d.month, d.day);
+        SimpleDateFormat format = new SimpleDateFormat(format_str, Locale.US);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        try {
+            return format.parse(str).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 1;
+        }
     }
 
     private static class d{
@@ -194,9 +218,6 @@ public class ExamInfo {
             this.year = year;
             this.month = month;
             this.day = day;
-        }
-        public LocalDate getLocalDate(){
-            return LocalDate.of(year, month, day);
         }
     }
 
@@ -211,12 +232,6 @@ public class ExamInfo {
             this.start_minute = start_minute;
             this.end_hour = end_hour;
             this.end_minute = end_minute;
-        }
-        public LocalTime getStartLocalTime(){
-            return LocalTime.of(start_hour, start_minute);
-        }
-        public LocalTime getEndLocalTime(){
-            return LocalTime.of(end_hour, end_minute);
         }
     }
 

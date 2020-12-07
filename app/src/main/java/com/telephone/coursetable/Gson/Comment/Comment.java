@@ -10,18 +10,7 @@ public class Comment {
     private String cmt; // "测试网络评论功能"
     private String name; // "用户"
     private long ts; // 1606574174, WARNING: this is second
-
-    public Comment(String cno, String tno, String cname, String sno, long idx, String dt, String cmt, String name, long ts) {
-        this.cno = cno;
-        this.tno = tno;
-        this.cname = cname;
-        this.sno = sno;
-        this.idx = idx;
-        this.dt = dt;
-        this.cmt = cmt;
-        this.name = name;
-        this.ts = ts;
-    }
+    private String mask; // "X同学"
 
     public String getCno() {
         return cno;
@@ -57,6 +46,10 @@ public class Comment {
 
     public long getTs() {
         return ts;
+    }
+
+    public String getMask() {
+        return mask;
     }
 
     public long getTimeStamp(){
