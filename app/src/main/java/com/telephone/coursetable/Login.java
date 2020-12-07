@@ -35,7 +35,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
@@ -46,7 +45,6 @@ import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.GradesDao;
 import com.telephone.coursetable.Database.GraduationScoreDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
-import com.telephone.coursetable.Database.KeyAndValue.GoToClassKeyAndValue;
 import com.telephone.coursetable.Database.LABDao;
 import com.telephone.coursetable.Database.Methods.Methods;
 import com.telephone.coursetable.Database.PersonInfoDao;
@@ -58,7 +56,6 @@ import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.LoginResponse;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
-import com.telephone.coursetable.Library.LibraryActivity;
 import com.telephone.coursetable.LogMe.LogMe;
 import com.telephone.coursetable.Merge.Merge;
 import com.telephone.coursetable.MyException.ExceptionIpForbidden;
@@ -67,7 +64,6 @@ import com.telephone.coursetable.MyException.ExceptionUnknown;
 import com.telephone.coursetable.MyException.ExceptionWrongUserOrPassword;
 import com.telephone.coursetable.OCR.OCR;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -750,37 +746,39 @@ public class Login extends AppCompatActivity {
         LogMe.e(NAME, "fetch cet success, merging...");
         Merge.cet(res.comment, cetDao);
 
-        term_list = tdao.selectAll();
-        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
-                MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow_low_api(c),
-                Clock.getDefaultDelimiterFor_whichTime(),
-                Clock.getSSFor_locateNow(c),
-                Clock.getESFor_locateNow(c),
-                Clock.getDSFor_locateNow(c)
-        );
-        if (locate.term != null) {
-            for (TermInfo term : term_list) {
-                if (!term.term.equals(locate.term.term)) {
-                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
-                    continue;
-                }
-                LogMe.e(NAME, "fetching lab");
-                res.code = -1;
-                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
-                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
-                    res = LAN.lab(c, cookie, term.term);
-                }
-                if (res.code != 0) {
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
-                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
-                    return false;
-                }
-                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
-                LogMe.e(NAME, "fetch lab success, merging...");
-                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
-            }
-        }
+
+        // edited by Telephone, 2020/12/7, 17:21, not fetch lab because there is something wrong with the server
+//        term_list = tdao.selectAll();
+//        Locate locate = Clock.locateNow_low_api(Clock.nowTimeStamp(), tdao, MyApp.getCurrentSharedPreference(),
+//                MyApp.times,
+//                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(c),
+//                Clock.getDefaultDelimiterFor_whichTime(),
+//                Clock.getSSFor_locateNow(c),
+//                Clock.getESFor_locateNow(c),
+//                Clock.getDSFor_locateNow(c)
+//        );
+//        if (locate.term != null) {
+//            for (TermInfo term : term_list) {
+//                if (!term.term.equals(locate.term.term)) {
+//                    LogMe.e(NAME, "skip lab-fetch: " + term.term);
+//                    continue;
+//                }
+//                LogMe.e(NAME, "fetching lab");
+//                res.code = -1;
+//                for (int i = 0; i < 2 && res.code != 0 && res.code != -6 && res.code != -7; i++) {
+//                    LogMe.e(NAME, "fetching lab time: " + (i + 1));
+//                    res = LAN.lab(c, cookie, term.term);
+//                }
+//                if (res.code != 0) {
+//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab fail: " + term.term);
+//                    com.telephone.coursetable.LogMe.LogMe.e(NAME, "fail");
+//                    return false;
+//                }
+//                com.telephone.coursetable.LogMe.LogMe.e(NAME, "fetch lab success: " + term.term);
+//                LogMe.e(NAME, "fetch lab success, merging...");
+//                Merge.lab(res.comment, labDao, gdao, cdao, my_comm_map, username);
+//            }
+//        }
 
         com.telephone.coursetable.LogMe.LogMe.e(NAME, "success");
         return true;
@@ -1017,7 +1015,7 @@ public class Login extends AppCompatActivity {
                                         NAME + " " + "locate now",
                                         Clock.locateNow_low_api(
                                                 Clock.nowTimeStamp(), tdao, shared_pref, MyApp.times,
-                                                Clock.getDateTimeFormatterFor_locateNow_low_api(Login.this),
+                                                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(Login.this),
                                                 Clock.getDefaultDelimiterFor_whichTime(),
                                                 getResources().getString(R.string.pref_hour_start_suffix),
                                                 getResources().getString(R.string.pref_hour_end_suffix),

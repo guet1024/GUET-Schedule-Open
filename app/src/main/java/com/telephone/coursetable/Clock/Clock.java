@@ -2,28 +2,16 @@ package com.telephone.coursetable.Clock;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.LinearLayout;
 
-import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.ShowTableNode;
 import com.telephone.coursetable.Database.TermInfo;
 import com.telephone.coursetable.Database.TermInfoDao;
-import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +21,7 @@ import java.util.TimeZone;
 
 public class Clock {
 
-    public static final long NO_TERM = 0;
+    public static final long WEEK_NUN_OF_NO_TERM = 0;
 
     /**
      * @param sts the timestamp of start
@@ -68,6 +56,16 @@ public class Clock {
         return ( sts + (week * 604800000L) + (weekday * 86400000L) + 3600000L );
     }
 
+    public static long[] getAWeekTimeStampForWeekSince(long sts, long week){
+        week--;
+        long[] res = new long[7];
+        long monday_ts = sts + (week * 604800000L);
+        for (int i = 0; i < 7; i++) {
+            res[i] = monday_ts + (i * 86400000L);
+        }
+        return res;
+    }
+
     private static DateTime getNowDateTimeFor_locate_time_period(long nts){
         // 使用东八区时区意味着，将传入的时间戳转换成东八区的时间，假设你当下在东八区，然后判断你当前在哪个时间段
         // 使用默认时区意味着，将传入的时间戳转换成默认时区的时间，假设你当下在默认时区，然后判断你当前在哪个时间段
@@ -87,7 +85,7 @@ public class Clock {
             return null;
         }else {
             try {
-                return getDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
+                return getDefaultDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
             } catch (ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -107,7 +105,7 @@ public class Clock {
             return null;
         }else {
             try {
-                return getDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
+                return getDefaultDateTimeFormatterFor_locateNow_low_api(c).parse(time_str);
             } catch (ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -137,7 +135,7 @@ public class Clock {
      * @param pref_d_suffix {@link #whichTime_low_api(long, SharedPreferences, String[], SimpleDateFormat, String, String, String, String)}
      * @return a {@link Locate}
      *      - res.{@link Locate#term} : corresponding {@link TermInfo} of specified current time, null if not found
-     *      - res.{@link Locate#week} : corresponding week num of specified current time, {@link #NO_TERM} if res.{@link Locate#term} is null
+     *      - res.{@link Locate#week} : corresponding week num of specified current time, {@link #WEEK_NUN_OF_NO_TERM} if res.{@link Locate#term} is null
      *      - res.{@link Locate#weekday} : weekday of specified current time
      *      - res.{@link Locate#month} : month of specified current time
      *      - res.{@link Locate#day} : day of specified current time
@@ -146,7 +144,7 @@ public class Clock {
      * @clear
      */
     public static Locate locateNow_low_api(long nts, TermInfoDao tdao, SharedPreferences pref, String[] times, SimpleDateFormat pref_time_period_formatter, String delimiter, String pref_s_suffix, String pref_e_suffix, String pref_d_suffix){
-        Locate res = new Locate(null, NO_TERM, 0, 0, 0, null, null);
+        Locate res = new Locate(null, WEEK_NUN_OF_NO_TERM, 0, 0, 0, null, null);
         Date n = new Date(nts);
         List<TermInfo> which_term_res = tdao.whichTerm(nts);
         if (!which_term_res.isEmpty()){
@@ -169,7 +167,7 @@ public class Clock {
     /**
      * @clear
      */
-    public static SimpleDateFormat getDateTimeFormatterFor_locateNow_low_api(Context c){
+    public static SimpleDateFormat getDefaultDateTimeFormatterFor_locateNow_low_api(Context c){
         // 默认使用 Locale.US
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(c.getResources().getString(R.string.server_hours_time_format), Locale.US);
         // 文件中记录的是北京时间
@@ -284,14 +282,14 @@ public class Clock {
                         if (timelist.get(i).equals(timelist.get(i + 1))) {
                             if (sl.before(n) || sl.equals(n)) {
                                 if (el.after(n) || el.equals(n)) {
-                                    res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                                    res = com.telephone.coursetable.Database.Methods.Methods.entry(timelist.get(i), timelist.get(i + 1));
                                     break;
                                 }
                             }
                         } else {
                             if (sl.before(n)) {
                                 if (el.after(n)) {
-                                    res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                                    res = com.telephone.coursetable.Database.Methods.Methods.entry(timelist.get(i), timelist.get(i + 1));
                                     break;
                                 }
                             }
@@ -306,7 +304,7 @@ public class Clock {
                     DateTime start = new DateTime(n, start_str, delimiter);
                     if (start.before(n) || start.equals(n)) {
                         if (st != null && st.after(n)) {
-                            res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                            res = com.telephone.coursetable.Database.Methods.Methods.entry(timelist.get(i), timelist.get(i + 1));
                             break;
                         }
                     }
@@ -319,7 +317,7 @@ public class Clock {
                     DateTime end = new DateTime(n, end_str, delimiter);
                     if (et != null && et.before(n)) {
                         if (end.after(n) || end.equals(n)) {
-                            res = Map.entry(timelist.get(i), timelist.get(i + 1));
+                            res = com.telephone.coursetable.Database.Methods.Methods.entry(timelist.get(i), timelist.get(i + 1));
                             break;
                         }
                     }

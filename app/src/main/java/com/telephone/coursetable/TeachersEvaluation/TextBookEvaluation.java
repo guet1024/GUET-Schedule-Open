@@ -42,7 +42,7 @@ public class TextBookEvaluation {
     private static volatile boolean evaluation_running = false;
 
     synchronized private static void addtoast(String s, int len, boolean end){
-        toastlist.add(Map.entry(s, len));
+        toastlist.add(com.telephone.coursetable.Database.Methods.Methods.entry(s, len));
         TextBookEvaluation.end = end;
     }
     synchronized private static Map.Entry<String, Integer> gettoast(){
@@ -196,7 +196,7 @@ public class TextBookEvaluation {
                 null,
                 null,
                 null,
-                30000
+                MyApp.lan_fetch_lab_read_timeout
         );
         for (int i = 0; httpURLConnection.code != 0 && i < 3; i++) {
             if (check_should_exit(c)){
@@ -214,7 +214,7 @@ public class TextBookEvaluation {
                     null,
                     null,
                     null,
-                    30000
+                    MyApp.lan_fetch_lab_read_timeout
             );
         }
         if (httpURLConnection.code != 0) {
@@ -478,7 +478,7 @@ public class TextBookEvaluation {
                 null,
                 null,
                 null,
-                30000
+                MyApp.lan_fetch_lab_read_timeout
         );
         for (int i = 0; res.code != 0 && res.code != -6 && i < 3; i++) {
             addtoast(  "网络波动，正在重新获取 " + book.getName() + " 教材的评分表",Toast.LENGTH_SHORT,false);
@@ -494,7 +494,7 @@ public class TextBookEvaluation {
                     null,
                     null,
                     null,
-                    30000
+                    MyApp.lan_fetch_lab_read_timeout
             );
         }
         if (res.code == 0){

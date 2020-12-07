@@ -7,8 +7,10 @@ import com.telephone.coursetable.Database.GoToClassDao;
 import com.telephone.coursetable.Database.Key.GoToClassKey;
 import com.telephone.coursetable.Database.KeyAndValue.GoToClassKeyAndValue;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Methods {
     /**
@@ -38,5 +40,9 @@ public class Methods {
             my_cmt_map.put(pair.getKey(), pair.getValue());
         }
         return my_cmt_map;
+    }
+
+    public static <KT, VT> Map.Entry<KT, VT> entry(KT k, VT v){
+        return new AbstractMap.SimpleEntry<>(k, v);
     }
 }

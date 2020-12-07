@@ -177,6 +177,9 @@ public class MyApp extends Application {
     final public static int web_vpn_wck_times = 6;
     final public static int web_vpn_ticket_regain_times = 6;
     final public static int web_vpn_refetch_times = 2;
+    final public static int lan_fetch_normal_read_timeout = 30_000; // 10s --> 30s
+    final public static int lan_fetch_lab_read_timeout = 120_000; // 30s --> 120s
+    final public static int wan_fetch_lab_read_timeout = 30_000; // 30s
     final public static String[] appwidget_list_today_time_descriptions = {
             "今天: 第一大节 (上午)",
             "今天: 第二大节 (上午)",

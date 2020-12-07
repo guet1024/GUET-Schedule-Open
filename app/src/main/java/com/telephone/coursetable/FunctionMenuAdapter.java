@@ -336,12 +336,13 @@ public class FunctionMenuAdapter implements ExpandableListAdapter {
                 break;
             case 3:
                 ((TextView)view.findViewById(R.id.library)).setText(groups.get(i).getValue().get(i1).get(0));
-                view.setOnClickListener(view12 -> new Thread(() -> {
-                    Intent intent = new Intent(context, LibraryActivity.class);
-                    intent.putExtra(LibraryActivity.EXTRA_USERNAME, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username);
-                    intent.putExtra(LibraryActivity.EXTRA_VPN_PASSWORD, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).vpn_password);
-                    context.startActivity(intent);
-                }).start());
+                // edited by Telephone, 2020/12/7, 17:44, no web vpn, no library
+//                view.setOnClickListener(view12 -> new Thread(() -> {
+//                    Intent intent = new Intent(context, LibraryActivity.class);
+//                    intent.putExtra(LibraryActivity.EXTRA_USERNAME, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).username);
+//                    intent.putExtra(LibraryActivity.EXTRA_VPN_PASSWORD, MyApp.getCurrentAppDB().userDao().getActivatedUser().get(0).vpn_password);
+//                    context.startActivity(intent);
+//                }).start());
                 break;
             case 4:
                 ((TextView)view.findViewById(R.id.change_term_item)).setText(groups.get(i).getValue().get(i1).get(0));

@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.PowerManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +24,6 @@ import com.telephone.coursetable.Clock.Clock;
 import com.telephone.coursetable.Clock.FindClassOfCurrentOrNextTimeRes;
 import com.telephone.coursetable.Clock.Locate;
 import com.telephone.coursetable.Database.AppDatabase;
-import com.telephone.coursetable.Database.AppDatabaseCompare;
 import com.telephone.coursetable.Database.CET;
 import com.telephone.coursetable.Database.CETDao;
 import com.telephone.coursetable.Database.ClassInfo;
@@ -63,7 +61,6 @@ import com.telephone.coursetable.Webinfo.GUET_Music;
 import com.telephone.coursetable.Webinfo.Guetphonenums;
 import com.telephone.coursetable.Webinfo.Webinfo;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -280,7 +277,7 @@ public class FetchService extends IntentService {
                 today,
                 tdao,
                 preferences,
-                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
@@ -390,7 +387,7 @@ public class FetchService extends IntentService {
                 tdao,
                 preferences,
                 MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),
@@ -400,7 +397,7 @@ public class FetchService extends IntentService {
                 tdao,
                 preferences,
                 MyApp.times,
-                Clock.getDateTimeFormatterFor_locateNow_low_api(FetchService.this),
+                Clock.getDefaultDateTimeFormatterFor_locateNow_low_api(FetchService.this),
                 Clock.getDefaultDelimiterFor_whichTime(),
                 getResources().getString(R.string.pref_hour_start_suffix),
                 getResources().getString(R.string.pref_hour_end_suffix),

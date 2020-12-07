@@ -226,7 +226,7 @@ public class FunctionMenu extends AppCompatActivity {
             child.add("高考考生号");
             child.add(pinfo.testnum);
             children.add(child);
-            menus.add(Map.entry(person_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(person_group, children));
 
             String graduation_score_group = "毕业计划课程";
             List<GraduationScore> graduation_score_list = gsdao.selectAll();
@@ -262,7 +262,7 @@ public class FunctionMenu extends AppCompatActivity {
             child.add(credit_hour_total_got + "");
             child.add(null);
             children.add(child);
-            menus.add(Map.entry(graduation_score_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(graduation_score_group, children));
 
             String grades_group = "成绩单";
             if (MyApp.getDb_compare().gradeTotalDao().unreadNum() > 0) {
@@ -298,21 +298,21 @@ public class FunctionMenu extends AppCompatActivity {
                 }
                 children.add(child);
             }
-            menus.add(Map.entry(grades_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(grades_group, children));
 
             String library_group = "图书馆藏";
             children = new LinkedList<>();
             child = new LinkedList<>();
-            child.add("图书馆藏查询");
+            child.add("图书馆藏查询(暂时关闭直到外网登录模块升级完毕)");
             children.add(child);
-            menus.add(Map.entry(library_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(library_group, children));
 
             String change_term_group = "学期调整";
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("调整学期时间");
             children.add(child);
-            menus.add(Map.entry(change_term_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(change_term_group, children));
 
             String exams_group = "考试安排";
             if (MyApp.getDb_compare().examTotalDao().unreadNum() > 0) {
@@ -342,7 +342,7 @@ public class FunctionMenu extends AppCompatActivity {
                     children.add(child);
                 }
             }
-            menus.add(Map.entry(exams_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(exams_group, children));
 
             String teachers_eva_group = "评教";
             children = new LinkedList<>();
@@ -352,7 +352,7 @@ public class FunctionMenu extends AppCompatActivity {
             child = new LinkedList<>();
             child.add("教材评价");
             children.add(child);
-            menus.add(Map.entry(teachers_eva_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(teachers_eva_group, children));
 
             String cet_group = "等级考试成绩";
             children = new LinkedList<>();
@@ -366,28 +366,28 @@ public class FunctionMenu extends AppCompatActivity {
                 child.add("证书编号: " + cet.card);
                 children.add(child);
             }
-            menus.add(Map.entry(cet_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(cet_group, children));
 
             String query_grade_points_group = "毕业学位";
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("毕业学位查询");
             children.add(child);
-            menus.add(Map.entry(query_grade_points_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(query_grade_points_group, children));
 
             String guet_tools_group = "GUET常用工具";
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("常用工具页");
             children.add(child);
-            menus.add(Map.entry(guet_tools_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(guet_tools_group, children));
 
             String update_group = "应用更新";
             children = new LinkedList<>();
             child = new LinkedList<>();
             child.add("当前是 " + BuildConfig.VERSION_NAME + " 版本");
             children.add(child);
-            menus.add(Map.entry(update_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(update_group, children));
 
             String about_group = "关于GUET课程表";
             children = new LinkedList<>();
@@ -397,7 +397,7 @@ public class FunctionMenu extends AppCompatActivity {
             child = new LinkedList<>();
             child.add("👉GUET课程表");
             children.add(child);
-            menus.add(Map.entry(about_group, children));
+            menus.add(com.telephone.coursetable.Database.Methods.Methods.entry(about_group, children));
 
             functionMenu.runOnUiThread(() -> {
                 FunctionMenuAdapter adapter = new FunctionMenuAdapter(functionMenu, menus, true, menu_listf, functionMenu);
@@ -490,7 +490,7 @@ public class FunctionMenu extends AppCompatActivity {
         String origin_key = groups.get(groupPosition).getKey();
         List<List<String>> origin_value = groups.get(groupPosition).getValue();
         groups.remove(groupPosition);
-        groups.add(groupPosition, Map.entry(origin_key.trim(), origin_value));
+        groups.add(groupPosition, com.telephone.coursetable.Database.Methods.Methods.entry(origin_key.trim(), origin_value));
         new Thread(()->{
             switch (groupPosition){
                 case 2: // grades

@@ -7,6 +7,7 @@ import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.GetBitmap;
 import com.telephone.coursetable.Http.Post;
+import com.telephone.coursetable.MyApp;
 import com.telephone.coursetable.R;
 
 public class LAN {
@@ -49,7 +50,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -73,7 +74,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -97,7 +98,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -121,7 +122,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -157,20 +158,20 @@ public class LAN {
      */
     public static HttpConnectionAndCode graduationScore(Context c, String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = Post.post(
-                "http://172.16.13.22/student/genyxxf",
-                null,
-                r.getString(R.string.user_agent),
-                "http://172.16.13.22/Login/MainDesktop",
-                "stid=1",
-                cookie,
-                "}",
-                null,
-                "\"success\":true",
-                null,
-                null,
-                null
-        );
+//        HttpConnectionAndCode gen = Post.post(
+//                "http://172.16.13.22/student/genyxxf",
+//                null,
+//                r.getString(R.string.user_agent),
+//                "http://172.16.13.22/Login/MainDesktop",
+//                "stid=1",
+//                cookie,
+//                "}",
+//                null,
+//                "\"success\":true",
+//                null,
+//                null,
+//                null
+//        );
         return Get.get(
                 r.getString(R.string.lan_get_graduation_score_url),
                 null,
@@ -183,7 +184,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -195,20 +196,20 @@ public class LAN {
      */
     public static HttpConnectionAndCode graduationScore2(Context c, String cookie){
         Resources r = c.getResources();
-        HttpConnectionAndCode gen = Post.post(
-                "http://172.16.13.22/student/genyxxf",
-                null,
-                r.getString(R.string.user_agent),
-                "http://172.16.13.22/Login/MainDesktop",
-                "stid=1",
-                cookie,
-                "}",
-                null,
-                "\"success\":true",
-                null,
-                null,
-                null
-        );
+//        HttpConnectionAndCode gen = Post.post(
+//                "http://172.16.13.22/student/genyxxf",
+//                null,
+//                r.getString(R.string.user_agent),
+//                "http://172.16.13.22/Login/MainDesktop",
+//                "stid=1",
+//                cookie,
+//                "}",
+//                null,
+//                "\"success\":true",
+//                null,
+//                null,
+//                null
+//        );
         return Get.get(
                 "http://172.16.13.22/student/getplancj",
                 null,
@@ -221,7 +222,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -245,7 +246,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -269,7 +270,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_lab_read_timeout
         );
     }
 
@@ -293,7 +294,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                null
+                MyApp.lan_fetch_normal_read_timeout
         );
     }
 
@@ -307,7 +308,7 @@ public class LAN {
         Resources r = c.getResources();
         return Get.get(
                 "http://172.16.13.22/student/getlabtable",
-                new String[]{"term="+term},
+                new String[]{"term=" + term},
                 r.getString(R.string.user_agent),
                 "http://172.16.13.22/Login/MainDesktop",
                 cookie,
@@ -317,7 +318,7 @@ public class LAN {
                 null,
                 null,
                 null,
-                30000
+                MyApp.lan_fetch_lab_read_timeout
         );
     }
 }
