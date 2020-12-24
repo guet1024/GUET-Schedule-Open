@@ -14,12 +14,12 @@
 
 ### 版权声明
 
-版权声明见仓库文件[📄](https://github.com/Telephone2019/CourseTable/blob/v1.0/COPYRIGHT)
+版权声明见仓库文件[📄](https://github.com/Telephone2019/CourseTable/blob/master/COPYRIGHT)
 
 ### 交流反馈
 
 - ❗ [GitHub Issue](https://github.com/Telephone2019/CourseTable/issues/new/choose)
-- 🐧 [QQ交流群](https://qm.qq.com/cgi-bin/qm/qr?k=cbQp_lZk4aKwXqMJfkEs7oteT8_nw4DZ&jump_from=webapi)
+- 🐧 [QQ交流群](https://qm.qq.com/cgi-bin/qm/qr?k=LjOFHb-pTST28-QLMqiz5uTcKH-_3h-4&jump_from=webapi)
 - ⭐ Star
 
 ### 对此项目做贡献
@@ -30,17 +30,22 @@
 
 ### 使用说明
 
-点击左上角徽标键登录，登录成功后可以在 <u>**更多功能**</u> 页面发现使用说明
+点击左上角徽标键登录
 
 ### 功能
 
 带⚡图标的功能处于开发/测试阶段，将在后续版本上线...
 
   + 支持WebVPN（外网）登录
-  + 课表显示
-  + 课表自动同步/数据自动更新
+  + 周课表显示
+  + 日课表显示
+  + 课表自动同步/数据自动更新（校园网）
+  + 课表自动同步/数据自动更新（外网）
   + 自定义课表
-  + 事件提醒⚡
+  + 考试倒计时
+  + 课程评论区
+  + 老师评论区
+  + 事件提醒
   + 课表小部件
   + 毕业计划课程
   + 成绩查询
@@ -48,10 +53,11 @@
   + 毕业学位查询
   + 图书馆藏查询
   + 考试安排查询
+  + 学分绩计算
   + 评教
   + 教材评价
   + 等级考试成绩查询
-  + 实验成绩查询⚡
+  + 实验成绩查询
   + 毕业条件查询
   + GUET常用工具
 ### 未来蓝图
@@ -60,13 +66,11 @@
       + GitHub Release
       + 应用内更新
       + 应用商店（暂无，后续版本上线）
-      + QQ交流群 336405176
+      + QQ交流群 336405176（1群）
+      + QQ交流群 913320924（2群）
   + 新增功能
     + 计划在未来的版本中新增一些实用的功能：
-      * 通过WebVPN自动同步/更新数据
       * 已选课程查询
-      * 事件提醒
-      * 实验成绩查询
 
 ### 声明
 
