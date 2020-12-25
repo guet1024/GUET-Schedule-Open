@@ -5,7 +5,7 @@
 
 ### 下载安装
 
-- APK文件：👉[最新版本](https://github.com/Telephone2019/CourseTable/releases/latest)的Assets中包含最新版本的APK安装包
+- APK文件：👉[最新版本](https://github.com/guet1024/GUET-Schedule-Open/releases/latest)的Assets中包含最新版本的APK安装包
 - 各大应用商店搜索 **<u>GUET课程表</u>** 🔍（暂无，后续版本上线）
 
 ### 开源协议
@@ -14,11 +14,11 @@
 
 ### 版权声明
 
-版权声明见仓库文件[📄](https://github.com/Telephone2019/CourseTable/blob/master/COPYRIGHT)
+版权声明见仓库文件[📄](https://github.com/guet1024/GUET-Schedule-Open/blob/master/COPYRIGHT)
 
 ### 交流反馈
 
-- ❗ [GitHub Issue](https://github.com/Telephone2019/CourseTable/issues/new/choose)
+- ❗ [GitHub Issue](https://github.com/guet1024/GUET-Schedule-Open/issues/new/choose)
 - 🐧 [QQ交流群](https://qm.qq.com/cgi-bin/qm/qr?k=LjOFHb-pTST28-QLMqiz5uTcKH-_3h-4&jump_from=webapi)
 - ⭐ Star
 
@@ -26,7 +26,7 @@
 
 1. 🔗 Fork此项目
 2. 💻 编写代码
-3. 🧲 向作者发送[Pull request](https://github.com/Telephone2019/CourseTable/compare)
+3. 🧲 向作者发送[Pull request](https://github.com/guet1024/GUET-Schedule-Open/compare)
 
 ### 使用说明
 
