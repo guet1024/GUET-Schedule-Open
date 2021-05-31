@@ -10,7 +10,7 @@
 
 ### 开源协议
 
-[GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
+此项目是在[GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)许可下发布的
 
 ### 版权声明
 
